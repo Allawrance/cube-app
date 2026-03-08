@@ -12,22 +12,21 @@
 <body>
   <div id="root"></div>
 
-  <!-- React + Babel (no build step needed) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 
-  <!-- Load the CUBE app -->
   <script type="text/babel" src="ees-cube-mvp.jsx"></script>
 
   <script>
-    // Mount the app once Babel has compiled it
-    window.addEventListener('load', function() {
-      setTimeout(function() {
+    // Poll until App component is available then mount
+    const interval = setInterval(function() {
+      if (typeof App !== 'undefined') {
+        clearInterval(interval);
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(React.createElement(App));
-      }, 100);
-    });
+      }
+    }, 200);
   </script>
 </body>
 </html>
