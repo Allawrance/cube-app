@@ -1010,7 +1010,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setActiveTab("cube");
     } catch(e) {
       if (e.name !== "AbortError") {
-        setError("Analysis failed. Please make sure the photo is clear and try again.");
+        console.error("Analysis error:", e.message, e);
+        setError("Analysis failed: " + e.message);
       }
     }
     setLoading(false);
@@ -1179,7 +1180,7 @@ Return ONLY the model response text, no heading, no preamble.`
               <div style={{fontSize:"16px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>Tap to upload or take a photo</div>
               <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>Your page can include the printed question,<br/>your handwritten answer, and any stimulus material.</div>
             </div>}
-            <input ref={fileRef} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={handleImg}/>
+            <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
 
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
