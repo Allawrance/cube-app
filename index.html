@@ -947,9 +947,9 @@ function App() {
     setQuestionNumber("");
     // Quick pre-scan to detect how many questions are on the page
     try {
-      const scanRes = await fetch("https://api.anthropic.com/v1/messages", {
+      const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
           model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
@@ -990,8 +990,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setLoading(true); setError(null);
     setLoadingMsg("Reading the question and applying CUBE...");
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
+        method:"POST", headers:{"Content-Type":"application/json"},
         signal: abortRef.current.signal,
         body: JSON.stringify({
           model: MODEL, max_tokens: 4000,
@@ -1026,8 +1026,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     const kwds2 = c1.syllabusKeywords?.length ? c1.syllabusKeywords : c1.syllabusMatch ? [c1.syllabusMatch] : [];
     const pk = kwds2[0] || {};
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
+        method:"POST", headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
           model: MODEL, max_tokens: 1000,
           system: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. You write Band 6 model responses that match the style and depth of top NSW HSC answers.
