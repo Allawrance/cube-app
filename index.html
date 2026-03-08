@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CUBE HSC Marking Coach — EES</title>
   <style>* { margin: 0; padding: 0; box-sizing: border-box; } body { background: #040d18; }</style>
-</head> 
+</head>
 <body>
   <div id="root"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -951,7 +951,7 @@ function App() {
         method:"POST",
         headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:200,
+          model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:b64 }},
             { type:"text", text:`Look at this worksheet image. List all question numbers visible (e.g. Q1, Q2, Question 3, (a), (b) etc).
@@ -960,12 +960,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         })
       });
       const scanData = await scanRes.json();
+      if (!scanRes.ok || scanData.error) { console.error("Scan error:", JSON.stringify(scanData)); setQuestionsOnPage(["1","2","3","4","5","6"]); return; }
       const raw = scanData.content?.[0]?.text?.trim() || "[]";
       const clean = raw.replace(/```json|```/g,"").trim();
       const arr = JSON.parse(clean);
       setQuestionsOnPage(Array.isArray(arr) && arr.length > 0 ? arr : ["1","2","3","4","5","6"]);
-    } catch {
-      setQuestionsOnPage(["1","2","3","4","5","6"]); // fallback to default
+    } catch(err) {
+      console.error("Scan catch:", err);
+      setQuestionsOnPage(["1","2","3","4","5","6"]);
     }
   };
 
