@@ -949,7 +949,7 @@ function App() {
     try {
       const scanRes = await fetch("https://api.anthropic.com/v1/messages", {
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
         body: JSON.stringify({
           model:"claude-sonnet-4-20250514", max_tokens:200,
           messages:[{ role:"user", content:[
@@ -989,7 +989,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setLoadingMsg("Reading the question and applying CUBE...");
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
+        method:"POST", headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
         signal: abortRef.current.signal,
         body: JSON.stringify({
           model: MODEL, max_tokens: 4000,
@@ -1025,7 +1025,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     const pk = kwds2[0] || {};
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
+        method:"POST", headers:{"Content-Type":"application/json","x-api-key":"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","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
         body: JSON.stringify({
           model: MODEL, max_tokens: 1000,
           system: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. You write Band 6 model responses that match the style and depth of top NSW HSC answers.
