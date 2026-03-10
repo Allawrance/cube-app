@@ -4,16 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CUBE HSC Marking Coach — EES</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #040d18; }
-    .mobile-hide { display: inline; }
-    .mobile-show-inline { display: none !important; }
-    @media (max-width: 600px) {
-      .mobile-hide { display: none !important; }
-      .mobile-show-inline { display: inline !important; }
-    }
-  </style>
+  <style>* { margin: 0; padding: 0; box-sizing: border-box; } body { background: #040d18; }</style>
 </head>
 <body>
   <div id="root"></div>
@@ -520,9 +511,9 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   const lines = buildLines(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
-  // In plan mode: enough space for notes above and below — tightened via viewBox cropTop later
+  // In plan mode: 180px above for top-row notes, 120px below for bottom-row notes
   const PLAN_EXTRA = mode === "plan" ? 180 : 0;
-  const PLAN_BELOW = mode === "plan" ? 80 : 0;
+  const PLAN_BELOW = mode === "plan" ? 120 : 0;
   const H = PT + PLAN_EXTRA + nLines * LH + 50 + PLAN_BELOW;
 
   const shapes = [];
@@ -614,14 +605,11 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   });
 
   // ── E: Planning notes (plan mode only) ──────────────────────────────────────
-  // Placement rule:
-  //   nLines == 1           → all above
-  //   nLines == 2           → line 0 above, line 1 below
-  //   nLines == 3           → line 0 above, line 1 below, line 2 above
-  //   nLines >= 4           → all above
   const notes = [];
+  // pills hoisted so cropTop calculation can access it after the if block
   let pills = [];
-  if (mode === "plan" && Array.isArray(planningArrows)) {
+
+  if (mode === "plan" && Array.isArray(planningArrows) && planningArrows.length) {
     const FS       = 10;
     const CH       = 6.0;
     const LH_N     = 13;
@@ -643,16 +631,9 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0, split).trim(), label.slice(split).trim()].filter(Boolean);
     }
 
-    // Decide whether a given target line should go above or below
-    const goesAbove = (targetLine) => {
-      if (nLines <= 1) return true;
-      if (nLines >= 4) return true;
-      // 2 or 3 lines: odd lines (0,2) above; line 1 below
-      return targetLine !== 1;
-    };
-
+    // All pills go above — simpler, avoids below-text clutter on mobile
     // Build pill descriptors
-    const MAX_X = W - PL;  // right boundary
+    const SVG_W = W;  // full SVG width for clamping
     pills = planningArrows
       .filter(arr => arr.targetStartIndex != null && arr.label)
       .map(arr => {
@@ -665,88 +646,53 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
         const bw = Math.max(maxLen * CH + PAD_X * 2, 48);
         const bh = lines2.length * LH_N + PAD_Y * 2;
         const targetX = pos.x + (arr.targetWord ? arr.targetWord.length * CW / 2 : 6);
-        // Clamp bx so pill never overflows right edge — push left if needed
+        // Clamp so pill never overflows right edge of SVG
         const rawBx = Math.max(PL, targetX - bw / 2);
-        const bx = Math.min(rawBx, MAX_X - bw);
-        // Force above if pill would overflow right edge at original position
-        const wouldOverflow = rawBx + bw > MAX_X;
-        const above = wouldOverflow ? true : goesAbove(pos.li);
+        const bx = Math.min(rawBx, SVG_W - bw - 4);
         return {
-          lines2, bw, bh,
-          targetX,
-          targetLine: pos.li,
-          above,
-          stemToY: 0,
-          stemFromY: 0,
-          row: -1,
-          bx,
-          by: 0,
+          lines2, bw, bh, targetX, targetLine: pos.li,
+          above: true,   // always above
+          stemToY: 0, stemFromY: 0, row: -1,
+          bx, by: 0,
         };
       })
       .sort((a, b) => a.targetX - b.targetX);
 
-    // Pack ABOVE pills into rows (stack upward from text)
-    const abovePills  = pills.filter(p => p.above);
-    const belowPills  = pills.filter(p => !p.above);
-
-    const packRows = (group) => {
-      const rowRightEdge = [];
-      group.forEach(p => {
-        for (let r = 0; ; r++) {
-          if (rowRightEdge[r] == null) rowRightEdge[r] = PL - BOX_GAP;
-          const minX = rowRightEdge[r] + BOX_GAP;
-          if (p.bx >= minX) {
-            p.row = r; rowRightEdge[r] = p.bx + p.bw; break;
-          } else {
-            const nudgedX = minX;
-            if (nudgedX + p.bw <= PL + CPL * CW + PL) {
-              p.bx = nudgedX; p.row = r; rowRightEdge[r] = p.bx + p.bw; break;
-            }
-          }
-          if (r >= 4) { p.row = r; break; }
+    // Pack pills into rows (collision-aware, left to right)
+    const rowRightEdge = [];
+    pills.forEach(p => {
+      for (let r = 0; ; r++) {
+        if (rowRightEdge[r] == null) rowRightEdge[r] = PL - BOX_GAP;
+        if (p.bx >= rowRightEdge[r] + BOX_GAP) {
+          p.row = r; rowRightEdge[r] = p.bx + p.bw; break;
         }
-      });
-    };
-    packRows(abovePills);
-    packRows(belowPills);
-
-    // Assign Y for above-pills (stack upward from text line 0 top)
-    const maxBH_above = abovePills.length ? Math.max(...abovePills.map(p => p.bh), 26) : 26;
-    const rowBottomBase = PT + PLAN_EXTRA - 50;
-    abovePills.forEach(p => {
-      p.by = rowBottomBase - p.row * (maxBH_above + ROW_GAP) - p.bh;
-      p.stemFromY = p.by + p.bh + 2;  // stem starts at box bottom
-      // Arrow tip stops 4px ABOVE the ascender top — does not touch the word
-      p.stemToY = PT + PLAN_EXTRA + p.targetLine * LH - FONT_SIZE * 0.9 - 4;
+        const nudged = rowRightEdge[r] + BOX_GAP;
+        if (nudged + p.bw <= SVG_W - 4) {
+          p.bx = nudged; p.row = r; rowRightEdge[r] = p.bx + p.bw; break;
+        }
+        if (r >= 5) { p.row = r; break; }
+      }
     });
 
-    // Assign Y for below-pills (stack downward from below target line)
-    const maxBH_below = belowPills.length ? Math.max(...belowPills.map(p => p.bh), 26) : 26;
-    belowPills.forEach(p => {
-      // Place below the target line's baseline + descender + gap
-      const lineBottom = PT + PLAN_EXTRA + (p.targetLine + 1) * LH + 8;
-      p.by = lineBottom + p.row * (maxBH_below + ROW_GAP);
-      p.stemFromY = p.by - 2;  // stem starts at box top (arrow points up to word)
-      // Arrow tip stops 4px BELOW the descender — does not touch the word
-      p.stemToY = PT + PLAN_EXTRA + p.targetLine * LH + FONT_SIZE * 0.25 + 4;
+    const maxRows = Math.max(...pills.map(p => p.row), 0) + 1;
+    const maxBH = Math.max(...pills.map(p => p.bh), 26);
+    // Stack rows upward from just above the text — row 0 closest to text
+    const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 10;  // top of text ascenders
+    pills.forEach(p => {
+      // row 0 = closest to text, higher rows stack further above
+      p.by = textTopY - (p.row + 1) * (maxBH + ROW_GAP) + ROW_GAP;
+      p.stemFromY = p.by + p.bh + 2;
+      p.stemToY   = PT + PLAN_EXTRA + p.targetLine * LH - FONT_SIZE * 0.9 - 4;
     });
 
-    // Render all pills
+    // Render
     pills.forEach((p, i) => {
       const cx = p.bx + p.bw / 2;
-      const x1 = cx, y1 = p.stemFromY;
-      const x2 = p.targetX, y2 = p.stemToY;
-      // Stem ends at arrowhead base (8px before tip) so line doesn't show through arrowhead
-      const stemEndY = p.above ? y2 - 8 : y2 + 8;
-      // Above: ▼ tip at y2, body extends upward 8px
-      // Below: ▲ tip at y2, body extends downward 8px
-      const arrowPts = p.above
-        ? `${x2-5},${y2-8} ${x2+5},${y2-8} ${x2},${y2}`
-        : `${x2-5},${y2+8} ${x2+5},${y2+8} ${x2},${y2}`;
-
+      const stemEndY = p.stemToY - 8;
+      const arrowPts = `${p.targetX-5},${p.stemToY-8} ${p.targetX+5},${p.stemToY-8} ${p.targetX},${p.stemToY}`;
       notes.push(
         <g key={`note${i}`}>
-          <line x1={x1} y1={y1} x2={x2} y2={stemEndY}
+          <line x1={cx} y1={p.stemFromY} x2={p.targetX} y2={stemEndY}
             stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
           <polygon points={arrowPts} fill="#c9a84c"/>
           <rect x={p.bx} y={p.by} width={p.bw} height={p.bh}
@@ -762,34 +708,32 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
-  // Compute tight crop: shift viewBox up to just above the highest pill, down to just below lowest
+  // ── Tight viewBox: crop to exactly the content with 4px margin ──────────────
   let cropTop = 0;
-  let tightH = H;
+  let svgH = H;
   if (mode === "plan") {
     const MARGIN = 4;
-    let minY = PT + PLAN_EXTRA;
-    let maxY = PT + PLAN_EXTRA + nLines * LH + 12;
-    pills.forEach(p => {
-      if (p.by < minY) minY = p.by;
-      if (p.by + p.bh > maxY) maxY = p.by + p.bh;
-    });
+    // Find the actual topmost pixel used (highest pill top, or text top if no pills)
+    const textTop = PT + PLAN_EXTRA - FONT_SIZE;
+    const minY = pills.length
+      ? Math.min(...pills.map(p => p.by), textTop)
+      : textTop;
+    const maxY = PT + PLAN_EXTRA + nLines * LH + 16;
     cropTop = Math.max(0, minY - MARGIN);
-    tightH = maxY + MARGIN - cropTop;
+    svgH    = maxY + MARGIN - cropTop;
   }
-  const viewH = mode === "plan" ? tightH : H;
-  const viewBox = mode === "plan" ? `0 ${cropTop} ${W} ${viewH}` : `0 0 ${W} ${H}`;
 
   return (
     <div style={{background:"#fffef5", borderRadius:"16px", boxShadow:"0 4px 20px rgba(0,0,0,0.3)", border:"1px solid #e8e0c8", marginBottom:"16px", overflowX:"auto"}}>
-      <svg width="100%" height={viewH || H} viewBox={viewBox} style={{display:"block", minWidth:320}}>
+      <svg width="100%" height={svgH} viewBox={`0 ${cropTop} ${W} ${svgH}`} style={{display:"block", minWidth:320}}>
         {/* Paper ruled lines */}
         {Array.from({length: nLines+2}, (_,i) => (
           <line key={`rl${i}`} x1="0" y1={PT + PLAN_EXTRA + i*LH + 8} x2={W} y2={PT + PLAN_EXTRA + i*LH + 8} stroke="rgba(160,185,220,0.3)" strokeWidth="1"/>
         ))}
-        {/* Red margin — only draw within visible cropTop area */}
-        <line x1={PL-10} y1={cropTop} x2={PL-10} y2={(viewH||H)+cropTop} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
-        {/* PLAN label — just above the text */}
-        <text x={PL-8} y={PT + PLAN_EXTRA - 6} fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#ccc" letterSpacing="1.5">{mode==="cube"?"CUBE":"PLAN"}</text>
+        {/* Red margin */}
+        <line x1={PL-10} y1={cropTop} x2={PL-10} y2={cropTop+svgH} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
+        {/* PLAN/CUBE label — just above text */}
+        <text x={PL-8} y={PT + PLAN_EXTRA - 8} fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#ccc" letterSpacing="1.5">{mode==="cube"?"CUBE":"PLAN"}</text>
         {/* Question text */}
         {lines.map((ln, i) => (
           <text key={i} x={PL} y={PT + PLAN_EXTRA + i*LH}
@@ -861,11 +805,11 @@ function FormattedResponse({ text }) {
     if (m[0] === '[?]') {
       parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
     } else if (m[1]) {
-      // Bold connective — bright purple, readable on dark background
-      parts.push(<strong key={m.index} style={{color:"#d18aff",background:"rgba(180,80,255,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
+      // Bold connective — purple highlight, visible on cream paper
+      parts.push(<strong key={m.index} style={{color:"#6a0dad",background:"rgba(106,13,173,0.12)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
     } else {
-      // Italic noun group — white, dotted underline, clearly visible on dark background
-      parts.push(<em key={m.index} style={{color:"#ffffff",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"rgba(255,255,255,0.5)",fontStyle:"italic"}}>{m[2]}</em>);
+      // Italic noun group — dark teal, dotted underline, clearly visible on cream
+      parts.push(<em key={m.index} style={{color:"#1a5276",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#1a5276",fontStyle:"italic"}}>{m[2]}</em>);
     }
     last = m.index + m[0].length;
   }
@@ -1190,10 +1134,7 @@ Return ONLY the model response text, no heading, no preamble.`
         <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
         <div>
           <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>HSC Marking Coach</div>
-          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
-            <span className="mobile-hide">NSW Earth &amp; Environmental Science · NESA Stage 6</span>
-            <span className="mobile-show-inline">12 EES</span>
-          </div>
+          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>NSW Earth &amp; Environmental Science · NESA Stage 6</div>
         </div>
         {phase===2&&<button onClick={reset} style={{marginLeft:"auto",padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
           <span style={{fontSize:"17px"}}>↩</span> New Question
@@ -1269,48 +1210,28 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            {/* Steps hidden — replaced by circles below */}
+            <Steps current={4} activeTab={activeTab}/>
 
             {/* ── Question summary bar ── */}
-            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"12px",border:"1px solid rgba(201,168,76,0.2)"}}>
-              {/* Row 1: tags */}
-              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:c.questionText?"8px":"0"}}>
+            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
+              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:c.questionText?"10px":"0"}}>
                 {dirs.map((dv,i)=>(
                   <div key={i} style={{display:"inline-block",border:"2.5px solid #c0392b",borderRadius:"50%",padding:"2px 10px",color:"#c0392b",fontWeight:900,fontSize:"13px"}}>{dv.word}</div>
                 ))}
+                {/* Question text inline — replaces topic title chips */}
+                {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.4",flex:1,minWidth:0}}>{c.questionText}</div>}
                 <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",whiteSpace:"nowrap"}}>Mod {primaryKwd.module}</div>
                 {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
                 {c.marks&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{c.marks} marks</div>}
                 {!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>{band}</div>}
               </div>
-              {/* Row 2: question text full-width */}
-              {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.4",width:"100%"}}>{c.questionText}</div>}
             </div>
 
-            {/* ── NAVIGATION CIRCLES — all screens ── */}
-            <div style={{display:"flex",gap:"0",justifyContent:"space-around",alignItems:"flex-start",marginTop:"-8px",marginBottom:"16px",background:"rgba(255,255,255,0.03)",borderRadius:"14px",padding:"10px 4px",border:"1px solid rgba(255,255,255,0.07)"}}>
-              {[["cube","CUBE",1],["plan","Plan",2],["script","Script",3],["rubric","Rubric",4],["feedback","FeedBk",5]].map(([id,label,num])=>{
-                const isActive = activeTab===id;
-                return (
-                  <button key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"5px",background:"transparent",border:"none",cursor:"pointer",padding:"0 2px",flex:1}}>
-                    <div style={{
-                      width:"44px",height:"44px",borderRadius:"50%",
-                      background: isActive ? gold : "rgba(255,255,255,0.08)",
-                      border:`2px solid ${isActive ? gold : "rgba(255,255,255,0.15)"}`,
-                      display:"flex",alignItems:"center",justifyContent:"center",
-                      fontSize:"18px",fontWeight:900,
-                      color: isActive ? "#040d18" : "#7a9ab8",
-                      transition:"all 0.2s",
-                      boxShadow: isActive ? `0 0 12px rgba(201,168,76,0.5)` : "none"
-                    }}>{num}</div>
-                    <div style={{
-                      fontSize:"14px",fontFamily:"sans-serif",fontWeight: isActive ? 700 : 400,
-                      color: isActive ? gold : "#7a9ab8",
-                      whiteSpace:"nowrap"
-                    }}>{label}</div>
-                  </button>
-                );
-              })}
+            {/* ── TABS ── */}
+            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"20px"}}>
+              {[["cube","📋 CUBE"],["plan","📝 Plan"],["script","✍️ Script"],["rubric","📊 Rubric"],["feedback","🏅 Feedback"]].map(([id,label])=>(
+                <button key={id} onClick={()=>setActiveTab(id)} style={tabStyle(id)}>{label}</button>
+              ))}
             </div>
 
             {/* ═══ TAB: CUBE ═══ */}
