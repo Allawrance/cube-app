@@ -623,7 +623,6 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
 
-    // Build pills — all above text, hard-clamped to SVG width
     allPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
       .map(a => {
@@ -638,7 +637,6 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       })
       .sort((a,b) => a.tx - b.tx);
 
-    // Pack into rows (collision-aware, hard right boundary = W-2)
     const rowRight = [];
     allPills.forEach(p => {
       for (let r = 0; ; r++) {
@@ -654,7 +652,6 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       }
     });
 
-    // Y: stack rows upward from just above first text line
     const maxBH    = Math.max(...allPills.map(p=>p.bh), 26);
     const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 8;
     allPills.forEach(p => {
@@ -663,7 +660,6 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 4;
     });
 
-    // Render
     allPills.forEach((p, i) => {
       const cx = p.bx + p.bw / 2;
       notes.push(
@@ -681,7 +677,6 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
-  // Tight viewBox: 4px above topmost pill, 4px below last text line
   const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
   const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
   const cropTop  = Math.max(0, _minY - 4);
@@ -1165,7 +1160,7 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            <Steps current={4} activeTab={activeTab}/>
+            
 
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
