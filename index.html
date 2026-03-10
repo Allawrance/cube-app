@@ -511,7 +511,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   const lines = buildLines(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
-  // PLAN_EXTRA: large enough to hold any pill rows above text — will be cropped by viewBox
+  // PLAN_EXTRA: internal coordinate space above text for pills; viewBox crops it tight later
   const PLAN_EXTRA = mode === "plan" ? 200 : 0;
   const H = PT + PLAN_EXTRA + nLines * LH + 30;
 
@@ -605,7 +605,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
 
   // ── E: Planning notes (plan mode only) ──────────────────────────────────────
   const notes = [];
-  let allPills = [];  // hoisted for cropTop calculation
+  let allPills = [];
 
   if (mode === "plan" && Array.isArray(planningArrows) && planningArrows.length) {
     const FS = 10, CH = 6.0, LH_N = 13, PAD_X = 7, PAD_Y = 5;
@@ -623,24 +623,22 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
 
-    // Build pills — all go above text
+    // Build pills — all above text, clamped within SVG width
     allPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
       .map(a => {
-        const idx  = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
-        const pos  = getXY(idx, lines, PLAN_EXTRA);
-        const ls   = splitLabel(a.label);
-        const bw   = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 48);
-        const bh   = ls.length * LH_N + PAD_Y * 2;
-        const tx   = pos.x + (a.targetWord ? a.targetWord.length * CW / 2 : 6);
-        // Clamp bx so pill stays within SVG width
-        const bx   = Math.min(Math.max(PL, tx - bw/2), W - bw - 2);
-        return { ls, bw, bh, tx, bx, by:0, row:-1,
-                 tLine: pos.li, stemFromY:0, stemToY:0 };
+        const idx = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
+        const pos = getXY(idx, lines, PLAN_EXTRA);
+        const ls  = splitLabel(a.label);
+        const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 48);
+        const bh  = ls.length * LH_N + PAD_Y * 2;
+        const tx  = pos.x + (a.targetWord ? a.targetWord.length * CW / 2 : 6);
+        const bx  = Math.min(Math.max(PL, tx - bw/2), W - bw - 2);
+        return { ls, bw, bh, tx, bx, by:0, row:-1, tLine:pos.li, stemFromY:0, stemToY:0 };
       })
       .sort((a,b) => a.tx - b.tx);
 
-    // Pack into rows (collision-aware)
+    // Pack into rows (collision-aware, hard right boundary = W-2)
     const rowRight = [];
     allPills.forEach(p => {
       for (let r = 0; ; r++) {
@@ -656,8 +654,8 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       }
     });
 
-    // Y positions — stack rows upward from just above first text line
-    const maxBH   = Math.max(...allPills.map(p=>p.bh), 26);
+    // Y: stack rows upward from just above first text line
+    const maxBH    = Math.max(...allPills.map(p=>p.bh), 26);
     const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 8;
     allPills.forEach(p => {
       p.by        = textTopY - (p.row + 1) * (maxBH + ROW_GAP);
@@ -667,15 +665,13 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
 
     // Render
     allPills.forEach((p, i) => {
-      const cx  = p.bx + p.bw / 2;
-      const tip = p.stemToY;
+      const cx = p.bx + p.bw / 2;
       notes.push(
         <g key={`n${i}`}>
-          <line x1={cx} y1={p.stemFromY} x2={p.tx} y2={tip-8}
+          <line x1={cx} y1={p.stemFromY} x2={p.tx} y2={p.stemToY-8}
             stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
-          <polygon points={`${p.tx-5},${tip-8} ${p.tx+5},${tip-8} ${p.tx},${tip}`} fill="#c9a84c"/>
-          <rect x={p.bx} y={p.by} width={p.bw} height={p.bh}
-            rx="6" fill="#fff8e1" stroke="#c9a84c" strokeWidth="1.5"/>
+          <polygon points={`${p.tx-5},${p.stemToY-8} ${p.tx+5},${p.stemToY-8} ${p.tx},${p.stemToY}`} fill="#c9a84c"/>
+          <rect x={p.bx} y={p.by} width={p.bw} height={p.bh} rx="6" fill="#fff8e1" stroke="#c9a84c" strokeWidth="1.5"/>
           {p.ls.map((ln,li)=>(
             <text key={li} x={p.bx+PAD_X} y={p.by+PAD_Y+li*LH_N+FS}
               fontSize={FS} fontFamily="sans-serif" fontWeight="700" fill="#7a5000">{ln}</text>
@@ -685,19 +681,19 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
-  // ── Tight viewBox: 4px above topmost content, 4px below last text line ───────
-  const textTop  = PT + PLAN_EXTRA - FONT_SIZE;
-  const minY     = allPills.length ? Math.min(textTop, ...allPills.map(p=>p.by)) : textTop;
-  const cropTop  = Math.max(0, minY - 4);
-  const contentH = (PT + PLAN_EXTRA + nLines * LH + 16) - cropTop;
+  // Tight viewBox: start 4px above topmost pill, end 4px below last text line
+  const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
+  const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
+  const cropTop  = Math.max(0, _minY - 4);
+  const svgH     = (PT + PLAN_EXTRA + nLines * LH + 16) - cropTop;
 
   return (
     <div style={{background:"#fffef5", borderRadius:"16px", boxShadow:"0 4px 20px rgba(0,0,0,0.3)", border:"1px solid #e8e0c8", marginBottom:"16px", overflowX:"auto"}}>
-      <svg width="100%" height={contentH} viewBox={`0 ${cropTop} ${W} ${contentH}`} style={{display:"block", minWidth:280}}>
+      <svg width="100%" height={svgH} viewBox={`0 ${cropTop} ${W} ${svgH}`} style={{display:"block", minWidth:280}}>
         {Array.from({length: nLines+1}, (_,i) => (
           <line key={`rl${i}`} x1="0" y1={PT+PLAN_EXTRA+i*LH+8} x2={W} y2={PT+PLAN_EXTRA+i*LH+8} stroke="rgba(160,185,220,0.3)" strokeWidth="1"/>
         ))}
-        <line x1={PL-10} y1={cropTop} x2={PL-10} y2={cropTop+contentH} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
+        <line x1={PL-10} y1={cropTop} x2={PL-10} y2={cropTop+svgH} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
         <text x={PL-8} y={PT+PLAN_EXTRA-10} fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#ccc" letterSpacing="1.5">{mode==="cube"?"CUBE":"PLAN"}</text>
         {lines.map((ln,i) => (
           <text key={i} x={PL} y={PT+PLAN_EXTRA+i*LH}
