@@ -511,7 +511,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   const lines = buildLines(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
-  // PLAN_EXTRA: internal coordinate space above text for pills; viewBox crops it tight later
+  // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
   const PLAN_EXTRA = mode === "plan" ? 200 : 0;
   const H = PT + PLAN_EXTRA + nLines * LH + 30;
 
@@ -623,7 +623,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
 
-    // Build pills — all above text, clamped within SVG width
+    // Build pills — all above text, hard-clamped to SVG width
     allPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
       .map(a => {
@@ -681,7 +681,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
-  // Tight viewBox: start 4px above topmost pill, end 4px below last text line
+  // Tight viewBox: 4px above topmost pill, 4px below last text line
   const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
   const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
   const cropTop  = Math.max(0, _minY - 4);
@@ -1169,24 +1169,27 @@ Return ONLY the model response text, no heading, no preamble.`
 
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
-              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:c.questionText?"10px":"0"}}>
+              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
                 {dirs.map((dv,i)=>(
                   <div key={i} style={{display:"inline-block",border:"2.5px solid #c0392b",borderRadius:"50%",padding:"2px 10px",color:"#c0392b",fontWeight:900,fontSize:"13px"}}>{dv.word}</div>
                 ))}
-                {/* Question text inline — replaces topic title chips */}
-                {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.4",flex:1,minWidth:0}}>{c.questionText}</div>}
                 <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",whiteSpace:"nowrap"}}>Mod {primaryKwd.module}</div>
                 {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
                 {c.marks&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{c.marks} marks</div>}
                 {!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>{band}</div>}
               </div>
+              {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
 
-            {/* ── TABS ── */}
-            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"20px"}}>
-              {[["cube","📋 CUBE"],["plan","📝 Plan"],["script","✍️ Script"],["rubric","📊 Rubric"],["feedback","🏅 Feedback"]].map(([id,label])=>(
-                <button key={id} onClick={()=>setActiveTab(id)} style={tabStyle(id)}>{label}</button>
-              ))}
+            {/* ── TABS: numbered circles ── */}
+            <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",background:"rgba(255,255,255,0.04)",borderRadius:"16px",padding:"10px 4px",marginBottom:"20px",border:"1px solid rgba(255,255,255,0.08)"}}>
+              {[["cube","CUBE"],["plan","Plan"],["script","Script"],["rubric","Rubric"],["feedback","Feedback"]].map(([id,label],idx)=>{
+                const active = activeTab===id;
+                return <div key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:"pointer",minWidth:"52px"}}>
+                  <div style={{width:"48px",height:"48px",borderRadius:"50%",background:active?gold:"rgba(255,255,255,0.08)",border:active?"none":"2px solid rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"18px",color:active?"#0d1b2a":"#7a9ab8",boxShadow:active?"0 4px 14px rgba(201,168,76,0.5)":"none",transition:"all 0.2s"}}>{idx+1}</div>
+                  <span style={{fontSize:"12px",fontWeight:active?800:500,color:active?gold:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:1.2}}>{label}</span>
+                </div>;
+              })}
             </div>
 
             {/* ═══ TAB: CUBE ═══ */}
