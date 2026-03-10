@@ -511,6 +511,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   const lines = buildLines(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
+  // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
   const PLAN_EXTRA = mode === "plan" ? 200 : 0;
   const H = PT + PLAN_EXTRA + nLines * LH + 30;
 
@@ -602,12 +603,14 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     }
   });
 
+  // ── E: Planning notes (plan mode only) ──────────────────────────────────────
   const notes = [];
   let allPills = [];
 
   if (mode === "plan" && Array.isArray(planningArrows) && planningArrows.length) {
     const FS = 10, CH = 6.0, LH_N = 13, PAD_X = 7, PAD_Y = 5;
     const MAX_CHARS = 14, BOX_GAP = 8, ROW_GAP = 4;
+
     const splitLabel = (label) => {
       if (label.length <= MAX_CHARS) return [label];
       const mid = Math.floor(label.length / 2);
@@ -619,6 +622,8 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       if (split < 1) split = MAX_CHARS;
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
+
+    // Build pills — all above text, hard-clamped to SVG width
     allPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
       .map(a => {
@@ -632,48 +637,69 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
         return { ls, bw, bh, tx, bx, by:0, row:-1, tLine:pos.li, stemFromY:0, stemToY:0 };
       })
       .sort((a,b) => a.tx - b.tx);
+
+    // Pack into rows (collision-aware, hard right boundary = W-2)
     const rowRight = [];
     allPills.forEach(p => {
       for (let r = 0; ; r++) {
         if (rowRight[r] == null) rowRight[r] = PL - BOX_GAP;
-        if (p.bx >= rowRight[r] + BOX_GAP) { p.row = r; rowRight[r] = p.bx + p.bw; break; }
+        if (p.bx >= rowRight[r] + BOX_GAP) {
+          p.row = r; rowRight[r] = p.bx + p.bw; break;
+        }
         const nudged = rowRight[r] + BOX_GAP;
-        if (nudged + p.bw <= W - 2) { p.bx = nudged; p.row = r; rowRight[r] = p.bx + p.bw; break; }
+        if (nudged + p.bw <= W - 2) {
+          p.bx = nudged; p.row = r; rowRight[r] = p.bx + p.bw; break;
+        }
         if (r >= 5) { p.row = r; break; }
       }
     });
-    const maxBH = Math.max(...allPills.map(p=>p.bh), 26);
+
+    // Y: stack rows upward from just above first text line
+    const maxBH    = Math.max(...allPills.map(p=>p.bh), 26);
     const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 8;
     allPills.forEach(p => {
-      p.by = textTopY - (p.row + 1) * (maxBH + ROW_GAP);
+      p.by        = textTopY - (p.row + 1) * (maxBH + ROW_GAP);
       p.stemFromY = p.by + p.bh + 2;
-      p.stemToY = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 4;
+      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 4;
     });
+
+    // Render
     allPills.forEach((p, i) => {
       const cx = p.bx + p.bw / 2;
       notes.push(
         <g key={`n${i}`}>
-          <line x1={cx} y1={p.stemFromY} x2={p.tx} y2={p.stemToY-8} stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
+          <line x1={cx} y1={p.stemFromY} x2={p.tx} y2={p.stemToY-8}
+            stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
           <polygon points={`${p.tx-5},${p.stemToY-8} ${p.tx+5},${p.stemToY-8} ${p.tx},${p.stemToY}`} fill="#c9a84c"/>
           <rect x={p.bx} y={p.by} width={p.bw} height={p.bh} rx="6" fill="#fff8e1" stroke="#c9a84c" strokeWidth="1.5"/>
-          {p.ls.map((ln,li)=>(<text key={li} x={p.bx+PAD_X} y={p.by+PAD_Y+li*LH_N+FS} fontSize={FS} fontFamily="sans-serif" fontWeight="700" fill="#7a5000">{ln}</text>))}
+          {p.ls.map((ln,li)=>(
+            <text key={li} x={p.bx+PAD_X} y={p.by+PAD_Y+li*LH_N+FS}
+              fontSize={FS} fontFamily="sans-serif" fontWeight="700" fill="#7a5000">{ln}</text>
+          ))}
         </g>
       );
     });
   }
 
+  // Tight viewBox: 4px above topmost pill, 4px below last text line
   const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
-  const _minY = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
-  const cropTop = Math.max(0, _minY - 4);
-  const svgH = (PT + PLAN_EXTRA + nLines * LH + 16) - cropTop;
+  const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
+  const cropTop  = Math.max(0, _minY - 4);
+  const svgH     = (PT + PLAN_EXTRA + nLines * LH + 16) - cropTop;
 
   return (
-    <div style={{background:"#fffef5",borderRadius:"16px",boxShadow:"0 4px 20px rgba(0,0,0,0.3)",border:"1px solid #e8e0c8",marginBottom:"16px",overflowX:"auto"}}>
-      <svg width="100%" height={svgH} viewBox={`0 ${cropTop} ${W} ${svgH}`} style={{display:"block",minWidth:280}}>
-        {Array.from({length:nLines+1},(_,i)=>(<line key={`rl${i}`} x1="0" y1={PT+PLAN_EXTRA+i*LH+8} x2={W} y2={PT+PLAN_EXTRA+i*LH+8} stroke="rgba(160,185,220,0.3)" strokeWidth="1"/>))}
+    <div style={{background:"#fffef5", borderRadius:"16px", boxShadow:"0 4px 20px rgba(0,0,0,0.3)", border:"1px solid #e8e0c8", marginBottom:"16px", overflowX:"auto"}}>
+      <svg width="100%" height={svgH} viewBox={`0 ${cropTop} ${W} ${svgH}`} style={{display:"block", minWidth:280}}>
+        {Array.from({length: nLines+1}, (_,i) => (
+          <line key={`rl${i}`} x1="0" y1={PT+PLAN_EXTRA+i*LH+8} x2={W} y2={PT+PLAN_EXTRA+i*LH+8} stroke="rgba(160,185,220,0.3)" strokeWidth="1"/>
+        ))}
         <line x1={PL-10} y1={cropTop} x2={PL-10} y2={cropTop+svgH} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
         <text x={PL-8} y={PT+PLAN_EXTRA-10} fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#ccc" letterSpacing="1.5">{mode==="cube"?"CUBE":"PLAN"}</text>
-        {lines.map((ln,i)=>(<text key={i} x={PL} y={PT+PLAN_EXTRA+i*LH} fontSize={FONT_SIZE} fontFamily="'Courier New',Courier,monospace" fill="#1a1a2e" textLength={ln.text.length*CW} lengthAdjust="spacing">{ln.text}</text>))}
+        {lines.map((ln,i) => (
+          <text key={i} x={PL} y={PT+PLAN_EXTRA+i*LH}
+            fontSize={FONT_SIZE} fontFamily="'Courier New',Courier,monospace" fill="#1a1a2e"
+            textLength={ln.text.length*CW} lengthAdjust="spacing">{ln.text}</text>
+        ))}
         {shapes}
         {notes}
       </svg>
@@ -734,11 +760,10 @@ function FormattedResponse({ text }) {
     if (m[0] === '[?]') {
       parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
     } else if (m[1]) {
-      // Bold connective — purple highlight, visible on cream paper
-      parts.push(<strong key={m.index} style={{color:"#6a0dad",background:"rgba(106,13,173,0.12)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
+      // Bold connective — bright yellow, visible on both dark UI and cream paper
+      parts.push(<strong key={m.index} style={{color:"#b8860b",background:"rgba(255,230,0,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
     } else {
-      // Italic noun group — dark teal, dotted underline, clearly visible on cream
-      parts.push(<em key={m.index} style={{color:"#1a5276",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#1a5276",fontStyle:"italic"}}>{m[2]}</em>);
+      parts.push(<em key={m.index} style={{color:"#0097a7",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#0097a7",fontStyle:"italic"}}>{m[2]}</em>);
     }
     last = m.index + m[0].length;
   }
@@ -1063,7 +1088,7 @@ Return ONLY the model response text, no heading, no preamble.`
         <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
         <div>
           <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>HSC Marking Coach</div>
-          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>12 EES</div>
+          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>NSW Earth &amp; Environmental Science · NESA Stage 6</div>
         </div>
         {phase===2&&<button onClick={reset} style={{marginLeft:"auto",padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
           <span style={{fontSize:"17px"}}>↩</span> New Question
@@ -1139,16 +1164,9 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            {/* ── TABS: numbered circles ── */}
-            <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",background:"rgba(255,255,255,0.04)",borderRadius:"16px",padding:"10px 4px",marginBottom:"20px",border:"1px solid rgba(255,255,255,0.08)"}}>
-              {[["cube","CUBE"],["plan","Plan"],["script","Script"],["rubric","Rubric"],["feedback","Feedback"]].map(([id,label],idx)=>{
-                const active = activeTab===id;
-                return <div key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:"pointer",minWidth:"52px"}}>
-                  <div style={{width:"48px",height:"48px",borderRadius:"50%",background:active?gold:"rgba(255,255,255,0.08)",border:active?"none":"2px solid rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"18px",color:active?"#0d1b2a":"#7a9ab8",boxShadow:active?"0 4px 14px rgba(201,168,76,0.5)":"none",transition:"all 0.2s"}}>{idx+1}</div>
-                  <span style={{fontSize:"12px",fontWeight:active?800:500,color:active?gold:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:1.2}}>{label}</span>
-                </div>;
-              })}
-            </div>
+            <Steps current={4} activeTab={activeTab}/>
+
+            {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
                 {dirs.map((dv,i)=>(
@@ -1160,6 +1178,17 @@ Return ONLY the model response text, no heading, no preamble.`
                 {!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>{band}</div>}
               </div>
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
+            </div>
+
+            {/* ── TABS: numbered circles ── */}
+            <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",background:"rgba(255,255,255,0.04)",borderRadius:"16px",padding:"10px 4px",marginBottom:"20px",border:"1px solid rgba(255,255,255,0.08)"}}>
+              {[["cube","CUBE"],["plan","Plan"],["script","Script"],["rubric","Rubric"],["feedback","Feedback"]].map(([id,label],idx)=>{
+                const active = activeTab===id;
+                return <div key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:"pointer",minWidth:"52px"}}>
+                  <div style={{width:"48px",height:"48px",borderRadius:"50%",background:active?gold:"rgba(255,255,255,0.08)",border:active?"none":"2px solid rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"18px",color:active?"#0d1b2a":"#7a9ab8",boxShadow:active?"0 4px 14px rgba(201,168,76,0.5)":"none",transition:"all 0.2s"}}>{idx+1}</div>
+                  <span style={{fontSize:"12px",fontWeight:active?800:500,color:active?gold:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:1.2}}>{label}</span>
+                </div>;
+              })}
             </div>
 
             {/* ═══ TAB: CUBE ═══ */}
@@ -1284,8 +1313,8 @@ Return ONLY the model response text, no heading, no preamble.`
             {activeTab==="script"&&<div>
               <SectionTitle>STEP 3 — YOUR RESPONSE (FORMATTED)</SectionTitle>
               <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"6px 12px",marginBottom:"12px",border:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"center"}}>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#6a0dad",background:"rgba(106,13,173,0.12)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#1a5276",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
+                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#ffe600",background:"rgba(255,230,0,0.15)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
+                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#00e5ff",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
                 <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
               </div>
               <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
