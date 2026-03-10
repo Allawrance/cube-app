@@ -1162,13 +1162,6 @@ Return ONLY the model response text, no heading, no preamble.`
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
 
-            {/* ── TABS ── */}
-            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"20px"}}>
-              {[["cube","📋 CUBE"],["plan","📝 Plan"],["script","✍️ Script"],["rubric","📊 Rubric"],["feedback","🏅 Feedback"]].map(([id,label])=>(
-                <button key={id} onClick={()=>setActiveTab(id)} style={tabStyle(id)}>{label}</button>
-              ))}
-            </div>
-
             {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
               <SectionTitle>STEP 1 — CUBE ANALYSIS</SectionTitle>
