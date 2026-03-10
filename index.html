@@ -760,9 +760,10 @@ function FormattedResponse({ text }) {
     if (m[0] === '[?]') {
       parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
     } else if (m[1]) {
-      // Bold connective — bright yellow, visible on both dark UI and cream paper
+      // Bold connective — purple highlight, visible on cream paper
       parts.push(<strong key={m.index} style={{color:"#b8860b",background:"rgba(255,230,0,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
     } else {
+      // Italic noun group — dark teal, dotted underline, clearly visible on cream
       parts.push(<em key={m.index} style={{color:"#0097a7",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#0097a7",fontStyle:"italic"}}>{m[2]}</em>);
     }
     last = m.index + m[0].length;
@@ -1088,7 +1089,7 @@ Return ONLY the model response text, no heading, no preamble.`
         <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
         <div>
           <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>HSC Marking Coach</div>
-          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>NSW Earth &amp; Environmental Science · NESA Stage 6</div>
+          <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>12 EES</div>
         </div>
         {phase===2&&<button onClick={reset} style={{marginLeft:"auto",padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
           <span style={{fontSize:"17px"}}>↩</span> New Question
@@ -1164,7 +1165,6 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            <Steps current={4} activeTab={activeTab}/>
 
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
