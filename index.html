@@ -599,7 +599,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     const exactEnd   = exactStart + trimmed.length;
     const s = getXY(exactStart, lines, PLAN_EXTRA);
     const e = getXY(exactEnd,   lines, PLAN_EXTRA);
-    const drawEnd = Math.min(e.li, s.li);
+    const drawEnd = e.li;  // fixed: was Math.min(e.li, s.li) which prevented boxes spanning line breaks
     for (let l = s.li; l <= drawEnd && l < lines.length; l++) {
       const x1 = (l === s.li ? s.x : PL) - 6;
       const x2 = (l === drawEnd ? e.x : PL + lines[l].text.trimEnd().length * CW) + 6;
