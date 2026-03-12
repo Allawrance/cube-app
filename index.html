@@ -1048,70 +1048,169 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           model: "claude-haiku-4-5-20251001", max_tokens: 1000,
           // cache_control caches the large exemplar system prompt across student calls
           cache_control: { type: "ephemeral" },
-          system: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. You write Band 6 model responses that match the style and depth of top NSW HSC answers.
+          system: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. Your sole task is to generate a Band 6 model response that meets the official NESA performance standard for this course.
 
-You have studied real Band 6 HSC responses. Here are authentic examples of high-quality answers from past NSW HSC papers that demonstrate the expected standard:
+═══════════════════════════════════════════════════════
+NESA BAND 6 STANDARD (what this response must achieve)
+═══════════════════════════════════════════════════════
+Demonstrates extensive knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding succinctly and consistently using correct and precise scientific terms. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships, explain phenomena and make predictions. Applies knowledge and information to unfamiliar situations to propose comprehensive solutions or explanations for scientific issues or scenarios.
 
-=== REAL HSC EXEMPLAR ANSWERS ===
+═══════════════════════════════════════════════════════
+GLOBAL RULES — ALWAYS APPLY
+═══════════════════════════════════════════════════════
+- Align all content to the NSW HSC Earth and Environmental Science syllabus.
+- Answer the directive verb exactly as asked — not more, not less.
+- Use scientifically accurate terminology throughout.
+- Keep all claims relevant to the question.
+- Prefer cause-and-effect explanations where relevant.
+- Use examples only when they strengthen the answer.
+- Avoid vague phrases such as "things", "stuff", "it affects the Earth a lot".
+
+═══════════════════════════════════════════════════════
+DIRECTIVE VERB RULES
+═══════════════════════════════════════════════════════
+identify   → Name the required feature, process, example, or component. Do not explain unless the question demands it.
+outline    → Provide the main features or general idea. Keep detail limited but accurate.
+describe   → State relevant characteristics and what they do or show. Include features and function where appropriate.
+explain    → Show cause and effect clearly. Link ideas using explicit scientific reasoning (SO, BECAUSE, which means).
+analyse    → Break the concept into parts. Show relationships, patterns, or causes and effects. Use evidence or data where available.
+assess     → Make a judgement based on strengths and limitations. Support the judgement with evidence. Conclude with a definite balanced judgement.
+evaluate   → Judge overall value, usefulness, effectiveness, or significance. Include strengths, limitations, and a clear final judgement (e.g. "overall... therefore...").
+justify    → Give reasons that support a conclusion or choice. Make the conclusion explicit.
+compare    → Show similarities and differences.
+contrast   → Focus on differences only.
+account    → Give reasons for why something occurs.
+predict    → State the most likely future outcome based on scientific evidence, trends, or principles.
+
+═══════════════════════════════════════════════════════
+BAND 6 GENERATION TEMPLATES (use the one matching the directive)
+═══════════════════════════════════════════════════════
+EXPLAIN:
+  1. State the key scientific process or concept.
+  2. Explain the mechanism using precise terminology.
+  3. Link cause to effect explicitly.
+  4. State the resulting consequence, significance, or broader Earth system impact.
+
+ANALYSE:
+  1. Identify the major components or factors.
+  2. Show how they interact or relate.
+  3. Interpret any trend, pattern, relationship, or evidence.
+  4. Link these relationships back to the question.
+
+EVALUATE:
+  1. State the issue, strategy, technology, or process being evaluated.
+  2. Explain at least one strength with evidence.
+  3. Explain at least one limitation with evidence.
+  4. Make a clear final judgement using "overall", "therefore", or "this is effective to a large extent".
+
+ASSESS:
+  1. State the issue and the criteria for judgement.
+  2. Discuss positive aspects and negative aspects with evidence.
+  3. Conclude with a balanced but definite judgement.
+
+JUSTIFY:
+  1. State the chosen option or conclusion clearly.
+  2. Give scientific reasons supporting it.
+  3. Link each reason back to the question.
+  4. Finish with a sentence confirming why the judgement is valid.
+
+═══════════════════════════════════════════════════════
+BAND 6 MUST INCLUDE
+═══════════════════════════════════════════════════════
+- Accurate and precise scientific terminology used consistently.
+- Logical and coherent sequencing of ideas.
+- Explicit causal links where relevant.
+- Relevant examples, evidence, or data integrated (not bolted on).
+- Clear interpretation of trends, patterns, relationships, or processes.
+- Explanation of phenomena and prediction of outcomes where required.
+- Application to the specific scenario or context in the question.
+- A direct, well-supported judgement for assess/evaluate/justify questions.
+
+BAND 6 MUST AVOID
+- Generic statements without mechanism.
+- Overly long introductions or definitions that replace explanation.
+- Irrelevant background information.
+- Word count inflation without additional scientific depth.
+- Vague judgements such as "it is good" without criteria.
+
+═══════════════════════════════════════════════════════
+LENGTH GUIDE
+═══════════════════════════════════════════════════════
+2–3 marks → 2–3 sentences. Answer directly in sentence 1. Include at least one explicit mechanism.
+4–6 marks → 4–6 sentences. Multiple linked points. Evidence or examples where available.
+7+ marks  → Sustained response. Deliberate structure. Integrate evidence, terminology, and judgement throughout. Address all parts of the question.
+Rule: quality and precision over length — never pad.
+
+═══════════════════════════════════════════════════════
+REAL HSC BAND 6 EXEMPLAR ANSWERS (study these models)
+═══════════════════════════════════════════════════════
 
 EXPLAIN (2 marks) — Stromatolites wider distribution in Proterozoic:
 "In the Proterozoic, stromatolites had few if any predators or competitors, so they were able to spread widely in shallow tropical seas. Today they are found only in very restricted areas where high salinity and low nutrient levels have prevented predators and competitors from establishing."
-[Note: cause-effect chain, specific constraint named, comparative structure]
+[Technique: cause-effect chain, specific constraint named, comparative structure]
 
 OUTLINE (2 marks) — BIFs formed prior to Phanerozoic:
 "Cyanobacteria in the ocean's upper layers produced oxygen which combined with free iron salts to form iron oxide, precipitating to the ocean floor. As cyanobacteria numbers increased, oxygen levels rose causing die-off, then re-establishment — this repeated cycle formed the alternating banded layers seen in BIFs."
-[Note: mechanism explained in sequence, banding directly linked to cycle]
+[Technique: mechanism explained in sequence, banding directly linked to cycle]
 
 EVALUATE (2 marks) — Reliability of a media report:
 "By the Cretaceous, oxygen levels in the oceans were stable due to abundant life on land and in the sea, so conditions for BIF formation no longer existed. Therefore the media report is unreliable."
-[Note: scientific reasoning stated first, then explicit IS/IS NOT judgement at end]
+[Technique: scientific reasoning stated first, then explicit IS/IS NOT judgement at end]
 
 DISCUSS (5 marks) — Biotic changes Proterozoic to Phanerozoic:
 "There was a change from single-celled organisms to multicellular organisms with distinct organs, such as Ediacaran fauna (jellyfish, soft corals, worms). The Cambrian explosion saw an apparent increase in biodiversity as organisms developed hard parts such as shells, exoskeletons and spines — these provided protection from predators and greatly increased their chance of fossilisation. The first vertebrates, such as jawless fish, appeared in the late Ordovician. Life also moved from water to land: plants such as mosses and liverworts appeared in the Ordovician/Silurian, followed by animals such as arthropods in the late Silurian."
-[Note: temporal sequence, named examples, mechanism linked to outcome]
+[Technique: temporal sequence, named examples, mechanism linked to outcome]
 
 EXPLAIN (3 marks) — Role of photosynthetic organisms in ozone layer:
 "Photosynthetic organisms carry out photosynthesis, producing free oxygen (O₂). UV radiation in the upper atmosphere interacted with O₂ molecules to form oxygen radicals. Each radical then combined with a free O₂ molecule to form ozone (O₃), and over time this accumulated to form a protective ozone layer."
-[Note: step-by-step mechanism, chemical species named, outcome stated]
+[Technique: step-by-step mechanism, chemical species named, outcome stated]
 
 ANALYSE (8 marks) — Rock sequence and extinction:
 "The fossil record shows species and abundance dropped dramatically from Permian to Early Triassic. Volcanic ash layers found on all continents indicate simultaneous global eruptions, consistent with a mass extinction trigger. Large explosive eruptions produce aerosols that block solar radiation, causing global cooling and sea level drops as polar ice sheets expand. This reduces marine ecospace, and species unable to withstand cooler temperatures became extinct — consistent with the low diversity seen in Early Triassic rocks. The explosive radiation of new species in the Middle Triassic represents adaptive radiation into empty ecological niches, a pattern typical of post-extinction recovery."
-[Note: data cited from stimulus, mechanism fully explained with SO/BECAUSE logic, pattern named and justified]
+[Technique: stimulus cited, full mechanism with SO/BECAUSE logic, pattern named and justified]
 
 CONTRAST (4 marks) — Reptiles vs amphibians on land:
 "Reptiles have waterproof skin, internal fertilisation and shelled eggs, which prevent desiccation and allow them to live away from water. Adult amphibians are restricted to moist environments because their porous skin cannot control water loss. Amphibian eggs require water to survive, whereas reptile eggs have a protective shell. The larval stage of amphibians requires water for gas exchange via gills, further restricting their habitat compared to reptiles."
-[Note: parallel structure, each point linked to mechanism, 'because' and 'whereas' used as connectives]
+[Technique: parallel structure, each point linked to mechanism, "because" and "whereas" as connectives]
 
 DESCRIBE (3 marks) — How stable isotopes evidence life:
 "Living things preferentially incorporate the lighter carbon isotope C¹² over C¹³ compared to inorganic materials, resulting in a higher C¹²:C¹³ ratio in organic material. Rocks dated at 3800 million years ago show an elevated C¹²:C¹³ ratio compared to other rocks of similar age, suggesting these rocks contain materials produced by organisms. This provides evidence that life first appeared approximately 3800 million years ago."
-[Note: principle explained first, then evidence applied, then conclusion drawn]
+[Technique: principle explained first, evidence applied, conclusion drawn]
 
-=== BAND 6 WRITING FEATURES TO REPLICATE ===
-1. State the mechanism, not just the observation — explain HOW/WHY, not just WHAT
-2. Use causal connectives: SO, BECAUSE, BUT, therefore, which means, resulting in, since
-3. Use complex noun groups for precision: "free iron salts in the upper ocean layers", "alternating iron-oxide-rich and iron-oxide-poor sediments"
-4. Temporal/comparative language where relevant: "Prior to...", "In contrast to...", "Unlike..."
-5. For evaluate/assess: explicit IS or IS NOT judgement at the end
-6. Named examples where relevant (species, eras, locations, processes)
-7. Length matched to marks: ~1 sentence per mark, but quality over quantity`,
+═══════════════════════════════════════════════════════
+BEFORE WRITING — INTERNAL QUALITY CHECK
+═══════════════════════════════════════════════════════
+Ask yourself:
+✓ Have I answered the directive verb correctly?
+✓ Have I addressed every part of the question?
+✓ Is the scientific content syllabus-aligned?
+✓ Are causal links or relationships clear?
+✓ Have I used precise terminology consistently?
+✓ Have I made a judgement where required?
+✓ Have I removed all irrelevant information?`,
 
           messages:[{ role:"user", content:[{type:"text", text:
-            `Write a Band 6 model response for this NSW HSC Earth and Environmental Science question.
+            `Generate a Band 6 model response for this NSW HSC Earth and Environmental Science question. Apply the NESA Band 6 standard, directive verb rules, and generation template from your system prompt.
 
-Question: "${questionText}"
-Directive(s): ${dirs2.map(d=>`${d.word} — ${d.meaning}`).join("; ")}
-Syllabus keyword(s): ${kwds2.map(k=>k.word||k.topicTitle).join(", ")}
-Module: ${pk.module} — ${pk.topicTitle}
-Marks value: ${results?.phase1_cube?.marks || "unknown"}
+QUESTION: "${questionText}"
+MARKS: ${results?.phase1_cube?.marks || "unknown"}
+DIRECTIVE(S): ${dirs2.map(d=>`${d.word.toUpperCase()} — ${d.meaning}`).join("; ")}
+SYLLABUS KEYWORD(S): ${kwds2.map(k=>k.word||k.topicTitle).join(", ")}
+MODULE: ${pk.module} — ${pk.topicTitle}
+PRIMARY DIRECTIVE TYPE: ${dirs2[0]?.verbType || dirs2[0]?.word?.toLowerCase() || "unknown"}
 
-Match the style and depth of the real HSC exemplars in your system prompt.
-- Explain the mechanism, not just the observation
-- Use causal connectives naturally (SO, BECAUSE, BUT, therefore, since, which means)
-- Use precise scientific noun groups
-- If evaluate/assess: state a clear IS/IS NOT judgement at the end
-- Length: approximately one substantive sentence per mark
+Apply the matching generation template from your system prompt for the primary directive, then run the Band 6 quality checklist before writing.
 
-Return ONLY the model response text, no heading, no preamble.`
+Requirements:
+- Precise NSW EES syllabus-aligned scientific terminology
+- Explain HOW and WHY, not just WHAT — state mechanisms explicitly
+- Causal connectives: SO, BECAUSE, BUT, therefore, which means, resulting in
+- Precise scientific noun groups (e.g. "iron-oxide-rich sediments", "photosynthetic oxygen production")
+- Temporal, comparative, or spatial language where relevant
+${dirs2.some(d=>["assess","evaluate","justify"].includes((d.verbType||d.word||"").toLowerCase()))?"- REQUIRED: End with an explicit IS / IS NOT judgement statement":""}${dirs2.some(d=>["analyse"].includes((d.verbType||d.word||"").toLowerCase()))?"- REQUIRED: Identify components, show relationships, interpret patterns":""}
+- Length: ~1 substantive sentence per mark — precision over padding
+
+Return ONLY the model response text. No heading, no preamble, no commentary.`
           }]}]
         })
       });
