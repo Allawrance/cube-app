@@ -156,7 +156,7 @@ const getBand = (score, maxScore=20) => {
 
 const MODEL = "claude-sonnet-4-20250514";
 
-// ─── STATIC SYSTEM PROMPT (cacheable) ────────────────────────────────────────
+// ─── MASTER AI PROMPT ────────────────────────────────────────────────────────
 function buildSystemPrompt(syllabusJSON) {
   return `You are an expert NSW HSC Earth and Environmental Science teacher and examiner.
 You apply the CUBE literacy strategy with PRECISE annotation rules, and mark student responses using a detailed rubric.
@@ -428,7 +428,6 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     }
   }
 }`;
-}
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -928,13 +927,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         signal: abortRef.current.signal,
         body: JSON.stringify({
           model: MODEL, max_tokens: 4000,
-          system: [
-            {
-              type: "text",
-              text: buildSystemPrompt(SYLLABUS),
-              cache_control: { type: "ephemeral" }
-            }
-          ],
+          system: [{
+            type: "text",
+            text: buildSystemPrompt(SYLLABUS),
+            cache_control: { type: "ephemeral" }
+          }],
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`Analyse ONLY Question ${questionNumber.trim()} from this image. Return JSON as specified.` }
@@ -971,8 +968,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         method:"POST", headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
           model: "claude-haiku-4-5-20251001", max_tokens: 1000,
-          system: [{ type:"text", cache_control:{ type:"ephemeral" }, text:
-`You are an expert NSW HSC Earth and Environmental Science marker and teacher. You write Band 6 model responses that match the style and depth of top NSW HSC answers.
+          system: [{ type:"text", cache_control:{ type:"ephemeral" }, text: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. You write Band 6 model responses that match the style and depth of top NSW HSC answers.
 
 You have studied real Band 6 HSC responses. Here are authentic examples of high-quality answers from past NSW HSC papers that demonstrate the expected standard:
 
@@ -1017,8 +1013,8 @@ DESCRIBE (3 marks) — How stable isotopes evidence life:
 4. Temporal/comparative language where relevant: "Prior to...", "In contrast to...", "Unlike..."
 5. For evaluate/assess: explicit IS or IS NOT judgement at the end
 6. Named examples where relevant (species, eras, locations, processes)
-7. Length matched to marks: ~1 sentence per mark, but quality over quantity`
-          }],
+7. Length matched to marks: ~1 sentence per mark, but quality over quantity`}],
+
           messages:[{ role:"user", content:[{type:"text", text:
             `Write a Band 6 model response for this NSW HSC Earth and Environmental Science question.
 
