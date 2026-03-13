@@ -1333,6 +1333,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
   const analyse = async () => {
     if (!pageB64) { setError("Please upload a photo first."); return; }
+    const nameParts = studentName.trim().split(/\s+/).filter(Boolean);
+    if (nameParts.length < 2) { setError("Please enter your first and last name before analysing."); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
@@ -1529,7 +1531,7 @@ Return ONLY the model response text, no heading, no preamble.`
             {/* ── Student name field ── */}
             <div style={{marginBottom:"20px"}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
-                <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"0.5px"}}>Enter your first and last name</div>
+                <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"0.5px"}}>{studentName.trim().split(/\s+/).filter(Boolean).length>=2 ? "Your name" : "Enter your first and last name"}</div>
                 {studentName.trim()&&<button onClick={()=>{setStudentName("");try{localStorage.removeItem("cube_student_name")}catch{}}} style={{background:"none",border:"none",color:"#7a9ab8",fontSize:"12px",cursor:"pointer",fontFamily:"sans-serif",textDecoration:"underline",padding:0}}>Not you?</button>}
               </div>
               <input
@@ -1544,7 +1546,8 @@ Return ONLY the model response text, no heading, no preamble.`
                   background: studentName.trim().length>1 ? "rgba(201,168,76,0.06)" : "rgba(201,168,76,0.18)",
                   color:"#f0e6c8",fontSize:"16px",fontFamily:"sans-serif",outline:"none",boxSizing:"border-box",transition:"all 0.3s"}}
               />
-              {!studentName.trim()&&<div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"5px"}}>Enter your name for personalised feedback.</div>}
+              {!studentName.trim()&&<div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"5px"}}>Your name allows for personalised feedback.</div>}
+              {studentName.trim()&&studentName.trim().split(/\s+/).filter(Boolean).length<2&&<div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Please enter both your first and last name.</div>}
             </div>
 
             {/* Single upload zone — hidden once photo selected */}
@@ -2012,4 +2015,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
