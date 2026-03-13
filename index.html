@@ -20,6 +20,13 @@
     -webkit-text-fill-color: #f0e6c8 !important;
     transition: background-color 5000s ease-in-out 0s;
   }
+  /* Pulsing border on empty name field */
+  @keyframes borderPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5); }
+    50%       { box-shadow: 0 0 0 6px rgba(201,168,76,0.0); }
+  }
+  .name-input-empty { animation: borderPulse 2s ease-in-out infinite; }
+  .name-input-filled { animation: none; }
 </style>
 </head>
 <body>
@@ -28,7 +35,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <script type="text/babel">
-const { useState, useRef } = React;
+const { useState, useRef, useEffect } = React;
 
 // ─── SYLLABUS DATABASE (04_EES_SYLLABUS_DATABASE.json) ───────────────────────
 const SYLLABUS = {
@@ -1250,7 +1257,16 @@ function RubricRow({label, data, applicable=true}) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 function App() {
-  const [studentName, setStudentName] = useState("");
+  const [studentName, setStudentName] = useState(() => {
+    try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
+  });
+
+  // Save name to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      if (studentName.trim()) localStorage.setItem("cube_student_name", studentName.trim());
+    } catch {}
+  }, [studentName]);
   const [phase, setPhase] = useState(0); // 0=upload, 2=results
   const [pageImg, setPageImg] = useState(null);
   const [pageB64, setPageB64] = useState(null);
@@ -1489,8 +1505,9 @@ Return ONLY the model response text, no heading, no preamble.`
 
             {/* ── Student name field ── */}
             <div style={{marginBottom:"20px"}}>
-              <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"8px",letterSpacing:"0.5px"}}>
-                Your name
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
+                <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"0.5px"}}>Enter your first and last name</div>
+                {studentName.trim()&&<button onClick={()=>{setStudentName("");try{localStorage.removeItem("cube_student_name")}catch{}}} style={{background:"none",border:"none",color:"#7a9ab8",fontSize:"12px",cursor:"pointer",fontFamily:"sans-serif",textDecoration:"underline",padding:0}}>Not you?</button>}
               </div>
               <input
                 type="text"
@@ -1498,7 +1515,11 @@ Return ONLY the model response text, no heading, no preamble.`
                 onChange={e=>setStudentName(e.target.value.slice(0,60))}
                 placeholder="First name Last name"
                 autoComplete="name"
-                style={{width:"100%",padding:"12px 16px",borderRadius:"10px",border:`2px solid ${studentName.trim().length>1?"rgba(201,168,76,0.6)":"rgba(201,168,76,0.25)"}`,background:"rgba(201,168,76,0.08)",color:"#f0e6c8",fontSize:"16px",fontFamily:"sans-serif",outline:"none",boxSizing:"border-box",transition:"all 0.2s"}}
+                className={studentName.trim().length>1 ? "name-input-filled" : "name-input-empty"}
+                style={{width:"100%",padding:"12px 16px",borderRadius:"10px",
+                  border:`3px solid ${studentName.trim().length>1?"rgba(201,168,76,0.5)":"#c9a84c"}`,
+                  background: studentName.trim().length>1 ? "rgba(201,168,76,0.06)" : "rgba(201,168,76,0.18)",
+                  color:"#f0e6c8",fontSize:"16px",fontFamily:"sans-serif",outline:"none",boxSizing:"border-box",transition:"all 0.3s"}}
               />
               {!studentName.trim()&&<div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"5px"}}>Enter your name for personalised feedback.</div>}
             </div>
@@ -1965,4 +1986,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
