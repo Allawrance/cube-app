@@ -1494,8 +1494,6 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            <Steps current={4} activeTab={activeTab} onTabChange={setActiveTab}/>
-
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
@@ -1510,16 +1508,7 @@ Return ONLY the model response text, no heading, no preamble.`
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
 
-            {/* ── TABS: numbered circles ── */}
-            <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",background:"rgba(255,255,255,0.04)",borderRadius:"16px",padding:"10px 4px",marginBottom:"20px",border:"1px solid rgba(255,255,255,0.08)"}}>
-              {[["cube","CUBE"],["plan","Plan"],["script","Script"],["rubric","Rubric"],["feedback","Feedback"]].map(([id,label],idx)=>{
-                const active = activeTab===id;
-                return <div key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:"pointer",minWidth:"52px"}}>
-                  <div style={{width:"48px",height:"48px",borderRadius:"50%",background:active?gold:"rgba(255,255,255,0.08)",border:active?"none":"2px solid rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"18px",color:active?"#0d1b2a":"#7a9ab8",boxShadow:active?"0 4px 14px rgba(201,168,76,0.5)":"none",transition:"all 0.2s"}}>{idx+1}</div>
-                  <span style={{fontSize:"12px",fontWeight:active?800:500,color:active?gold:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:1.2}}>{label}</span>
-                </div>;
-              })}
-            </div>
+            <Steps current={4} activeTab={activeTab} onTabChange={setActiveTab}/>
 
             {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
@@ -1906,4 +1895,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
