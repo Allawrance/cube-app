@@ -1362,34 +1362,31 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setPhase(2);
       setActiveTab("cube");
 
-      // ── Log syllabus keywords to Google Sheet ──────────────────────────────
+      // ── Log complete row directly to Google Sheet in one call ───────────────
       try {
         const kwds = parsed?.phase1_cube?.syllabusKeywords || [];
-        if (kwds.length > 0) {
-          const syllabusLog = kwds.map(k => {
-            const mod = k.module ? `M${k.module}` : "";
-            const topic = k.topicTitle || "";
-            const word = k.word || "";
-            return `${word} (${mod} ${topic})`.trim();
-          }).join(" | ");
-          fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Student-Name": encodeURIComponent(studentName.trim()||"anonymous"),
-              "X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber)),
-              "X-Log-Only": "true",
-            },
-            body: JSON.stringify({
-              logType: "SYLLABUS",
-              student: studentName.trim() || "anonymous",
-              question: questionNumber,
-              modules: [...new Set(kwds.map(k=>k.module).filter(Boolean))].join(", "),
-              directives: (parsed?.phase1_cube?.directives||[]).map(d=>d.word).join(", "),
-              syllabusKeywords: syllabusLog,
-            })
-          }); // fire-and-forget
-        }
+        const dirs = parsed?.phase1_cube?.directives || [];
+        const WEBHOOK = "https://script.google.com/macros/s/AKfycbzYNlIH33iAk0KyOwaqdaFM0HKLpM-OgOUThmeUeNI6gDfdtwYiBKMfhcgF2Hk2X38/exec";
+        const syllabusLog = kwds.map(k => {
+          const mod = k.module ? `M${k.module}` : "";
+          const topic = k.topicTitle || "";
+          const word = k.word || "";
+          return `${word} (${mod} ${topic})`.trim();
+        }).join(" | ");
+        fetch(WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "FULL_ROW",
+            student:          studentName.trim() || "anonymous",
+            question:         questionNumber,
+            callType:         "ANALYSE",
+            model:            "claude-sonnet-4-20250514",
+            modules:          [...new Set(kwds.map(k=>k.module).filter(Boolean))].join(", ") || "—",
+            directives:       dirs.map(d=>d.word).join(", ") || "—",
+            syllabusKeywords: syllabusLog || "—",
+          })
+        }); // fire-and-forget
       } catch {}
     } catch(e) {
       if (e.name !== "AbortError") {
@@ -2019,4 +2016,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
