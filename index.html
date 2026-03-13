@@ -1366,7 +1366,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       try {
         const kwds = parsed?.phase1_cube?.syllabusKeywords || [];
         const dirs = parsed?.phase1_cube?.directives || [];
-        const WEBHOOK = "https://script.google.com/macros/s/AKfycbzYNlIH33iAk0KyOwaqdaFM0HKLpM-OgOUThmeUeNI6gDfdtwYiBKMfhcgF2Hk2X38/exec";
+        const WEBHOOK = "https://script.google.com/macros/s/AKfycbzvahT3OtGBNoJ7-Qbpv_arrGXiONb47NLZxDwwxFTJoQd_iQSbTkPy6K5BbI6GWhH8/exec";
         const syllabusLog = kwds.map(k => {
           const mod = k.module ? `M${k.module}` : "";
           const topic = k.topicTitle || "";
@@ -2016,4 +2016,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
