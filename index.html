@@ -944,71 +944,79 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
 
-    // Build pills — alternate above/below by target line (even=above, odd=below)
-    allPills = planningArrows
+    // Split pills into above (even-index) and below (odd-index) groups
+    // ALL above pills float above line 0; ALL below pills float below the last line
+    // Each pill is centred horizontally on its target word with a straight vertical arrow
+
+    const rawPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
-      .map(a => {
+      .map((a, gi) => {
         const idx = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
         const pos = getXY(idx, lines, PLAN_EXTRA);
         const ls  = splitLabel(a.label);
-        const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 48);
+        const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 52);
         const bh  = ls.length * LH_N + PAD_Y * 2;
+        // Arrow tip: centre of the target word
         const tx  = pos.x + (a.targetWord ? a.targetWord.length * CW / 2 : 6);
-        const bx  = Math.min(Math.max(PL, tx - bw/2), W - bw - 2);
-        const goBelow = pos.li % 2 === 1;
-        return { ls, bw, bh, tx, bx, by:0, row:-1, tLine:pos.li, goBelow, stemFromY:0, stemToY:0 };
-      })
-      .sort((a,b) => a.tx - b.tx);
+        const goBelow = gi % 2 === 1;
+        return { ls, bw, bh, tx, bx: tx - bw/2, by:0, row:0, tLine:pos.li, goBelow, stemFromY:0, stemToY:0 };
+      });
 
-    // Pack into rows separately for above and below groups
-    const rowRightAbove = [], rowRightBelow = [];
-    allPills.forEach(p => {
-      const rowArr = p.goBelow ? rowRightBelow : rowRightAbove;
-      for (let r = 0; ; r++) {
-        if (rowArr[r] == null) rowArr[r] = PL - BOX_GAP;
-        if (p.bx >= rowArr[r] + BOX_GAP) {
-          p.row = r; rowArr[r] = p.bx + p.bw; break;
-        }
-        const nudged = rowArr[r] + BOX_GAP;
-        if (nudged + p.bw <= W - 2) {
-          p.bx = nudged; p.row = r; rowArr[r] = p.bx + p.bw; break;
-        }
-        if (r >= 5) { p.row = r; break; }
+    const abovePills = rawPills.filter(p => !p.goBelow).sort((a,b) => a.tx - b.tx);
+    const belowPills = rawPills.filter(p =>  p.goBelow).sort((a,b) => a.tx - b.tx);
+
+    // Resolve horizontal overlaps within each group by nudging right
+    const resolveOverlaps = (pills) => {
+      for (let i = 1; i < pills.length; i++) {
+        const prev = pills[i-1], cur = pills[i];
+        const minX = prev.bx + prev.bw + BOX_GAP;
+        if (cur.bx < minX) cur.bx = Math.min(minX, W - cur.bw - 2);
       }
+      // Clamp left edge
+      pills.forEach(p => { p.bx = Math.max(PL, Math.min(p.bx, W - p.bw - 2)); });
+    };
+    resolveOverlaps(abovePills);
+    resolveOverlaps(belowPills);
+
+    // Y positions
+    // Above: all pills sit above line 0, stacked in rows if needed (row 0 closest to text)
+    const ROW_H = Math.max(...rawPills.map(p=>p.bh), 26) + ROW_GAP;
+    const textTopY  = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 6;
+    const textBotY  = PT + PLAN_EXTRA + nLines * LH + 4;
+    const STEM_GAP  = 8; // gap between pill edge and arrowhead
+
+    // Assign rows to above pills (row 0 = closest to text = highest y value)
+    // We use a single row for now; if pills overlap vertically we push earlier ones up
+    abovePills.forEach(p => { p.row = 0; });
+    // Simple single-row stacking for above (most cases won't need multi-row)
+    abovePills.forEach(p => {
+      p.by        = textTopY - STEM_GAP - p.bh;
+      p.stemFromY = p.by + p.bh;          // bottom of pill
+      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 2; // top of target word line
     });
 
-    // Y positions — above: stack upward from line top; below: stack downward from line bottom
-    const maxBH = Math.max(...allPills.map(p=>p.bh), 26);
-    const LINE_OFFSET = 6;
-    allPills.forEach(p => {
-      const lineTopY = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 4;
-      const lineBotY = PT + PLAN_EXTRA + p.tLine * LH + LH * 0.15;
-      if (!p.goBelow) {
-        // above: row 0 is closest to line, row 1 further up
-        p.by        = lineTopY - LINE_OFFSET - (p.row + 1) * (maxBH + ROW_GAP);
-        p.stemFromY = p.by + p.bh + 2;
-        p.stemToY   = lineTopY;
-      } else {
-        // below: row 0 is closest to line, stacking downward
-        p.by        = lineBotY + LINE_OFFSET + p.row * (maxBH + ROW_GAP);
-        p.stemFromY = p.by - 2;
-        p.stemToY   = lineBotY;
-      }
+    belowPills.forEach(p => {
+      p.by        = textBotY + STEM_GAP;
+      p.stemFromY = p.by;                 // top of pill
+      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH + LH * 0.2; // bottom of target word line
     });
+
+    allPills = [...abovePills, ...belowPills];
 
     // Render
     allPills.forEach((p, i) => {
-      const cx = p.bx + p.bw / 2;
-      const arrowUp = !p.goBelow;
-      // Arrow tip points toward the text line
-      const tipY  = arrowUp ? p.stemToY   : p.stemToY;
-      const lineY = arrowUp ? p.stemFromY : p.stemFromY;
+      const cx   = p.bx + p.bw / 2;  // centre of pill (may differ from tx after nudging)
+      const arrowUp = !p.goBelow;     // arrow points toward text
+      const tipY  = p.stemToY;
+      const lineY = p.stemFromY;
       const polyPts = arrowUp
-        ? `${p.tx-5},${tipY-8} ${p.tx+5},${tipY-8} ${p.tx},${tipY}`
-        : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;
+        ? `${p.tx-5},${tipY-8} ${p.tx+5},${tipY-8} ${p.tx},${tipY}`   // ↓ into text
+        : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;  // ↑ into text
       notes.push(
         <g key={`n${i}`}>
-          <line x1={cx} y1={lineY} x2={p.tx} y2={arrowUp ? tipY-8 : tipY+8}
+          {/* Diagonal line from pill centre to arrowhead */}
+          <line x1={cx} y1={arrowUp ? lineY : lineY}
+                x2={p.tx} y2={arrowUp ? tipY-8 : tipY+8}
             stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
           <polygon points={polyPts} fill="#c9a84c"/>
           <rect x={p.bx} y={p.by} width={p.bw} height={p.bh} rx="6" fill="#fff8e1" stroke="#c9a84c" strokeWidth="1.5"/>
@@ -1021,13 +1029,13 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
-  // ViewBox: cover above pills (minY) through below pills and text bottom
+  // ViewBox: above pills sit above line 0, below pills sit below last line
   const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
   const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
   const _maxY    = allPills.length
-    ? Math.max(PT + PLAN_EXTRA + nLines * LH + 16, ...allPills.map(p=>p.by + p.bh + 8))
+    ? Math.max(PT + PLAN_EXTRA + nLines * LH + 16, ...allPills.map(p=>p.by + p.bh + 10))
     : PT + PLAN_EXTRA + nLines * LH + 16;
-  const cropTop  = Math.max(0, _minY - 4);
+  const cropTop  = Math.max(0, _minY - 6);
   const svgH     = _maxY - cropTop;
 
   return (
@@ -1494,6 +1502,8 @@ Return ONLY the model response text, no heading, no preamble.`
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
+            <Steps current={4} activeTab={activeTab} onTabChange={setActiveTab}/>
+
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
@@ -1508,7 +1518,16 @@ Return ONLY the model response text, no heading, no preamble.`
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
 
-            <Steps current={4} activeTab={activeTab} onTabChange={setActiveTab}/>
+            {/* ── TABS: numbered circles ── */}
+            <div style={{display:"flex",justifyContent:"space-around",alignItems:"flex-start",background:"rgba(255,255,255,0.04)",borderRadius:"16px",padding:"10px 4px",marginBottom:"20px",border:"1px solid rgba(255,255,255,0.08)"}}>
+              {[["cube","CUBE"],["plan","Plan"],["script","Script"],["rubric","Rubric"],["feedback","Feedback"]].map(([id,label],idx)=>{
+                const active = activeTab===id;
+                return <div key={id} onClick={()=>setActiveTab(id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:"pointer",minWidth:"52px"}}>
+                  <div style={{width:"48px",height:"48px",borderRadius:"50%",background:active?gold:"rgba(255,255,255,0.08)",border:active?"none":"2px solid rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"18px",color:active?"#0d1b2a":"#7a9ab8",boxShadow:active?"0 4px 14px rgba(201,168,76,0.5)":"none",transition:"all 0.2s"}}>{idx+1}</div>
+                  <span style={{fontSize:"12px",fontWeight:active?800:500,color:active?gold:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:1.2}}>{label}</span>
+                </div>;
+              })}
+            </div>
 
             {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
