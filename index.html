@@ -1375,8 +1375,21 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
       // ── Log complete row directly to Google Sheet in one call ───────────────
       try {
-        const kwds = parsed?.phase1_cube?.syllabusKeywords || [];
-        const dirs = parsed?.phase1_cube?.directives || [];
+        const kwds   = parsed?.phase1_cube?.syllabusKeywords || [];
+        const dirs   = parsed?.phase1_cube?.directives || [];
+        const a3     = parsed?.phase3_analysis;
+        const marks  = parsed?.phase1_cube?.marks ?? null;
+
+        // Compute student score (mirrors totalScore() render logic)
+        const causalApp   = a3?.rubric?.causalConnectives?.applicable !== false;
+        const modalityApp = a3?.rubric?.modality?.applicable === true;
+        const rawScore    = (causalApp   ? (a3?.rubric?.causalConnectives?.score||0) : 0)
+                          + (a3?.rubric?.complexNounGroups?.score||0)
+                          + (modalityApp ? (a3?.rubric?.modality?.score||0)          : 0)
+                          + (a3?.rubric?.logicalFlow?.score||0);
+        const maxScore    = 10 + (causalApp ? 5 : 0) + (modalityApp ? 5 : 0);
+        const band        = getBand(rawScore, maxScore);
+
         const WEBHOOK = "https://script.google.com/macros/s/AKfycbzvahT3OtGBNoJ7-Qbpv_arrGXiONb47NLZxDwwxFTJoQd_iQSbTkPy6K5BbI6GWhH8/exec";
         const syllabusLog = kwds.map(k => k.word || k.topicTitle || "").filter(Boolean).join(" | ");
         fetch(WEBHOOK, {
@@ -1393,6 +1406,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             modules:          [...new Set(kwds.map(k=>k.topicCode||k.module).filter(Boolean))].join(", ") || "—",
             directives:       dirs.map(d=>d.word).join(", ") || "—",
             syllabusKeywords: syllabusLog || "—",
+            studentMark:      marks !== null && marks !== undefined ? Math.round((rawScore / maxScore) * marks) : `Ind ${band}`,
+            cubeMark:         `${rawScore}/${maxScore}`,
+            questionValue:    marks !== null && marks !== undefined ? marks : "",
           })
         }); // fire-and-forget
       } catch {}
