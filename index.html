@@ -2077,7 +2077,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         {phase===2&&results&&(()=>{
           const { phase1_cube: c, phase2_plan: p, phase3_analysis: _a0 } = results;
           // Use Stage 2 results when available (separate call), fall back to combined call result
-          const a = stage2Results || _a0;
+          // a is undefined until Stage 2 runs — all a-references must be guarded
+          const a = stage2Results || _a0 || null;
           // ── normalise: support both new array schema and old single-object schema ──
           const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
           const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : c.syllabusMatch ? [c.syllabusMatch] : [];
@@ -2086,10 +2087,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const verbType = primaryDir.verbType || "other";
           const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
-          const score = totalScore(a);
+          const score = a ? totalScore(a) : 0;
           const marksKnown = c.marks !== null && c.marks !== undefined;
-          const causalApplicable  = a.rubric?.causalConnectives?.applicable !== false;
-          const modalityApplicable = a.rubric?.modality?.applicable === true;
+          const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
+          const modalityApplicable = a ? (a.rubric?.modality?.applicable === true) : false;
           const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
 
