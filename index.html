@@ -1694,10 +1694,38 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           ]}]
         })
       });
-      const data = await res.json();
-      const raw = data.content.map(b=>b.text||"").join("");
-      const clean = raw.replace(/```json|```/g,"").trim();
-      const parsed = JSON.parse(clean);
+      let data;
+      try {
+        data = await res.json();
+      } catch(parseErr) {
+        throw new Error(`Response was not JSON (HTTP ${res.status}) — proxy or network issue`);
+      }
+      // ── Guard: API-level error (rate limit, content filter, overload) ──
+      if (!res.ok || data.error) {
+        const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
+        throw new Error(`API error: ${msg}`);
+      }
+      const raw = (data.content||[]).map(b=>b.text||"").join("");
+      // ── Robust JSON extraction: find first { to last } even if Haiku adds prose ──
+      const firstBrace = raw.indexOf("{");
+      const lastBrace  = raw.lastIndexOf("}");
+      if (firstBrace === -1 || lastBrace === -1) {
+        console.error("Stage 1 raw response:", raw.slice(0,500));
+        throw new Error("No JSON found in response. Check console for details.");
+      }
+      const clean = raw.slice(firstBrace, lastBrace + 1);
+      let parsed;
+      try {
+        parsed = JSON.parse(clean);
+      } catch(jsonErr) {
+        console.error("Stage 1 JSON parse failed:", jsonErr.message, "\nRaw:", clean.slice(0,500));
+        throw new Error("Could not read AI response — please try again.");
+      }
+      // ── Validate minimal expected structure ──
+      if (!parsed.phase1_cube || !parsed.phase1_cube.questionText) {
+        console.error("Stage 1 missing phase1_cube:", JSON.stringify(parsed).slice(0,300));
+        throw new Error("AI returned incomplete CUBE analysis — please try again.");
+      }
       setResults(parsed);
       setPhase(2);
       setActiveTab("cube");
@@ -1735,8 +1763,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       } catch {}
     } catch(e) {
       if (e.name !== "AbortError") {
-        console.error("Analysis error:", e.message, e);
-        setError("Analysis failed: " + e.message);
+        console.error("Stage 1 analysis error:", e.message, e);
+        setError("⚠️ CUBE analysis failed — " + e.message + "\n\nPlease check your internet connection and try again. If the problem continues, try a different photo.");
       }
     }
     setLoading(false);
@@ -1837,9 +1865,25 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error?.message || "Stage 2 API error");
-      const raw = data.content.map(b=>b.text||"").join("");
-      const clean = raw.replace(/\`\`\`json|\`\`\`/g,"").trim();
-      const parsed = JSON.parse(clean);
+      if (!res.ok || data.error) {
+        const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
+        throw new Error(`API error: ${msg}`);
+      }
+      const raw = (data.content||[]).map(b=>b.text||"").join("");
+      const firstBrace = raw.indexOf("{");
+      const lastBrace  = raw.lastIndexOf("}");
+      if (firstBrace === -1 || lastBrace === -1) {
+        console.error("Stage 2 raw response:", raw.slice(0,500));
+        throw new Error("No JSON in Stage 2 response — please try again.");
+      }
+      const clean = raw.slice(firstBrace, lastBrace + 1);
+      let parsed;
+      try {
+        parsed = JSON.parse(clean);
+      } catch(jsonErr) {
+        console.error("Stage 2 JSON parse failed:", jsonErr.message);
+        throw new Error("Could not read marking response — please try again.");
+      }
       setStage2Results(parsed);
       setStage1Done(true);
       setActiveTab("script");
@@ -2009,7 +2053,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               </div>}
             </div>}
 
-            {error&&<div style={{background:"rgba(244,67,54,0.1)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"12px 16px",color:"#ff8a80",marginBottom:"16px",fontSize:"14px",fontFamily:"sans-serif"}}>{error}</div>}
+            {error&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px 16px",marginBottom:"16px",fontFamily:"sans-serif"}}>
+              <div style={{color:"#ff8a80",fontSize:"14px",whiteSpace:"pre-line",marginBottom:"10px"}}>{error}</div>
+              <button onClick={()=>{setError(null);}} style={{background:"rgba(244,67,54,0.2)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",padding:"6px 16px",color:"#ff8a80",fontSize:"13px",cursor:"pointer",fontFamily:"sans-serif",fontWeight:700}}>✕ Dismiss and try again</button>
+            </div>}
 
             {pageImg&&(
               questionsOnPage === null
