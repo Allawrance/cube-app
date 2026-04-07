@@ -147,13 +147,13 @@ const DIRECTIVES = {
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["argument supporting the claim","counterargument or limitation","final judgement"],
                 rubricFocus:["modality","logical_flow","causal_connectives"] },
-  evaluate:   { meaning:"Make a judgement about the value, effectiveness, or significance of something based on evidence and reasoning. Must have PRO, CON and IS/IS NOT.",
+  evaluate:   { meaning:"Make a judgement about the value, effectiveness, or significance of something based on evidence and reasoning. Must have PRO/BENEFIT, CON/LIMITATION and IS/IS NOT.",
                 requiresJudgement:true,  requiresCausal:true,  modality:"required",
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["argument supporting the claim","counterargument","final judgement"],
                 rubricFocus:["modality","logical_flow","causal_connectives"] },
   "critically evaluate": {
-                meaning:"Weigh ALL aspects; make a judgement based on strengths AND weaknesses. Highest-order response. Must include multiple PRO and CON with IS/IS NOT.",
+                meaning:"Weigh ALL aspects; make a judgement based on strengths AND weaknesses. Highest-order response. Must include multiple PRO/BENEFIT and CON/LIMITATION with IS/IS NOT.",
                 requiresJudgement:true,  requiresCausal:true,  modality:"required",
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["multiple arguments for","multiple arguments against","weighted final judgement"],
@@ -623,7 +623,15 @@ Logical Flow: 0=no structure, 1=disconnected, 2=basic, 3=mostly logical, 4=clear
 
 SPECIAL DIRECTIVE RULES:
 - EXPLAIN: response MUST use SO, BECAUSE, or BUT as causal connectives
-- ASSESS/EVALUATE: response MUST include PRO argument, CON/opposing argument, AND IS/IS NOT judgement
+- ASSESS/EVALUATE: response MUST include PRO/BENEFIT argument, CON/LIMITATION argument, AND IS/IS NOT judgement
+
+KEY TERM DEFINITIONS:
+- Identify any syllabus-specific terms in the question that a student should define in their response to demonstrate understanding to the marker
+- Examples: sustainability, biodiversity, geosphere, anthropogenic, mitigation, adaptation, superposition
+- Return up to 3 terms maximum — only terms directly relevant to the question
+- Each definition must be concise (1 sentence, max 15 words) and match the NESA EES syllabus meaning
+- If no syllabus terms require defining, return an empty array []
+- Store in specialCheck.keyTermDefinitions
 - IDENTIFY + EXPLAIN (dual): response must first name/state the item, THEN explain with causal connectives
 
 BAND MAPPING (only when marks not given): 0-5=Band2, 6-9=Band3, 10-13=Band4, 14-17=Band5, 18-20=Band6
@@ -735,7 +743,7 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     },
     "mission": {
       "targetCategory": "lowest scoring category",
-      "weakness": "what needs improving",
+      "weakness": "short actionable fix — one thing only, max 10 words, e.g. 'a clear causal link using because, but, or so' or 'a specific example to support your point'",
       "originalPhrase": "direct quote of weak phrase from student",
       "improvedVersion": "rewritten improved version"
     },
@@ -760,6 +768,9 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
         "judgementLinked": false,
         "comment": null
       },
+      "keyTermDefinitions": [
+        { "term": "syllabus term used in question", "definition": "brief 1-sentence definition a student should include to show marker they understand it" }
+      ],
       "modelSentenceStarter": "A 2-3 sentence SENTENCE SCAFFOLD showing the ideal structure. Use SO/BECAUSE/BUT in CAPS to demonstrate connective placement. This is a starter pattern, NOT a full answer."
     }
   }
@@ -1170,10 +1181,10 @@ function FormattedResponse({ text }) {
       parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
     } else if (m[1]) {
       // Bold connective — purple highlight, visible on cream paper
-      parts.push(<strong key={m.index} style={{color:"#6a0dad",background:"rgba(106,13,173,0.12)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
+      parts.push(<strong key={m.index} style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
     } else {
       // Italic noun group — dark teal, dotted underline, clearly visible on cream
-      parts.push(<em key={m.index} style={{color:"#1a5276",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#1a5276",fontStyle:"italic"}}>{m[2]}</em>);
+      parts.push(<em key={m.index} style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#64b5f6",fontStyle:"italic"}}>{m[2]}</em>);
     }
     last = m.index + m[0].length;
   }
@@ -1704,7 +1715,7 @@ Return ONLY the model response text, no heading, no preamble.`
                         {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"2px 10px",fontWeight:900,color:"#ce93d8",fontSize:"15px",fontFamily:"sans-serif"}}>{w}</span>)}
                       </div>}
                       {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"8px",display:"flex",gap:"8px",flexWrap:"wrap"}}>
-                        {["✅ PRO","❌ CON","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"15px",fontFamily:"sans-serif"}}>{w}</span>)}
+                        {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"15px",fontFamily:"sans-serif"}}>{w}</span>)}
                       </div>}
                     </div>
                   </div>
@@ -1786,8 +1797,8 @@ Return ONLY the model response text, no heading, no preamble.`
             {activeTab==="script"&&<div>
               <SectionTitle>STEP 3 — YOUR RESPONSE (FORMATTED)</SectionTitle>
               <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"6px 12px",marginBottom:"12px",border:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"center"}}>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#6a0dad",background:"rgba(106,13,173,0.12)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#1a5276",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
+                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
+                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
                 <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
               </div>
               <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
@@ -1813,8 +1824,8 @@ Return ONLY the model response text, no heading, no preamble.`
                     [a.responseStructure?.hasEffect,"Effect explained"],
                   ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
                   {isAssessEval&&[
-                    [a.responseStructure?.hasArgument1,"First argument (PRO)"],
-                    [a.responseStructure?.hasArgument2OrCounterpoint,"Second argument (CON)"],
+                    [a.responseStructure?.hasArgument1,"First argument (PRO / BENEFIT)",a.responseStructure?.argument1Text],
+                    [a.responseStructure?.hasArgument2OrCounterpoint,"Second argument (CON / LIMITATION)",a.responseStructure?.argument2Text],
                     [a.responseStructure?.hasFinalJudgement,"IS / IS NOT judgement"],
                   ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
                 </div>
@@ -1893,8 +1904,7 @@ Return ONLY the model response text, no heading, no preamble.`
                 <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                   <div style={{fontSize:"32px"}}>🥇</div>
                   <div>
-                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"15px",marginBottom:"4px",fontFamily:"sans-serif"}}>Medal 1 — {a.medals.medal1.category}</div>
-                    <div style={{color:"#f0e6c8",fontSize:"14px",lineHeight:"1.6",marginBottom:"8px"}}>{a.medals.medal1.explanation}</div>
+                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"15px",marginBottom:"8px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal1.category}</div>
                     <div style={{background:"rgba(255,215,0,0.08)",border:"1px solid rgba(255,215,0,0.25)",borderRadius:"8px",padding:"8px 12px",color:"#f5d67a",fontSize:"13px",fontStyle:"italic"}}>"{a.medals.medal1.quote}"</div>
                   </div>
                 </div>
@@ -1904,8 +1914,7 @@ Return ONLY the model response text, no heading, no preamble.`
                 <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                   <div style={{fontSize:"32px"}}>🥈</div>
                   <div>
-                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"15px",marginBottom:"4px",fontFamily:"sans-serif"}}>Medal 2 — {a.medals.medal2.category}</div>
-                    <div style={{color:"#e0e0e0",fontSize:"14px",lineHeight:"1.6",marginBottom:"8px"}}>{a.medals.medal2.explanation}</div>
+                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"15px",marginBottom:"8px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal2.category}</div>
                     <div style={{background:"rgba(192,192,192,0.08)",border:"1px solid rgba(192,192,192,0.2)",borderRadius:"8px",padding:"8px 12px",color:"#d0d0d0",fontSize:"13px",fontStyle:"italic"}}>"{a.medals.medal2.quote}"</div>
                   </div>
                 </div>
@@ -1916,15 +1925,15 @@ Return ONLY the model response text, no heading, no preamble.`
                 <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                   <div style={{fontSize:"32px"}}>🎯</div>
                   <div style={{width:"100%"}}>
-                    <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"4px",fontFamily:"sans-serif"}}>Your Mission — {a.mission.targetCategory}</div>
-                    <div style={{color:"#ffcdd2",fontSize:"14px",lineHeight:"1.6",marginBottom:"10px"}}>{a.mission.weakness}</div>
+                    <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"6px",fontFamily:"sans-serif"}}>Your mission</div>
+                    <div style={{color:"#ffcdd2",fontSize:"14px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {a.mission.weakness}</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
                       <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(244,67,54,0.25)"}}>
-                        <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>ORIGINAL</div>
+                        <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
                         <div style={{fontSize:"13px",color:"#ffcdd2",fontStyle:"italic"}}>"{a.mission.originalPhrase}"</div>
                       </div>
                       <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(76,175,80,0.25)"}}>
-                        <div style={{fontSize:"10px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>IMPROVED</div>
+                        <div style={{fontSize:"10px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>TO THIS</div>
                         <div style={{fontSize:"13px",color:"#c8e6c9",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
                       </div>
                     </div>
@@ -1984,8 +1993,8 @@ Return ONLY the model response text, no heading, no preamble.`
                 })()}
                 {isAssessEval&&a.specialCheck?.assessEvalCheck&&<>
                   {[
-                    [a.specialCheck.assessEvalCheck.hasPRO,"PRO / advantage",a.specialCheck.assessEvalCheck.proText],
-                    [a.specialCheck.assessEvalCheck.hasCON,"CON / opposing argument",a.specialCheck.assessEvalCheck.conText],
+                    [a.specialCheck.assessEvalCheck.hasPRO,"PRO / BENEFIT",a.specialCheck.assessEvalCheck.proText],
+                    [a.specialCheck.assessEvalCheck.hasCON,"CON / LIMITATION",a.specialCheck.assessEvalCheck.conText],
                     [a.specialCheck.assessEvalCheck.hasJudgement,"IS or IS NOT judgement",a.specialCheck.assessEvalCheck.judgementText],
                     [a.specialCheck.assessEvalCheck.judgementLinked,"Judgement linked to PRO/CON",null],
                   ].map(([ok,label,quote],i)=><div key={i} style={{marginBottom:"8px"}}>
@@ -2004,6 +2013,14 @@ Return ONLY the model response text, no heading, no preamble.`
                 <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
                   This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
                 </div>
+                {a.specialCheck?.keyTermDefinitions?.length>0&&<div style={{background:"rgba(100,181,246,0.08)",border:"1px solid rgba(100,181,246,0.25)",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px"}}>
+                  <div style={{fontSize:"10px",color:"#64b5f6",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📖 DEFINE THESE KEY TERMS IN YOUR ANSWER</div>
+                  {a.specialCheck.keyTermDefinitions.map((t,i)=><div key={i} style={{marginBottom:"6px",fontSize:"13px",fontFamily:"sans-serif"}}>
+                    <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
+                    <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
+                  </div>)}
+                  <div style={{fontSize:"11px",color:"#7986cb",fontFamily:"sans-serif",marginTop:"6px",fontStyle:"italic"}}>Defining these shows the marker you understand the syllabus concept.</div>
+                </div>}
                 <div style={{background:"rgba(255,255,255,0.93)",borderRadius:"12px",padding:"14px 16px",border:"1px solid rgba(201,168,76,0.35)",marginBottom:"6px"}}>
                   <div style={{fontSize:"14px",color:"#222",fontFamily:"'Georgia',serif",lineHeight:"1.9"}}>
                     {a.specialCheck.modelSentenceStarter.split(/\b(SO|BECAUSE|BUT|IS NOT|IS)\b/).map((part,i)=>
@@ -2049,4 +2066,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
