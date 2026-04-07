@@ -147,13 +147,13 @@ const DIRECTIVES = {
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["argument supporting the claim","counterargument or limitation","final judgement"],
                 rubricFocus:["modality","logical_flow","causal_connectives"] },
-  evaluate:   { meaning:"Make a judgement about the value, effectiveness, or significance of something based on evidence and reasoning. Must have PRO/BENEFIT, CON/LIMITATION and IS/IS NOT.",
+  evaluate:   { meaning:"Make a judgement about the value, effectiveness, or significance of something based on evidence and reasoning. Must have PRO, CON and IS/IS NOT.",
                 requiresJudgement:true,  requiresCausal:true,  modality:"required",
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["argument supporting the claim","counterargument","final judgement"],
                 rubricFocus:["modality","logical_flow","causal_connectives"] },
   "critically evaluate": {
-                meaning:"Weigh ALL aspects; make a judgement based on strengths AND weaknesses. Highest-order response. Must include multiple PRO/BENEFIT and CON/LIMITATION with IS/IS NOT.",
+                meaning:"Weigh ALL aspects; make a judgement based on strengths AND weaknesses. Highest-order response. Must include multiple PRO and CON with IS/IS NOT.",
                 requiresJudgement:true,  requiresCausal:true,  modality:"required",
                 judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
                 responseStructure:["multiple arguments for","multiple arguments against","weighted final judgement"],
@@ -623,15 +623,7 @@ Logical Flow: 0=no structure, 1=disconnected, 2=basic, 3=mostly logical, 4=clear
 
 SPECIAL DIRECTIVE RULES:
 - EXPLAIN: response MUST use SO, BECAUSE, or BUT as causal connectives
-- ASSESS/EVALUATE: response MUST include PRO/BENEFIT argument, CON/LIMITATION argument, AND IS/IS NOT judgement
-
-KEY TERM DEFINITIONS:
-- Identify any syllabus-specific terms in the question that a student should define in their response to demonstrate understanding to the marker
-- Examples: sustainability, biodiversity, geosphere, anthropogenic, mitigation, adaptation, superposition
-- Return up to 3 terms maximum — only terms directly relevant to the question
-- Each definition must be concise (1 sentence, max 15 words) and match the NESA EES syllabus meaning
-- If no syllabus terms require defining, return an empty array []
-- Store in specialCheck.keyTermDefinitions
+- ASSESS/EVALUATE: response MUST include PRO argument, CON/opposing argument, AND IS/IS NOT judgement
 - IDENTIFY + EXPLAIN (dual): response must first name/state the item, THEN explain with causal connectives
 
 BAND MAPPING (only when marks not given): 0-5=Band2, 6-9=Band3, 10-13=Band4, 14-17=Band5, 18-20=Band6
@@ -743,7 +735,7 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     },
     "mission": {
       "targetCategory": "lowest scoring category",
-      "weakness": "short actionable fix — one thing only, max 10 words, e.g. 'a clear causal link using because, but, or so' or 'a specific example to support your point'",
+      "weakness": "short actionable fix — one thing only, max 10 words, e.g. 'a clear causal link using because, but, or so'",
       "originalPhrase": "direct quote of weak phrase from student",
       "improvedVersion": "rewritten improved version"
     },
@@ -768,9 +760,6 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
         "judgementLinked": false,
         "comment": null
       },
-      "keyTermDefinitions": [
-        { "term": "syllabus term used in question", "definition": "brief 1-sentence definition a student should include to show marker they understand it" }
-      ],
       "modelSentenceStarter": "A 2-3 sentence SENTENCE SCAFFOLD showing the ideal structure. Use SO/BECAUSE/BUT in CAPS to demonstrate connective placement. This is a starter pattern, NOT a full answer."
     }
   }
@@ -1287,6 +1276,49 @@ function App() {
     } catch {}
   }, [studentName]);
   const [phase, setPhase] = useState(0); // 0=upload, 2=results
+  // ── GAMIFICATION STATE ──
+  const [streak, setStreak] = useState(() => {
+    try {
+      const d = JSON.parse(localStorage.getItem("cube_streak") || "{}");
+      const today = new Date().toDateString();
+      const last  = d.lastDate;
+      if (last === today) return d.count || 0;
+      const yesterday = new Date(Date.now()-86400000).toDateString();
+      return last === yesterday ? (d.count || 0) : 0;
+    } catch { return 0; }
+  });
+  const [sessionXP, setSessionXP] = useState(0);
+  const [cubeXP,    setCubeXP]    = useState(null);  // null = not yet assessed
+  const [annoXP,    setAnnoXP]    = useState(null);
+  const [writeXP,   setWriteXP]   = useState(null);
+  const [stage1Done, setStage1Done] = useState(false);
+  const [iterCount,  setIterCount]  = useState(1);    // Stage 1 attempt number
+
+  // persist streak on submit
+  const bumpStreak = () => {
+    try {
+      const today = new Date().toDateString();
+      const d = JSON.parse(localStorage.getItem("cube_streak") || "{}");
+      const count = d.lastDate === today ? (d.count || 0) : (d.lastDate === new Date(Date.now()-86400000).toDateString() ? (d.count || 0) + 1 : 1);
+      localStorage.setItem("cube_streak", JSON.stringify({count, lastDate: today}));
+      setStreak(count);
+    } catch {}
+  };
+
+  // Compute CUBE XP from parsed results
+  const computeCubeXP = (parsed) => {
+    const c = parsed?.phase1_cube;
+    if (!c) return 0;
+    const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
+    const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : [];
+    const constraints = c.constraints || [];
+    const evidenceRequired = c.evidenceRequired;
+    let xp = dirs.length; // +1 per directive (C)
+    xp += kwds.length;    // +1 per syllabus point (U)
+    xp += constraints.length; // +1 per constraint (B)
+    if (evidenceRequired) xp += 1; // +1 if E applicable and noted
+    return xp;
+  };
   const [pageImg, setPageImg] = useState(null);
   const [pageB64, setPageB64] = useState(null);
   const [questionNumber, setQuestionNumber] = useState("");
@@ -1383,6 +1415,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setResults(parsed);
       setPhase(2);
       setActiveTab("cube");
+      // ── GAMIFICATION: compute Stage 1 XP ──
+      const cxp = computeCubeXP(parsed);
+      setCubeXP(cxp);
+      setAnnoXP(null); setWriteXP(null); setStage1Done(false);
+      bumpStreak();
+      setSessionXP(cxp);
 
       // ── Log complete row directly to Google Sheet in one call ───────────────
       try {
@@ -1488,7 +1526,7 @@ Return ONLY the model response text, no heading, no preamble.`
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setIterCount(1); setSessionXP(0); };
 
   const totalScore = (r) => {
     if (!r) return 0;
@@ -1542,16 +1580,20 @@ Return ONLY the model response text, no heading, no preamble.`
           <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
             <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
             <div>
-              <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>HSC Marking Coach</div>
+              <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>CUBE Marking Coach</div>
               <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
                 <span className="hide-mobile">HSC Earth &amp; Environmental Science</span>
                 <span className="show-mobile">12 EES</span>
               </div>
             </div>
           </div>
-          {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
-            <span style={{fontSize:"17px"}}>↩</span> New Question
-          </button>}
+          <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+            {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"12px",fontWeight:800,color:"#ff6d00",background:"rgba(255,109,0,0.12)",border:"1px solid rgba(255,109,0,0.3)",borderRadius:"20px",padding:"4px 12px"}}>🔥 {streak} day{streak!==1?"s":""}</div>}
+            {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"12px",fontWeight:800,color:"#a89fff",background:"rgba(108,99,255,0.15)",border:"1px solid rgba(108,99,255,0.35)",borderRadius:"20px",padding:"4px 12px"}}>⚡ {sessionXP} XP</div>}
+            {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
+              <span style={{fontSize:"17px"}}>↩</span> New Question
+            </button>}
+          </div>
         </div>
       </div>
 
@@ -1693,12 +1735,25 @@ Return ONLY the model response text, no heading, no preamble.`
                   {color:"#c0392b", ch:"C", desc:"Directive verb(s)"},
                   {color:"#1a6db5", ch:"U", desc:"Syllabus keyword(s)"},
                   {color:"#2e7d32", ch:"B", desc:"Constraints / scope words"},
+                  {color:"#6a1b9a", ch:"E", desc:"Evidence / example (when required)"},
                 ].map(k=>(
                   <div key={k.ch} style={{display:"flex",alignItems:"center",gap:"7px",fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
                     <strong style={{color:k.color}}>{k.ch}</strong> = {k.desc}
                   </div>
                 ))}
               </div>
+
+              {/* ── CUBE XP total card ── */}
+              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff55",borderRadius:"12px",padding:"12px 16px",marginBottom:"14px",display:"flex",alignItems:"center",justifyContent:"space-between",fontFamily:"sans-serif"}}>
+                <div>
+                  <div style={{fontSize:"10px",fontWeight:800,color:"#a89fff",textTransform:"uppercase",letterSpacing:"1.5px",marginBottom:"2px"}}>⚡ Your CUBE XP</div>
+                  <div style={{fontSize:"11px",color:"#555",fontStyle:"italic"}}>Resubmit your photo to improve before moving to annotation</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
+                  <span style={{fontSize:"12px",color:"#555"}}> XP</span>
+                </div>
+              </div>}
 
               {/* C cards — one per directive */}
               {dirs.map((dv,i)=>(
@@ -1760,10 +1815,6 @@ Return ONLY the model response text, no heading, no preamble.`
             {activeTab==="plan"&&<div>
               <SectionTitle>STEP 2 — ANSWER PLANNING</SectionTitle>
 
-              <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",marginBottom:"12px",lineHeight:"1.6"}}>
-                Planning notes are written above each key word — just like annotating your question before you write.
-              </div>
-
               {/* SVG plan paper with notes above words */}
               <SVGAnnotatedPaper
                 text={c.questionText}
@@ -1791,6 +1842,38 @@ Return ONLY the model response text, no heading, no preamble.`
                   </div>
                 ))}
               </Card>}
+
+              {/* ── Annotation XP total card ── */}
+              <div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff55",borderRadius:"12px",padding:"12px 16px",marginBottom:"10px",display:"flex",alignItems:"center",justifyContent:"space-between",fontFamily:"sans-serif"}}>
+                <div>
+                  <div style={{fontSize:"10px",fontWeight:800,color:"#a89fff",textTransform:"uppercase",letterSpacing:"1.5px",marginBottom:"2px"}}>⚡ Your Annotation XP</div>
+                  <div style={{fontSize:"11px",color:"#555",fontStyle:"italic"}}>+1 XP per annotation idea used in your written response — checked after Stage 2</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)}</span>
+                  <span style={{fontSize:"12px",color:"#555"}}> XP so far</span>
+                </div>
+              </div>
+
+              {/* ── Stage 1 total strip ── */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"10px",padding:"10px 16px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+                <div style={{fontSize:"11px",color:"#aaa"}}>⚡ Stage 1 total &nbsp;·&nbsp; CUBE <strong style={{color:"#a89fff"}}>{cubeXP||0} XP</strong></div>
+                <div style={{fontSize:"22px",fontWeight:900,color:"#a89fff"}}>{cubeXP||0} XP</div>
+              </div>
+
+              {/* ── Refine gate ── */}
+              <div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"16px 18px",fontFamily:"sans-serif",marginBottom:"16px"}}>
+                <div style={{fontSize:"14px",fontWeight:800,color:"#e8eaf0",marginBottom:"6px"}}>✏️ Refine before you write</div>
+                <div style={{fontSize:"12px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"8px"}}>The more you improve your CUBE and annotation now, the easier your response will be. Keep submitting photos until you're happy — each refinement updates your Stage 1 XP to reflect your best attempt.</div>
+                <div style={{fontSize:"10px",color:"#555",marginBottom:"10px",fontStyle:"italic"}}>Attempt {iterCount} of Stage 1</div>
+                <button onClick={()=>{setIterCount(n=>n+1); setActiveTab("cube"); setTimeout(()=>window.scrollTo({top:0,behavior:"smooth"}),50);}} style={{width:"100%",padding:"13px 18px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:900,cursor:"pointer",marginBottom:"8px",fontFamily:"sans-serif",display:"block",textAlign:"center"}}>
+                  📷 Submit a refinement → improve your XP
+                </button>
+                <button onClick={()=>{setStage1Done(true); setActiveTab("script");}} style={{width:"100%",padding:"9px 18px",background:"transparent",color:"#6c63ff",border:"1px solid #6c63ff44",borderRadius:"10px",fontSize:"12px",fontWeight:700,cursor:"pointer",fontFamily:"sans-serif",display:"block",textAlign:"center"}}>
+                  I'm ready — go to Stage 2 →
+                </button>
+              </div>
+
             </div>}
 
             {/* ═══ TAB: SCRIPT ═══ */}
@@ -1824,8 +1907,8 @@ Return ONLY the model response text, no heading, no preamble.`
                     [a.responseStructure?.hasEffect,"Effect explained"],
                   ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
                   {isAssessEval&&[
-                    [a.responseStructure?.hasArgument1,"First argument (PRO / BENEFIT)",a.responseStructure?.argument1Text],
-                    [a.responseStructure?.hasArgument2OrCounterpoint,"Second argument (CON / LIMITATION)",a.responseStructure?.argument2Text],
+                    [a.responseStructure?.hasArgument1,"First argument (PRO / BENEFIT)"],
+                    [a.responseStructure?.hasArgument2OrCounterpoint,"Second argument (CON / LIMITATION)"],
                     [a.responseStructure?.hasFinalJudgement,"IS / IS NOT judgement"],
                   ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
                 </div>
@@ -1864,6 +1947,12 @@ Return ONLY the model response text, no heading, no preamble.`
                   </tbody>
                 </table>
               </Card>
+
+              {/* ── Session XP total strip ── */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"10px",padding:"10px 16px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+                <div style={{fontSize:"11px",color:"#aaa"}}>⚡ Session XP &nbsp;·&nbsp; Stage 1 <strong style={{color:"#a89fff"}}>{(cubeXP||0)} XP</strong> &nbsp;+&nbsp; Writing <strong style={{color:"#69f0ae"}}>{score} XP</strong></div>
+                <div style={{fontSize:"22px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+score} XP</div>
+              </div>
 
               {/* Detected features */}
               <div style={{display:"grid",gridTemplateColumns:`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
@@ -1926,7 +2015,7 @@ Return ONLY the model response text, no heading, no preamble.`
                   <div style={{fontSize:"32px"}}>🎯</div>
                   <div style={{width:"100%"}}>
                     <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"6px",fontFamily:"sans-serif"}}>Your mission</div>
-                    <div style={{color:"#ffcdd2",fontSize:"14px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {a.mission.weakness}</div>
+                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {a.mission.weakness}</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
                       <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(244,67,54,0.25)"}}>
                         <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
@@ -2013,14 +2102,6 @@ Return ONLY the model response text, no heading, no preamble.`
                 <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
                   This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
                 </div>
-                {a.specialCheck?.keyTermDefinitions?.length>0&&<div style={{background:"rgba(100,181,246,0.08)",border:"1px solid rgba(100,181,246,0.25)",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px"}}>
-                  <div style={{fontSize:"10px",color:"#64b5f6",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📖 DEFINE THESE KEY TERMS IN YOUR ANSWER</div>
-                  {a.specialCheck.keyTermDefinitions.map((t,i)=><div key={i} style={{marginBottom:"6px",fontSize:"13px",fontFamily:"sans-serif"}}>
-                    <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
-                    <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
-                  </div>)}
-                  <div style={{fontSize:"11px",color:"#7986cb",fontFamily:"sans-serif",marginTop:"6px",fontStyle:"italic"}}>Defining these shows the marker you understand the syllabus concept.</div>
-                </div>}
                 <div style={{background:"rgba(255,255,255,0.93)",borderRadius:"12px",padding:"14px 16px",border:"1px solid rgba(201,168,76,0.35)",marginBottom:"6px"}}>
                   <div style={{fontSize:"14px",color:"#222",fontFamily:"'Georgia',serif",lineHeight:"1.9"}}>
                     {a.specialCheck.modelSentenceStarter.split(/\b(SO|BECAUSE|BUT|IS NOT|IS)\b/).map((part,i)=>
