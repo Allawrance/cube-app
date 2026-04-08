@@ -3091,7 +3091,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   <div style={{fontSize:"32px"}}>🎯</div>
                   <div style={{width:"100%"}}>
                     <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"6px",fontFamily:"sans-serif"}}>Your mission</div>
-                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {a.mission.weakness}</div>
+                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {(a.mission.weakness||"").charAt(0).toLowerCase()+(a.mission.weakness||"").slice(1)}</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
                       <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(244,67,54,0.25)"}}>
                         <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
