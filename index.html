@@ -1902,14 +1902,15 @@ The student may have written annotation ideas ABOVE or BESIDE the printed questi
 These are short handwritten notes, words, ideas, or phrases written before their response.
 
 YOUR TASKS:
-1. READ the student's actual handwritten annotations — short handwritten notes the student wrote ABOVE or BESIDE the printed question text BEFORE writing their response.
-   CRITICAL RULES — READ CAREFULLY:
-   - ONLY record handwriting that is physically located ABOVE or BESIDE the printed question, not below it.
-   - The student's written response (below the question) is NOT an annotation. Do NOT extract it.
-   - If you see no handwritten notes above or beside the question, return an EMPTY annotationIdeas array [].
-   - Do NOT invent, infer, or generate annotation ideas. Do NOT extract content from the written response.
-   - When in doubt whether something is an annotation or part of the response, return [].
-   - A blank space above the question means zero annotations — return [].
+1. READ the student's actual handwritten annotations — brief planning notes the student wrote ABOVE or BESIDE the printed question text.
+   CRITICAL RULES — READ ALL OF THESE:
+   - Annotations are BRIEF: single words or short phrases of 2-4 words maximum (e.g. "seismic monitoring", "Mt Pinatubo", "PRO/CON", "IS/IS NOT").
+   - A FULL SENTENCE is NEVER an annotation. If you see a full sentence near the question, it is part of the written response — ignore it.
+   - Handwriting ABOVE the question that continues from a previous page or previous answer is part of a DIFFERENT question's response — NOT an annotation. Ignore it.
+   - The student's written response paragraphs (below the printed question) are NOT annotations. Do NOT extract from them.
+   - If you see no brief handwritten planning notes beside or above the question, return [].
+   - Do NOT invent, infer, or generate annotation ideas.
+   - When in doubt, return [].
 
 2. CHECK whether each annotation idea was used in the written response:
    - used: true/false — did this idea (or equivalent) appear in the written response?
@@ -2418,12 +2419,14 @@ Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
 Modality applicable: ${(primaryDir.modality==="required"||primaryDir.modality==="optional")?"YES — set modality.applicable=true":"NO — set modality.applicable=false"}
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
-STRICT RULES:
-- The student's written response (the paragraphs below the question) is NOT an annotation. Do NOT extract from it.
-- Only count notes physically above or beside the printed question text.
-- If the space above the question is blank → annotationIdeas = []
-- If unsure whether something is an annotation or part of the response → annotationIdeas = []
-After identifying any genuine annotations, check whether each one appears in the written response.
+STRICT RULES for annotations:
+- Annotations are BRIEF planning notes: single words or short phrases of 2-4 words MAX (e.g. "Mt Pinatubo", "PRO/CON", "seismic monitoring").
+- A full sentence is NEVER an annotation — if it is a sentence, it is part of the written response. Reject it.
+- Handwriting above the question that looks like a continuation of a previous answer is NOT an annotation. Ignore it.
+- Only count brief handwritten notes that are clearly beside or immediately above the printed question.
+- If you see no such brief notes → annotationIdeas = []
+- If in doubt → annotationIdeas = []
+After identifying any genuine brief annotations, check whether each appears in the written response.
 
 Transcribe and mark ONLY the handwritten response to this question. Return JSON only.` }
           ]}]
@@ -2469,7 +2472,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       // Log to webhook
       try {
         const causalApp  = parsed.rubric?.causalConnectives?.applicable !== false;
-        const modalApp   = parsed.rubric?.modality?.applicable === true;
+        // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
+        const dirWord    = (primaryDir.word||"").toLowerCase().trim();
+        const dirFromObj = DIRECTIVES[dirWord] || DIRECTIVES[dirWord.replace("critically ","")];
+        const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
         const sc  = totalScore(parsed);
         const mx  = 10 + (causalApp?5:0) + (modalApp?5:0);
         const band = getBand(sc, mx);
@@ -2686,7 +2692,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const score = a ? totalScore(a) : 0;
           const marksKnown = c.marks !== null && c.marks !== undefined;
           const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
-          const modalityApplicable = a ? (a.rubric?.modality?.applicable === true) : false;
+          // Derive modality applicable from directive — do not trust Sonnet's value
+          const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
+          const dirObjR  = DIRECTIVES[dirWordR] || DIRECTIVES[dirWordR.replace("critically ","")];
+          const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : (a ? a.rubric?.modality?.applicable === true : false);
           const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
 
