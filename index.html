@@ -1291,12 +1291,23 @@ B — BOX (constraints — be generous)
 - NEVER leave causal/directional words unboxed.
 
 E — EVIDENCE (planning tab only)
-- For each boxed constraint and each directive, generate a planning arrow.
-- label = a SPECIFIC, CONTENT-RICH answer note — NOT a generic instruction.
-  - For an IDENTIFY directive: write the ACTUAL scientific answer
-  - For an EXPLAIN directive: write the ACTUAL causal mechanism in brief
-  - For a causal_directional constraint: write WHAT causes that direction
-  - Labels may be up to 6 words — be specific and scientific, not procedural
+Generate planning arrows for EACH directive verb AND each key constraint/keyword.
+CRITICAL: labels must be SPECIFIC CONTENT — actual EES knowledge, not generic instructions.
+
+ARROW GENERATION RULES BY DIRECTIVE:
+- EVALUATE/ASSESS directive → generate arrows for: (1) the named example to use, (2) PRO/BENEFIT argument, (3) CON/LIMITATION argument, (4) IS/IS NOT judgement format
+- EXPLAIN directive → generate arrows for: (1) the causal mechanism (A→B→C), (2) connectives to use (SO/BECAUSE), (3) specific scientific terms
+- DESCRIBE/OUTLINE → generate arrows for: (1) key features to name, (2) specific terminology
+- IDENTIFY → generate arrows for: (1) the actual answer, (2) any required named examples
+
+LABEL QUALITY RULES:
+- Write ACTUAL EES content — specific named examples, mechanisms, data, terms
+  GOOD: "Mt Pinatubo 1991 — seismic monitoring, COSPEC, gas analysis"
+  BAD: "Name a specific example" or "Provide evidence"
+- Labels may be up to 8 words — be dense with specific content
+- For evaluate questions: always include an arrow with "IS/IS NOT effective because..."
+- For explain questions: always include the causal chain A → B → C
+
 - targetStartIndex = character position of that word in the question string
 
 ════════════════════════════════════════
@@ -1349,6 +1360,7 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     "evidenceRequired": false,
     "evidenceType": null
   },
+
 }`;
 }
 
@@ -1888,9 +1900,9 @@ ANNOTATION READING — STUDENT'S HANDWRITTEN ANNOTATIONS
 The student may have written annotation ideas ABOVE or BESIDE the printed question text on the page.
 These are short handwritten notes, words, ideas, or phrases written before their response.
 
-YOUR ANNOTATION AND PLANNING TASKS:
+YOUR TASKS:
 1. READ the student's actual handwritten annotations (not the printed question, not the response).
-   - Extract up to 6 annotation ideas the student wrote.
+   - Extract up to 6 annotation ideas the student wrote above/beside the question.
    - If no annotations are visible, return an empty annotationIdeas array.
    - Do NOT invent annotation ideas. Only record what the student actually wrote.
 
@@ -1902,10 +1914,19 @@ YOUR ANNOTATION AND PLANNING TASKS:
    - If used:false, quality must be null
    - Cap at 6 annotation ideas maximum.
 
-3. GENERATE a planSummary and writingScaffold based on the question's directive and content:
-   - planSummary: one sentence summarising what the student needs to do to answer well
-   - writingScaffold: 2-4 steps tailored to the directive verb (evaluate/explain/describe etc.)
-   - Steps should be specific to this question, not generic
+3. GENERATE planning arrows and writing scaffold for the question (phase2_plan):
+   - Read the printed question text and generate content-rich annotation ideas
+   - planningArrows: one arrow per key word/phrase in the question (directive, syllabus terms, constraints)
+   - label = SPECIFIC EES content — actual named examples, mechanisms, data — NOT generic instructions
+     GOOD: "Mt Pinatubo 1991 — seismic monitoring, COSPEC, SO2 emissions"
+     GOOD: "IS effective — saved 58,000 lives / IS NOT — infrastructure damage still occurred"
+     BAD: "Name a specific example" or "Provide evidence here"
+   - For EVALUATE/ASSESS: must include arrows for named example, PRO argument, CON argument, IS/IS NOT judgement
+   - For EXPLAIN/ANALYSE: must include arrows for causal mechanism (A→B→C) and specific connective placement
+   - writingScaffold: 2–4 steps specific to this question's directive and content
+   - summary: one sentence telling student exactly what a good answer needs to do
+
+
 
 ════════════════════════════════════════
 RUBRIC SCORING (0–5 each)
@@ -1953,16 +1974,24 @@ Ignore all other questions and answers on the page.
 
 Return ONLY valid JSON (no markdown, no backticks):
 {
+  "phase2_plan": {
+    "planningArrows": [
+      { "targetWord": "evaluate", "label": "IS effective: saved lives / IS NOT: damage still occurred", "targetStartIndex": 10 },
+      { "targetWord": "technology", "label": "seismic monitoring, COSPEC, gas analysis, GPS", "targetStartIndex": 30 },
+      { "targetWord": "named example", "label": "Mt Pinatubo 1991 — 20M tonnes SO₂ released", "targetStartIndex": 8 },
+      { "targetWord": "effective", "label": "PRO: evacuated 58,000 / CON: infrastructure damage", "targetStartIndex": 45 }
+    ],
+    "writingScaffold": {
+      "step1": "Name the volcanic eruption (e.g. Mt Pinatubo 1991)",
+      "step2": "PRO/BENEFIT: explain how technology was effective using SO/BECAUSE",
+      "step3": "CON/LIMITATION: explain a weakness using BUT/HOWEVER",
+      "step4": "JUDGEMENT: The technology IS/IS NOT effective overall because..."
+    },
+    "summary": "Name the eruption, evaluate the prediction technology with PRO + CON, end with IS/IS NOT judgement."
+  },
   "studentResponseText": "Verbatim transcription — mark every unclear word as [?]",
   "formattedResponse": "Copy of studentResponseText with **connective** and _noun group_ markdown",
   "annotationIdeas": ["idea 1 the student wrote above the question", "idea 2", "idea 3"],
-  "planSummary": "One sentence: what the student needs to do to answer this question well",
-  "writingScaffold": {
-    "step1": "First step for the student e.g. Define: state what the technology is",
-    "step2": "Second step e.g. PRO/BENEFIT: explain how it was effective with evidence",
-    "step3": "Third step e.g. CON/LIMITATION: explain a weakness",
-    "step4": "Fourth step e.g. JUDGEMENT: IS/IS NOT effective — link to evidence"
-  },
   "annotationCheck": [
     { "idea": "idea student wrote", "used": true, "quality": "usable", "evidence": "quote from response showing it was developed" },
     { "idea": "another idea student wrote", "used": true, "quality": "present", "evidence": "brief mention only" },
@@ -2187,7 +2216,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           }],
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`Apply CUBE to ONLY Question ${sanitiseInput(questionNumber)} from this image. Do NOT read or mark the student handwritten response. Return JSON with phase1_cube ONLY. Do not return phase2_plan.` }
+            { type:"text", text:`Apply CUBE to ONLY Question ${sanitiseInput(questionNumber)} from this image. Do NOT read or mark the student handwritten response. Return JSON with phase1_cube ONLY.` }
           ]}]
         })
       });
@@ -2804,13 +2833,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
               {/* SVG + all plan content — only shown after Stage 2 has run */}
               {stage2Results&&<div>
-              {/* SVG plan paper — uses stage2 annotation ideas read from image */}
+              {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
               <SVGAnnotatedPaper
                 text={c.questionText}
                 directives={dirs}
                 syllabusKeywords={kwds}
                 constraints={c.constraints}
-                planningArrows={stage2Results?.annotationIdeas?.map((idea,i)=>({label:idea,targetWord:c.questionText?.split(" ")[i]||"",targetStartIndex:0}))||[]}
+                planningArrows={stage2Results?.phase2_plan?.planningArrows||[]}
                 mode="plan"
               />
 
@@ -2868,20 +2897,20 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </div>;
               })()}
 
-              {/* Answer summary — from stage2 results */}
-              {stage2Results?.planSummary&&<Card bg="rgba(201,168,76,0.08)" border="rgba(201,168,76,0.3)">
+              {/* Answer summary — from Stage 1 phase2_plan */}
+              {stage2Results?.phase2_plan?.summary&&<Card bg="rgba(201,168,76,0.08)" border="rgba(201,168,76,0.3)">
                 <div style={{fontSize:"15px",color:"#f0e6c8",lineHeight:"1.6"}}>
-                  <strong style={{color:gold}}>In short: </strong>{stage2Results.planSummary}
+                  <strong style={{color:gold}}>In short: </strong>{stage2Results.phase2_plan.summary}
                 </div>
               </Card>}
 
-              {/* Writing scaffold — from stage2 results */}
-              {stage2Results?.writingScaffold&&<Card bg="rgba(33,150,243,0.06)" border="rgba(33,150,243,0.25)">
+              {/* Writing scaffold — from Stage 1 phase2_plan */}
+              {stage2Results?.phase2_plan?.writingScaffold&&<Card bg="rgba(33,150,243,0.06)" border="rgba(33,150,243,0.25)">
                 <SectionTitle color="#ffffff">WRITING SCAFFOLD</SectionTitle>
-                {["step1","step2","step3","step4"].filter(k=>stage2Results.writingScaffold[k]).map((k,i)=>(
+                {["step1","step2","step3","step4"].filter(k=>stage2Results.phase2_plan.writingScaffold[k]).map((k,i)=>(
                   <div key={k} style={{display:"flex",gap:"12px",marginBottom:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px",fontFamily:"sans-serif"}}>{i+1}</div>
-                    <div style={{color:"#e8eaf0",fontSize:"15px",lineHeight:"1.6"}}>{stage2Results.writingScaffold[k]}</div>
+                    <div style={{color:"#e8eaf0",fontSize:"15px",lineHeight:"1.6"}}>{stage2Results.phase2_plan.writingScaffold[k]}</div>
                   </div>
                 ))}
               </Card>}
