@@ -1802,19 +1802,19 @@ function Steps({current, activeTab, onTabChange}) {
           style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:clickable?"pointer":"default"}}>
           <div style={{position:"relative",width:"56px",height:"56px"}}>
             <div style={{width:"56px",height:"56px",borderRadius:"50%",
-              background: (s==="🏆"&&active)?"linear-gradient(135deg,#6c63ff,#9c27b0)": active?"#c9a84c": done?"#4caf50":"rgba(255,255,255,0.08)",
-              border:`2px solid ${(s==="🏆"&&active)?"#6c63ff":active?"#c9a84c":done?"#4caf50":"rgba(255,255,255,0.15)"}`,
+              background: s==="🏆" ? (active?"linear-gradient(135deg,#6c63ff,#9c27b0)":done?"linear-gradient(135deg,#4a0e7a,#6c63ff)":"rgba(108,99,255,0.15)") : active?"#c9a84c": done?"#4caf50":"rgba(255,255,255,0.08)",
+              border:`2px solid ${s==="🏆"?(active||done?"#6c63ff":"rgba(108,99,255,0.3)"):active?"#c9a84c":done?"#4caf50":"rgba(255,255,255,0.15)"}`,
               display:"flex",alignItems:"center",justifyContent:"center",
-              fontSize:"22px",fontWeight:900,
-              color: active||done?"#0d1b2a":"#ffffff",
+              fontSize: s==="🏆" ? "26px" : "22px",fontWeight:900,
+              color: s==="🏆" ? "white" : active||done?"#0d1b2a":"#ffffff",
               boxShadow: active?"0 4px 14px rgba(201,168,76,0.5)":done?"0 2px 8px rgba(76,175,80,0.4)":"none",
               transition:"all 0.3s"}}>
-              {i+1}
+              {s==="🏆" ? "🏆" : i+1}
             </div>
             {done&&<div style={{position:"absolute",top:"-4px",right:"-4px",width:"20px",height:"20px",borderRadius:"50%",background:"#2e7d32",border:"2px solid #0d1b2a",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:900,color:"white",lineHeight:1}}>✓</div>}
           </div>
           <div style={{fontSize:"13px",color: active?"#c9a84c": done?"#4caf50":"#ffffff",
-            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap"}}>{s}</div>
+            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap",color:s==="🏆"?(active?"#a89fff":done?"#a89fff":"#555"):undefined}}>{s}</div>
         </div>
         {i<steps.length-1&&<div style={{flex:1,height:"3px",
           background: done?"#c9a84c":"rgba(255,255,255,0.15)",
@@ -2338,6 +2338,10 @@ Return ONLY the model response text, no heading, no preamble.`
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   const fetchLeaderboard = async (period, directive) => {
+    if (LEADERBOARD_URL.includes("REPLACE_WITH")) {
+      setLbError("Leaderboard not yet configured — deploy LeaderboardWebhook.gs and update LEADERBOARD_URL in index.html.");
+      return;
+    }
     setLbLoading(true); setLbError(null);
     try {
       const url = `${LEADERBOARD_URL}?subject=${SUBJECT_CODE}&period=${period||lbPeriod}&directive=${directive||lbDirective}`;
