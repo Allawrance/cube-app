@@ -652,7 +652,7 @@ const getBand = (score, maxScore=20) => {
 const MODEL = "claude-sonnet-4-20250514"; // Stage 2 (markFullAnswer) only
 const HAIKU  = "claude-haiku-4-5-20251001";  // Stage 1 (analyse) — also scan + model answer
 const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycbzvahT3OtGBNoJ7-Qbpv_arrGXiONb47NLZxDwwxFTJoQd_iQSbTkPy6K5BbI6GWhH8/exec";
-const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbzwK8XleE_qIipD-bMDJvNK48hBioGBzk5Z-IJ2zRzn8p1s03bhT6RFMlH6j7WCg_XZ/exec";
+const LEADERBOARD_URL = "https://script.google.com/macros/s/REPLACE_WITH_LEADERBOARD_WEBAPP_URL/exec";
 const SUBJECT_NAME    = "Earth & Environmental Science";
 const SUBJECT_CODE    = "EES";
 
@@ -3374,8 +3374,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                           {lbPeriod==="improved"&&p.improvement&&<span style={{fontSize:"10px",color:"#69f0ae",fontWeight:700}}>+{p.improvement} XP</span>}
                         </div>
                         <div style={{fontSize:"10px",color:"#9aabb8",marginTop:"2px",display:"flex",gap:"10px"}}>
-                          <span>📐 {p.cubeCount} CUBE</span>
-                          <span>✍️ {p.annotatedCount} annotated</span>
+                          <span>✅ {p.annotatedCount} marked</span>
+                          <span>🔄 {p.cubeCount} attempt{p.cubeCount!==1?"s":""}</span>
                         </div>
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
