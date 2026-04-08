@@ -1901,10 +1901,14 @@ The student may have written annotation ideas ABOVE or BESIDE the printed questi
 These are short handwritten notes, words, ideas, or phrases written before their response.
 
 YOUR TASKS:
-1. READ the student's actual handwritten annotations (not the printed question, not the response).
-   - Extract up to 6 annotation ideas the student wrote above/beside the question.
-   - If no annotations are visible, return an empty annotationIdeas array.
-   - Do NOT invent annotation ideas. Only record what the student actually wrote.
+1. READ the student's actual handwritten annotations — short handwritten notes the student wrote ABOVE or BESIDE the printed question text BEFORE writing their response.
+   CRITICAL RULES — READ CAREFULLY:
+   - ONLY record handwriting that is physically located ABOVE or BESIDE the printed question, not below it.
+   - The student's written response (below the question) is NOT an annotation. Do NOT extract it.
+   - If you see no handwritten notes above or beside the question, return an EMPTY annotationIdeas array [].
+   - Do NOT invent, infer, or generate annotation ideas. Do NOT extract content from the written response.
+   - When in doubt whether something is an annotation or part of the response, return [].
+   - A blank space above the question means zero annotations — return [].
 
 2. CHECK whether each annotation idea was used in the written response:
    - used: true/false — did this idea (or equivalent) appear in the written response?
@@ -1991,7 +1995,8 @@ Return ONLY valid JSON (no markdown, no backticks):
   },
   "studentResponseText": "Verbatim transcription — mark every unclear word as [?]",
   "formattedResponse": "Copy of studentResponseText with **connective** and _noun group_ markdown",
-  "annotationIdeas": ["idea 1 the student wrote above the question", "idea 2", "idea 3"],
+  "annotationIdeas": [],
+  "annotationIdeas_NOTE": "EMPTY ARRAY if no handwritten notes above/beside question. Never extract from written response.",
   "annotationCheck": [
     { "idea": "idea student wrote", "used": true, "quality": "usable", "evidence": "quote from response showing it was developed" },
     { "idea": "another idea student wrote", "used": true, "quality": "present", "evidence": "brief mention only" },
@@ -2409,7 +2414,9 @@ Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.ver
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
 
-ANNOTATION TASK: Look for short handwritten notes/ideas/words that the student wrote ABOVE or BESIDE the printed question (not the response). These are their planning annotations. Read up to 6 of them. If none exist, return an empty annotationIdeas array. Then check whether each annotation idea appears in their written response.
+ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — these are planning annotations written before the response. The written response itself (below the question) is NOT an annotation.
+IMPORTANT: If there are no handwritten notes above or beside the question, annotationIdeas MUST be an empty array []. Do not extract from the response. Do not invent ideas.
+Check whether each annotation idea (if any) appears in the written response.
 
 Transcribe and mark ONLY the handwritten response to this question. Return JSON only.` }
           ]}]
@@ -3124,7 +3131,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   <div style={{fontSize:"32px"}}>🎯</div>
                   <div style={{width:"100%"}}>
                     <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"6px",fontFamily:"sans-serif"}}>Your mission</div>
-                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {(a.mission.weakness||"").charAt(0).toLowerCase()+(a.mission.weakness||"").slice(1)}</div>
+                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {(w=>(w.replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")))(a.mission.weakness||"")}</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
                       <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(244,67,54,0.25)"}}>
                         <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
