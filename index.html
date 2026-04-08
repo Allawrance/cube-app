@@ -1209,7 +1209,8 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     "rubric": {
       "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
       "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
-      "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": false },
+      "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
+    "modality_NOTE": "applicable=true for evaluate/assess/justify; applicable=false for all other directives",
       "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
     },
     "medals": {
@@ -1826,7 +1827,7 @@ function Steps({current, activeTab, onTabChange}) {
             {done&&<div style={{position:"absolute",top:"-4px",right:"-4px",width:"20px",height:"20px",borderRadius:"50%",background:"#2e7d32",border:"2px solid #0d1b2a",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:900,color:"white",lineHeight:1}}>✓</div>}
           </div>
           <div style={{fontSize:"13px",color: active?"#c9a84c": done?"#4caf50":"#ffffff",
-            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap",color:s==="🏆"?(active?"#a89fff":done?"#a89fff":"#555"):undefined}}>{s}</div>
+            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap",color:s==="🏆"?(active?"#a89fff":done?"#a89fff":"#555"):undefined}}>{s==="🏆"?"Rank":s}</div>
         </div>
         {i<steps.length-1&&<div style={{flex:1,height:"3px",
           background: done?"#c9a84c":"rgba(255,255,255,0.15)",
@@ -2017,7 +2018,8 @@ Return ONLY valid JSON (no markdown, no backticks):
   "rubric": {
     "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
     "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
-    "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": false },
+    "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
+    "modality_NOTE": "applicable=true for evaluate/assess/justify; applicable=false for all other directives",
     "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
   },
   "medals": {
@@ -2413,10 +2415,15 @@ Question: "${sanitiseInput(c1.questionText)}"
 Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.verbType||"")})
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
+Modality applicable: ${(primaryDir.modality==="required"||primaryDir.modality==="optional")?"YES — set modality.applicable=true":"NO — set modality.applicable=false"}
 
-ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — these are planning annotations written before the response. The written response itself (below the question) is NOT an annotation.
-IMPORTANT: If there are no handwritten notes above or beside the question, annotationIdeas MUST be an empty array []. Do not extract from the response. Do not invent ideas.
-Check whether each annotation idea (if any) appears in the written response.
+ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
+STRICT RULES:
+- The student's written response (the paragraphs below the question) is NOT an annotation. Do NOT extract from it.
+- Only count notes physically above or beside the printed question text.
+- If the space above the question is blank → annotationIdeas = []
+- If unsure whether something is an annotation or part of the response → annotationIdeas = []
+After identifying any genuine annotations, check whether each one appears in the written response.
 
 Transcribe and mark ONLY the handwritten response to this question. Return JSON only.` }
           ]}]
