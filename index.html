@@ -1097,7 +1097,8 @@ TIER 3 — REASONING (explain, analyse, predict, suggest, discuss):
 TIER 4 — EVALUATIVE (assess, evaluate, critically evaluate, justify):
 - Causal connectives required AND judgement (IS/IS NOT) required
 - specialCheck.type = "assess_eval"
-- Modality: REQUIRED
+- Modality: REQUIRED — set modality.applicable=true and score it
+- CRITICAL: For evaluate/assess questions you MUST set modality.applicable=true — never false
 
 Causal Connectives rubric scores: 0=none, 1=present but wrong, 2=one correct, 3=two correct, 4=three+, 5=four+ varied
 Complex Noun Groups: 0=none, 1=minimal, 2=one clear, 3=two+, 4=several precise, 5=consistent technical
@@ -1210,7 +1211,6 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
       "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
       "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
       "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-    "modality_NOTE": "applicable=true for evaluate/assess/justify; applicable=false for all other directives",
       "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
     },
     "medals": {
@@ -1956,7 +1956,8 @@ TIER 3 — REASONING (explain, analyse, predict, suggest, discuss):
 TIER 4 — EVALUATIVE (assess, evaluate, critically evaluate, justify):
 - Causal connectives required AND judgement (IS/IS NOT) required
 - specialCheck.type = "assess_eval"
-- Modality: REQUIRED
+- Modality: REQUIRED — set modality.applicable=true and score it
+- CRITICAL: For evaluate/assess questions you MUST set modality.applicable=true — never false
 
 Causal Connectives: 0=none, 1=present but weak, 2=one correct, 3=two correct, 4=three+, 5=four+ varied
 Complex Noun Groups: 0=none, 1=minimal, 2=one clear, 3=two+, 4=several precise, 5=consistent technical
@@ -2019,7 +2020,6 @@ Return ONLY valid JSON (no markdown, no backticks):
     "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
     "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
     "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-    "modality_NOTE": "applicable=true for evaluate/assess/justify; applicable=false for all other directives",
     "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
   },
   "medals": {
@@ -2994,18 +2994,14 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     })}
                   </>;
                 })()}
-                {/* Photo inside annotation card, below scoring ── */}
-                {(()=>{const t=enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, CONNECTIVES)||""; return (normaliseIllegible(t).includes("[?]"))&&pageImg;})()&&<div style={{marginTop:"10px"}}>
-                  <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check the <span style={{background:"#ff6d00",color:"white",borderRadius:"3px",padding:"0 5px"}}>?</span> words against your handwriting</div>
+                {/* Photo always shown in Script tab so student can check their work */}
+                {pageB64&&<div style={{marginTop:"10px"}}>
+                  <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
                   <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
                 </div>}
               </Card>}
 
-              {/* ── Original photo fallback (when no annotation check available) ── */}
-              {!stage2Results?.annotationCheck?.length&&(()=>{const t=enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, CONNECTIVES)||""; return (normaliseIllegible(t).includes("[?]"))&&pageImg;})()&&<div style={{marginBottom:"14px"}}>
-                <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check the <span style={{background:"#ff6d00",color:"white",borderRadius:"3px",padding:"0 5px"}}>?</span> words against your handwriting</div>
-                <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
-              </div>}
+
 
               {/* Response structure check */}
               <Card bg="rgba(255,255,255,0.04)" border="rgba(255,255,255,0.1)">
