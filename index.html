@@ -652,7 +652,7 @@ const getBand = (score, maxScore=20) => {
 const MODEL = "claude-sonnet-4-20250514"; // Stage 2 (markFullAnswer) only
 const HAIKU  = "claude-haiku-4-5-20251001";  // Stage 1 (analyse) — also scan + model answer
 const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycbzvahT3OtGBNoJ7-Qbpv_arrGXiONb47NLZxDwwxFTJoQd_iQSbTkPy6K5BbI6GWhH8/exec";
-const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbxstpNRlun53bqZig3UQICx_NtunQ2-ufes31Qp7K_m-svSkDAbF5aJxo-5DWUQ4I3U/exec";
+const LEADERBOARD_URL = "https://script.google.com/macros/s/REPLACE_WITH_LEADERBOARD_WEBAPP_URL/exec";
 const SUBJECT_NAME    = "Earth & Environmental Science";
 const SUBJECT_CODE    = "EES";
 
@@ -3390,13 +3390,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     <div style={{fontSize:"10px",color:"#9aabb8",textTransform:"uppercase",letterSpacing:"1px",fontWeight:700,marginBottom:"10px",fontFamily:"sans-serif"}}>📊 Class {lbPeriod==="week"?"This Week":"Stats"}</div>
                     <div style={{display:"flex",gap:"8px"}}>
                       {[
-                        {val:`${leaderboard.classStats.completionPct}%`, label:"CUBE + Annotation
-completed",       color:"#c9a84c"},
-                        {val:leaderboard.classStats.submissions,          label:"Full submissions",                    color:"#69f0ae"},
-                        {val:leaderboard.classStats.explainCount,         label:"Explain/Analyse
-questions",          color:"#64b5f6"},
-                        {val:leaderboard.classStats.assessCount,          label:"Assess/Evaluate
-questions",          color:"#ff8a65"},
+                        {val:`${leaderboard.classStats.completionPct}%`, label:"CUBE + Annotation completed", color:"#c9a84c"},
+                        {val:leaderboard.classStats.submissions,          label:"Full submissions",           color:"#69f0ae"},
+                        {val:leaderboard.classStats.explainCount,         label:"Explain / Analyse",          color:"#64b5f6"},
+                        {val:leaderboard.classStats.assessCount,          label:"Assess / Evaluate",          color:"#ff8a65"},
                       ].map((s,i)=>(
                         <div key={i} style={{flex:1,background:"rgba(255,255,255,0.03)",borderRadius:"8px",padding:"8px 4px",textAlign:"center"}}>
                           <div style={{fontSize:"18px",fontWeight:900,color:s.color}}>{s.val}</div>
@@ -3421,4 +3418,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   </script>
 </body>
 </html>
-
