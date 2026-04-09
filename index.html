@@ -1826,8 +1826,9 @@ function Steps({current, activeTab, onTabChange}) {
             </div>
             {done&&<div style={{position:"absolute",top:"-4px",right:"-4px",width:"20px",height:"20px",borderRadius:"50%",background:"#2e7d32",border:"2px solid #0d1b2a",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:900,color:"white",lineHeight:1}}>✓</div>}
           </div>
-          <div style={{fontSize:"13px",color: active?"#c9a84c": done?"#4caf50":"#ffffff",
-            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap",color:s==="🏆"?(active?"#a89fff":done?"#a89fff":"#555"):undefined}}>{s==="🏆"?"Score":s}</div>
+          <div style={{fontSize:"13px",
+            color: s==="🏆" ? (active?"#a89fff":done?"#a89fff":"#e8eaf0") : (active?"#c9a84c":done?"#4caf50":"#e8eaf0"),
+            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap"}}>{s==="🏆"?"Score":s}</div>
         </div>
         {i<steps.length-1&&<div style={{flex:1,height:"3px",
           background: done?"#c9a84c":"rgba(255,255,255,0.15)",
@@ -2416,7 +2417,7 @@ Question: "${sanitiseInput(c1.questionText)}"
 Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.verbType||"")})
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
-Modality applicable: ${(primaryDir.modality==="required"||primaryDir.modality==="optional")?"YES — set modality.applicable=true":"NO — set modality.applicable=false"}
+Modality applicable: ${(()=>{const mv=primaryDir.modalityRule||primaryDir.modality||""; const dv=(primaryDir.word||primaryDir.verbType||"").toLowerCase().trim(); const dobj=DIRECTIVES[dv]||DIRECTIVES[dv.replace("critically ","")] ; const req=dobj?(dobj.modality==="required"||dobj.modality==="optional"):["assess","evaluate","critically evaluate"].includes(dv); return req?"YES — set modality.applicable=true":"NO — set modality.applicable=false";})()}
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
 STRICT RULES for annotations:
@@ -2694,8 +2695,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
           // Derive modality applicable from directive — do not trust Sonnet's value
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
-          const dirObjR  = DIRECTIVES[dirWordR] || DIRECTIVES[dirWordR.replace("critically ","")];
-          const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : (a ? a.rubric?.modality?.applicable === true : false);
+          const dirObjR  = DIRECTIVES[dirWordR] || DIRECTIVES[dirWordR.replace("critically ","")] || DIRECTIVES[verbType] || DIRECTIVES[verbType?.replace("critically ","")];
+          const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
           const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
 
@@ -3103,11 +3104,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </Card>
               </div>
 
-              {/* ── Student handwritten response — always shown at bottom of Rubric tab ── */}
-              {pageB64&&<div style={{marginTop:"16px"}}>
-                <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR HANDWRITTEN RESPONSE — Check your answer against the rubric above</div>
-                <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your handwritten response"/>
-              </div>}
 
             </div>}
             </div>}
@@ -3163,6 +3159,47 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     </div>
                   </div>
                 </div>
+              </Card>}
+
+              {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
+              {a.specialCheck?.modelSentenceStarter&&<Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
+
+                {/* ── STEP 1: Structure Pattern ── */}
+                <SectionTitle color={gold}>💡 HOW TO STRUCTURE YOUR ANSWER</SectionTitle>
+                <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
+                  This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
+                </div>
+                <div style={{background:"rgba(255,255,255,0.93)",borderRadius:"12px",padding:"14px 16px",border:"1px solid rgba(201,168,76,0.35)",marginBottom:"6px"}}>
+                  <div style={{fontSize:"14px",color:"#222",fontFamily:"'Georgia',serif",lineHeight:"1.9"}}>
+                    {a.specialCheck.modelSentenceStarter.split(/\b(SO|BECAUSE|BUT|IS NOT|IS)\b/).map((part,i)=>
+                      ["SO","BECAUSE","BUT","IS NOT","IS"].includes(part)
+                        ?<span key={i} style={{background:"#7b1fa2",color:"white",borderRadius:"4px",padding:"1px 7px",fontWeight:900,fontFamily:"sans-serif",fontSize:"12px",margin:"0 2px"}}>{part}</span>
+                        :<span key={i}>{part}</span>
+                    )}
+                  </div>
+                  <div style={{marginTop:"8px",fontSize:"11px",color:"#888",fontFamily:"sans-serif",borderTop:"1px solid #eee",paddingTop:"6px"}}>
+                    ✏️ This is a <em>pattern</em>, not an answer — write your own version using your knowledge
+                  </div>
+                </div>
+
+                {/* ── STEP 2: See a full example ── */}
+                {!modelAnswer&&<>
+                  <div style={{marginTop:"16px",marginBottom:"6px",fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.5"}}>
+                    Want to see a <strong style={{color:"#f0d080"}}>complete example answer</strong> written at Band 6 level? Use it to check what depth and detail is expected — not to copy.
+                  </div>
+                  <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
+                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer"}
+                  </button>
+                </>}
+                {modelAnswer&&<>
+                  <div style={{marginTop:"14px",marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
+                    ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
+                  </div>
+                  <PaperCard subtitle="">
+                    <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
+                  </PaperCard>
+                  <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
+                </>}
               </Card>}
 
               {/* ── 3. Special check (connectives / argument structure) ── */}
@@ -3226,21 +3263,23 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   </>;
                 })()}
                 {isAssessEval&&a.specialCheck?.assessEvalCheck&&<>
-                  {/* ── Define key terms FIRST — helps student understand what to address ── */}
-                  <div style={{marginBottom:"12px",background:"rgba(100,181,246,0.08)",border:"1px solid rgba(100,181,246,0.25)",borderRadius:"8px",padding:"10px 12px"}}>
-                    <div style={{display:"flex",gap:"10px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif",marginBottom:"6px"}}>
-                      <span style={{fontSize:"16px"}}>✅</span>
-                      <span style={{color:"#e8eaf0",fontWeight:700}}>DEFINE key terms in the question</span>
+                  {/* ── Define key terms — plain bullet row aligned with PRO/CON ── */}
+                  <div style={{marginBottom:"8px"}}>
+                    <div style={{display:"flex",gap:"10px",alignItems:"flex-start",fontSize:"13px",fontFamily:"sans-serif"}}>
+                      <Tick ok={true}/>
+                      <div style={{flex:1}}>
+                        <span style={{color:"#e8eaf0",fontWeight:600}}>DEFINE key terms in the question</span>
+                        {a.specialCheck?.keyTermDefinitions?.length>0
+                          ? a.specialCheck.keyTermDefinitions.map((t,i)=>(
+                              <div key={i} style={{marginTop:"3px",fontSize:"13px",fontFamily:"sans-serif"}}>
+                                <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
+                                <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
+                              </div>
+                            ))
+                          : <div style={{marginTop:"3px",fontSize:"12px",color:"#888",fontStyle:"italic",fontFamily:"sans-serif"}}>Identify any syllabus-specific terms in the question and define them in your opening sentence</div>
+                        }
+                      </div>
                     </div>
-                    {a.specialCheck?.keyTermDefinitions?.length>0
-                      ? a.specialCheck.keyTermDefinitions.map((t,i)=>(
-                          <div key={i} style={{marginLeft:"26px",marginBottom:"4px",fontSize:"13px",fontFamily:"sans-serif"}}>
-                            <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
-                            <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
-                          </div>
-                        ))
-                      : <div style={{marginLeft:"26px",fontSize:"12px",color:"#888",fontStyle:"italic",fontFamily:"sans-serif"}}>Identify any syllabus-specific terms in the question and define them in your opening sentence</div>
-                    }
                   </div>
                   {/* ── PRO / CON rows ── */}
                   {[
@@ -3277,46 +3316,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </>}
               </Card>}
 
-              {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
-              {a.specialCheck?.modelSentenceStarter&&<Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
-
-                {/* ── STEP 1: Structure Pattern ── */}
-                <SectionTitle color={gold}>💡 HOW TO STRUCTURE YOUR ANSWER</SectionTitle>
-                <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
-                  This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
-                </div>
-                <div style={{background:"rgba(255,255,255,0.93)",borderRadius:"12px",padding:"14px 16px",border:"1px solid rgba(201,168,76,0.35)",marginBottom:"6px"}}>
-                  <div style={{fontSize:"14px",color:"#222",fontFamily:"'Georgia',serif",lineHeight:"1.9"}}>
-                    {a.specialCheck.modelSentenceStarter.split(/\b(SO|BECAUSE|BUT|IS NOT|IS)\b/).map((part,i)=>
-                      ["SO","BECAUSE","BUT","IS NOT","IS"].includes(part)
-                        ?<span key={i} style={{background:"#7b1fa2",color:"white",borderRadius:"4px",padding:"1px 7px",fontWeight:900,fontFamily:"sans-serif",fontSize:"12px",margin:"0 2px"}}>{part}</span>
-                        :<span key={i}>{part}</span>
-                    )}
-                  </div>
-                  <div style={{marginTop:"8px",fontSize:"11px",color:"#888",fontFamily:"sans-serif",borderTop:"1px solid #eee",paddingTop:"6px"}}>
-                    ✏️ This is a <em>pattern</em>, not an answer — write your own version using your knowledge
-                  </div>
-                </div>
-
-                {/* ── STEP 2: See a full example ── */}
-                {!modelAnswer&&<>
-                  <div style={{marginTop:"16px",marginBottom:"6px",fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.5"}}>
-                    Want to see a <strong style={{color:"#f0d080"}}>complete example answer</strong> written at Band 6 level? Use it to check what depth and detail is expected — not to copy.
-                  </div>
-                  <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
-                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer"}
-                  </button>
-                </>}
-                {modelAnswer&&<>
-                  <div style={{marginTop:"14px",marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
-                    ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
-                  </div>
-                  <PaperCard subtitle="">
-                    <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
-                  </PaperCard>
-                  <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
-                </>}
-              </Card>}
 
             </div>}
             </div>}
