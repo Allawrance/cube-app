@@ -2293,6 +2293,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             directives:       dirs.map(d=>d.word).join(", ") || "—",
             syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ") || "—",
             callType:         "STAGE1_CUBE",
+            sheetTab:         "EES CUBE",
             model:            "claude-haiku-4-5-20251001",
             cubeXP:           cxpVal,
             cubeMax:          cmaxVal,
@@ -2375,6 +2376,15 @@ Return ONLY the model response text, no heading, no preamble.`
   const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
+  // Sync streak from server when student name is entered
+  useEffect(()=>{
+    const parts = (studentName||"").trim().split(/\s+/);
+    if (parts.length>=2 && parts[0] && !leaderboard && !lbLoading) {
+      fetchLeaderboard("week","all");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[studentName]);
+
   const fetchLeaderboard = async (period, directive) => {
     if (LEADERBOARD_URL.includes("REPLACE_WITH")) {
       setLbError("Leaderboard not yet configured — deploy LeaderboardWebhook.gs and update LEADERBOARD_URL in index.html.");
@@ -2387,6 +2397,17 @@ Return ONLY the model response text, no heading, no preamble.`
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setLeaderboard(data);
+      // Sync streak from server for current student (cross-device consistency)
+      try {
+        const me = privacyName(studentName.trim()||"anonymous");
+        const myRow = (data.leaderboard||[]).find(p=>p.student===me);
+        if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
+          // Server streak is source of truth — update local state and cache
+          setStreak(myRow.streak);
+          const today = new Date().toDateString();
+          localStorage.setItem("cube_streak", JSON.stringify({count:myRow.streak, lastDate:today}));
+        }
+      } catch {}
     } catch(e) {
       setLbError("Could not load leaderboard: " + e.message);
     }
@@ -2499,6 +2520,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             directives:       dirs.map(d=>d.word).join(", ")||"—",
             syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ")||"—",
             callType:         "STAGE2_MARK",
+            sheetTab:         "EES FULL",
             model:            MODEL,
             cubeXP:           cubeXP || 0,
             cubeMax:          dirs.length + kwds.length + (c1.constraints||[]).length + (c1.evidenceRequired?1:0),
@@ -3119,46 +3141,41 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               {stage2Results&&<div>
               <SectionTitle>STEPS 5–8 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
 
-              {/* ── 1. MEDALS first — celebrate what they did well ── */}
-              {a.medals?.medal1&&<Card bg="rgba(255,215,0,0.06)" border="rgba(255,215,0,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{fontSize:"32px"}}>🥇</div>
-                  <div>
-                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"15px",marginBottom:"8px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal1.category}</div>
-                    <div style={{background:"rgba(255,215,0,0.08)",border:"1px solid rgba(255,215,0,0.25)",borderRadius:"8px",padding:"8px 12px",color:"#f5d67a",fontSize:"13px",fontStyle:"italic"}}>"{a.medals.medal1.quote}"</div>
+              {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
+              {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
+                {a.medals?.medal1&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.medals?.medal2||a.mission?"12px":0}}>
+                  <div style={{fontSize:"26px",flexShrink:0}}>🥇</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal1.category}</div>
+                    <div style={{color:"#f5d67a",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal1.quote}"</div>
                   </div>
-                </div>
-              </Card>}
-
-              {a.medals?.medal2&&<Card bg="rgba(192,192,192,0.06)" border="rgba(192,192,192,0.25)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{fontSize:"32px"}}>🥈</div>
-                  <div>
-                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"15px",marginBottom:"8px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal2.category}</div>
-                    <div style={{background:"rgba(192,192,192,0.08)",border:"1px solid rgba(192,192,192,0.2)",borderRadius:"8px",padding:"8px 12px",color:"#d0d0d0",fontSize:"13px",fontStyle:"italic"}}>"{a.medals.medal2.quote}"</div>
+                </div>}
+                {a.medals?.medal2&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.mission?"12px":0,paddingTop:a.medals?.medal1?"10px":0,borderTop:a.medals?.medal1?"1px solid rgba(255,255,255,0.07)":"none"}}>
+                  <div style={{fontSize:"26px",flexShrink:0}}>🥈</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal2.category}</div>
+                    <div style={{color:"#d0d0d0",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal2.quote}"</div>
                   </div>
-                </div>
-              </Card>}
-
-              {/* ── 2. Mission — immediately after medals ── */}
-              {a.mission&&<Card bg="rgba(244,67,54,0.06)" border="rgba(244,67,54,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{fontSize:"32px"}}>🎯</div>
-                  <div style={{width:"100%"}}>
-                    <div style={{fontWeight:800,color:"#ff8a80",fontSize:"15px",marginBottom:"6px",fontFamily:"sans-serif"}}>Your mission</div>
-                    <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.5",marginBottom:"10px"}}>To improve, add {(w=>(w.replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")))(a.mission.weakness||"")}</div>
-                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
-                      <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(244,67,54,0.25)"}}>
-                        <div style={{fontSize:"10px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
-                        <div style={{fontSize:"13px",color:"#ffcdd2",fontStyle:"italic"}}>"{a.mission.originalPhrase}"</div>
-                      </div>
-                      <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"10px 12px",border:"1px solid rgba(76,175,80,0.25)"}}>
-                        <div style={{fontSize:"10px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>TO THIS</div>
-                        <div style={{fontSize:"13px",color:"#c8e6c9",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
+                </div>}
+                {a.mission&&<div style={{paddingTop:(a.medals?.medal1||a.medals?.medal2)?"10px":0,borderTop:(a.medals?.medal1||a.medals?.medal2)?"1px solid rgba(255,255,255,0.07)":"none"}}>
+                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                    <div style={{fontSize:"26px",flexShrink:0}}>🎯</div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:800,color:"#ff8a80",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>Your mission</div>
+                      <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:"8px"}}>To improve: {(w=>(w.replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")))(a.mission.weakness||"")}</div>
+                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px"}}>
+                        <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(244,67,54,0.25)"}}>
+                          <div style={{fontSize:"9px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
+                          <div style={{fontSize:"12px",color:"#ffcdd2",fontStyle:"italic"}}>"{a.mission.originalPhrase}"</div>
+                        </div>
+                        <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(76,175,80,0.25)"}}>
+                          <div style={{fontSize:"9px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>TO THIS</div>
+                          <div style={{fontSize:"12px",color:"#c8e6c9",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </div>}
               </Card>}
 
               {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
@@ -3182,17 +3199,20 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   </div>
                 </div>
 
-                {/* ── STEP 2: See a full example ── */}
+              </Card>}
+
+              {/* ── Band 6 example — at very bottom so student reviews their work first ── */}
+              <div style={{marginTop:"8px",paddingTop:"16px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
                 {!modelAnswer&&<>
-                  <div style={{marginTop:"16px",marginBottom:"6px",fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.5"}}>
-                    Want to see a <strong style={{color:"#f0d080"}}>complete example answer</strong> written at Band 6 level? Use it to check what depth and detail is expected — not to copy.
+                  <div style={{fontSize:"12px",color:"#9aabb8",fontFamily:"sans-serif",lineHeight:"1.5",marginBottom:"10px",textAlign:"center"}}>
+                    ✅ Once you've reviewed all your feedback above —
                   </div>
                   <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
-                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer"}
+                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer — not to copy"}
                   </button>
                 </>}
                 {modelAnswer&&<>
-                  <div style={{marginTop:"14px",marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
+                  <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
                     ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
                   </div>
                   <PaperCard subtitle="">
@@ -3200,7 +3220,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   </PaperCard>
                   <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
                 </>}
-              </Card>}
+              </div>
 
               {/* ── 3. Special check (connectives / argument structure) ── */}
               {a.specialCheck?.type!=="none"&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
