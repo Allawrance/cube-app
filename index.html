@@ -2315,9 +2315,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         const marks  = parsed?.phase1_cube?.marks ?? null;
         const cxpVal = computeCubeXP(parsed);
         const cmaxVal = computeMaxCubeXP(parsed);
-        fetch(WEBHOOK_URL, {
-          method: "POST", mode: "no-cors",
-          headers: { "Content-Type": "text/plain" },
+        fetch("https://cube-proxy.alan-3e2.workers.dev/log", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type:             "FULL_ROW",
             subject:          SUBJECT_NAME,
@@ -2544,7 +2544,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const annoTotal  = annoPresXP + annoUsdXP;
         const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.round((sc/mx)*c1.marks) : "";
         const indBand    = (c1.marks == null || c1.marks === "") ? `Band ${band}` : "";
-        fetch(WEBHOOK_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"},
+        fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
             type:             "FULL_ROW",
             subject:          SUBJECT_NAME,
