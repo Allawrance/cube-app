@@ -651,7 +651,13 @@ const getBand = (score, maxScore=20) => {
 
 const MODEL = "claude-sonnet-4-20250514"; // Stage 2 (markFullAnswer) only
 const HAIKU  = "claude-haiku-4-5-20251001";  // Stage 1 (analyse) — also scan + model answer
-const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycbyUcmjtLWPkdK4QK_dy70zKkg03GxFqKxv3x44MLVf8pkni7eHmiCDie2aQdMJ2vBd1/exec";
+const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycby7BleibkC0-NRxIe1TvzLllVFLpyN1IdXcHd_Byxd9uqwhxCHsGr_5rxXfuNOeoBzr/exec";
+// ⚠️  DATA NOT WRITING TO EES CUBE / EES FULL?
+// This URL points to the OLD LogWebhook deployment.
+// FIX: In Apps Script → Deploy → Manage deployments → click ✏️ on the deployment
+// that has the URL above → change Version to "New version" → Deploy.
+// This updates the OLD URL to run the new LogWebhook v7 code.
+// No change to index.html needed after that.
 const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbyj9dbw2_Fdh5zZF1NsWMfcN5T4dZHnYOH5cAIrXBcnV10L78xiZYcFm7tV7jQ8wIvk/exec";
 const SUBJECT_NAME    = "Earth & Environmental Science";
 const SUBJECT_CODE    = "EES";
@@ -2256,7 +2262,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           }],
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`Apply CUBE to ONLY Question ${sanitiseInput(questionNumber)} from this image. Do NOT read or mark the student handwritten response. Return JSON with phase1_cube ONLY.` }
+            { type:"text", text:`For Question ${sanitiseInput(questionNumber)} in this image, do TWO things and return BOTH in JSON:\n1. Apply CUBE to the printed question text (phase1_cube).\n2. Look carefully at the printed question text for any handwritten pen marks the student made DIRECTLY ON the question words — circles/ovals around words, underlines under words, boxes/rectangles around words, or wavy lines. Report these in studentCube. If you see NO marks on the question text, return empty arrays and score:0.\nDo NOT read or transcribe the student written answer below the question.` }
           ]}]
         })
       });
@@ -2765,7 +2771,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
                 {stage2Results&&marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{Math.round((score/maxScore)*c.marks)}/{c.marks}</div>}
                 {stage2Results&&!marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{score}/{maxScore}</div>}
-                {!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>Indicative {band}</div>}
+                {stage2Results&&!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>Indicative {band}</div>}
                 {studentName.trim()&&<div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"5px"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4"/><path d="M12 13c-5 0-8 2.5-8 4v1h16v-1c0-1.5-3-4-8-4z"/></svg>
                   {studentName.trim()}
@@ -2835,6 +2841,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               {/* ── Upload + Ready buttons in CUBE tab ── */}
               {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
+                {/* ── Student's photo: compare their CUBE marks with the model answer ── */}
+                {pageB64&&<div style={{marginBottom:"12px",borderRadius:"10px",overflow:"hidden",border:"1.5px solid rgba(201,168,76,0.3)",background:"rgba(0,0,0,0.2)"}}>
+                  <div style={{fontSize:"10px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",padding:"6px 10px",background:"rgba(201,168,76,0.08)",fontFamily:"sans-serif"}}>
+                    📷 YOUR CUBE ATTEMPT — compare with the model answer above
+                  </div>
+                  <img src={`data:image/jpeg;base64,${pageB64}`} style={{width:"100%",display:"block",maxHeight:"220px",objectFit:"cover",objectPosition:"top"}} alt="Your CUBE attempt"/>
+                </div>}
                 <button onClick={()=>{
                   // Same as New Question — full reset then open file picker
                   setStage2Results(null); setStage1Done(false); setStage2Error(null);
