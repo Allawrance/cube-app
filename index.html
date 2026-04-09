@@ -2774,15 +2774,17 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 ))}
               </div>
 
-              {/* ── CUBE XP total card ── */}
-              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",display:"flex",alignItems:"center",justifyContent:"space-between",fontFamily:"sans-serif"}}>
-                <div>
-                  <div style={{fontSize:"17px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1.5px",marginBottom:"5px"}}>⚡ Points for your <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> of the question</div>
-
-                </div>
-                <div style={{textAlign:"right"}}>
-                  <span style={{fontSize:"36px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
-                  <span style={{fontSize:"14px",color:"#888"}}> XP</span>
+              {/* ── CUBE XP total card — shows max possible from question elements ── */}
+              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div>
+                    <div style={{fontSize:"14px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"3px"}}>⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in question</div>
+                    <div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>Your XP is based on your annotations below — submit your answer to see your score</div>
+                  </div>
+                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
+                    <span style={{fontSize:"30px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
+                    <span style={{fontSize:"12px",color:"#888"}}> max XP</span>
+                  </div>
                 </div>
               </div>}
 
@@ -2802,57 +2804,61 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </button>
               </div>}
 
-              {/* C cards — one per directive */}
-              {dirs.map((dv,i)=>(
-                <Card key={i} bg="rgba(192,57,43,0.08)" border="rgba(192,57,43,0.3)">
-                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                    <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0}}>C</div>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:700,color:"#ff8a80",fontSize:"15px",marginBottom:"3px"}}>
-                        Directive Verb: <span style={{background:"rgba(192,57,43,0.2)",padding:"1px 8px",borderRadius:"20px"}}>{dv.word}</span>
-                        {dirs.length>1&&<span style={{marginLeft:"8px",fontSize:"11px",color:"#ffab91",fontFamily:"sans-serif"}}>{dv.isPrimary?"PRIMARY":"SECONDARY"}</span>}
+              {/* C card — all directives in one box */}
+              {dirs.length>0&&<Card bg="rgba(192,57,43,0.08)" border="rgba(192,57,43,0.3)">
+                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                  <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>C</div>
+                  <div style={{flex:1}}>
+                    {dirs.map((dv,i)=>(
+                      <div key={i} style={{borderTop:i>0?"1px solid rgba(192,57,43,0.2)":"none",paddingTop:i>0?"10px":"0",marginTop:i>0?"10px":"0"}}>
+                        <div style={{fontWeight:700,color:"#ff8a80",fontSize:"15px",marginBottom:"3px"}}>
+                          Directive Verb: <span style={{background:"rgba(192,57,43,0.2)",padding:"1px 8px",borderRadius:"20px"}}>{dv.word}</span>
+                          {dirs.length>1&&<span style={{marginLeft:"8px",fontSize:"11px",color:"#ffab91",fontFamily:"sans-serif"}}>{dv.isPrimary?"PRIMARY":"SECONDARY"}</span>}
+                        </div>
+                        <div style={{color:"#e8d0d0",fontSize:"14px",lineHeight:"1.5"}}>{dv.meaning}</div>
+                        {dv.verbType==="explain"&&<div style={{marginTop:"6px",display:"flex",gap:"8px"}}>
+                          {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"2px 10px",fontWeight:900,color:"#ce93d8",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
+                        </div>}
+                        {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"6px",display:"flex",gap:"8px",flexWrap:"wrap"}}>
+                          {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
+                        </div>}
                       </div>
-                      <div style={{color:"#e8d0d0",fontSize:"14px",lineHeight:"1.5"}}>{dv.meaning}</div>
-                      {dv.verbType==="explain"&&<div style={{marginTop:"8px",display:"flex",gap:"8px"}}>
-                        {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"2px 10px",fontWeight:900,color:"#ce93d8",fontSize:"15px",fontFamily:"sans-serif"}}>{w}</span>)}
-                      </div>}
-                      {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"8px",display:"flex",gap:"8px",flexWrap:"wrap"}}>
-                        {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"15px",fontFamily:"sans-serif"}}>{w}</span>)}
-                      </div>}
-                    </div>
+                    ))}
                   </div>
-                </Card>
-              ))}
+                </div>
+              </Card>}
 
-              {/* U cards — one per syllabus keyword */}
-              {kwds.map((kw,i)=>(
-                <Card key={i} bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
-                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                    <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0}}>U</div>
-                    <div>
-                      <div style={{fontWeight:700,color:"#ffffff",fontSize:"15px",marginBottom:"3px"}}>
-                        Syllabus Keyword: <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+              {/* U card — all syllabus keywords in one box */}
+              {kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
+                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                  <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>U</div>
+                  <div style={{flex:1}}>
+                    {kwds.map((kw,i)=>(
+                      <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.2)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
+                        <div style={{fontWeight:700,color:"#ffffff",fontSize:"14px",marginBottom:"2px"}}>
+                          <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+                          <span style={{marginLeft:"8px",fontSize:"11px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
+                        </div>
+                        <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>{kw.syllabusText}</div>
                       </div>
-                      <div style={{color:"#e8eaf0",fontSize:"13px",marginBottom:"4px",fontFamily:"sans-serif"}}>Module {kw.module}: {kw.moduleTitle} · {kw.topicCode}</div>
-                      <div style={{color:"#e8eaf0",fontSize:"13px",lineHeight:"1.5"}}>{kw.syllabusText}</div>
-                    </div>
+                    ))}
                   </div>
-                </Card>
-              ))}
+                </div>
+              </Card>}
 
-              {/* B card */}
+              {/* B card — constraints */}
               {c.constraints?.length>0&&<Card bg="rgba(46,125,50,0.08)" border="rgba(46,125,50,0.3)">
                 <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0}}>B</div>
+                  <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>B</div>
                   <div style={{width:"100%"}}>
-                    <div style={{fontWeight:700,color:"#a5d6a7",fontSize:"15px",marginBottom:"8px"}}>Constraints &amp; Scope Words:</div>
+                    <div style={{fontWeight:700,color:"#a5d6a7",fontSize:"14px",marginBottom:"8px"}}>Constraints &amp; Scope Words:</div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:"8px"}}>
                       {c.constraints.map((ct,i)=><div key={i} style={{background:"rgba(46,125,50,0.12)",border:"2px solid #2e7d32",borderRadius:"6px",padding:"4px 12px"}}>
-                        <div style={{color:"#a5d6a7",fontWeight:700,fontSize:"14px"}}>{ct.text}</div>
+                        <div style={{color:"#a5d6a7",fontWeight:700,fontSize:"13px"}}>{ct.text}</div>
                         <div style={{color:"#81c784",fontSize:"11px",fontFamily:"sans-serif"}}>{ct.type?.replace(/_/g," ")}</div>
                       </div>)}
                     </div>
-                    {c.evidenceRequired&&<div style={{marginTop:"10px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"6px 12px",fontSize:"14px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
+                    {c.evidenceRequired&&<div style={{marginTop:"8px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"6px 12px",fontSize:"13px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
                   </div>
                 </div>
               </Card>}
