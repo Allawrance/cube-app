@@ -651,7 +651,7 @@ const getBand = (score, maxScore=20) => {
 
 const MODEL = "claude-sonnet-4-20250514"; // Stage 2 (markFullAnswer) only
 const HAIKU  = "claude-haiku-4-5-20251001";  // Stage 1 (analyse) — also scan + model answer
-const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycby7BleibkC0-NRxIe1TvzLllVFLpyN1IdXcHd_Byxd9uqwhxCHsGr_5rxXfuNOeoBzr/exec";
+const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycbzvahT3OtGBNoJ7-Qbpv_arrGXiONb47NLZxDwwxFTJoQd_iQSbTkPy6K5BbI6GWhH8/exec";
 const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbyj9dbw2_Fdh5zZF1NsWMfcN5T4dZHnYOH5cAIrXBcnV10L78xiZYcFm7tV7jQ8wIvk/exec";
 const SUBJECT_NAME    = "Earth & Environmental Science";
 const SUBJECT_CODE    = "EES";
@@ -3026,32 +3026,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     })}
                   </>;
                 })()}
-                {/* Photo always shown in Script tab so student can check their work */}
-                {pageB64&&<div style={{marginTop:"10px"}}>
-                  <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
-                  <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
-                </div>}
               </Card>}
 
-
-
-              {/* Response structure check */}
-              <Card bg="rgba(255,255,255,0.04)" border="rgba(255,255,255,0.1)">
-                <SectionTitle>RESPONSE STRUCTURE CHECK</SectionTitle>
-                <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>{a.responseStructure?.structureComment}</div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px"}}>
-                  {isExplain&&[
-                    [a.responseStructure?.hasCause,"Cause identified"],
-                    [a.responseStructure?.hasCausalConnective,"Causal connective used"],
-                    [a.responseStructure?.hasEffect,"Effect explained"],
-                  ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
-                  {isAssessEval&&[
-                    [a.responseStructure?.hasArgument1,"First argument (PRO / BENEFIT)"],
-                    [a.responseStructure?.hasArgument2OrCounterpoint,"Second argument (CON / LIMITATION)"],
-                    [a.responseStructure?.hasFinalJudgement,"IS / IS NOT judgement"],
-                  ].map(([ok,label],i)=><div key={i} style={{display:"flex",gap:"8px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#c8d8e8"}}>{label}</span></div>)}
-                </div>
-              </Card>
+              {/* Photo below the typed response */}
+              {pageB64&&<div style={{marginTop:"12px"}}>
+                <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
+                <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
+              </div>}
             </div>}
             </div>}
 
@@ -3201,26 +3182,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
               </Card>}
 
-              {/* ── Band 6 example — at very bottom so student reviews their work first ── */}
-              <div style={{marginTop:"8px",paddingTop:"16px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
-                {!modelAnswer&&<>
-                  <div style={{fontSize:"12px",color:"#9aabb8",fontFamily:"sans-serif",lineHeight:"1.5",marginBottom:"10px",textAlign:"center"}}>
-                    ✅ Once you've reviewed all your feedback above —
-                  </div>
-                  <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
-                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer — not to copy"}
-                  </button>
-                </>}
-                {modelAnswer&&<>
-                  <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
-                    ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
-                  </div>
-                  <PaperCard subtitle="">
-                    <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
-                  </PaperCard>
-                  <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
-                </>}
-              </div>
 
               {/* ── 3. Special check (connectives / argument structure) ── */}
               {a.specialCheck?.type!=="none"&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
@@ -3335,6 +3296,26 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   <div style={{marginTop:"8px",color:"#ffccbc",fontSize:"13px",fontFamily:"sans-serif",lineHeight:"1.6"}}>{a.specialCheck.assessEvalCheck.comment}</div>
                 </>}
               </Card>}
+              {/* ── Band 6 example — at very bottom so student reviews their work first ── */}
+              <div style={{marginTop:"8px",paddingTop:"16px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+                {!modelAnswer&&<>
+                  <div style={{fontSize:"12px",color:"#9aabb8",fontFamily:"sans-serif",lineHeight:"1.5",marginBottom:"10px",textAlign:"center"}}>
+                    ✅ Once you've reviewed all your feedback above —
+                  </div>
+                  <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
+                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer — not to copy"}
+                  </button>
+                </>}
+                {modelAnswer&&<>
+                  <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
+                    ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
+                  </div>
+                  <PaperCard subtitle="">
+                    <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
+                  </PaperCard>
+                  <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
+                </>}
+              </div>
 
 
             </div>}
