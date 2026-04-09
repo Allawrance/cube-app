@@ -1312,6 +1312,21 @@ LABEL QUALITY RULES:
 - targetStartIndex = character position of that word in the question string
 
 ════════════════════════════════════════
+STUDENT CUBE MARKING — SCORING RULES
+════════════════════════════════════════
+After generating the correct CUBE (directives, syllabusKeywords, constraints), look at what the student physically marked ON the question text with pen or pencil:
+
+SCORING (1 point each, report in studentCube):
+- circled[]: List words the student circled/ovaled. Award 1 point per directive verb correctly circled.
+- underlined[]: List words the student underlined. Award 1 point per syllabus keyword correctly underlined.
+- boxed[]: List words the student boxed. Award 1 point per constraint correctly boxed.
+- wavy[]: List words marked with wavy/zigzag line. Award 1 point per evidence/example word correctly marked.
+- score: total points earned by student (sum of correct marks above)
+- maxScore: total possible points (= dirs.length + kwds.length + constraints.length + evidenceRequired?1:0)
+- feedback: one sentence naming what they got right and what they missed
+- If you see NO handwritten marks on the question text, return empty arrays and score:0
+
+════════════════════════════════════════
 MULTI-DIRECTIVE QUESTIONS
 ════════════════════════════════════════
 If the question contains two directive verbs:
@@ -1324,7 +1339,15 @@ IMAGE INSTRUCTIONS
 ════════════════════════════════════════
 You will receive ONE image of a student's worksheet page.
 The question number to analyse will be specified in the user message. Ignore all other questions and answers.
-Read ONLY the printed/typed question text. DO NOT read or transcribe any handwritten student response.
+
+TWO READING TASKS:
+1. Read the printed/typed question text to generate the correct CUBE (directives, syllabusKeywords, constraints).
+2. Look at the SAME printed question text and identify any handwritten CUBE marks the student made ON the question:
+   - Circles or ovals drawn around a word = student circled a directive verb (C)
+   - Underlines drawn under a word = student underlined a syllabus keyword (U)
+   - Boxes or rectangles drawn around a word = student boxed a constraint (B)
+   - Wavy/zigzag lines under a word = student marked evidence/example (E)
+   DO NOT read the student's written answer below the question — only look at marks ON the question text itself.
 
 Return ONLY valid JSON (no markdown, no backticks, no extra text):
 {
@@ -1361,7 +1384,15 @@ Return ONLY valid JSON (no markdown, no backticks, no extra text):
     "evidenceRequired": false,
     "evidenceType": null
   },
-
+  "studentCube": {
+    "circled": ["directive verb the student circled on the question"],
+    "underlined": ["syllabus keyword the student underlined on the question"],
+    "boxed": ["constraint word the student boxed on the question"],
+    "wavy": ["evidence word marked with wavy/zigzag underline"],
+    "score": 0,
+    "maxScore": 0,
+    "feedback": "e.g. Correctly circled evaluate. Underlined technology correctly. Did not box named example."
+  }
 }`;
 }
 
@@ -2123,19 +2154,19 @@ function App() {
     } catch {}
   };
 
-  // Compute CUBE XP from parsed results
+  // Compute CUBE XP: student's score from their actual markings (from studentCube.score)
+  // maxCubeXP is computed separately from the question elements
   const computeCubeXP = (parsed) => {
+    // Student's actual earned XP = what they correctly circled/underlined/boxed
+    return parsed?.studentCube?.score ?? 0;
+  };
+  const computeMaxCubeXP = (parsed) => {
+    // Maximum possible XP = number of CUBE elements in the question
     const c = parsed?.phase1_cube;
     if (!c) return 0;
     const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
     const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : [];
-    const constraints = c.constraints || [];
-    const evidenceRequired = c.evidenceRequired;
-    let xp = dirs.length; // +1 per directive (C)
-    xp += kwds.length;    // +1 per syllabus point (U)
-    xp += constraints.length; // +1 per constraint (B)
-    if (evidenceRequired) xp += 1; // +1 if E applicable and noted
-    return xp;
+    return dirs.length + (kwds.length) + (c.constraints||[]).length + (c.evidenceRequired?1:0);
   };
   const [pageImg, setPageImg] = useState(null);
   const [pageB64, setPageB64] = useState(null);
@@ -2277,7 +2308,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         const dirs   = parsed?.phase1_cube?.directives || [];
         const marks  = parsed?.phase1_cube?.marks ?? null;
         const cxpVal = computeCubeXP(parsed);
-        const cmaxVal = dirs.length + kwds.length + (parsed?.phase1_cube?.constraints||[]).length + (parsed?.phase1_cube?.evidenceRequired?1:0);
+        const cmaxVal = computeMaxCubeXP(parsed);
         fetch(WEBHOOK_URL, {
           method: "POST", redirect: "follow",
           headers: { "Content-Type": "text/plain" },
@@ -2774,18 +2805,19 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 ))}
               </div>
 
-              {/* ── CUBE XP card — student score (top) + sample max (bottom) ── */}
+              {/* ── CUBE XP card — student CUBE marking score ── */}
               {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                {/* Row 1: student's actual CUBE XP from their annotations */}
+                {/* Row 1: student's actual CUBE marking score */}
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px"}}>
-                  <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px"}}>
-                    ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
+                  <div>
+                    <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>
+                      ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
+                    </div>
+                    {results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>{results.studentCube.feedback}</div>}
                   </div>
                   <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    {stage2Results
-                      ? <><span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{Math.min((stage2Results.annotationCheck||[]).length,6) + (stage2Results.annotationCheck||[]).filter(a=>a.used).length}</span><span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span></>
-                      : <span style={{fontSize:"13px",color:"#555",fontStyle:"italic"}}>— submit answer to score</span>
-                    }
+                    <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
+                    <span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span>
                   </div>
                 </div>
                 {/* Divider */}
@@ -2794,7 +2826,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
                   <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"20px",fontWeight:900,color:"#555"}}>{cubeXP}</span>
+                    <span style={{fontSize:"20px",fontWeight:900,color:"#555"}}>{results ? computeMaxCubeXP(results) : "—"}</span>
                     <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
                   </div>
                 </div>
