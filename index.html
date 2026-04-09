@@ -2781,7 +2781,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
             {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
-              <SectionTitle>STEP 1 — CUBE ANALYSIS</SectionTitle>
+              <SectionTitle>STEP 2 — CUBE ANALYSIS</SectionTitle>
 
               <SVGAnnotatedPaper
                 text={c.questionText}
@@ -2917,7 +2917,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
             {/* ═══ TAB: PLAN ═══ */}
             {activeTab==="plan"&&<div>
-              <SectionTitle>STEP 2 — ANSWER PLANNING</SectionTitle>
+              <SectionTitle>STEP 3 — ANSWER PLANNING</SectionTitle>
 
               {/* ── Locked banner when Stage 2 not yet run ── */}
               {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"18px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
@@ -3170,7 +3170,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
               </div>}
               {stage2Results&&<div>
-              <SectionTitle>STEPS 5–8 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
+              <SectionTitle>STEP 6 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
 
               {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
               {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
@@ -3484,7 +3484,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                         </div>
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
-                        <div style={{fontSize:"16px",fontWeight:900,color:"#a89fff"}}>{p.totalXP}</div>
+                        {isMe&&<div style={{fontSize:"9px",color:"#9aabb8",fontFamily:"sans-serif",marginBottom:"2px",whiteSpace:"nowrap"}}>Your total score</div>}
+                        <div style={{fontSize:isMe?"26px":"16px",fontWeight:900,color:"#a89fff",lineHeight:1}}>{p.totalXP}</div>
                         <div style={{fontSize:"9px",color:"#555"}}>XP</div>
                       </div>
                     </div>;
