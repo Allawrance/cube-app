@@ -2774,16 +2774,28 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 ))}
               </div>
 
-              {/* ── CUBE XP total card — shows max possible from question elements ── */}
+              {/* ── CUBE XP card — student score (top) + sample max (bottom) ── */}
               {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div>
-                    <div style={{fontSize:"14px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"3px"}}>⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in question</div>
-                    <div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>Your XP is based on your annotations below — submit your answer to see your score</div>
+                {/* Row 1: student's actual CUBE XP from their annotations */}
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px"}}>
+                  <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px"}}>
+                    ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
                   </div>
                   <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"30px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
-                    <span style={{fontSize:"12px",color:"#888"}}> max XP</span>
+                    {stage2Results
+                      ? <><span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{Math.min((stage2Results.annotationCheck||[]).length,6) + (stage2Results.annotationCheck||[]).filter(a=>a.used).length}</span><span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span></>
+                      : <span style={{fontSize:"13px",color:"#555",fontStyle:"italic"}}>— submit answer to score</span>
+                    }
+                  </div>
+                </div>
+                {/* Divider */}
+                <div style={{height:"1px",background:"rgba(108,99,255,0.2)",marginBottom:"10px"}}/>
+                {/* Row 2: sample answer max XP */}
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
+                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
+                    <span style={{fontSize:"20px",fontWeight:900,color:"#555"}}>{cubeXP}</span>
+                    <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
                   </div>
                 </div>
               </div>}
