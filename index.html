@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CUBE HSC Marking Coach — EES</title>
+  <title>CUBE HSC Marking Coach</title>
   <style>
   * { margin: 0; padding: 0; box-sizing: border-box; } body { background: #040d18; }
   .hide-mobile { display: inline; }
@@ -12,7 +12,6 @@
     .hide-mobile { display: none; }
     .show-mobile { display: inline; }
   }
-  /* Prevent Chrome autofill from overriding input background */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus {
@@ -20,7 +19,6 @@
     -webkit-text-fill-color: #f0e6c8 !important;
     transition: background-color 5000s ease-in-out 0s;
   }
-  /* Pulsing border on empty name field */
   @keyframes borderPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5); }
     50%       { box-shadow: 0 0 0 6px rgba(201,168,76,0.0); }
@@ -37,1374 +35,46 @@
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
 
-// ─── SYLLABUS DATABASE (04_EES_SYLLABUS_DATABASE.json) ───────────────────────
-// ─── SYLLABUS DATABASE (from ees.json — dot point text + keywords, strict NESA language only) ───
-const SYLLABUS = {
-  "5": {
-    "title": "Earth's Processes",
-    "topics": [
-      {
-        "code": "5-1",
-        "title": "Development of the Biosphere",
-        "dotPoints": [
-          {
-            "label": "5-1a",
-            "text": "Investigate evidence for the origin of organic molecules on the Earth, including Urey and Miller's experiments, communities around black smokers, and meteorites/panspermia"
-          },
-          {
-            "label": "5-1b",
-            "text": "Investigate the evidence for the development of photosynthetic life, including cyanobacteria and stromatolites"
-          },
-          {
-            "label": "5-1c",
-            "text": "Evaluate the evidence for the origin of multicellular life and resulting changes to ecosystems, for example the Ediacaran and Cambrian fauna"
-          },
-          {
-            "label": "5-1d",
-            "text": "Investigate the conquest of land by both plants and animals"
-          }
-        ],
-        "keywords": [
-          "organic molecules",
-          "Urey and Miller",
-          "black smokers",
-          "meteorites",
-          "panspermia",
-          "photosynthetic life",
-          "cyanobacteria",
-          "stromatolites",
-          "multicellular life",
-          "ecosystems",
-          "Ediacaran",
-          "Cambrian fauna",
-          "conquest of land"
-        ]
-      },
-      {
-        "code": "5-2",
-        "title": "Changes in the Geosphere, Atmosphere and Hydrosphere",
-        "dotPoints": [
-          {
-            "label": "5-2a",
-            "text": "Analyse the changes in the geosphere, atmosphere and hydrosphere that resulted from the development and evolution of the biosphere, including the effect of photosynthesising cyanobacteria on each of the spheres, and the role of oxygen in the production of banded iron formations"
-          }
-        ],
-        "keywords": [
-          "geosphere",
-          "atmosphere",
-          "hydrosphere",
-          "biosphere",
-          "cyanobacteria",
-          "oxygen",
-          "banded iron formations"
-        ]
-      },
-      {
-        "code": "5-3",
-        "title": "Plate Tectonic Supercycle",
-        "dotPoints": [
-          {
-            "label": "5-3a",
-            "text": "Model the plate tectonic supercycle"
-          },
-          {
-            "label": "5-3b",
-            "text": "Outline the effect of the plate tectonic supercycle on large-scale phenomena, including climate and evolution"
-          }
-        ],
-        "keywords": [
-          "plate tectonic supercycle",
-          "climate",
-          "evolution"
-        ]
-      },
-      {
-        "code": "5-4",
-        "title": "Fossil Formation and Stratigraphy",
-        "dotPoints": [
-          {
-            "label": "5-4a",
-            "text": "Investigate and model processes of fossil formation by examining a variety of methods in rock, including mould formations, cast formations, and trace fossils"
-          },
-          {
-            "label": "5-4b",
-            "text": "Discuss the significance of index fossils in generating a geological timescale"
-          },
-          {
-            "label": "5-4c",
-            "text": "Extrapolate how the principles of uniformitarianism and superposition as well as fossils and absolute dating can be used to date events of geological significance, for example the evolution of the Cambrian fauna and mass extinction events"
-          }
-        ],
-        "keywords": [
-          "fossil formation",
-          "mould",
-          "cast",
-          "trace fossils",
-          "index fossils",
-          "geological timescale",
-          "uniformitarianism",
-          "superposition",
-          "absolute dating",
-          "mass extinction",
-          "Cambrian fauna"
-        ]
-      }
-    ]
-  },
-  "6": {
-    "title": "Hazards",
-    "topics": [
-      {
-        "code": "6-1",
-        "title": "Geological Natural Disasters",
-        "dotPoints": [
-          {
-            "label": "6-1a",
-            "text": "Using data, predict the zones along which earthquakes and both effusive and explosive volcanic eruptions are likely to occur and relate these to plate boundaries"
-          },
-          {
-            "label": "6-1b",
-            "text": "Using secondary sources, investigate and model the changing depth of the focus of earthquakes at convergent and divergent boundaries"
-          },
-          {
-            "label": "6-1c",
-            "text": "Using secondary sources, investigate and explain the hazards associated with earthquakes, including ground motion and tsunamis"
-          },
-          {
-            "label": "6-1d",
-            "text": "Using secondary sources, investigate and explain the hazards associated with volcanoes, for example ash eruptions and lava flows, lahars and poisonous gas emissions"
-          },
-          {
-            "label": "6-1e",
-            "text": "Account for the types of magma in each of the above types of volcanoes, and analyse how this affects the explosivity of their eruptions"
-          },
-          {
-            "label": "6-1f",
-            "text": "Investigate the point at which a geological hazard becomes a disaster"
-          }
-        ],
-        "keywords": [
-          "earthquakes",
-          "effusive eruptions",
-          "explosive eruptions",
-          "plate boundaries",
-          "focus",
-          "convergent boundaries",
-          "divergent boundaries",
-          "ground motion",
-          "tsunamis",
-          "ash eruptions",
-          "lava flows",
-          "lahars",
-          "poisonous gas emissions",
-          "magma",
-          "explosivity",
-          "geological hazard",
-          "disaster"
-        ]
-      },
-      {
-        "code": "6-2",
-        "title": "Impact of Natural Disasters on the Biosphere",
-        "dotPoints": [
-          {
-            "label": "6-2a",
-            "text": "Using data from secondary sources, compare the eruptions that occur at explosive and effusive volcanoes in terms of the impact on the biosphere and atmosphere"
-          },
-          {
-            "label": "6-2b",
-            "text": "Analyse the effects of a major volcanic eruption on the atmosphere in terms of changing the climate, both warming and cooling"
-          },
-          {
-            "label": "6-2c",
-            "text": "In a case study, investigate one eruption that has had a significant effect on the biosphere and atmosphere and assess its impact, including but not limited to Mount Pinatubo"
-          },
-          {
-            "label": "6-2d",
-            "text": "Evaluate the causes and physical impact of climatic phenomena on a local ecosystem, including hailstorms, east coast lows, droughts or floods, and bushfires"
-          },
-          {
-            "label": "6-2e",
-            "text": "Investigate how human activities can contribute to the frequency and magnitude of some natural disasters, including droughts or floods, and bushfires and landslides"
-          }
-        ],
-        "keywords": [
-          "explosive volcanoes",
-          "effusive volcanoes",
-          "biosphere",
-          "atmosphere",
-          "volcanic eruption",
-          "climate",
-          "warming",
-          "cooling",
-          "eruption",
-          "Mount Pinatubo",
-          "climatic phenomena",
-          "local ecosystem",
-          "hailstorms",
-          "east coast lows",
-          "droughts",
-          "floods",
-          "bushfires",
-          "human activities",
-          "frequency",
-          "magnitude",
-          "natural disasters",
-          "landslides"
-        ]
-      },
-      {
-        "code": "6-3",
-        "title": "Prediction and Prevention of Natural Disasters",
-        "dotPoints": [
-          {
-            "label": "6-3a",
-            "text": "Using secondary sources, evaluate the effectiveness of technologies in predicting natural disasters, for example volcanoes: three-dimensional imaging, seismic data, early-warning systems, ground-movement data, analysis of historical data; earthquakes: ground movement detectors, anomalous animal behaviour, strain meters; east coast lows: temperatures, pressure systems"
-          },
-          {
-            "label": "6-3b",
-            "text": "Investigate and evaluate the technologies used to minimise the effect of natural disasters associated with volcanoes and earthquakes, including building codes, disaster warning systems and education"
-          },
-          {
-            "label": "6-3c",
-            "text": "Using secondary sources, assess the accuracy of technologies used in meteorology to predict and prevent damage to life and infrastructure as a result of natural weather events"
-          }
-        ],
-        "keywords": [
-          "technologies",
-          "predicting natural disasters",
-          "three-dimensional imaging",
-          "seismic data",
-          "early-warning systems",
-          "ground-movement data",
-          "historical data",
-          "ground movement detectors",
-          "anomalous animal behaviour",
-          "strain meters",
-          "temperatures",
-          "pressure systems",
-          "building codes",
-          "disaster warning systems",
-          "education",
-          "meteorology",
-          "infrastructure",
-          "natural weather events"
-        ]
-      }
-    ]
-  },
-  "7": {
-    "title": "Climate Science",
-    "topics": [
-      {
-        "code": "7-1",
-        "title": "Natural Processes of Variations in Climate",
-        "dotPoints": [
-          {
-            "label": "7-1a",
-            "text": "Use modelling to explain the causes of the natural greenhouse effect and examine the timescales in which changes occur"
-          },
-          {
-            "label": "7-1b",
-            "text": "Using secondary sources, assess the different causes of natural climate variation and the timescales in which changes occur, including the plate tectonic supercycle, massive volcanic eruptions in the Deccan and Siberian Traps, changes in the Earth's orbit around the Sun, and changes in ocean currents and ocean circulation"
-          }
-        ],
-        "keywords": [
-          "natural greenhouse effect",
-          "natural climate variation",
-          "timescales",
-          "plate tectonic supercycle",
-          "volcanic eruptions",
-          "Deccan Traps",
-          "Siberian Traps",
-          "Earth's orbit",
-          "ocean currents",
-          "ocean circulation"
-        ]
-      },
-      {
-        "code": "7-2",
-        "title": "Evidence for Climate Variation",
-        "dotPoints": [
-          {
-            "label": "7-2a",
-            "text": "Describe and discuss ancient evidence of variations in global temperature, including pollen grains in sedimentary rocks, changes in rock types, fossils and microfossils, and changing isotope ratios in rocks and deep sea sediments"
-          },
-          {
-            "label": "7-2b",
-            "text": "Identify and explain more recent evidence of climate variation, including ice cores containing gas bubbles and oxygen isotopes, dendrochronology, Aboriginal art sites showing now-extinct species and environments, human instrumental records, and isotope ratios shown in stalagmites, stalactites and corals"
-          }
-        ],
-        "keywords": [
-          "pollen grains",
-          "sedimentary rocks",
-          "rock types",
-          "fossils",
-          "microfossils",
-          "isotope ratios",
-          "deep sea sediments",
-          "ice cores",
-          "gas bubbles",
-          "oxygen isotopes",
-          "dendrochronology",
-          "Aboriginal art",
-          "instrumental records",
-          "stalagmites",
-          "stalactites",
-          "corals"
-        ]
-      },
-      {
-        "code": "7-3",
-        "title": "Influence of Human Activities on Changes to Climate",
-        "dotPoints": [
-          {
-            "label": "7-3a",
-            "text": "Distinguish between the natural greenhouse effect and any anthropogenic greenhouse effects"
-          },
-          {
-            "label": "7-3b",
-            "text": "Investigate any influence that human activities may have had on the environment since the Industrial Revolution, including increases in greenhouse gases and ocean acidification"
-          },
-          {
-            "label": "7-3c",
-            "text": "Investigate flow-on effects of changes to climate, including changing weather patterns, changes in glaciers, sea ice and ice sheets, and changing range of species due to rising sea level"
-          }
-        ],
-        "keywords": [
-          "natural greenhouse effect",
-          "anthropogenic",
-          "human activities",
-          "environment",
-          "Industrial Revolution",
-          "greenhouse gases",
-          "ocean acidification",
-          "weather patterns",
-          "glaciers",
-          "sea ice",
-          "ice sheets",
-          "sea level",
-          "species"
-        ]
-      },
-      {
-        "code": "7-4",
-        "title": "Mitigation and Adaptation Strategies",
-        "dotPoints": [
-          {
-            "label": "7-4a",
-            "text": "Investigate possible human-induced causes for the enhanced greenhouse effect, including the burning of fossil fuels for energy and land use and land cover change"
-          },
-          {
-            "label": "7-4b",
-            "text": "Investigate scientific evidence suggesting ways in which humans may assist to minimise any human contribution to the greenhouse effect in their daily lives"
-          },
-          {
-            "label": "7-4c",
-            "text": "Evaluate scientific evidence for the usefulness of a range of mitigation and adaptation strategies, including urban design and geo-engineering strategies, alternative energy sources, and using or changing agricultural practices including those of Aboriginal and Torres Strait Islander Peoples"
-          }
-        ],
-        "keywords": [
-          "enhanced greenhouse effect",
-          "fossil fuels",
-          "land use",
-          "land cover change",
-          "greenhouse effect",
-          "mitigation",
-          "adaptation",
-          "urban design",
-          "geo-engineering",
-          "alternative energy",
-          "agricultural practices",
-          "Aboriginal and Torres Strait Islander Peoples"
-        ]
-      }
-    ]
-  },
-  "8": {
-    "title": "Resource Management",
-    "topics": [
-      {
-        "code": "8-1",
-        "title": "Using Australia's Natural Resources",
-        "dotPoints": [
-          {
-            "label": "8-1a",
-            "text": "Identify Australian renewable resources and where they are located, including agricultural resources (terrestrial and aquatic), water, and energy sources"
-          },
-          {
-            "label": "8-1b",
-            "text": "Investigate how mining sites affect the environment, including Aboriginal cultural sites, and examine methods of reclamation of the environment after mining operations cease, including open-pit mining, underground mining methods, and offshore and onshore drilling"
-          },
-          {
-            "label": "8-1c",
-            "text": "Prepare a case study to investigate the involvement of traditional owners in the planning procedures, mining practices and restoration of damaged lands after mining operations cease"
-          },
-          {
-            "label": "8-1d",
-            "text": "Prepare a case study of an important Australian renewable or non-renewable resource, including how the resource is found, extracted and/or managed, how the resource is used, whether the resource can be extracted and/or used sustainably, and the past, present and future use and importance of the resource"
-          }
-        ],
-        "keywords": [
-          "renewable resources",
-          "Australia",
-          "agricultural resources",
-          "water",
-          "energy sources",
-          "mining",
-          "environment",
-          "Aboriginal cultural sites",
-          "reclamation",
-          "open-pit mining",
-          "underground mining",
-          "offshore drilling",
-          "onshore drilling",
-          "traditional owners",
-          "planning procedures",
-          "mining practices",
-          "restoration",
-          "renewable resource",
-          "non-renewable resource",
-          "sustainably"
-        ]
-      },
-      {
-        "code": "8-2",
-        "title": "Waste Management",
-        "dotPoints": [
-          {
-            "label": "8-2a",
-            "text": "Conduct a practical investigation of the composition of household or organisational waste"
-          },
-          {
-            "label": "8-2b",
-            "text": "Outline the management options for different types of solid waste"
-          },
-          {
-            "label": "8-2c",
-            "text": "Evaluate the sustainability of a named waste management option, for example energy used to produce and/or recycle the waste, environmental impact of waste disposal, space for disposal or storage of waste, local waste management facilities, and demand for reused or recycled waste"
-          }
-        ],
-        "keywords": [
-          "composition",
-          "household waste",
-          "organisational waste",
-          "management options",
-          "solid waste",
-          "sustainability",
-          "waste management",
-          "recycle",
-          "environmental impact",
-          "disposal",
-          "waste management facilities"
-        ]
-      },
-      {
-        "code": "8-3",
-        "title": "Sustainability",
-        "dotPoints": [
-          {
-            "label": "8-3a",
-            "text": "Investigate different definitions of sustainability and the rationales that underpin those definitions"
-          },
-          {
-            "label": "8-3b",
-            "text": "Investigate human activities that affect sustainability, including overharvesting, water pollution, and habitat removal or destruction"
-          },
-          {
-            "label": "8-3c",
-            "text": "Investigate the processes used by Aboriginal and Torres Strait Islander Peoples as sustainable resource managers, for example cultural traditions that preserve Country and Place, ongoing engagement with land councils, national parks and municipal councils, and legislation and actions to protect significant areas of Country and Place"
-          },
-          {
-            "label": "8-3d",
-            "text": "Research and present information about a sustainability initiative in their community"
-          }
-        ],
-        "keywords": [
-          "sustainability",
-          "definitions",
-          "rationale",
-          "human activities",
-          "overharvesting",
-          "water pollution",
-          "habitat removal",
-          "habitat destruction",
-          "Aboriginal and Torres Strait Islander Peoples",
-          "Country",
-          "Place",
-          "land councils",
-          "national parks",
-          "municipal councils",
-          "legislation",
-          "community"
-        ]
-      }
-    ]
+// ─── CONFIG — loaded from config.json at startup ──────────────────────────────
+// config.json lives in the same directory as index.html (one per subject repo).
+// It contains: subjectCode, subjectName, syllabus, bandRules, leaderboardUrl,
+//              sheetTabCube, sheetTabFull, leaderboardTip, directiveTiers, connectives
+// This index.html is subject-agnostic — do not add subject-specific logic here.
+let config = {
+  subjectCode: "EES",
+  subjectName: "Earth & Environmental Science",
+  subjectShortName: "EES",
+  leaderboardTip: "",
+  leaderboardUrl: "",
+  sheetTabCube: "EES CUBE",
+  sheetTabFull: "EES FULL",
+  syllabus: {},
+  bandRules: {},
+  directiveTiers: {},
+  connectives: { preferred:["so","because","but"], accepted:[], contrast:[] },
+};
+
+// Load config.json from same directory — runs once before React mounts
+async function loadConfig() {
+  try {
+    const res = await fetch("./config.json?v=" + Date.now());
+    if (!res.ok) throw new Error("config.json not found (HTTP " + res.status + ")");
+    const data = await res.json();
+    config = { ...config, ...data };
+    console.log("✅ Config loaded:", config.subjectCode, config.subjectName);
+  } catch(e) {
+    console.error("❌ Failed to load config.json:", e.message);
   }
-};
+}
 
-// ─── DIRECTIVE VERBS (06_QUESTION_INTERPRETER_ENGINE.docx) ───────────────────
-// ─── DIRECTIVE VERB LIBRARY ──────────────────────────────────────────────────
-// Source: 08_HSC_DIRECTIVE_LIBRARY.json — merged with CUBE tier system
-// Each entry: meaning (student task), requiresCausal, requiresJudgement, modality,
-//             responseStructure (what the answer needs), rubricFocus
-const DIRECTIVES = {
-  // ── TIER 1 — Recall / Listing (no causal required) ───────────────────────
-  list:       { meaning:"Give a series of brief points or examples. Naming only — no explanation required.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["dot-point items named"], rubricFocus:[] },
-  name:       { meaning:"Give the specific name — one or a few words.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["correct term"], rubricFocus:[] },
-  state:      { meaning:"Give a specific fact, rule or value concisely.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["fact or value"], rubricFocus:[] },
-  identify:   { meaning:"Recognise and name the correct concept, feature, or example.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["correct term or concept"], rubricFocus:[] },
-  define:     { meaning:"State the meaning and identify essential qualities.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["meaning","essential qualities"], rubricFocus:[] },
-  calculate:  { meaning:"Use mathematical procedures to determine a numerical answer.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["correct formula","substitution of values","calculation","final answer with units"],
-                rubricFocus:["logical_flow"] },
-  // ── TIER 2 — Description / Comparison (no causal required) ───────────────
-  describe:   { meaning:"Provide the key features or characteristics of a concept and explain the function or role of those features.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["identify feature","state what the feature does (function or role)"],
-                rubricFocus:["complex_noun_groups","logical_flow"] },
-  outline:    { meaning:"Provide the main features or general principles of a concept.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["key points","brief explanation"],
-                rubricFocus:["logical_flow"] },
-  compare:    { meaning:"Show similarities AND differences between two or more concepts.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["identify similarity","identify difference"],
-                rubricFocus:["logical_flow"] },
-  contrast:   { meaning:"Show differences between two or more concepts.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["identify distinguishing feature","explain difference"],
-                rubricFocus:["logical_flow"] },
-  construct:  { meaning:"Draw, make or build — produce a diagram, table or graph.",
-                requiresJudgement:false, requiresCausal:false, modality:"ignore",
-                responseStructure:["correct diagram or table"], rubricFocus:["logical_flow"] },
-  // ── TIER 3 — Reasoning (causal connectives required) ────────────────────
-  predict:    { meaning:"Suggest what may happen based on available information.",
-                requiresJudgement:false, requiresCausal:true, modality:"ignore",
-                responseStructure:["prediction","reasoning"], rubricFocus:["causal_connectives","logical_flow"] },
-  suggest:    { meaning:"Propose a possible reason or course of action.",
-                requiresJudgement:false, requiresCausal:true, modality:"ignore",
-                responseStructure:["proposal","reasoning"], rubricFocus:["causal_connectives","logical_flow"] },
-  explain:    { meaning:"Provide cause-and-effect reasoning showing how or why something occurs. USE: SO, BECAUSE, BUT (preferred) or: as a result, therefore, thus, hence, consequently.",
-                requiresJudgement:false, requiresCausal:true,  modality:"ignore",
-                preferredConnectives:["because","so","but"],
-                responseStructure:["cause","causal connective","effect"],
-                rubricFocus:["causal_connectives","logical_flow"] },
-  analyse:    { meaning:"Identify components of an issue or concept and explain the relationships between them.",
-                requiresJudgement:false, requiresCausal:true,  modality:"optional",
-                responseStructure:["identify components","explain relationships or interactions","describe resulting effect or implication"],
-                rubricFocus:["logical_flow","causal_connectives"] },
-  discuss:    { meaning:"Present arguments or information about a topic and consider different perspectives.",
-                requiresJudgement:false, requiresCausal:true,  modality:"optional",
-                responseStructure:["multiple points or perspectives","supporting explanation","possible conclusion"],
-                rubricFocus:["logical_flow","causal_connectives"] },
-  // ── TIER 4 — Evaluative (causal + judgement required) ───────────────────
-  justify:    { meaning:"Support a decision or conclusion using evidence and reasoning.",
-                requiresJudgement:true,  requiresCausal:true,  modality:"optional",
-                responseStructure:["clear claim","supporting evidence","reasoning linking evidence to claim"],
-                rubricFocus:["logical_flow","causal_connectives"] },
-  assess:     { meaning:"Make a judgement about the value, effectiveness, or significance of something by weighing arguments. Final sentence must state whether the claim IS or IS NOT effective/significant/appropriate.",
-                requiresJudgement:true,  requiresCausal:true,  modality:"required",
-                judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
-                responseStructure:["argument supporting the claim","counterargument or limitation","final judgement"],
-                rubricFocus:["modality","logical_flow","causal_connectives"] },
-  evaluate:   { meaning:"Make a judgement about the value, effectiveness, or significance of something based on evidence and reasoning. Must have PRO, CON and IS/IS NOT.",
-                requiresJudgement:true,  requiresCausal:true,  modality:"required",
-                judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
-                responseStructure:["argument supporting the claim","counterargument","final judgement"],
-                rubricFocus:["modality","logical_flow","causal_connectives"] },
-  "critically evaluate": {
-                meaning:"Weigh ALL aspects; make a judgement based on strengths AND weaknesses. Highest-order response. Must include multiple PRO and CON with IS/IS NOT.",
-                requiresJudgement:true,  requiresCausal:true,  modality:"required",
-                judgementRequirement:"Final sentence must state whether the claim IS or IS NOT effective, significant, or appropriate.",
-                responseStructure:["multiple arguments for","multiple arguments against","weighted final judgement"],
-                rubricFocus:["modality","logical_flow","causal_connectives"] },
-};
-
-// ─── CAUSAL CONNECTIVES ──────────────────────────────────────────────────────
-// Preferred (SO, BECAUSE, BUT) score higher — full credit.
-// Accepted alternatives score but with a note to use the preferred forms.
-const CONNECTIVES = {
-  preferred: ["so", "because", "but"],
-  accepted:  ["as a result", "therefore", "thus", "hence", "consequently",
-              "which means", "this causes", "leading to", "resulting in",
-              "due to", "since", "however", "although", "yet"],
-};
-
+// ─── CONSTANTS (subject-independent) ─────────────────────────────────────────
 const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"],[18,20,"Band 6"]];
-// Scale score to /20 equivalent before band lookup
 const getBand = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
 };
 
-const MODEL = "claude-sonnet-4-20250514"; // Stage 2 (markFullAnswer) only
-const HAIKU  = "claude-haiku-4-5-20251001";  // Stage 1 (analyse) — also scan + model answer
-const WEBHOOK_URL     = "https://script.google.com/macros/s/AKfycbwLZRvVWCm4La32lFgGnp5DtUBbDYX7Bgbmi4SRDEVom9yZ-_pXL72ipjTxUW7RNzQk/exec";
-// ⚠️  DATA NOT WRITING TO EES CUBE / EES FULL?
-// This URL points to the OLD LogWebhook deployment.
-// FIX: In Apps Script → Deploy → Manage deployments → click ✏️ on the deployment
-// that has the URL above → change Version to "New version" → Deploy.
-// This updates the OLD URL to run the new LogWebhook v7 code.
-// No change to index.html needed after that.
-const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbyj9dbw2_Fdh5zZF1NsWMfcN5T4dZHnYOH5cAIrXBcnV10L78xiZYcFm7tV7jQ8wIvk/exec";
-const SUBJECT_NAME    = "Earth & Environmental Science";
-const SUBJECT_CODE    = "EES";
-
-// ─── NESA BAND RESPONSE GENERATOR RULES ─────────────────────────────────────
-const BAND_RULES = {
-  "file_name": "10_BAND_RESPONSE_GENERATOR_RULES.json",
-  "course": "NSW HSC Earth and Environmental Science",
-  "purpose": "Rules for generating model responses aligned to HSC performance band expectations.",
-  "global_rules": {
-    "always": [
-      "Align all content to the NSW HSC Earth and Environmental Science syllabus.",
-      "Answer the directive verb exactly as asked.",
-      "Use scientifically accurate terminology.",
-      "Keep all claims relevant to the question and stimulus.",
-      "Do not include content beyond syllabus requirements for full marks unless it directly improves clarity without changing the expected standard.",
-      "Prefer cause-and-effect explanations where relevant.",
-      "Use examples only when they strengthen the answer.",
-      "Avoid vague phrases such as 'things', 'stuff', 'it affects the Earth a lot'."
-    ],
-    "directive_rules": {
-      "identify": [
-        "Name the required feature, process, example, or component.",
-        "Do not explain unless the question demands it."
-      ],
-      "outline": [
-        "Provide the main features or general idea.",
-        "Keep detail limited but accurate."
-      ],
-      "describe": [
-        "State relevant characteristics and what they do or show.",
-        "Include features and function where appropriate."
-      ],
-      "explain": [
-        "Show cause and effect clearly.",
-        "Link ideas using explicit scientific reasoning."
-      ],
-      "analyse": [
-        "Break the concept into parts.",
-        "Show relationships, patterns, or causes and effects.",
-        "Use evidence, data, or examples where available."
-      ],
-      "assess": [
-        "Make a judgement based on strengths and limitations.",
-        "Support the judgement with evidence."
-      ],
-      "evaluate": [
-        "Judge overall value, usefulness, effectiveness, or significance.",
-        "Include strengths, limitations, and a clear final judgement."
-      ],
-      "justify": [
-        "Give reasons that support a conclusion or choice.",
-        "Make the conclusion explicit."
-      ],
-      "compare": [
-        "Show similarities and differences."
-      ],
-      "contrast": [
-        "Focus on differences."
-      ],
-      "account": [
-        "Give reasons for why something occurs."
-      ],
-      "predict": [
-        "State the most likely future outcome based on scientific evidence, trends, or principles."
-      ]
-    },
-    "stimulus_rules": [
-      "If a graph, table, map, diagram, or data is provided, directly refer to it.",
-      "Use exact trends, patterns, or features from the stimulus where possible.",
-      "Do not ignore the stimulus in higher-mark questions."
-    ]
-  },
-  "band_rules": {
-    "Band6": {
-      "nesa_descriptor": "Demonstrates extensive knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding succinctly and consistently using correct and precise scientific terms in a variety of formats and contexts. Designs investigations to obtain accurate, reliable and valid data, evaluating and mitigating risks and making modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships, explain phenomena and make predictions. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose comprehensive solutions or explanations for scientific issues or scenarios.",
-      "knowledge_standard": "Extensive knowledge and understanding of scientific concepts, including complex and abstract ideas.",
-      "must_include": [
-        "Accurate and precise scientific terminology used consistently.",
-        "Logical and coherent sequencing of ideas.",
-        "Explicit causal links where relevant.",
-        "Relevant examples, evidence, or data integrated into the response.",
-        "Clear interpretation of trends, patterns, relationships, or processes from data or stimulus.",
-        "Explanation of phenomena and prediction of outcomes where required.",
-        "Application to unfamiliar situations with comprehensive solutions or explanations.",
-        "A direct, well-supported judgement for assess/evaluate/justify questions.",
-        "For investigations: consideration of accuracy, reliability, validity, risk mitigation, and evidence-based modifications."
-      ],
-      "style_rules": [
-        "Communicate succinctly and consistently \u2014 avoid padding.",
-        "Integrate multiple ideas rather than listing disconnected facts.",
-        "Link mechanisms to outcomes and consequences.",
-        "Where relevant, move from process to consequence to significance.",
-        "Represent data and understanding across a variety of formats and contexts where required."
-      ],
-      "avoid": [
-        "Generic statements without mechanism.",
-        "Overly long introductions.",
-        "Definitions that replace explanation.",
-        "Irrelevant background information.",
-        "Word count inflation without additional scientific depth."
-      ],
-      "minimum_response_features": {
-        "short_response_2_3_marks": [
-          "Directly answer the question in the first sentence.",
-          "Include at least one explicit scientific link or mechanism."
-        ],
-        "mid_response_4_6_marks": [
-          "Include multiple linked scientific points.",
-          "Use evidence, examples, or data if available.",
-          "Maintain clear structure."
-        ],
-        "extended_response_7_plus_marks": [
-          "Use a deliberate structure.",
-          "Sustain depth throughout the response.",
-          "Integrate evidence, terminology, and judgement.",
-          "Address all parts of the question."
-        ]
-      }
-    },
-    "Band5": {
-      "nesa_descriptor": "Demonstrates thorough knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding logically and effectively using correct scientific terms in a variety of formats and contexts. Designs investigations to obtain reliable and valid data, evaluating and mitigating risks and making some modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose explanations for scientific issues or scenarios.",
-      "knowledge_standard": "Thorough knowledge and understanding of scientific concepts, including complex and abstract ideas, but less extensive or precise than Band 6.",
-      "must_include": [
-        "Correct scientific terminology used logically and effectively.",
-        "Clear explanation of key concepts with mostly sound reasoning.",
-        "Interpretation of data to derive trends, patterns, or relationships.",
-        "Application to unfamiliar situations to propose explanations (but less comprehensive than Band 6).",
-        "Relevant example or evidence where useful.",
-        "For investigations: consideration of reliability, validity, and risk, with some modifications in response to evidence."
-      ],
-      "style_rules": [
-        "Communicate logically and effectively across a variety of formats.",
-        "Explain clearly with sound detail.",
-        "May be less integrated, less precise, or less succinctly expressed than Band 6."
-      ],
-      "avoid": [
-        "Major omissions in reasoning.",
-        "Significant scientific errors.",
-        "Ignoring the stimulus or data where provided."
-      ]
-    },
-    "Band4": {
-      "nesa_descriptor": "Demonstrates sound knowledge and understanding of scientific concepts. Communicates scientific understanding effectively using scientific terms. Designs and plans investigations to obtain data, and evaluates risks. Processes, interprets and represents data using a range of scientific formats. Identifies scientific problems, questions or hypotheses and applies processes to primary or secondary data. Applies knowledge and information relevant to scientific issues or scenarios.",
-      "knowledge_standard": "Sound knowledge and understanding of scientific concepts, without the depth or complexity of Band 5 or 6.",
-      "must_include": [
-        "Correct scientific terminology used effectively.",
-        "Clear explanation of core concepts.",
-        "Processing and interpretation of data using scientific formats.",
-        "Identification of scientific problems or hypotheses with application to data.",
-        "Application of knowledge to relevant scientific issues or scenarios.",
-        "For investigations: design and planning to obtain data, with risk evaluation."
-      ],
-      "style_rules": [
-        "Communicate effectively using scientific terms.",
-        "Focus on correct core ideas.",
-        "May be less detailed, less precise, or less well linked than Band 5 or 6.",
-        "Interpretation present but may lack depth or connection to broader concepts."
-      ],
-      "avoid": [
-        "Unsupported broad claims.",
-        "Confusing or poorly sequenced explanations.",
-        "Ignoring data or stimulus provided."
-      ]
-    },
-    "Band3": {
-      "nesa_descriptor": "Demonstrates basic knowledge and understanding of scientific concepts. Communicates scientific understanding using basic scientific terms. Implements scientific processes to obtain data, and identifies risks. Processes primary or secondary data, and represents it using scientific formats. Responds to scientific problems, questions, or hypotheses. Recalls scientific knowledge and information.",
-      "knowledge_standard": "Basic knowledge and understanding of scientific concepts, with limited depth or connection between ideas.",
-      "must_include": [
-        "Some correct scientific facts or knowledge.",
-        "Basic scientific terms used, though not always precisely.",
-        "Simple response to a scientific problem, question, or hypothesis.",
-        "Basic processing or representation of primary or secondary data.",
-        "Recall of relevant scientific knowledge or information.",
-        "For investigations: implementation of processes and identification of risks."
-      ],
-      "style_rules": [
-        "Short, straightforward, and mostly descriptive.",
-        "Communication is simple and may lack precision."
-      ],
-      "avoid": [
-        "Large sections of irrelevant material.",
-        "Invented or incorrect science presented as fact."
-      ]
-    },
-    "Band2": {
-      "nesa_descriptor": "Demonstrates limited knowledge and understanding of scientific concepts. Communicates scientific understanding using limited scientific terms. Partially outlines investigations to obtain data and information. Provides simple descriptions of scientific phenomena. Recalls basic scientific knowledge and information.",
-      "knowledge_standard": "Limited knowledge and understanding; responses are partial, underdeveloped, and mostly descriptive.",
-      "must_include": [
-        "A few isolated correct ideas or basic facts.",
-        "Very limited use of scientific language.",
-        "Simple descriptions of scientific phenomena.",
-        "Recall of basic scientific knowledge or information.",
-        "For investigations: partial outline only."
-      ],
-      "style_rules": [
-        "Partial and underdeveloped.",
-        "Communication is minimal and uses limited scientific terms."
-      ],
-      "avoid": [
-        "Invented or incorrect scientific claims.",
-        "Presenting Band 2 as a complete or adequate response."
-      ]
-    },
-    "Band1": {
-      "nesa_descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
-      "knowledge_standard": "Does not demonstrate the minimum expected standard.",
-      "must_include": [
-        "No generation target. Used only as a fallback classification label for wholly inadequate responses."
-      ]
-    }
-  },
-  "question_type_rules": {
-    "calculation": {
-      "must_include": [
-        "Formula or method used.",
-        "Substitution of values.",
-        "Working shown clearly.",
-        "Final answer with correct unit.",
-        "Reasonable significant figures where appropriate."
-      ]
-    },
-    "practical_investigation": {
-      "must_include": [
-        "Independent variable.",
-        "Dependent variable.",
-        "Controlled variables.",
-        "Method steps in logical order.",
-        "Reference to reliability, accuracy, validity, and risk where relevant."
-      ]
-    },
-    "data_interpretation": {
-      "must_include": [
-        "Quote or paraphrase the main trend, pattern, or anomaly.",
-        "Use comparative language such as increase, decrease, peak, lower, higher, fluctuates.",
-        "Link the pattern to scientific concepts.",
-        "Do not merely restate the graph without interpretation."
-      ]
-    },
-    "extended_response": {
-      "must_include": [
-        "Opening sentence that addresses the question directly.",
-        "Body paragraphs organised by concept or argument.",
-        "Concluding sentence with judgement if required."
-      ]
-    }
-  },
-  "generation_templates": {
-    "Band6_explain": [
-      "State the key scientific process or concept.",
-      "Explain the mechanism using precise terminology.",
-      "Link cause to effect explicitly.",
-      "State the resulting consequence, significance, or broader Earth system impact."
-    ],
-    "Band6_analyse": [
-      "Identify the major components or factors.",
-      "Show how they interact or relate.",
-      "Interpret any trend, pattern, relationship, or evidence.",
-      "Link these relationships back to the question."
-    ],
-    "Band6_evaluate": [
-      "State the issue, strategy, technology, or process being evaluated.",
-      "Explain at least one strength with evidence.",
-      "Explain at least one limitation with evidence.",
-      "Make a clear final judgement using phrases such as 'overall', 'therefore', or 'this is effective to a large extent'."
-    ],
-    "Band6_assess": [
-      "State the issue and the criteria for judgement.",
-      "Discuss positive aspects and negative aspects.",
-      "Use evidence or examples.",
-      "Conclude with a balanced but definite judgement."
-    ],
-    "Band6_justify": [
-      "State the chosen option or conclusion clearly.",
-      "Give scientific reasons supporting it.",
-      "Link each reason back to the question.",
-      "Finish with a sentence that confirms why the judgement is valid."
-    ]
-  },
-  "quality_checks": {
-    "before_output": [
-      "Has the directive verb been answered correctly?",
-      "Has every part of the question been addressed?",
-      "Is the scientific content syllabus-aligned?",
-      "Is the terminology appropriate to the target band?",
-      "Are the causal links or relationships clear?",
-      "Has the stimulus been used where relevant?",
-      "Has a judgement been made when required?",
-      "Has irrelevant information been removed?"
-    ],
-    "band6_checklist": [
-      "Precise scientific terminology used consistently.",
-      "Multiple linked concepts included.",
-      "Mechanisms explained, not just stated.",
-      "Evidence, examples, or data integrated.",
-      "Response is coherent and logically sequenced.",
-      "Judgement is explicit if required by the question."
-    ]
-  },
-  "output_controls": {
-    "target_band_selection_rule": {
-      "Band6": "Generate with extensive precision, integrated reasoning across complex and abstract ideas, evidence, prediction, and strong judgement. Responses must be succinct and consistently use precise scientific terminology.",
-      "Band5": "Generate with thorough, logically sound explanation and clear terminology. Slightly less integrated or precise than Band 6; applies to unfamiliar situations but with less comprehensiveness.",
-      "Band4": "Generate with sound core content, effective use of scientific terms, and clear structure. Interpret data and apply knowledge to relevant scenarios, but with reduced depth and sophistication.",
-      "Band3": "Generate basic, mostly descriptive responses using simple scientific terms. Recall facts and respond simply to problems. Limited explanation and basic data processing only.",
-      "Band2": "Generate very simple, partial, and underdeveloped responses using minimal scientific language. Simple descriptions and basic recall only.",
-      "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
-    },
-    "forbidden_behaviours": [
-      "Do not generate Band 6 responses by merely increasing word count.",
-      "Do not add irrelevant advanced content to imitate sophistication.",
-      "Do not ignore the syllabus or stimulus.",
-      "Do not use vague judgements such as 'it is good' without criteria."
-    ]
-  }
-};
-
-// ─── MASTER AI PROMPT ────────────────────────────────────────────────────────
-function buildSystemPrompt(syllabusJSON) {
-  return `You are an expert NSW HSC Earth and Environmental Science teacher and examiner.
-You apply the CUBE literacy strategy with PRECISE annotation rules, and mark student responses using a detailed rubric.
-
-⚠️ GLOBAL RULE — ILLEGIBLE HANDWRITING:
-When transcribing student handwriting in studentResponseText and formattedResponse:
-- Every single word that you CANNOT read clearly MUST be written as [?]
-- Do NOT leave blank spaces where a word should be
-- Do NOT skip words
-- [?] must appear in BOTH studentResponseText AND formattedResponse
-- Example of correct transcription: "The [?] erupted causing [?] to spread into the [?]"
-- Example of WRONG transcription: "The      erupted causing      to spread into the     " ← NEVER do this
-
-SYLLABUS DATABASE:
-${JSON.stringify(syllabusJSON, null, 2)}
-
-SYLLABUS USAGE NOTES:
-- Each topic has a "keywords" array — these are the EXACT NESA syllabus terms students can be examined on
-- Each topic has "dotPoints" — the exact NESA dot point wording for that topic
-- When matching a question keyword, return the matching dotPoint "text" as syllabusText in your JSON
-- Only underline words that appear in the keywords array — do not add terms from outside the syllabus
-
-DIRECTIVE VERBS AND RULES:
-${JSON.stringify(DIRECTIVES, null, 2)}
-
-CAUSAL CONNECTIVES:
-${JSON.stringify(CONNECTIVES, null, 2)}
-
-CONNECTIVE SCORING RULE:
-- Preferred connectives (SO, BECAUSE, BUT) — award full credit
-- Accepted alternatives (as a result, therefore, thus, hence, consequently, however, although, since, as, yet, etc.) — award FULL credit. These are equally valid HSC connectives. Only add a brief tip in the comment suggesting SO/BECAUSE/BUT as a stylistic alternative, not as a correction.
-- When detecting connectives in the student response, recognise BOTH preferred and accepted forms
-- In the specialCheck.explainCheck, hasSO/hasBECAUSE/hasBUT refers to preferred forms only; also report acceptedConnectivesFound separately
-
-════════════════════════════════════════
-CUBE ANNOTATION RULES — READ CAREFULLY
-════════════════════════════════════════
-
-C — CIRCLE (directive verbs)
-- Detect ALL directive verbs in the question. Many questions have TWO (e.g. "Identify... and explain...").
-- Circle ONLY the verb word(s) themselves — not surrounding words.
-- Example: "Identify which gases impact" → circle only "Identify"
-- Example: "Explain how the P and S waves can be used" → circle only "Explain"
-- If there are two directives, return BOTH in the directives array.
-- For each directive, record its exact startIndex in the question string.
-
-U — UNDERLINE (syllabus keywords ONLY)
-- Underline ONLY the specific noun keyword(s) from the matching syllabus dot point.
-- Do NOT underline whole clauses, phrases, or sentences.
-- Do NOT underline verbs, connectives, or generic words.
-- Match against the syllabus database keywords list for the relevant dot point.
-- Example: question mentions "gas(es)" and "climate" matching M7-1 or M6-2 → underline "gas(es)" and "climate" SEPARATELY as two underline annotations.
-- Example: question mentions "supercontinent cycle" → underline only "supercontinent cycle"
-- If there are multiple syllabus keywords in the question, return one underline annotation per keyword.
-
-⚠️ ANNOTATION PRIORITY RULE — ONE ANNOTATION PER WORD:
-Each word or phrase in the question can receive ONLY ONE annotation. Never annotate the same word twice.
-Priority order (highest wins):
-  1. C — CIRCLE: directive verbs always take priority
-  2. U — UNDERLINE: syllabus keywords (if not already circled)
-  3. B — BOX: constraints/scope words (if not already circled or underlined)
-Example: "cooling" is both a syllabus keyword AND a causal direction word → UNDERLINE only (keyword wins over constraint).
-Example: "Identify" is a directive AND could be a verb → CIRCLE only.
-Do NOT add the same word to both syllabusKeywords and constraints arrays.
-
-B — BOX (constraints — be generous, box anything that limits the scope)
-- Box ALL of the following types of words/phrases:
-  1. Evidence/method constraints: "using an example", "using a diagram", "using data", "with reference to", "using the stimulus"
-  2. Scope constraints: number words ("two ways", "three reasons"), time periods, named locations
-  3. Causal/directional constraint words: "impact", "effect", "change", "increase", "decrease", "cause", "result"  
-     — these tell the student WHICH direction the answer must go, so they MUST be boxed
-  4. Named organisms, processes, or events that constrain the topic: "P waves", "S waves", "cyanobacteria", "Veevers"
-- Box the EXACT word or short phrase only — not the surrounding clause.
-- NEVER box single prepositions or articles standing alone (to, on, the, a, an, of, in, at, by, for). These are not constraints.
-- Example: "Identify which gas(es) impact on the climate to cool it. Draw a picture to explain?"
-  → Box: "impact", "cool", "Draw a picture" (diagram required)
-- NEVER leave causal/directional words unboxed.
-
-E — EVIDENCE ARROWS (planning tab only)
-- For each boxed constraint and each directive, generate a planning arrow.
-- targetWord = the exact word from the question being annotated
-- label = a SPECIFIC, CONTENT-RICH answer note — NOT a generic instruction.
-  - For an IDENTIFY directive: write the ACTUAL scientific answer (e.g. "SO₂ / sulfur dioxide" not "name the gas")
-  - For an EXPLAIN directive: write the ACTUAL causal mechanism in brief (e.g. "SO₂→aerosols→reflects sunlight" not "cause + SO/BECAUSE")
-  - For a causal_directional constraint (e.g. "cool"): write WHAT causes that direction (e.g. "aerosols block solar radiation")
-  - For a diagram constraint: write what the diagram must show (e.g. "volcano→stratosphere→aerosols→↓temp")
-  - For scope/number constraints: write the specific content required
-  - Labels may be up to 6 words — be specific and scientific, not procedural
-- targetStartIndex = character position of that word in the question string
-
-════════════════════════════════════════
-MULTI-DIRECTIVE QUESTIONS
-════════════════════════════════════════
-If the question contains two directive verbs (e.g. "Identify X and explain Y"):
-- Return ALL directives in the directives array (not just one).
-- The primary directive is the one that determines rubric scoring and modality rules.
-- The secondary directive adds an extra structure requirement to the response.
-- writingScaffold must address BOTH directives in sequence.
-
-════════════════════════════════════════
-RUBRIC SCORING (0–5 each)
-════════════════════════════════════════
-
-DIRECTIVE VERB TIERS — CRITICAL RULES:
-
-TIER 1 — RECALL/LISTING (list, name, state, identify, define):
-- NO causal connectives required — student is only naming/listing items
-- causalConnectives: set applicable=false AND score=0 in the JSON — this displays as "Not applicable for this directive verb"
-- modality: set applicable=false — also displays as "Not applicable"
-- Total is therefore out of 10 (complexNounGroups + logicalFlow only)
-- A response to "list" or "identify" that names correct items IS a full answer — no SO/BECAUSE needed
-- specialCheck.type should be "none" for these directives
-
-TIER 2 — DESCRIPTION (describe, outline, compare, construct):
-- No causal connectives required — student is describing, not explaining
-- causalConnectives: set applicable=false AND score=0 — "Not applicable for this directive verb"
-- modality: set applicable=false
-- Total is therefore out of 10 (complexNounGroups + logicalFlow only)
-
-TIER 3 — REASONING (explain, analyse, predict, suggest, discuss):
-- Causal connectives ARE required (SO, BECAUSE, BUT preferred)
-- For EXPLAIN: specialCheck.type = "explain"
-- Modality: ignore for explain/predict/suggest; optional for analyse/discuss
-
-TIER 4 — EVALUATIVE (assess, evaluate, critically evaluate, justify):
-- Causal connectives required AND judgement (IS/IS NOT) required
-- specialCheck.type = "assess_eval"
-- Modality: REQUIRED — set modality.applicable=true and score it
-- CRITICAL: For evaluate/assess questions you MUST set modality.applicable=true — never false
-
-Causal Connectives rubric scores: 0=none, 1=present but wrong, 2=one correct, 3=two correct, 4=three+, 5=four+ varied
-Complex Noun Groups: 0=none, 1=minimal, 2=one clear, 3=two+, 4=several precise, 5=consistent technical
-Modality: IGNORE if Tier 1/2 directive; optional for analyse; required for assess/evaluate
-Logical Flow: 0=no structure, 1=disconnected, 2=basic, 3=mostly logical, 4=clear org, 5=highly coherent
-
-SPECIAL DIRECTIVE RULES:
-- EXPLAIN: response MUST use SO, BECAUSE, or BUT as causal connectives
-- ASSESS/EVALUATE: response MUST include PRO argument, CON/opposing argument, AND IS/IS NOT judgement
-- IDENTIFY + EXPLAIN (dual): response must first name/state the item, THEN explain with causal connectives
-
-BAND MAPPING (only when marks not given): 0-5=Band2, 6-9=Band3, 10-13=Band4, 14-17=Band5, 18-20=Band6
-
-════════════════════════════════════════
-IMAGE INSTRUCTIONS
-════════════════════════════════════════
-You will receive ONE image of a student's worksheet page. The page may contain multiple questions and answers.
-IMPORTANT: The question number to analyse will be specified in the user message. Ignore all other questions and answers on the page.
-Find the printed/typed text (the question) and the handwritten response written below or beside it.
-
-Return ONLY valid JSON (no markdown, no backticks, no extra text):
-{
-  "phase1_cube": {
-    "questionText": "full question text exactly as written",
-    "marks": null,
-    "directives": [
-      {
-        "word": "Identify",
-        "verbType": "identify",
-        "meaning": "NESA meaning",
-        "requiresJudgement": false,
-        "requiresCausal": false,
-        "modalityRule": "ignore",
-        "startIndex": 0,
-        "isPrimary": true
-      },
-      {
-        "word": "explain",
-        "verbType": "explain",
-        "meaning": "NESA meaning",
-        "requiresJudgement": false,
-        "requiresCausal": true,
-        "modalityRule": "ignore",
-        "startIndex": 45,
-        "isPrimary": false
-      }
-    ],
-    "syllabusKeywords": [
-      {
-        "word": "gas(es)",
-        "module": "7",
-        "moduleTitle": "Climate Science",
-        "topicCode": "7-1",
-        "topicTitle": "Natural Processes of Climate Variation",
-        "syllabusText": "relevant dot point text",
-        "startIndex": 15,
-        "endIndex": 21
-      },
-      {
-        "word": "climate",
-        "module": "7",
-        "moduleTitle": "Climate Science",
-        "topicCode": "7-1",
-        "topicTitle": "Natural Processes of Climate Variation",
-        "syllabusText": "relevant dot point text",
-        "startIndex": 35,
-        "endIndex": 42
-      }
-    ],
-    "constraints": [
-      { "text": "impact", "startIndex": 22, "endIndex": 28, "type": "causal_directional" },
-      { "text": "cool", "startIndex": 50, "endIndex": 54, "type": "causal_directional" },
-      { "text": "Draw a picture", "startIndex": 58, "endIndex": 72, "type": "diagram_required" }
-    ],
-    "evidenceRequired": false,
-    "evidenceType": null
-  },
-  "phase2_plan": {
-    "answerStructure": "identify_then_explain",
-    "planningArrows": [
-      { "targetWord": "Identify", "label": "SO₂ / sulfur dioxide", "targetStartIndex": 0 },
-      { "targetWord": "explain", "label": "SO₂→aerosols→reflects sunlight", "targetStartIndex": 45 },
-      { "targetWord": "impact", "label": "aerosols block solar radiation", "targetStartIndex": 22 },
-      { "targetWord": "Draw a picture", "label": "volcano→stratosphere→aerosols→↓temp", "targetStartIndex": 58 }
-    ],
-    "writingScaffold": {
-      "step1": "First: IDENTIFY — name the gas (e.g. sulfur dioxide / volcanic aerosols)",
-      "step2": "Then: EXPLAIN — use SO or BECAUSE to link the gas to cooling",
-      "step3": "Include a labelled diagram showing the mechanism",
-      "step4": null
-    },
-    "summary": "Name the gas that cools climate, then explain the mechanism using causal connectives, with a diagram."
-  },
-  "phase3_analysis": {
-    "studentResponseText": "Verbatim transcription of ALL student handwriting. Read every word carefully. For ANY word that is unclear, smudged, or illegible you MUST write [?] — do NOT leave a blank space, do NOT skip it. Example: 'Volcanoes release SO2 into [?]. If it reaches [?] it can spread' — every unreadable word becomes [?].",
-    "formattedResponse": "CRITICAL: Copy studentResponseText EXACTLY, then apply these markdown tags inline — do NOT change any words. Rules: (1) Wrap each causal connective word in double asterisks: so→**so**, because→**because**, but→**but**, therefore→**therefore**, thus→**thus**, hence→**hence**. (2) Wrap each complex scientific noun group (2+ words or technical term) in single underscores: volcanic aerosols→_volcanic aerosols_, stratosphere→_stratosphere_, sulfur dioxide→_sulfur dioxide_. (3) Keep every [?] marker exactly as [?]. Example input: 'Volcanoes release SO2 so it cools.' → Example output: 'Volcanoes release _SO2_ **so** it cools.' If there are no connectives or noun groups, still return the full transcription with [?] markers for illegible words.",
-    "responseStructure": {
-      "hasCause": false,
-      "hasCausalConnective": false,
-      "hasEffect": false,
-      "hasArgument1": false,
-      "hasArgument2OrCounterpoint": false,
-      "hasFinalJudgement": false,
-      "structureComment": "comment on structure addressing ALL directive verbs"
-    },
-    "detectedConnectives": [],
-    "detectedNounGroups": [],
-    "detectedModality": [],
-    "rubric": {
-      "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-      "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
-      "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-      "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
-    },
-    "medals": {
-      "medal1": { "category": "Strength category", "explanation": "explanation", "quote": "direct quote from student" },
-      "medal2": { "category": "Second strength", "explanation": "explanation", "quote": "direct quote from student" }
-    },
-    "mission": {
-      "targetCategory": "lowest scoring category",
-      "weakness": "short actionable fix — one thing only, max 10 words, e.g. 'a clear causal link using because, but, or so'",
-      "originalPhrase": "direct quote of weak phrase from student",
-      "improvedVersion": "rewritten improved version"
-    },
-    "specialCheck": {
-      "type": "explain",
-      "explainCheck": {
-        "hasSO": false,
-        "hasBECAUSE": false,
-        "hasBUT": false,
-        "causeEffectLinked": false,
-        "connectivesFound": [],
-        "acceptedConnectivesFound": [],
-        "comment": "comment — if only accepted forms used, note: 'Good use of [therefore] — practise using SO/BECAUSE/BUT for maximum impact'"
-      },
-      "assessEvalCheck": {
-        "hasPRO": false,
-        "proText": null,
-        "hasCON": false,
-        "conText": null,
-        "hasJudgement": false,
-        "judgementText": null,
-        "judgementLinked": false,
-        "linkedJudgementExample": "e.g. Despite [limitation], it IS effective because [benefit]",
-        "comment": null
-      },
-      "modelSentenceStarter": "A 2-3 sentence SENTENCE SCAFFOLD showing the ideal structure. Use SO/BECAUSE/BUT in CAPS to demonstrate connective placement. This is a starter pattern, NOT a full answer."
-    }
-  }
-}`;
-}
-
-// ─── STAGE 1 SYSTEM PROMPT (Haiku — CUBE + annotation only) ─────────────────
-function buildStage1SystemPrompt(syllabusJSON) {
-  return `You are an expert NSW HSC Earth and Environmental Science teacher.
-Your ONLY job is to apply the CUBE literacy strategy to the question in the image, and generate a planning annotation layer.
-Do NOT mark or assess the student's written response. Do NOT return phase3_analysis.
-
-SYLLABUS DATABASE:
-${JSON.stringify(syllabusJSON, null, 2)}
-
-DIRECTIVE VERBS AND RULES:
-${JSON.stringify(DIRECTIVES, null, 2)}
-
-════════════════════════════════════════
-CUBE ANNOTATION RULES — READ CAREFULLY
-════════════════════════════════════════
-
-C — CIRCLE (directive verbs)
-- Detect ALL directive verbs in the question. Many questions have TWO (e.g. "Identify... and explain...").
-- Circle ONLY the verb word(s) themselves — not surrounding words.
-- If there are two directives, return BOTH in the directives array.
-- For each directive, record its exact startIndex in the question string.
-
-U — UNDERLINE (syllabus keywords ONLY)
-- Underline ONLY the specific noun keyword(s) from the matching syllabus dot point.
-- Do NOT underline whole clauses, phrases, or sentences.
-- Do NOT underline verbs, connectives, or generic words.
-- Match against the syllabus database keywords list for the relevant dot point.
-- If there are multiple syllabus keywords in the question, return one per keyword.
-
-⚠️ ANNOTATION PRIORITY RULE — ONE ANNOTATION PER WORD:
-Each word can receive ONLY ONE annotation. Priority: C > U > B.
-Do NOT add the same word to both syllabusKeywords and constraints arrays.
-
-B — BOX (constraints — be generous)
-- Box ALL of the following: evidence/method constraints, scope constraints (number words, time periods, locations),
-  causal/directional words (impact, effect, change, increase, decrease, cause, result),
-  named organisms/processes/events that constrain the topic.
-- NEVER box single prepositions or articles standing alone.
-- NEVER leave causal/directional words unboxed.
-
-E — EVIDENCE (planning tab only)
-Generate planning arrows for EACH directive verb AND each key constraint/keyword.
-CRITICAL: labels must be SPECIFIC CONTENT — actual EES knowledge, not generic instructions.
-
-ARROW GENERATION RULES BY DIRECTIVE:
-- EVALUATE/ASSESS directive → generate arrows for: (1) the named example to use, (2) PRO/BENEFIT argument, (3) CON/LIMITATION argument, (4) IS/IS NOT judgement format
-- EXPLAIN directive → generate arrows for: (1) the causal mechanism (A→B→C), (2) connectives to use (SO/BECAUSE), (3) specific scientific terms
-- DESCRIBE/OUTLINE → generate arrows for: (1) key features to name, (2) specific terminology
-- IDENTIFY → generate arrows for: (1) the actual answer, (2) any required named examples
-
-LABEL QUALITY RULES:
-- Write ACTUAL EES content — specific named examples, mechanisms, data, terms
-  GOOD: "Mt Pinatubo 1991 — seismic monitoring, COSPEC, gas analysis"
-  BAD: "Name a specific example" or "Provide evidence"
-- Labels may be up to 8 words — be dense with specific content
-- For evaluate questions: always include an arrow with "IS/IS NOT effective because..."
-- For explain questions: always include the causal chain A → B → C
-
-- targetStartIndex = character position of that word in the question string
-
-════════════════════════════════════════
-STUDENT CUBE MARKING — SCORING RULES
-════════════════════════════════════════
-After generating the correct CUBE (directives, syllabusKeywords, constraints), look at what the student physically marked ON the question text with pen or pencil:
-
-SCORING (1 point each, report in studentCube):
-- circled[]: List words the student circled/ovaled. Award 1 point per directive verb correctly circled.
-- underlined[]: List words the student underlined. Award 1 point per syllabus keyword correctly underlined.
-- boxed[]: List words the student boxed. Award 1 point per constraint correctly boxed.
-- wavy[]: List words marked with wavy/zigzag line. Award 1 point per evidence/example word correctly marked.
-- score: total points earned by student (sum of correct marks above)
-- maxScore: total possible points (= dirs.length + kwds.length + constraints.length + evidenceRequired?1:0)
-- feedback: one sentence naming what they got right and what they missed
-- If you see NO handwritten marks on the question text, return empty arrays and score:0
-
-════════════════════════════════════════
-MULTI-DIRECTIVE QUESTIONS
-════════════════════════════════════════
-If the question contains two directive verbs:
-- Return ALL directives in the directives array.
-- The primary directive is the one that determines rubric scoring.
-- writingScaffold must address BOTH directives in sequence.
-
-════════════════════════════════════════
-IMAGE INSTRUCTIONS
-════════════════════════════════════════
-You will receive ONE image of a student's worksheet page.
-The question number to analyse will be specified in the user message. Ignore all other questions and answers.
-
-TWO READING TASKS:
-1. Read the printed/typed question text to generate the correct CUBE (directives, syllabusKeywords, constraints).
-2. Look at the SAME printed question text and identify any handwritten CUBE marks the student made ON the question:
-   - Circles or ovals drawn around a word = student circled a directive verb (C)
-   - Underlines drawn under a word = student underlined a syllabus keyword (U)
-   - Boxes or rectangles drawn around a word = student boxed a constraint (B)
-   - Wavy/zigzag lines under a word = student marked evidence/example (E)
-   DO NOT read the student's written answer below the question — only look at marks ON the question text itself.
-
-Return ONLY valid JSON (no markdown, no backticks, no extra text):
-{
-  "phase1_cube": {
-    "questionText": "full question text exactly as written",
-    "marks": null,
-    "directives": [
-      {
-        "word": "Identify",
-        "verbType": "identify",
-        "meaning": "NESA meaning",
-        "requiresJudgement": false,
-        "requiresCausal": false,
-        "modalityRule": "ignore",
-        "startIndex": 0,
-        "isPrimary": true
-      }
-    ],
-    "syllabusKeywords": [
-      {
-        "word": "gas(es)",
-        "module": "7",
-        "moduleTitle": "Climate Science",
-        "topicCode": "7-1",
-        "topicTitle": "Natural Processes of Climate Variation",
-        "syllabusText": "relevant dot point text",
-        "startIndex": 15,
-        "endIndex": 21
-      }
-    ],
-    "constraints": [
-      { "text": "impact", "startIndex": 22, "endIndex": 28, "type": "causal_directional" }
-    ],
-    "evidenceRequired": false,
-    "evidenceType": null
-  },
-  "studentCube": {
-    "circled": ["directive verb the student circled on the question"],
-    "underlined": ["syllabus keyword the student underlined on the question"],
-    "boxed": ["constraint word the student boxed on the question"],
-    "wavy": ["evidence word marked with wavy/zigzag underline"],
-    "score": 0,
-    "maxScore": 0,
-    "feedback": "e.g. Correctly circled evaluate. Underlined technology correctly. Did not box named example."
-  }
-}`;
-}
-
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-// Compress image before sending to API: resize to max 1200px wide, JPEG quality 0.82
-// Reduces vision tokens by ~40-60% on typical phone photos with no quality loss for OCR
 const toB64 = f => new Promise((res, rej) => {
   const img = new Image();
   const objectUrl = URL.createObjectURL(f);
@@ -1414,20 +84,18 @@ const toB64 = f => new Promise((res, rej) => {
     const scale = img.width > MAX_W ? MAX_W / img.width : 1;
     const w = Math.round(img.width * scale);
     const h = Math.round(img.height * scale);
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-    res(dataUrl.split(',')[1]);
+    canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+    res(dataUrl.split(",")[1]);
   };
   img.onerror = rej;
   img.src = objectUrl;
 });
 
-// Sanitise user text before interpolating into prompts (strip prompt-injection chars)
-const sanitiseInput = (str) => String(str || '').replace(/[`${}\\]/g, '').trim().slice(0, 200);
+const sanitiseInput = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
 
-// Privacy: convert "Alan Lawrance" → "Alan L" for Google Sheets logging
 const privacyName = (fullName) => {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "anonymous";
@@ -1435,17 +103,16 @@ const privacyName = (fullName) => {
   return parts[0] + " " + parts[parts.length - 1][0].toUpperCase();
 };
 
-// ─── SVG ANNOTATED PAPER ─────────────────────────────────────────────────────
-// Courier New at fontSize 17 — true measured char width is 10.2px not 10.5px.
-// We also half-pixel-round every x calculation to prevent sub-pixel drift
-// accumulating over longer lines (which was pushing shapes like "explain" off centre).
-const FONT_SIZE = 17; // px — must match textLength calculation
-const CW = 10.2;   // true char width px — Courier New fontSize 17
-const LH = 38;     // line height px
-const PL = 44;     // left pad
-const PT = 58;     // top padding — increased to give ovals/boxes room above line 1
-const CPL = 50;    // chars per line
+// ─── SVG CONSTANTS ────────────────────────────────────────────────────────────
+const FONT_SIZE = 17;
+const CW = 10.2;
+const LH = 38;
+const PL = 44;
+const PT = 58;
+const CPL = 50;
 
+
+// ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
 function buildLines(text, cplOverride) {
   const CPL_USE = cplOverride || CPL;
   if (!text) return [];
@@ -1820,6 +487,7 @@ function FormattedResponse({ text }) {
   return <>{parts}</>;
 }
 
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
 // ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
 const Badge = ({children,bg,color}) => <span style={{background:bg,color:color||"white",borderRadius:"6px",padding:"2px 10px",fontSize:"12px",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>{children}</span>;
 const Card = ({children,bg,border,style={}}) => <div style={{background:bg||"rgba(255,255,255,0.04)",border:`1px solid ${border||"rgba(255,255,255,0.1)"}`,borderRadius:"14px",padding:"18px 20px",marginBottom:"14px",...style}}>{children}</div>;
@@ -1912,185 +580,6 @@ function RubricRow({label, data, applicable=true}) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-// ─── STAGE 2 SYSTEM PROMPT (writing marking only, caches well) ───────────────
-function buildStage2SystemPrompt() {
-  return `You are an expert NSW HSC Earth and Environmental Science teacher and examiner.
-Your ONLY job in this call is to mark the student's WRITTEN RESPONSE to the question.
-CUBE and annotation have already been validated. Do not re-assess them.
-
-⚠️ GLOBAL RULE — ILLEGIBLE HANDWRITING:
-When transcribing student handwriting in studentResponseText and formattedResponse:
-- Every single word that you CANNOT read clearly MUST be written as [?]
-- Do NOT leave blank spaces where a word should be
-- Do NOT skip words
-- [?] must appear in BOTH studentResponseText AND formattedResponse
-
-CAUSAL CONNECTIVES:
-${JSON.stringify(CONNECTIVES, null, 2)}
-
-CONNECTIVE SCORING RULE:
-- Preferred connectives (SO, BECAUSE, BUT) — award full credit
-- Accepted alternatives (as a result, therefore, thus, hence, consequently, however, although, since, as, yet, etc.) — award FULL credit.
-- In the specialCheck.explainCheck, hasSO/hasBECAUSE/hasBUT refers to preferred forms only; also report acceptedConnectivesFound separately
-
-════════════════════════════════════════
-ANNOTATION READING — STUDENT'S HANDWRITTEN ANNOTATIONS
-════════════════════════════════════════
-The student may have written annotation ideas ABOVE or BESIDE the printed question text on the page.
-These are short handwritten notes, words, ideas, or phrases written before their response.
-
-YOUR TASKS:
-1. READ the student's actual handwritten annotations — brief planning notes the student wrote ABOVE or BESIDE the printed question text.
-   CRITICAL RULES — READ ALL OF THESE:
-   - Annotations are BRIEF: single words or short phrases of 2-4 words maximum (e.g. "seismic monitoring", "Mt Pinatubo", "PRO/CON", "IS/IS NOT").
-   - A FULL SENTENCE is NEVER an annotation. If you see a full sentence near the question, it is part of the written response — ignore it.
-   - Handwriting ABOVE the question that continues from a previous page or previous answer is part of a DIFFERENT question's response — NOT an annotation. Ignore it.
-   - The student's written response paragraphs (below the printed question) are NOT annotations. Do NOT extract from them.
-   - If you see no brief handwritten planning notes beside or above the question, return [].
-   - Do NOT invent, infer, or generate annotation ideas.
-   - When in doubt, return [].
-
-2. CHECK whether each annotation idea was used in the written response:
-   - used: true/false — did this idea (or equivalent) appear in the written response?
-   - If used:true, also check quality:
-     - "usable" = the idea was developed into a full argument with evidence or causal link
-     - "present" = the idea was mentioned but only superficially
-   - If used:false, quality must be null
-   - Cap at 6 annotation ideas maximum.
-
-3. GENERATE planning arrows and writing scaffold for the question (phase2_plan):
-   - Read the printed question text and generate content-rich annotation ideas
-   - planningArrows: one arrow per key word/phrase in the question (directive, syllabus terms, constraints)
-   - label = SPECIFIC EES content — actual named examples, mechanisms, data — NOT generic instructions
-     GOOD: "Mt Pinatubo 1991 — seismic monitoring, COSPEC, SO2 emissions"
-     GOOD: "IS effective — saved 58,000 lives / IS NOT — infrastructure damage still occurred"
-     BAD: "Name a specific example" or "Provide evidence here"
-   - For EVALUATE/ASSESS: must include arrows for named example, PRO argument, CON argument, IS/IS NOT judgement
-   - For EXPLAIN/ANALYSE: must include arrows for causal mechanism (A→B→C) and specific connective placement
-   - writingScaffold: 2–4 steps specific to this question's directive and content
-   - summary: one sentence telling student exactly what a good answer needs to do
-
-
-
-════════════════════════════════════════
-RUBRIC SCORING (0–5 each)
-════════════════════════════════════════
-
-DIRECTIVE VERB TIERS — CRITICAL RULES:
-
-TIER 1 — RECALL/LISTING (list, name, state, identify, define):
-- causalConnectives: set applicable=false AND score=0
-- modality: set applicable=false
-- specialCheck.type should be "none"
-
-TIER 2 — DESCRIPTION (describe, outline, compare, construct):
-- causalConnectives: set applicable=false AND score=0
-- modality: set applicable=false
-
-TIER 3 — REASONING (explain, analyse, predict, suggest, discuss):
-- Causal connectives ARE required (SO, BECAUSE, BUT preferred)
-- For EXPLAIN: specialCheck.type = "explain"
-- Modality: ignore for explain/predict/suggest; optional for analyse/discuss
-
-TIER 4 — EVALUATIVE (assess, evaluate, critically evaluate, justify):
-- Causal connectives required AND judgement (IS/IS NOT) required
-- specialCheck.type = "assess_eval"
-- Modality: REQUIRED — set modality.applicable=true and score it
-- CRITICAL: For evaluate/assess questions you MUST set modality.applicable=true — never false
-
-Causal Connectives: 0=none, 1=present but weak, 2=one correct, 3=two correct, 4=three+, 5=four+ varied
-Complex Noun Groups: 0=none, 1=minimal, 2=one clear, 3=two+, 4=several precise, 5=consistent technical
-Modality: IGNORE if Tier 1/2; optional for analyse; required for assess/evaluate
-Logical Flow: 0=no structure, 1=disconnected, 2=basic, 3=mostly logical, 4=clear org, 5=highly coherent
-
-SPECIAL DIRECTIVE RULES:
-- EXPLAIN: response MUST use SO, BECAUSE, or BUT
-- ASSESS/EVALUATE: response MUST include PRO/BENEFIT argument, CON/LIMITATION argument, AND IS/IS NOT judgement
-
-BAND MAPPING (only when marks not given): 0-5=Band2, 6-9=Band3, 10-13=Band4, 14-17=Band5, 18-20=Band6
-
-════════════════════════════════════════
-IMAGE INSTRUCTIONS
-════════════════════════════════════════
-You will receive an image of the student's worksheet.
-The question text and directive will be provided in the user message.
-Find and transcribe ONLY the student's handwritten response to the specified question.
-Ignore all other questions and answers on the page.
-
-Return ONLY valid JSON (no markdown, no backticks):
-{
-  "phase2_plan": {
-    "planningArrows": [
-      { "targetWord": "evaluate", "label": "IS effective: saved lives / IS NOT: damage still occurred", "targetStartIndex": 10 },
-      { "targetWord": "technology", "label": "seismic monitoring, COSPEC, gas analysis, GPS", "targetStartIndex": 30 },
-      { "targetWord": "named example", "label": "Mt Pinatubo 1991 — 20M tonnes SO₂ released", "targetStartIndex": 8 },
-      { "targetWord": "effective", "label": "PRO: evacuated 58,000 / CON: infrastructure damage", "targetStartIndex": 45 }
-    ],
-    "writingScaffold": {
-      "step1": "Name the volcanic eruption (e.g. Mt Pinatubo 1991)",
-      "step2": "PRO/BENEFIT: explain how technology was effective using SO/BECAUSE",
-      "step3": "CON/LIMITATION: explain a weakness using BUT/HOWEVER",
-      "step4": "JUDGEMENT: The technology IS/IS NOT effective overall because..."
-    },
-    "summary": "Name the eruption, evaluate the prediction technology with PRO + CON, end with IS/IS NOT judgement."
-  },
-  "studentResponseText": "Verbatim transcription — mark every unclear word as [?]",
-  "formattedResponse": "Copy of studentResponseText with **connective** and _noun group_ markdown",
-  "annotationIdeas": [],
-  "annotationIdeas_NOTE": "EMPTY ARRAY if no handwritten notes above/beside question. Never extract from written response.",
-  "annotationCheck": [
-    { "idea": "idea student wrote", "used": true, "quality": "usable", "evidence": "quote from response showing it was developed" },
-    { "idea": "another idea student wrote", "used": true, "quality": "present", "evidence": "brief mention only" },
-    { "idea": "unused idea student wrote", "used": false, "quality": null, "evidence": null }
-  ],
-  "responseStructure": {
-    "hasCause": false,
-    "hasCausalConnective": false,
-    "hasEffect": false,
-    "hasArgument1": false,
-    "hasArgument2OrCounterpoint": false,
-    "hasFinalJudgement": false,
-    "structureComment": "comment on structure"
-  },
-  "detectedConnectives": [],
-  "detectedNounGroups": [],
-  "detectedModality": [],
-  "rubric": {
-    "causalConnectives": { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-    "complexNounGroups":  { "score": 0, "evidence": null, "comment": "why this score" },
-    "modality":           { "score": 0, "evidence": null, "comment": "why this score", "applicable": true },
-    "logicalFlow":        { "score": 0, "evidence": null, "comment": "why this score" }
-  },
-  "medals": {
-    "medal1": { "category": "Strength category", "quote": "direct quote from student" },
-    "medal2": { "category": "Second strength", "quote": "direct quote from student" }
-  },
-  "mission": {
-    "targetCategory": "lowest scoring category",
-    "weakness": "short actionable fix — one thing only, max 10 words",
-    "originalPhrase": "direct quote of weak phrase from student",
-    "improvedVersion": "rewritten improved version"
-  },
-  "specialCheck": {
-    "type": "explain",
-    "explainCheck": {
-      "hasSO": false, "hasBECAUSE": false, "hasBUT": false,
-      "causeEffectLinked": false, "connectivesFound": [], "acceptedConnectivesFound": [],
-      "comment": "comment"
-    },
-    "assessEvalCheck": {
-      "hasPRO": false, "proText": null, "hasCON": false, "conText": null,
-      "hasJudgement": false, "judgementText": null, "judgementLinked": false, "linkedJudgementExample": "e.g. Despite [limitation], it IS effective because [benefit]",
-      "comment": "comment"
-    },
-    "modelSentenceStarter": "A 2-3 sentence SENTENCE SCAFFOLD. Use SO/BECAUSE/BUT in CAPS.",
-    "keyTermDefinitions": [
-      { "term": "syllabus term", "definition": "brief 1-sentence NESA definition" }
-    ]
-  }
-}`;
-}
-
 function App() {
   const [studentName, setStudentName] = useState(() => {
     try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
@@ -2254,12 +743,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
         signal: abortRef.current.signal,
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001", max_tokens: 2000,
-          system: [{
-            type: "text",
-            text: buildStage1SystemPrompt(SYLLABUS),
-            cache_control: { type: "ephemeral" }
-          }],
+          stage: "stage1",
+          subject: config.subjectCode,
+          syllabus: config.syllabus,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`For Question ${sanitiseInput(questionNumber)} in this image, do TWO things and return BOTH in JSON:\n1. Apply CUBE to the printed question text (phase1_cube).\n2. Look carefully at the printed question text for any handwritten pen marks the student made DIRECTLY ON the question words — circles/ovals around words, underlines under words, boxes/rectangles around words, or wavy lines. Report these in studentCube. If you see NO marks on the question text, return empty arrays and score:0.\nDo NOT read or transcribe the student written answer below the question.` }
@@ -2320,7 +806,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type:             "FULL_ROW",
-            subject:          SUBJECT_NAME,
+            subject:          config.subjectName,
             student:          privacyName(studentName.trim() || "anonymous"),
             sessionId:        sid,
             attempt:          iterCount,
@@ -2330,7 +816,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             directives:       dirs.map(d=>d.word).join(", ") || "—",
             syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ") || "—",
             callType:         "STAGE1_CUBE",
-            sheetTab:         "EES CUBE",
+            sheetTab:         config.sheetTabCube,
             model:            "claude-haiku-4-5-20251001",
             cubeXP:           cxpVal,
             cubeMax:          cmaxVal,
@@ -2367,22 +853,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous"))},
         body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001", max_tokens: 1000,
-          system: [{ type:"text", cache_control:{ type:"ephemeral" }, text: `You are an expert NSW HSC Earth and Environmental Science marker and teacher. You generate Band 6 model responses aligned to official NESA performance band descriptors and marking standards.
-
-You must follow these NESA-aligned generation rules exactly:
-
-BAND RESPONSE GENERATOR RULES:
-${JSON.stringify(BAND_RULES, null, 2)}
-
-ADDITIONAL WRITING RULES:
-- Use causal connectives naturally: SO, BECAUSE, BUT, therefore, since, which means, resulting in
-- Use precise complex noun groups rather than vague terms
-- Length calibration: ~1 substantive sentence per mark — quality over word count
-- Never pad with definitions or irrelevant background
-- For explain/analyse: follow the Band6_explain or Band6_analyse generation template
-- For evaluate/assess: follow Band6_evaluate or Band6_assess template with explicit final judgement
-- Run the band6_checklist mentally before outputting`}],
+          stage: "modelAnswer",
+          subject: config.subjectCode,
+          bandRules: config.bandRules,
 
           messages:[{ role:"user", content:[{type:"text", text:
             `Write a Band 6 model response for this NSW HSC Earth and Environmental Science question.
@@ -2423,13 +896,13 @@ Return ONLY the model response text, no heading, no preamble.`
   },[studentName]);
 
   const fetchLeaderboard = async (period, directive) => {
-    if (LEADERBOARD_URL.includes("REPLACE_WITH")) {
-      setLbError("Leaderboard not yet configured — deploy LeaderboardWebhook.gs and update LEADERBOARD_URL in index.html.");
+    if (!config.leaderboardUrl || config.leaderboardUrl.includes("REPLACE_WITH")) {
+      setLbError("Leaderboard not yet configured — deploy LeaderboardWebhook.gs and update leaderboardUrl in config.json.");
       return;
     }
     setLbLoading(true); setLbError(null);
     try {
-      const url = `https://cube-proxy.alan-3e2.workers.dev/leaderboard?subject=${SUBJECT_CODE}&period=${period||lbPeriod}&directive=${directive||lbDirective}&lburl=${encodeURIComponent(LEADERBOARD_URL)}`;
+      const url = `https://cube-proxy.alan-3e2.workers.dev/leaderboard?subject=${config.subjectCode}&period=${period||lbPeriod}&directive=${directive||lbDirective}&lburl=${encodeURIComponent(config.leaderboardUrl||"")}`;
       const res  = await fetch(url);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -2465,8 +938,8 @@ Return ONLY the model response text, no heading, no preamble.`
         method:"POST",
         headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(sanitiseInput(questionNumber))},
         body: JSON.stringify({
-          model: MODEL, max_tokens: 3000,
-          system: [{ type:"text", text:buildStage2SystemPrompt(), cache_control:{ type:"ephemeral" } }],
+          stage: "stage2",
+          subject: config.subjectCode,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`Mark the written response to Question ${sanitiseInput(questionNumber)} from this image.
@@ -2475,7 +948,6 @@ Question: "${sanitiseInput(c1.questionText)}"
 Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.verbType||"")})
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
-Modality applicable: ${(()=>{const mv=primaryDir.modalityRule||primaryDir.modality||""; const dv=(primaryDir.word||primaryDir.verbType||"").toLowerCase().trim(); const dobj=DIRECTIVES[dv]||DIRECTIVES[dv.replace("critically ","")] ; const req=dobj?(dobj.modality==="required"||dobj.modality==="optional"):["assess","evaluate","critically evaluate"].includes(dv); return req?"YES — set modality.applicable=true":"NO — set modality.applicable=false";})()}
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
 STRICT RULES for annotations:
@@ -2533,7 +1005,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const causalApp  = parsed.rubric?.causalConnectives?.applicable !== false;
         // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
-        const dirFromObj = DIRECTIVES[dirWord] || DIRECTIVES[dirWord.replace("critically ","")];
+        const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
         const sc  = totalScore(parsed);
         const mx  = 10 + (causalApp?5:0) + (modalApp?5:0);
@@ -2547,7 +1019,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
             type:             "FULL_ROW",
-            subject:          SUBJECT_NAME,
+            subject:          config.subjectName,
             student:          privacyName(studentName.trim()||"anonymous"),
             sessionId:        sessionId,
             attempt:          iterCount,
@@ -2557,7 +1029,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             directives:       dirs.map(d=>d.word).join(", ")||"—",
             syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ")||"—",
             callType:         "STAGE2_MARK",
-            sheetTab:         "EES FULL",
+            sheetTab:         config.sheetTabFull,
             model:            MODEL,
             cubeXP:           cubeXP || 0,
             cubeMax:          dirs.length + kwds.length + (c1.constraints||[]).length + (c1.evidenceRequired?1:0),
@@ -2637,8 +1109,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             <div>
               <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>CUBE Marking Coach</div>
               <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
-                <span className="hide-mobile">HSC Earth &amp; Environmental Science</span>
-                <span className="show-mobile">12 EES</span>
+                <span className="hide-mobile">{config.subjectName}</span>
+                <span className="show-mobile">{config.subjectShortName||config.subjectCode}</span>
               </div>
             </div>
           </div>
@@ -2754,7 +1226,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
           // Derive modality applicable from directive — do not trust Sonnet's value
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
-          const dirObjR  = DIRECTIVES[dirWordR] || DIRECTIVES[dirWordR.replace("critically ","")] || DIRECTIVES[verbType] || DIRECTIVES[verbType?.replace("critically ","")];
+          const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
           const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
@@ -3050,7 +1522,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               </div>
               <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
                 <div style={{fontSize:"16px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>
-                  <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, CONNECTIVES)}/>
+                  <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
                 </div>
               </PaperCard>
 
@@ -3148,7 +1620,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   {a.detectedConnectives?.length>0 ? <>
                     <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px"}}>
                       {a.detectedConnectives.map((c,i)=>{
-                        const isPref = CONNECTIVES.preferred.includes(c.toLowerCase());
+                        const isPref = (config.connectives?.preferred||["so","because","but"]).includes(c.toLowerCase());
                         return <span key={i} style={{display:"inline-block",
                           background:isPref?"rgba(123,31,162,0.3)":"rgba(46,125,50,0.2)",
                           border:`1px solid ${isPref?"rgba(206,147,216,0.5)":"rgba(129,199,132,0.5)"}`,
@@ -3272,7 +1744,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                       <div style={{fontSize:"11px",color:"#81c784",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>✅ CAUSAL CONNECTIVES USED</div>
                       <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"8px"}}>
                         {allFound.map((c,i)=>{
-                          const isPref = CONNECTIVES.preferred.includes(c.toLowerCase());
+                          const isPref = (config.connectives?.preferred||["so","because","but"]).includes(c.toLowerCase());
                           return <span key={i} style={{
                             background: isPref?"rgba(123,31,162,0.25)":"rgba(201,168,76,0.2)",
                             border:`1px solid ${isPref?"rgba(206,147,216,0.5)":"rgba(201,168,76,0.4)"}`,
@@ -3418,8 +1890,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   </button>
                 ))}
               </div>
-              {lbDirective==="explain"&&<div style={{background:"rgba(100,181,246,0.08)",border:"1px solid #1565c0",borderRadius:"8px",padding:"8px 12px",marginBottom:"12px",fontSize:"11px",color:"#64b5f6",fontFamily:"sans-serif"}}>
-                💡 <strong>EES tip:</strong> ~60% of HSC questions are Explain/Analyse type — these questions rely heavily on causal connectives (SO, BECAUSE, BUT).
+              {config.leaderboardTip&&<div style={{background:"rgba(100,181,246,0.08)",border:"1px solid #1565c0",borderRadius:"8px",padding:"8px 12px",marginBottom:"12px",fontSize:"11px",color:"#64b5f6",fontFamily:"sans-serif"}}>
+                💡 <strong>{config.subjectCode} tip:</strong> {config.leaderboardTip}
               </div>}
 
               {/* Loading */}
@@ -3537,7 +2009,49 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+// ─── APP SHELL — waits for config.json before rendering ──────────────────────
+function AppShell() {
+  const [configReady, setConfigReady] = useState(false);
+  const [configError, setConfigError] = useState(null);
+
+  useEffect(() => {
+    loadConfig().then(() => {
+      if (!config.subjectCode) {
+        setConfigError("config.json loaded but missing subjectCode. Check your config.json.");
+      }
+      setConfigReady(true);
+    }).catch(e => {
+      setConfigError("Could not load config.json: " + e.message);
+      setConfigReady(true); // still render with defaults
+    });
+  }, []);
+
+  if (!configReady) {
+    return (
+      <div style={{minHeight:"100vh",background:"#040d18",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"16px"}}>
+        <div style={{width:"32px",height:"32px",border:"3px solid rgba(201,168,76,0.25)",borderTopColor:"#c9a84c",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}></div>
+        <div style={{color:"#c9a84c",fontFamily:"sans-serif",fontSize:"14px"}}>Loading subject config...</div>
+        <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+      </div>
+    );
+  }
+
+  if (configError) {
+    return (
+      <div style={{minHeight:"100vh",background:"#040d18",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}>
+        <div style={{background:"rgba(244,67,54,0.1)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"12px",padding:"24px",maxWidth:"500px",fontFamily:"sans-serif"}}>
+          <div style={{color:"#ff8a80",fontSize:"16px",fontWeight:700,marginBottom:"8px"}}>⚠️ Configuration Error</div>
+          <div style={{color:"#e8eaf0",fontSize:"13px"}}>{configError}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return <App />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(AppShell));
   </script>
 </body>
 </html>
