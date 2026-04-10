@@ -883,7 +883,7 @@ Return ONLY the model response text, no heading, no preamble.`
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   // Sync streak from server when student name is entered
@@ -986,7 +986,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       }
       setStage2Results(parsed);
       setStage1Done(true);
-      setActiveTab("script");
+      setActiveTab("plan");
       // Update session XP with annotation ideas used
       const annoItems = (parsed.annotationCheck||[]).slice(0,6); // cap at 6
       // Two-tier annotation XP:
@@ -1313,13 +1313,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               {/* ── Upload + Ready buttons in CUBE tab ── */}
               {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
-                {/* ── Student's photo: compare their CUBE marks with the model answer ── */}
-                {pageB64&&<div style={{marginBottom:"12px",borderRadius:"10px",overflow:"hidden",border:"1.5px solid rgba(201,168,76,0.3)",background:"rgba(0,0,0,0.2)"}}>
-                  <div style={{fontSize:"10px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",padding:"6px 10px",background:"rgba(201,168,76,0.08)",fontFamily:"sans-serif"}}>
-                    📷 YOUR CUBE ATTEMPT — compare with the model answer above
-                  </div>
-                  <img src={`data:image/jpeg;base64,${pageB64}`} style={{width:"100%",display:"block",maxHeight:"220px",objectFit:"cover",objectPosition:"top"}} alt="Your CUBE attempt"/>
-                </div>}
+
                 <button onClick={()=>{
                   // Same as New Question — full reset then open file picker
                   setStage2Results(null); setStage1Done(false); setStage2Error(null);
