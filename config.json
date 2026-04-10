@@ -1,2051 +1,1026 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CUBE HSC Marking Coach</title>
-  <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; } body { background: #040d18; }
-  .hide-mobile { display: inline; }
-  .show-mobile { display: none; }
-  @media (max-width: 600px) {
-    .hide-mobile { display: none; }
-    .show-mobile { display: inline; }
-  }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0px 1000px rgba(30, 50, 40, 0.9) inset !important;
-    -webkit-text-fill-color: #f0e6c8 !important;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-  @keyframes borderPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5); }
-    50%       { box-shadow: 0 0 0 6px rgba(201,168,76,0.0); }
-  }
-  .name-input-empty { animation: borderPulse 2s ease-in-out infinite; }
-  .name-input-filled { animation: none; }
-</style>
-</head>
-<body>
-  <div id="root"></div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <script type="text/babel">
-const { useState, useRef, useEffect } = React;
-
-// ─── CONFIG — loaded from config.json at startup ──────────────────────────────
-// config.json lives in the same directory as index.html (one per subject repo).
-// It contains: subjectCode, subjectName, syllabus, bandRules, leaderboardUrl,
-//              sheetTabCube, sheetTabFull, leaderboardTip, directiveTiers, connectives
-// This index.html is subject-agnostic — do not add subject-specific logic here.
-let config = {
-  subjectCode: "EES",
-  subjectName: "Earth & Environmental Science",
-  subjectShortName: "EES",
-  leaderboardTip: "",
-  leaderboardUrl: "",
-  sheetTabCube: "EES CUBE",
-  sheetTabFull: "EES FULL",
-  syllabus: {},
-  bandRules: {},
-  directiveTiers: {},
-  connectives: { preferred:["so","because","but"], accepted:[], contrast:[] },
-};
-
-// Load config.json from same directory — runs once before React mounts
-async function loadConfig() {
-  try {
-    const res = await fetch("./config.json?v=" + Date.now());
-    if (!res.ok) throw new Error("config.json not found (HTTP " + res.status + ")");
-    const data = await res.json();
-    config = { ...config, ...data };
-    console.log("✅ Config loaded:", config.subjectCode, config.subjectName);
-  } catch(e) {
-    console.error("❌ Failed to load config.json:", e.message);
-  }
-}
-
-// ─── CONSTANTS (subject-independent) ─────────────────────────────────────────
-const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"],[18,20,"Band 6"]];
-const getBand = (score, maxScore=20) => {
-  const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
-  return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
-};
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-const toB64 = f => new Promise((res, rej) => {
-  const img = new Image();
-  const objectUrl = URL.createObjectURL(f);
-  img.onload = () => {
-    URL.revokeObjectURL(objectUrl);
-    const MAX_W = 1200;
-    const scale = img.width > MAX_W ? MAX_W / img.width : 1;
-    const w = Math.round(img.width * scale);
-    const h = Math.round(img.height * scale);
-    const canvas = document.createElement("canvas");
-    canvas.width = w; canvas.height = h;
-    canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
-    res(dataUrl.split(",")[1]);
-  };
-  img.onerror = rej;
-  img.src = objectUrl;
-});
-
-const sanitiseInput = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
-
-const privacyName = (fullName) => {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "anonymous";
-  if (parts.length === 1) return parts[0];
-  return parts[0] + " " + parts[parts.length - 1][0].toUpperCase();
-};
-
-// ─── SVG CONSTANTS ────────────────────────────────────────────────────────────
-const FONT_SIZE = 17;
-const CW = 10.2;
-const LH = 38;
-const PL = 44;
-const PT = 58;
-const CPL = 50;
-
-
-// ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
-function buildLines(text, cplOverride) {
-  const CPL_USE = cplOverride || CPL;
-  if (!text) return [];
-  const lines = [];
-  const words = text.split(/(\s+)/); // alternating words and spaces
-  let lineText = "";
-  let lineStart = 0;
-  let charPos = 0;
-  words.forEach(token => {
-    if (!token) { charPos += token.length; return; }
-    if (/^\s+$/.test(token)) {
-      // space token
-      if (lineText.length + token.length > CPL) {
-        // flush line, skip the whitespace
-        if (lineText) lines.push({ text: lineText, start: lineStart });
-        lineStart = charPos + token.length;
-        lineText = "";
-      } else {
-        lineText += token;
-      }
-    } else {
-      // word token
-      if (lineText.length + token.length > CPL_USE && lineText.trim()) {
-        lines.push({ text: lineText, start: lineStart });
-        lineStart = charPos;
-        lineText = token;
-      } else {
-        if (!lineText) lineStart = charPos;
-        lineText += token;
-      }
-    }
-    charPos += token.length;
-  });
-  if (lineText.trim()) lines.push({ text: lineText, start: lineStart });
-  return lines;
-}
-
-function getXY(idx, lines, yOff = 0) {
-  if (!lines.length) return { x: PL, y: PT + yOff, li: 0 };
-  for (let i = 0; i < lines.length; i++) {
-    const end = lines[i].start + lines[i].text.length;
-    if (idx < end || i === lines.length - 1) {
-      const col = Math.max(0, idx - lines[i].start);
-      // Round to nearest 0.5px to prevent sub-pixel drift on long lines
-      return { x: PL + Math.round(col * CW * 2) / 2, y: PT + yOff + i * LH, li: i };
-    }
-  }
-  return { x: PL, y: PT + yOff, li: 0 };
-}
-
-function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
-                              // legacy fallback props
-                              directive, syllabusMatch }) {
-  if (!text) return null;
-
-  // ── normalise to new schema, fall back to old single-object props ──
-  const dirs = directives?.length ? directives
-    : directive ? [directive] : [];
-  const kwds = syllabusKeywords?.length ? syllabusKeywords
-    : syllabusMatch ? [{ ...syllabusMatch, word: syllabusMatch.topicTitle }] : [];
-
-  // Responsive CPL — fewer chars per line on narrow mobile screens
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 500;
-  const effectiveCPL = isMobile ? 28 : CPL;
-  const lines = buildLines(text, effectiveCPL);
-  const nLines = Math.max(lines.length, 1);
-  const W = PL + effectiveCPL * CW + PL;
-  // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
-  const PLAN_EXTRA = mode === "plan" ? 280 : 0;
-  const H = PT + PLAN_EXTRA + nLines * LH + 30;
-
-  const shapes = [];
-
-  // ── helper: find exact char position of a word near a given index ──────────
-  // Searches ±25 chars around hintIdx to find where `word` actually appears.
-  // Prefer forward (AI often points just before the word); fall back to backward.
-  const findExact = (word, hintIdx) => {
-    if (!word || hintIdx == null) return hintIdx;
-    const wl = word.toLowerCase();
-    const ql = text.toLowerCase();
-    // Forward pass first (most common: AI points to word before)
-    for (let d = 0; d <= 40; d++) {
-      const i = hintIdx + d;
-      if (ql.slice(i, i + wl.length) === wl) return i;
-    }
-    // Backward pass (less common: AI overshoots)
-    for (let d = 1; d <= 20; d++) {
-      const i = hintIdx - d;
-      if (i >= 0 && ql.slice(i, i + wl.length) === wl) return i;
-    }
-    // Full scan fallback — if hint is badly wrong, find first occurrence
-    const fullIdx = ql.indexOf(wl);
-    if (fullIdx >= 0) return fullIdx;
-    return hintIdx; // fallback: trust AI
-  };
-
-  // ── C: red ovals — one per directive verb ────────────────────────────────
-  // s.y from getXY = SVG text baseline (y attr of <text> element)
-  // Cap-height midpoint ≈ baseline - FONT_SIZE*0.36 ≈ baseline - 6px
-  // ry should span from descender to ascender: ~FONT_SIZE*0.75
-  dirs.forEach((dv, di) => {
-    if (dv.startIndex == null || !dv.word) return;
-    const exactStart = findExact(dv.word, dv.startIndex);
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
-    const wPx = dv.word.length * CW;
-    const rx = wPx/2 + 10;
-    const ry = FONT_SIZE * 0.80;   // compact — spans the letter body
-    const cy = s.y - FONT_SIZE * 0.36;  // centred on cap-height midpoint
-    const cx = Math.max(s.x + wPx/2, PL - 8 + rx);
-    shapes.push(
-      <ellipse key={`circle${di}`}
-        cx={cx} cy={cy} rx={rx} ry={ry}
-        fill="rgba(192,57,43,0.08)" stroke="#c0392b" strokeWidth="2.5"/>
-    );
-  });
-
-  // ── U: blue underlines — one per syllabus keyword ────────────────────────
-  // s.y = baseline; underline sits just below baseline (+3px)
-  kwds.forEach((kw, ki) => {
-    if (kw.startIndex == null) return;
-    const wordStr = kw.word || kw.topicTitle || "";
-    const exactStart = findExact(wordStr, kw.startIndex);
-    const exactEnd = exactStart + wordStr.length;
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
-    const e = getXY(exactEnd,   lines, PLAN_EXTRA);
-    for (let l = s.li; l <= e.li && l < lines.length; l++) {
-      const x1 = l === s.li ? s.x : PL;
-      const rawX2 = l === e.li ? e.x : PL + lines[l].text.trimEnd().length * CW;
-      const x2 = rawX2 - 4;  // slight trim to avoid bleeding into next word
-      const yBase = PT + PLAN_EXTRA + l * LH;  // baseline for this line
-      const y = yBase + 4;   // just below baseline
-      shapes.push(<line key={`u${ki}_${l}`} x1={x1} y1={y} x2={x2} y2={y} stroke="#1a6db5" strokeWidth="3" strokeLinecap="round"/>);
-    }
-  });
-
-  // ── B: green boxes — constraints ─────────────────────────────────────────
-  // s.y = baseline; box spans from ascender top to descender bottom
-  const SKIP_WORDS = new Set(["to","on","the","a","an","of","in","at","by","for","it","is"]);
-  // Build set of keyword text (lowercase) so we never box words already underlined
-  const kwdTexts = new Set((syllabusKeywords||[]).map(k=>(k.word||"").trim().toLowerCase()));
-  const dirTexts = new Set((directives||[]).map(d=>(d.word||"").trim().toLowerCase()));
-  (constraints || []).forEach((ct, ci) => {
-    if (ct.startIndex == null) return;
-    const trimmed = (ct.text||"").trim();
-    const tl = trimmed.toLowerCase();
-    // Skip if this word is already a directive (circled) or syllabus keyword (underlined)
-    if (SKIP_WORDS.has(tl) || kwdTexts.has(tl) || dirTexts.has(tl)) return;
-    const exactStart = findExact(trimmed, ct.startIndex);
-    const exactEnd   = exactStart + trimmed.length;
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
-    const e = getXY(exactEnd,   lines, PLAN_EXTRA);
-    const drawEnd = e.li;  // use actual end line — allows multi-word constraints to span lines
-    for (let l = s.li; l <= drawEnd && l < lines.length; l++) {
-      const x1 = (l === s.li ? s.x : PL) - 6;
-      const x2 = (l === drawEnd ? e.x : PL + lines[l].text.trimEnd().length * CW) + 6;
-      const yBase = PT + PLAN_EXTRA + l * LH;
-      const boxTop = yBase - FONT_SIZE * 0.85;  // top of ascenders
-      const boxH   = FONT_SIZE * 1.15;           // ascender to descender, stops above underline
-      shapes.push(<rect key={`b${ci}_${l}`} x={x1} y={boxTop} width={Math.max(x2-x1, 12)} height={boxH} rx="4" fill="rgba(46,125,50,0.07)" stroke="#2e7d32" strokeWidth="2"/>);
-    }
-  });
-
-  // ── E: Planning notes (plan mode only) ──────────────────────────────────────
-  const notes = [];
-  let allPills = [];
-
-  if (mode === "plan" && Array.isArray(planningArrows) && planningArrows.length) {
-    const FS = 10, CH = 6.0, LH_N = 13, PAD_X = 7, PAD_Y = 5;
-    const MAX_CHARS = 14, BOX_GAP = 8, ROW_GAP = 4;
-
-    const splitLabel = (label) => {
-      if (label.length <= MAX_CHARS) return [label];
-      const mid = Math.floor(label.length / 2);
-      let split = -1;
-      for (let d = 0; d <= 8; d++) {
-        if (label[mid+d]==='→'||label[mid+d]===' '){split=mid+d+1;break;}
-        if (label[mid-d]==='→'||label[mid-d]===' '){split=mid-d+1;break;}
-      }
-      if (split < 1) split = MAX_CHARS;
-      return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
-    };
-
-    // Split pills into above (even-index) and below (odd-index) groups
-    // ALL above pills float above line 0; ALL below pills float below the last line
-    // Each pill is centred horizontally on its target word with a straight vertical arrow
-
-    const rawPills = planningArrows
-      .filter(a => a.targetStartIndex != null && a.label)
-      .map((a, gi) => {
-        const idx = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
-        const pos = getXY(idx, lines, PLAN_EXTRA);
-        const ls  = splitLabel(a.label);
-        const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 52);
-        const bh  = ls.length * LH_N + PAD_Y * 2;
-        // Arrow tip: centre of the target word
-        const tx  = pos.x + (a.targetWord ? a.targetWord.length * CW / 2 : 6);
-        const goBelow = gi % 2 === 1;
-        return { ls, bw, bh, tx, bx: tx - bw/2, by:0, row:0, tLine:pos.li, goBelow, stemFromY:0, stemToY:0 };
-      });
-
-    const abovePills = rawPills.filter(p => !p.goBelow).sort((a,b) => a.tx - b.tx);
-    const belowPills = rawPills.filter(p =>  p.goBelow).sort((a,b) => a.tx - b.tx);
-
-    // Resolve horizontal overlaps within each group by nudging right
-    const resolveOverlaps = (pills) => {
-      for (let i = 1; i < pills.length; i++) {
-        const prev = pills[i-1], cur = pills[i];
-        const minX = prev.bx + prev.bw + BOX_GAP;
-        if (cur.bx < minX) cur.bx = Math.min(minX, W - cur.bw - 2);
-      }
-      // Clamp left edge
-      pills.forEach(p => { p.bx = Math.max(PL, Math.min(p.bx, W - p.bw - 2)); });
-    };
-    resolveOverlaps(abovePills);
-    resolveOverlaps(belowPills);
-
-    // Y positions
-    // Above: two tiers — row 0 closest to text, row 1 further up
-    // Assign tiers by detecting horizontal overlap between sorted pills
-    const ROW_H    = Math.max(...rawPills.map(p=>p.bh), 26) + ROW_GAP + 4;
-    const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 6;
-    const textBotY = PT + PLAN_EXTRA + nLines * LH + 4;
-    const STEM_GAP = 10;
-
-    // Assign above pills to row 0 or row 1 to avoid overlap
-    // Sort by x, greedily assign to row 0; if it overlaps last row-0 pill, put in row 1
-    const row0Right = { 0: PL - BOX_GAP, 1: PL - BOX_GAP };
-    abovePills.forEach(p => {
-      if (p.bx >= row0Right[0] + BOX_GAP) {
-        p.row = 0; row0Right[0] = p.bx + p.bw;
-      } else if (p.bx >= row0Right[1] + BOX_GAP) {
-        p.row = 1; row0Right[1] = p.bx + p.bw;
-      } else {
-        // both rows occupied at this x — pick whichever has more space
-        p.row = row0Right[0] <= row0Right[1] ? 0 : 1;
-        row0Right[p.row] = p.bx + p.bw;
-      }
-    });
-
-    // row 0 = closest to text (lower y), row 1 = further up (higher y)
-    abovePills.forEach(p => {
-      p.by        = textTopY - STEM_GAP - p.bh - p.row * ROW_H;
-      p.stemFromY = p.by + p.bh;
-      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH - FONT_SIZE * 0.9 - 2;
-    });
-
-    belowPills.forEach(p => {
-      p.by        = textBotY + STEM_GAP;
-      p.stemFromY = p.by;                 // top of pill
-      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH + LH * 0.2; // bottom of target word line
-    });
-
-    allPills = [...abovePills, ...belowPills];
-
-    // Render
-    allPills.forEach((p, i) => {
-      const cx   = p.bx + p.bw / 2;  // centre of pill (may differ from tx after nudging)
-      const arrowUp = !p.goBelow;     // arrow points toward text
-      const tipY  = p.stemToY;
-      const lineY = p.stemFromY;
-      const polyPts = arrowUp
-        ? `${p.tx-5},${tipY-8} ${p.tx+5},${tipY-8} ${p.tx},${tipY}`   // ↓ into text
-        : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;  // ↑ into text
-      notes.push(
-        <g key={`n${i}`}>
-          {/* Diagonal line from pill centre to arrowhead */}
-          <line x1={cx} y1={arrowUp ? lineY : lineY}
-                x2={p.tx} y2={arrowUp ? tipY-8 : tipY+8}
-            stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
-          <polygon points={polyPts} fill="#c9a84c"/>
-          <rect x={p.bx} y={p.by} width={p.bw} height={p.bh} rx="6" fill="#fff8e1" stroke="#c9a84c" strokeWidth="1.5"/>
-          {p.ls.map((ln,li)=>(
-            <text key={li} x={p.bx+PAD_X} y={p.by+PAD_Y+li*LH_N+FS}
-              fontSize={FS} fontFamily="sans-serif" fontWeight="700" fill="#7a5000">{ln}</text>
-          ))}
-        </g>
-      );
-    });
-  }
-
-  // ViewBox: above pills sit above line 0, below pills sit below last line
-  const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
-  const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
-  const _maxY    = allPills.length
-    ? Math.max(PT + PLAN_EXTRA + nLines * LH + 16, ...allPills.map(p=>p.by + p.bh + 10))
-    : PT + PLAN_EXTRA + nLines * LH + 16;
-  const cropTop  = Math.max(0, _minY - 6);
-  const svgH     = _maxY - cropTop;
-
-  return (
-    <div style={{background:"#fffef5", borderRadius:"16px", boxShadow:"0 4px 20px rgba(0,0,0,0.3)", border:"1px solid #e8e0c8", marginBottom:"16px", overflowX:"auto"}}>
-      <svg width="100%" height={svgH} viewBox={`0 ${cropTop} ${W} ${svgH}`} style={{display:"block", minWidth:280}}>
-        {Array.from({length: nLines+1}, (_,i) => (
-          <line key={`rl${i}`} x1="0" y1={PT+PLAN_EXTRA+i*LH+8} x2={W} y2={PT+PLAN_EXTRA+i*LH+8} stroke="rgba(160,185,220,0.3)" strokeWidth="1"/>
-        ))}
-        <line x1={PL-10} y1={cropTop} x2={PL-10} y2={cropTop+svgH} stroke="rgba(210,70,70,0.22)" strokeWidth="1.5"/>
-        <text x={PL-8} y={PT+PLAN_EXTRA-10} fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#ccc" letterSpacing="1.5">{mode==="cube"?"CUBE":"PLAN"}</text>
-        {lines.map((ln,i) => (
-          <text key={i} x={PL} y={PT+PLAN_EXTRA+i*LH}
-            fontSize={FONT_SIZE} fontFamily="'Courier New',Courier,monospace" fill="#1a1a2e"
-            textLength={ln.text.length*CW} lengthAdjust="spacing">{ln.text}</text>
-        ))}
-        {shapes}
-        {notes}
-      </svg>
-    </div>
-  );
-}
-
-// ─── FORMATTED RESPONSE with bold connectives + italic noun groups ────────────
-// Also detects runs of 3+ spaces left by AI for illegible words → converts to [?]
-function normaliseIllegible(text) {
-  if (!text) return text;
-  // Replace 3+ consecutive spaces with [?] — AI commonly leaves gaps for illegible words
-  return text.replace(/ {3,}/g, ' [?] ');
-}
-
-// Post-process formattedResponse: if AI forgot _italic_ markers for noun groups,
-// wrap them based on detectedNounGroups list. Also ensure [?] from studentText carries through.
-function enrichFormattedResponse(formatted, studentText, nounGroups, connectives) {
-  // Pick best source
-  const hasMarkup = t => t && (t.includes('**') || t.includes('_') || t.includes('[?]'));
-  let text = hasMarkup(formatted) ? formatted
-           : hasMarkup(studentText) ? studentText
-           : formatted || studentText || '';
-  // Normalise illegible gaps — 3+ spaces → [?]
-  text = normaliseIllegible(text);
-
-  // Always inject bold connectives client-side if not already present
-  const allConnectives = [
-    ...(connectives?.preferred || ["so","because","but"]),
-    ...(connectives?.accepted  || ["therefore","thus","hence","however","although","consequently","as a result","which means","resulting in","leading to","due to","since","yet"])
-  ];
-  allConnectives.forEach(conn => {
-    const escaped = conn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Only wrap if not already bolded
-    text = text.replace(new RegExp(`(?<!\\*)(\\b${escaped}\\b)(?!\\*)`, 'gi'), '**$1**');
-  });
-
-  // Inject italic noun groups if missing
-  if (nounGroups && nounGroups.length > 0 && !text.includes('_')) {
-    // Sort longest first to avoid partial matches
-    const sorted = [...nounGroups].sort((a,b) => b.length - a.length);
-    sorted.forEach(ng => {
-      if (!ng || ng.length < 2) return;
-      const escaped = ng.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      text = text.replace(new RegExp(`(?<![_*])(${escaped})(?![_*])`, 'gi'), '_$1_');
-    });
-  }
-  return text;
-}
-function FormattedResponse({ text }) {
-  if (!text) return null;
-  const cleaned = normaliseIllegible(text);
-  const parts = [];
-  const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
-  let last = 0, m;
-  while ((m = regex.exec(cleaned)) !== null) {
-    if (m.index > last) parts.push(<span key={last}>{cleaned.slice(last, m.index)}</span>);
-    if (m[0] === '[?]') {
-      parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
-    } else if (m[1]) {
-      // Bold connective — purple highlight, visible on cream paper
-      parts.push(<strong key={m.index} style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
-    } else {
-      // Italic noun group — dark teal, dotted underline, clearly visible on cream
-      parts.push(<em key={m.index} style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#64b5f6",fontStyle:"italic"}}>{m[2]}</em>);
-    }
-    last = m.index + m[0].length;
-  }
-  if (last < cleaned.length) parts.push(<span key="end">{cleaned.slice(last)}</span>);
-  return <>{parts}</>;
-}
-
-// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
-// ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
-const Badge = ({children,bg,color}) => <span style={{background:bg,color:color||"white",borderRadius:"6px",padding:"2px 10px",fontSize:"12px",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>{children}</span>;
-const Card = ({children,bg,border,style={}}) => <div style={{background:bg||"rgba(255,255,255,0.04)",border:`1px solid ${border||"rgba(255,255,255,0.1)"}`,borderRadius:"14px",padding:"18px 20px",marginBottom:"14px",...style}}>{children}</div>;
-const SectionTitle = ({children,color}) => <div style={{fontSize:"11px",color:color||"#c9a84c",letterSpacing:"1.5px",fontWeight:800,marginBottom:"10px",fontFamily:"sans-serif"}}>{children}</div>;
-const ScoreDot = ({score,max=5}) => {
-  const pct = score/max;
-  const col = pct>=0.8?"#4caf50":pct>=0.5?"#ff9800":"#f44336";
-  return <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-    <div style={{width:"40px",height:"40px",borderRadius:"50%",background:`conic-gradient(${col} ${pct*360}deg, rgba(255,255,255,0.1) 0deg)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div style={{width:"28px",height:"28px",borderRadius:"50%",background:"#0d1b2a"}}/>
-    </div>
-  </div>;
-};
-
-const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
-
-// ─── STEP INDICATOR ──────────────────────────────────────────────────────────
-function Steps({current, activeTab, onTabChange}) {
-  const steps = ["Upload","CUBE","Plan","Script","Rubric","Feedback","🏆"];
-  const tabToStep = {cube:1, plan:2, script:3, rubric:4, feedback:5, rank:6};
-  const stepToTab = {1:"cube", 2:"plan", 3:"script", 4:"rubric", 5:"feedback", 6:"rank"};
-  const highlight = activeTab ? (tabToStep[activeTab] ?? current) : current;
-  return <div style={{display:"flex",alignItems:"center",gap:"0",marginBottom:"20px",padding:"14px 8px",background:"rgba(255,255,255,0.04)",borderRadius:"16px",border:"1px solid rgba(255,255,255,0.08)"}}>
-    {steps.map((s,i)=>{
-      const done = i < highlight;
-      const active = i === highlight;
-      const clickable = i > 0 && !!onTabChange;
-      return <div key={s} style={{display:"flex",alignItems:"center",flex:i<steps.length-1?1:"auto"}}>
-        <div onClick={clickable ? ()=>onTabChange(stepToTab[i]) : undefined}
-          style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",cursor:clickable?"pointer":"default"}}>
-          <div style={{position:"relative",width:"56px",height:"56px"}}>
-            <div style={{width:"56px",height:"56px",borderRadius:"50%",
-              background: s==="🏆" ? (active?"linear-gradient(135deg,#6c63ff,#9c27b0)":done?"linear-gradient(135deg,#4a0e7a,#6c63ff)":"rgba(108,99,255,0.15)") : active?"#c9a84c": done?"#4caf50":"rgba(255,255,255,0.08)",
-              border:`2px solid ${s==="🏆"?(active||done?"#6c63ff":"rgba(108,99,255,0.3)"):active?"#c9a84c":done?"#4caf50":"rgba(255,255,255,0.15)"}`,
-              display:"flex",alignItems:"center",justifyContent:"center",
-              fontSize: s==="🏆" ? "26px" : "22px",fontWeight:900,
-              color: s==="🏆" ? "white" : active||done?"#0d1b2a":"#ffffff",
-              boxShadow: active?"0 4px 14px rgba(201,168,76,0.5)":done?"0 2px 8px rgba(76,175,80,0.4)":"none",
-              transition:"all 0.3s"}}>
-              {s==="🏆" ? "🏆" : i+1}
-            </div>
-            {done&&<div style={{position:"absolute",top:"-4px",right:"-4px",width:"20px",height:"20px",borderRadius:"50%",background:"#2e7d32",border:"2px solid #0d1b2a",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:900,color:"white",lineHeight:1}}>✓</div>}
-          </div>
-          <div style={{fontSize:"13px",
-            color: s==="🏆" ? (active?"#a89fff":done?"#a89fff":"#e8eaf0") : (active?"#c9a84c":done?"#4caf50":"#e8eaf0"),
-            fontFamily:"sans-serif",fontWeight:active||done?700:400,whiteSpace:"nowrap"}}>{s==="🏆"?"Score":s}</div>
-        </div>
-        {i<steps.length-1&&<div style={{flex:1,height:"3px",
-          background: done?"#c9a84c":"rgba(255,255,255,0.15)",
-          margin:"0 4px",marginBottom:"22px",borderRadius:"2px",transition:"all 0.3s"}}/>}
-      </div>;
-    })}
-  </div>;
-}
-
-// ─── PAPER CARD ──────────────────────────────────────────────────────────────
-function PaperCard({children, subtitle}) {
-  return <div style={{background:"#fffef5",borderRadius:"16px",padding:"20px 24px",boxShadow:"0 4px 24px rgba(0,0,0,0.4)",border:"1px solid #e8e0c8",position:"relative",overflow:"hidden",marginBottom:"16px"}}>
-    <div style={{position:"absolute",inset:0,pointerEvents:"none"}}>
-      {[...Array(8)].map((_,i)=><div key={i} style={{position:"absolute",left:0,right:0,top:`${48+i*32}px`,height:"1px",background:"rgba(160,180,220,0.3)"}}/>)}
-      <div style={{position:"absolute",top:0,bottom:0,left:"32px",width:"1.5px",background:"rgba(255,100,100,0.2)"}}/>
-    </div>
-    {subtitle&&<div style={{fontSize:"10px",color:"#999",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"1px",marginBottom:"10px",position:"relative"}}>{subtitle}</div>}
-    <div style={{position:"relative"}}>{children}</div>
-  </div>;
-}
-
-// ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
-function RubricRow({label, data, applicable=true}) {
-  // XP: +2 per writing feature (max score=5 maps to +2 XP when >=3, else proportional)
-  const xpEarned = !applicable ? null : (data?.score||0); // raw score = XP directly
-  if (!applicable) return <tr>
-    <td style={{padding:"10px 14px",color:"#c8d8e8",fontSize:"13px",fontFamily:"sans-serif"}}>{label}</td>
-    <td style={{padding:"10px 14px",textAlign:"center"}}><span style={{color:"#555",fontSize:"12px",fontStyle:"italic"}}>N/A</span></td>
-    <td style={{padding:"10px 14px",textAlign:"center",color:"#444",fontSize:"13px",fontFamily:"sans-serif"}}>—</td>
-    <td style={{padding:"10px 14px",color:"#555",fontSize:"13px",fontStyle:"italic",fontFamily:"sans-serif"}}>Not applicable for this directive verb</td>
-  </tr>;
-  return <tr>
-    <td style={{padding:"10px 14px",color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontWeight:600,borderBottom:"1px solid rgba(255,255,255,0.06)"}}>{label}</td>
-    <td style={{padding:"10px 14px",borderBottom:"1px solid rgba(255,255,255,0.06)",textAlign:"center"}}><ScoreDot score={data?.score||0}/></td>
-    <td style={{padding:"10px 14px",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-      <span style={{fontWeight:900,fontSize:"15px",color:xpEarned>=4?"#69f0ae":xpEarned>=2?"#ffa726":"#ef5350"}}>+{xpEarned}</span>
-      <span style={{fontSize:"10px",color:"#888",fontFamily:"sans-serif",display:"block"}}>XP</span>
-    </td>
-    <td style={{padding:"10px 14px",color:"#e8eaf0",fontSize:"12px",fontFamily:"sans-serif",lineHeight:"1.5",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-      {data?.evidence&&<div style={{marginBottom:"4px",color:"#c8d8e8",fontStyle:"italic"}}>"{data.evidence}"</div>}
-      {data?.comment}
-    </td>
-  </tr>;
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function App() {
-  const [studentName, setStudentName] = useState(() => {
-    try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
-  });
-
-  // Save name to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      if (studentName.trim()) localStorage.setItem("cube_student_name", studentName.trim());
-    } catch {}
-  }, [studentName]);
-  const [phase, setPhase] = useState(0); // 0=upload, 2=results
-  // ── GAMIFICATION STATE ──
-  const [streak, setStreak] = useState(() => {
-    try {
-      const d = JSON.parse(localStorage.getItem("cube_streak") || "{}");
-      const today = new Date().toDateString();
-      const last  = d.lastDate;
-      if (last === today) return d.count || 0;
-      if (!last) return 0;
-      const daysSince = Math.floor((new Date(today) - new Date(last)) / 86400000);
-      // Decay: 1 day missed = half, 2 days = quarter, 3+ = zero
-      const raw = d.count || 0;
-      if (daysSince === 1) return Math.floor(raw / 2);
-      if (daysSince === 2) return Math.floor(raw / 4);
-      return 0;
-    } catch { return 0; }
-  });
-  const [sessionXP, setSessionXP] = useState(0);
-  const [cubeXP,    setCubeXP]    = useState(null);  // null = not yet assessed
-  const [annoXP,    setAnnoXP]    = useState(null);
-  const [writeXP,   setWriteXP]   = useState(null);
-  const [stage1Done, setStage1Done] = useState(false);
-  const [stage2Loading, setStage2Loading] = useState(false);
-  const [stage2Error,   setStage2Error]   = useState(null);
-  const [stage2Results, setStage2Results] = useState(null); // phase3_analysis from Call 2
-  const [leaderboard, setLeaderboard]   = useState(null);  // fetched from LeaderboardWebhook
-  const [lbLoading,   setLbLoading]     = useState(false);
-  const [lbError,     setLbError]       = useState(null);
-  const [lbPeriod,    setLbPeriod]      = useState("week");
-  const [lbDirective, setLbDirective]   = useState("all");
-  const [annotationIdeas, setAnnotationIdeas] = useState([]); // from stage 1 planningArrows labels
-  const [iterCount,  setIterCount]  = useState(1);    // Stage 1 attempt number
-  const [sessionId,  setSessionId]  = useState("");    // shared by Stage1+Stage2 for same attempt
-
-  // persist streak on submit
-  const bumpStreak = () => {
-    try {
-      const today = new Date().toDateString();
-      const d = JSON.parse(localStorage.getItem("cube_streak") || "{}");
-      const last = d.lastDate;
-      let count;
-      if (last === today) {
-        count = d.count || 0; // already counted today
-      } else if (!last) {
-        count = 1;
-      } else {
-        const daysSince = Math.floor((new Date(today) - new Date(last)) / 86400000);
-        const prev = d.count || 0;
-        if (daysSince === 1) count = prev + 1;          // consecutive
-        else if (daysSince === 2) count = Math.max(1, Math.floor(prev / 2) + 1); // half + 1
-        else if (daysSince === 3) count = Math.max(1, Math.floor(prev / 4) + 1); // quarter + 1
-        else count = 1;                                  // fully reset
-      }
-      localStorage.setItem("cube_streak", JSON.stringify({count, lastDate: today}));
-      setStreak(count);
-    } catch {}
-  };
-
-  // Compute CUBE XP: student's score from their actual markings (from studentCube.score)
-  // maxCubeXP is computed separately from the question elements
-  const computeCubeXP = (parsed) => {
-    // Student's actual earned XP = what they correctly circled/underlined/boxed
-    return parsed?.studentCube?.score ?? 0;
-  };
-  const computeMaxCubeXP = (parsed) => {
-    // Maximum possible XP = number of CUBE elements in the question
-    const c = parsed?.phase1_cube;
-    if (!c) return 0;
-    const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
-    const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : [];
-    return dirs.length + (kwds.length) + (c.constraints||[]).length + (c.evidenceRequired?1:0);
-  };
-  const [pageImg, setPageImg] = useState(null);
-  const [pageB64, setPageB64] = useState(null);
-  const [questionNumber, setQuestionNumber] = useState("");
-  const [questionsOnPage, setQuestionsOnPage] = useState(null); // null=not scanned yet
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState("");
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("cube");
-  const [showOptional, setShowOptional] = useState(false);
-  const [modelAnswer, setModelAnswer] = useState(null);
-  const [modelLoading, setModelLoading] = useState(false);
-  const fileRef = useRef();
-  const abortRef = useRef(null);
-
-  const handleImg = async (e) => {
-    const f = e.target.files[0]; if (!f) return;
-    e.target.value = "";
-    const url = URL.createObjectURL(f);
-    const b64 = await toB64(f);
-    setPageImg(url);
-    setPageB64(b64);
-    setError(null);
-    setQuestionsOnPage(null);
-    setQuestionNumber("");
-    // Quick pre-scan to detect how many questions are on the page
-    try {
-      const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
-        body: JSON.stringify({
-          model:"claude-haiku-4-5-20251001", max_tokens:200,
-          messages:[{ role:"user", content:[
-            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:b64 }},
-            { type:"text", text:`Look at this worksheet image. List all question numbers visible (e.g. Q1, Q2, Question 3, (a), (b) etc).
-Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No other text.` }
-          ]}]
-        })
-      });
-      const scanData = await scanRes.json();
-      if (!scanRes.ok || scanData.error) { console.error("Scan error:", JSON.stringify(scanData)); setQuestionsOnPage(["1","2","3","4","5","6"]); return; }
-      const raw = scanData.content?.[0]?.text?.trim() || "[]";
-      const clean = raw.replace(/```json|```/g,"").trim();
-      const arr = JSON.parse(clean);
-      setQuestionsOnPage(Array.isArray(arr) && arr.length > 0 ? arr : ["1","2","3","4","5","6"]);
-    } catch(err) {
-      console.error("Scan catch:", err);
-      setQuestionsOnPage(["1","2","3","4","5","6"]);
-    }
-  };
-
-  // Cancel any in-flight request and return to a clean upload state
-  const cancelAndReset = () => {
-    if (abortRef.current) { abortRef.current.abort(); abortRef.current = null; }
-    setLoading(false);
-    setLoadingMsg("");
-    setPageImg(null);
-    setPageB64(null);
-    setError(null);
-    // Re-open file picker immediately so student can choose a new photo
-    setTimeout(() => fileRef.current?.click(), 50);
-  };
-
-  const analyse = async () => {
-    if (!pageB64) { setError("Please upload a photo first."); return; }
-    const nameParts = studentName.trim().split(/\s+/).filter(Boolean);
-    if (nameParts.length < 2) { setError("Please enter your first name and the first initial of your surname before analysing."); return; }
-    if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
-    if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
-    abortRef.current = new AbortController();
-    setLoading(true); setError(null);
-    setLoadingMsg("Applying CUBE to your question...");
-    // Generate session ID shared between Stage 1 + Stage 2 for this attempt
-    const sid = privacyName(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
-    setSessionId(sid);
-    try {
-      const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
-        signal: abortRef.current.signal,
-        body: JSON.stringify({
-          stage: "stage1",
-          subject: config.subjectCode,
-          syllabus: config.syllabus,
-          messages:[{ role:"user", content:[
-            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`For Question ${sanitiseInput(questionNumber)} in this image, do TWO things and return BOTH in JSON:\n1. Apply CUBE to the printed question text (phase1_cube).\n2. Look carefully at the printed question text for any handwritten pen marks the student made DIRECTLY ON the question words — circles/ovals around words, underlines under words, boxes/rectangles around words, or wavy lines. Report these in studentCube. If you see NO marks on the question text, return empty arrays and score:0.\nDo NOT read or transcribe the student written answer below the question.` }
-          ]}]
-        })
-      });
-      let data;
-      try {
-        data = await res.json();
-      } catch(parseErr) {
-        throw new Error(`Response was not JSON (HTTP ${res.status}) — proxy or network issue`);
-      }
-      // ── Guard: API-level error (rate limit, content filter, overload) ──
-      if (!res.ok || data.error) {
-        const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
-        throw new Error(`API error: ${msg}`);
-      }
-      const raw = (data.content||[]).map(b=>b.text||"").join("");
-      // ── Robust JSON extraction: find first { to last } even if Haiku adds prose ──
-      const firstBrace = raw.indexOf("{");
-      const lastBrace  = raw.lastIndexOf("}");
-      if (firstBrace === -1 || lastBrace === -1) {
-        console.error("Stage 1 raw response:", raw.slice(0,500));
-        throw new Error("No JSON found in response. Check console for details.");
-      }
-      const clean = raw.slice(firstBrace, lastBrace + 1);
-      let parsed;
-      try {
-        parsed = JSON.parse(clean);
-      } catch(jsonErr) {
-        console.error("Stage 1 JSON parse failed:", jsonErr.message, "\nRaw:", clean.slice(0,500));
-        throw new Error("Could not read AI response — please try again.");
-      }
-      // ── Validate minimal expected structure ──
-      if (!parsed.phase1_cube || !parsed.phase1_cube.questionText) {
-        console.error("Stage 1 missing phase1_cube:", JSON.stringify(parsed).slice(0,300));
-        throw new Error("AI returned incomplete CUBE analysis — please try again.");
-      }
-      setResults(parsed);
-      setPhase(2);
-      setActiveTab("cube");
-      // ── GAMIFICATION: compute Stage 1 XP ──
-      const cxp = computeCubeXP(parsed);
-      setCubeXP(cxp);
-      setAnnoXP(null); setWriteXP(null); setStage1Done(false);
-      bumpStreak();
-      setSessionXP(cxp);
-
-      // ── Log Stage 1 (CUBE only) to Google Sheet ──────────────────────────────
-      try {
-        const kwds   = parsed?.phase1_cube?.syllabusKeywords || [];
-        const dirs   = parsed?.phase1_cube?.directives || [];
-        const marks  = parsed?.phase1_cube?.marks ?? null;
-        const cxpVal = computeCubeXP(parsed);
-        const cmaxVal = computeMaxCubeXP(parsed);
-        fetch("https://cube-proxy.alan-3e2.workers.dev/log", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type:             "FULL_ROW",
-            subject:          config.subjectName,
-            student:          privacyName(studentName.trim() || "anonymous"),
-            sessionId:        sid,
-            attempt:          iterCount,
-            streak:           streak,
-            question:         questionNumber,
-            modules:          [...new Set(kwds.map(k=>k.topicCode||k.module).filter(Boolean))].join(", ") || "—",
-            directives:       dirs.map(d=>d.word).join(", ") || "—",
-            syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ") || "—",
-            callType:         "STAGE1_CUBE",
-            sheetTab:         config.sheetTabCube,
-            model:            "claude-haiku-4-5-20251001",
-            cubeXP:           cxpVal,
-            cubeMax:          cmaxVal,
-            // Stage 2 fields blank at Stage 1
-            annoIdeas:"", annoUsed:"", annoXP:"",
-            wConn:"", wNoun:"", wMod:"", wFlow:"",
-            writeXP:"", writeMax:"",
-            totalXP:          cxpVal,
-            awdMark:          "",
-            questionMarks:    marks ?? "",
-            indBand:          "",
-          })
-        }); // fire-and-forget
-      } catch {}
-    } catch(e) {
-      if (e.name !== "AbortError") {
-        console.error("Stage 1 analysis error:", e.message, e);
-        setError("⚠️ CUBE analysis failed — " + e.message + "\n\nPlease check your internet connection and try again. If the problem continues, try a different photo.");
-      }
-    }
-    setLoading(false);
-    abortRef.current = null;
-  };
-
-  const generateModelAnswer = async () => {
-    if (!results) return;
-    setModelLoading(true);
-    const c1 = results.phase1_cube;
-    const { questionText } = c1;
-    const dirs2 = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
-    const kwds2 = c1.syllabusKeywords?.length ? c1.syllabusKeywords : c1.syllabusMatch ? [c1.syllabusMatch] : [];
-    const pk = kwds2[0] || {};
-    try {
-      const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous"))},
-        body: JSON.stringify({
-          stage: "modelAnswer",
-          subject: config.subjectCode,
-          bandRules: config.bandRules,
-
-          messages:[{ role:"user", content:[{type:"text", text:
-            `Write a Band 6 model response for this NSW HSC Earth and Environmental Science question.
-
-Question: "${sanitiseInput(questionText)}"
-Directive(s): ${dirs2.map(d=>`${sanitiseInput(d.word)} — ${sanitiseInput(d.meaning)}`).join("; ")}
-Syllabus keyword(s): ${kwds2.map(k=>sanitiseInput(k.word||k.topicTitle)).join(", ")}
-Module: ${sanitiseInput(pk.module)} — ${sanitiseInput(pk.topicTitle)}
-Marks value: ${results?.phase1_cube?.marks || "unknown"}
-
-Match the style and depth of the real HSC exemplars in your system prompt.
-- Explain the mechanism, not just the observation
-- Use causal connectives naturally (SO, BECAUSE, BUT, therefore, since, which means)
-- Use precise scientific noun groups
-- If evaluate/assess: state a clear IS/IS NOT judgement at the end
-- Length: approximately one substantive sentence per mark
-
-Return ONLY the model response text, no heading, no preamble.`
-          }]}]
-        })
-      });
-      const data = await res.json();
-      setModelAnswer(data.content[0]?.text || "");
-    } catch(e) { setModelAnswer("Could not generate model answer. Please try again."); }
-    setModelLoading(false);
-  };
-
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
-
-  // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
-  // Sync streak from server when student name is entered
-  useEffect(()=>{
-    const parts = (studentName||"").trim().split(/\s+/);
-    if (parts.length>=2 && parts[0] && !leaderboard && !lbLoading) {
-      fetchLeaderboard("week","all");
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[studentName]);
-
-  const fetchLeaderboard = async (period, directive) => {
-    if (!config.leaderboardUrl || config.leaderboardUrl.includes("REPLACE_WITH")) {
-      setLbError("Leaderboard not yet configured — deploy LeaderboardWebhook.gs and update leaderboardUrl in config.json.");
-      return;
-    }
-    setLbLoading(true); setLbError(null);
-    try {
-      const url = `https://cube-proxy.alan-3e2.workers.dev/leaderboard?subject=${config.subjectCode}&period=${period||lbPeriod}&directive=${directive||lbDirective}&lburl=${encodeURIComponent(config.leaderboardUrl||"")}`;
-      const res  = await fetch(url);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setLeaderboard(data);
-      // Sync streak from server for current student (cross-device consistency)
-      try {
-        const me = privacyName(studentName.trim()||"anonymous");
-        const myRow = (data.leaderboard||[]).find(p=>p.student===me);
-        if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
-          // Server streak is source of truth — update local state and cache
-          setStreak(myRow.streak);
-          const today = new Date().toDateString();
-          localStorage.setItem("cube_streak", JSON.stringify({count:myRow.streak, lastDate:today}));
+{
+  "subjectCode": "EES",
+  "subjectName": "Earth & Environmental Science",
+  "subjectShortName": "EES",
+  "dominantMode": "Evidence + systems + data",
+  "cleanRule": "EES = causal explanation + evidence from stimulus where provided",
+  "leaderboardTip": "~60% of HSC questions are Explain/Analyse type \u2014 causal connectives (SO, BECAUSE, BUT) are essential.",
+  "sheetTabCube": "EES CUBE",
+  "sheetTabFull": "EES FULL",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbyj9dbw2_Fdh5zZF1NsWMfcN5T4dZHnYOH5cAIrXBcnV10L78xiZYcFm7tV7jQ8wIvk/exec",
+  "syllabus": {
+    "5": {
+      "title": "Earth's Processes",
+      "topics": [
+        {
+          "code": "5-1",
+          "title": "Development of the Biosphere",
+          "dotPoints": [
+            {
+              "label": "5-1a",
+              "text": "Investigate evidence for the origin of organic molecules on the Earth, including Urey and Miller's experiments, communities around black smokers, and meteorites/panspermia"
+            },
+            {
+              "label": "5-1b",
+              "text": "Investigate the evidence for the development of photosynthetic life, including cyanobacteria and stromatolites"
+            },
+            {
+              "label": "5-1c",
+              "text": "Evaluate the evidence for the origin of multicellular life and resulting changes to ecosystems, for example the Ediacaran and Cambrian fauna"
+            },
+            {
+              "label": "5-1d",
+              "text": "Investigate the conquest of land by both plants and animals"
+            }
+          ],
+          "keywords": [
+            "organic molecules",
+            "Urey and Miller",
+            "black smokers",
+            "meteorites",
+            "panspermia",
+            "photosynthetic life",
+            "cyanobacteria",
+            "stromatolites",
+            "multicellular life",
+            "ecosystems",
+            "Ediacaran",
+            "Cambrian fauna",
+            "conquest of land"
+          ]
+        },
+        {
+          "code": "5-2",
+          "title": "Changes in the Geosphere, Atmosphere and Hydrosphere",
+          "dotPoints": [
+            {
+              "label": "5-2a",
+              "text": "Analyse the changes in the geosphere, atmosphere and hydrosphere that resulted from the development and evolution of the biosphere, including the effect of photosynthesising cyanobacteria on each of the spheres, and the role of oxygen in the production of banded iron formations"
+            }
+          ],
+          "keywords": [
+            "geosphere",
+            "atmosphere",
+            "hydrosphere",
+            "biosphere",
+            "cyanobacteria",
+            "oxygen",
+            "banded iron formations"
+          ]
+        },
+        {
+          "code": "5-3",
+          "title": "Plate Tectonic Supercycle",
+          "dotPoints": [
+            {
+              "label": "5-3a",
+              "text": "Model the plate tectonic supercycle"
+            },
+            {
+              "label": "5-3b",
+              "text": "Outline the effect of the plate tectonic supercycle on large-scale phenomena, including climate and evolution"
+            }
+          ],
+          "keywords": [
+            "plate tectonic supercycle",
+            "climate",
+            "evolution"
+          ]
+        },
+        {
+          "code": "5-4",
+          "title": "Fossil Formation and Stratigraphy",
+          "dotPoints": [
+            {
+              "label": "5-4a",
+              "text": "Investigate and model processes of fossil formation by examining a variety of methods in rock, including mould formations, cast formations, and trace fossils"
+            },
+            {
+              "label": "5-4b",
+              "text": "Discuss the significance of index fossils in generating a geological timescale"
+            },
+            {
+              "label": "5-4c",
+              "text": "Extrapolate how the principles of uniformitarianism and superposition as well as fossils and absolute dating can be used to date events of geological significance, for example the evolution of the Cambrian fauna and mass extinction events"
+            }
+          ],
+          "keywords": [
+            "fossil formation",
+            "mould",
+            "cast",
+            "trace fossils",
+            "index fossils",
+            "geological timescale",
+            "uniformitarianism",
+            "superposition",
+            "absolute dating",
+            "mass extinction",
+            "Cambrian fauna"
+          ]
         }
-      } catch {}
-    } catch(e) {
-      setLbError("Could not load leaderboard: " + e.message);
-    }
-    setLbLoading(false);
-  };
-
-  const markFullAnswer = async () => {
-    if (!pageB64 || !results) return;
-    setStage2Loading(true); setStage2Error(null);
-    const c1 = results.phase1_cube;
-    const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
-    const kwds = c1.syllabusKeywords?.length ? c1.syllabusKeywords : [];
-    const primaryDir = dirs.find(d=>d.isPrimary) || dirs[0] || {};
-    // Option B: Stage 2 reads student's actual handwritten annotations from the image itself
-    // No longer passing AI-generated planningArrows — Sonnet reads what the student wrote
-    try {
-      const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(sanitiseInput(questionNumber))},
-        body: JSON.stringify({
-          stage: "stage2",
-          subject: config.subjectCode,
-          messages:[{ role:"user", content:[
-            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`Mark the written response to Question ${sanitiseInput(questionNumber)} from this image.
-
-Question: "${sanitiseInput(c1.questionText)}"
-Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.verbType||"")})
-Marks value: ${c1.marks||"not stated"}
-Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
-
-ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
-STRICT RULES for annotations:
-- Annotations are BRIEF planning notes: single words or short phrases of 2-4 words MAX (e.g. "Mt Pinatubo", "PRO/CON", "seismic monitoring").
-- A full sentence is NEVER an annotation — if it is a sentence, it is part of the written response. Reject it.
-- Handwriting above the question that looks like a continuation of a previous answer is NOT an annotation. Ignore it.
-- Only count brief handwritten notes that are clearly beside or immediately above the printed question.
-- If you see no such brief notes → annotationIdeas = []
-- If in doubt → annotationIdeas = []
-After identifying any genuine brief annotations, check whether each appears in the written response.
-
-Transcribe and mark ONLY the handwritten response to this question. Return JSON only.` }
-          ]}]
-        })
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error?.message || "Stage 2 API error");
-      if (!res.ok || data.error) {
-        const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
-        throw new Error(`API error: ${msg}`);
-      }
-      const raw = (data.content||[]).map(b=>b.text||"").join("");
-      const firstBrace = raw.indexOf("{");
-      const lastBrace  = raw.lastIndexOf("}");
-      if (firstBrace === -1 || lastBrace === -1) {
-        console.error("Stage 2 raw response:", raw.slice(0,500));
-        throw new Error("No JSON in Stage 2 response — please try again.");
-      }
-      const clean = raw.slice(firstBrace, lastBrace + 1);
-      let parsed;
-      try {
-        parsed = JSON.parse(clean);
-      } catch(jsonErr) {
-        console.error("Stage 2 JSON parse failed:", jsonErr.message);
-        throw new Error("Could not read marking response — please try again.");
-      }
-      setStage2Results(parsed);
-      setStage1Done(true);
-      setActiveTab("plan");
-      // Update session XP with annotation ideas used
-      const annoItems = (parsed.annotationCheck||[]).slice(0,6); // cap at 6
-      // Two-tier annotation XP:
-      // +1 XP per idea present (student wrote it) — up to 6 XP
-      // +1 XP per idea used in response — up to 6 XP
-      // Max total annotation XP = 12
-      const annoPresenceXP = Math.min(annoItems.length, 6); // +1 per annotation written
-      const annoUsedXP = annoItems.filter(a=>a.used).length; // +1 per used in response
-      const annoXpVal = annoPresenceXP + annoUsedXP;
-      setAnnoXP(annoXpVal);
-      // Also store breakdown for display
-      setAnnotationIdeas({presence: annoPresenceXP, used: annoUsedXP, items: annoItems});
-      setSessionXP((cubeXP||0) + annoXpVal + totalScore(parsed));
-      // Log to webhook
-      try {
-        const causalApp  = parsed.rubric?.causalConnectives?.applicable !== false;
-        // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
-        const dirWord    = (primaryDir.word||"").toLowerCase().trim();
-        const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
-        const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
-        const sc  = totalScore(parsed);
-        const mx  = 10 + (causalApp?5:0) + (modalApp?5:0);
-        const band = getBand(sc, mx);
-        const annoItems  = (parsed.annotationCheck||[]).slice(0,6);
-        const annoPresXP = Math.min(annoItems.length, 6);
-        const annoUsdXP  = annoItems.filter(a=>a.used).length;
-        const annoTotal  = annoPresXP + annoUsdXP;
-        const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.round((sc/mx)*c1.marks) : "";
-        const indBand    = (c1.marks == null || c1.marks === "") ? `Band ${band}` : "";
-        fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({
-            type:             "FULL_ROW",
-            subject:          config.subjectName,
-            student:          privacyName(studentName.trim()||"anonymous"),
-            sessionId:        sessionId,
-            attempt:          iterCount,
-            streak:           streak,
-            question:         questionNumber,
-            modules:          [...new Set(kwds.map(k=>k.topicCode||k.module).filter(Boolean))].join(", ")||"—",
-            directives:       dirs.map(d=>d.word).join(", ")||"—",
-            syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ")||"—",
-            callType:         "STAGE2_MARK",
-            sheetTab:         config.sheetTabFull,
-            model:            MODEL,
-            cubeXP:           cubeXP || 0,
-            cubeMax:          dirs.length + kwds.length + (c1.constraints||[]).length + (c1.evidenceRequired?1:0),
-            annoIdeas:        annoPresXP,
-            annoUsed:         annoUsdXP,
-            annoXP:           annoTotal,
-            wConn:            causalApp ? (parsed.rubric?.causalConnectives?.score ?? "") : "",
-            wNoun:            parsed.rubric?.complexNounGroups?.score ?? "",
-            wMod:             modalApp  ? (parsed.rubric?.modality?.score ?? "")  : "",
-            wFlow:            parsed.rubric?.logicalFlow?.score ?? "",
-            writeXP:          sc,
-            writeMax:         mx,
-            totalXP:          (cubeXP||0) + annoTotal + sc,
-            awdMark:          awdMark,
-            questionMarks:    c1.marks ?? "",
-            indBand:          indBand,
-          })
-        });
-      } catch {}
-    } catch(e) {
-      setStage2Error("Marking failed: " + e.message + ". Please try again.");
-    }
-    setStage2Loading(false);
-  };
-
-  const totalScore = (r) => {
-    if (!r) return 0;
-    const { rubric } = r;
-    const causal  = rubric.causalConnectives?.applicable !== false ? (rubric.causalConnectives?.score||0) : 0;
-    const modality = rubric.modality?.applicable ? (rubric.modality?.score||0) : 0;
-    return causal + (rubric.complexNounGroups?.score||0) + modality + (rubric.logicalFlow?.score||0);
-  };
-
-  // ── STYLES ──
-  const bg = "linear-gradient(160deg,#040d18 0%,#081525 40%,#0a1e35 100%)";
-  const gold = "#c9a84c";
-  const tabStyle = (id) => ({
-    padding:"10px 18px", border:"none", borderRadius:"8px", fontSize:"13px", fontWeight:700,
-    cursor:"pointer", fontFamily:"sans-serif", letterSpacing:"0.5px",
-    background: activeTab===id ? gold : "rgba(255,255,255,0.06)",
-    color: activeTab===id ? "#0d1b2a" : "#7a9ab8",
-    transition:"all 0.2s"
-  });
-
-  return (
-    <div style={{minHeight:"100vh",background:bg,fontFamily:"'Georgia','Times New Roman',serif",color:"#e8eaf0"}}>
-      <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-        .cube-spinner {
-          display: inline-block;
-          width: 18px; height: 18px;
-          border: 3px solid rgba(201,168,76,0.25);
-          border-top-color: #c9a84c;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-          vertical-align: middle;
-          flex-shrink: 0;
+      ]
+    },
+    "6": {
+      "title": "Hazards",
+      "topics": [
+        {
+          "code": "6-1",
+          "title": "Geological Natural Disasters",
+          "dotPoints": [
+            {
+              "label": "6-1a",
+              "text": "Using data, predict the zones along which earthquakes and both effusive and explosive volcanic eruptions are likely to occur and relate these to plate boundaries"
+            },
+            {
+              "label": "6-1b",
+              "text": "Using secondary sources, investigate and model the changing depth of the focus of earthquakes at convergent and divergent boundaries"
+            },
+            {
+              "label": "6-1c",
+              "text": "Using secondary sources, investigate and explain the hazards associated with earthquakes, including ground motion and tsunamis"
+            },
+            {
+              "label": "6-1d",
+              "text": "Using secondary sources, investigate and explain the hazards associated with volcanoes, for example ash eruptions and lava flows, lahars and poisonous gas emissions"
+            },
+            {
+              "label": "6-1e",
+              "text": "Account for the types of magma in each of the above types of volcanoes, and analyse how this affects the explosivity of their eruptions"
+            },
+            {
+              "label": "6-1f",
+              "text": "Investigate the point at which a geological hazard becomes a disaster"
+            }
+          ],
+          "keywords": [
+            "earthquakes",
+            "effusive eruptions",
+            "explosive eruptions",
+            "plate boundaries",
+            "focus",
+            "convergent boundaries",
+            "divergent boundaries",
+            "ground motion",
+            "tsunamis",
+            "ash eruptions",
+            "lava flows",
+            "lahars",
+            "poisonous gas emissions",
+            "magma",
+            "explosivity",
+            "geological hazard",
+            "disaster"
+          ]
+        },
+        {
+          "code": "6-2",
+          "title": "Impact of Natural Disasters on the Biosphere",
+          "dotPoints": [
+            {
+              "label": "6-2a",
+              "text": "Using data from secondary sources, compare the eruptions that occur at explosive and effusive volcanoes in terms of the impact on the biosphere and atmosphere"
+            },
+            {
+              "label": "6-2b",
+              "text": "Analyse the effects of a major volcanic eruption on the atmosphere in terms of changing the climate, both warming and cooling"
+            },
+            {
+              "label": "6-2c",
+              "text": "In a case study, investigate one eruption that has had a significant effect on the biosphere and atmosphere and assess its impact, including but not limited to Mount Pinatubo"
+            },
+            {
+              "label": "6-2d",
+              "text": "Evaluate the causes and physical impact of climatic phenomena on a local ecosystem, including hailstorms, east coast lows, droughts or floods, and bushfires"
+            },
+            {
+              "label": "6-2e",
+              "text": "Investigate how human activities can contribute to the frequency and magnitude of some natural disasters, including droughts or floods, and bushfires and landslides"
+            }
+          ],
+          "keywords": [
+            "explosive volcanoes",
+            "effusive volcanoes",
+            "biosphere",
+            "atmosphere",
+            "volcanic eruption",
+            "climate",
+            "warming",
+            "cooling",
+            "eruption",
+            "Mount Pinatubo",
+            "climatic phenomena",
+            "local ecosystem",
+            "hailstorms",
+            "east coast lows",
+            "droughts",
+            "floods",
+            "bushfires",
+            "human activities",
+            "frequency",
+            "magnitude",
+            "natural disasters",
+            "landslides"
+          ]
+        },
+        {
+          "code": "6-3",
+          "title": "Prediction and Prevention of Natural Disasters",
+          "dotPoints": [
+            {
+              "label": "6-3a",
+              "text": "Using secondary sources, evaluate the effectiveness of technologies in predicting natural disasters, for example volcanoes: three-dimensional imaging, seismic data, early-warning systems, ground-movement data, analysis of historical data; earthquakes: ground movement detectors, anomalous animal behaviour, strain meters; east coast lows: temperatures, pressure systems"
+            },
+            {
+              "label": "6-3b",
+              "text": "Investigate and evaluate the technologies used to minimise the effect of natural disasters associated with volcanoes and earthquakes, including building codes, disaster warning systems and education"
+            },
+            {
+              "label": "6-3c",
+              "text": "Using secondary sources, assess the accuracy of technologies used in meteorology to predict and prevent damage to life and infrastructure as a result of natural weather events"
+            }
+          ],
+          "keywords": [
+            "technologies",
+            "predicting natural disasters",
+            "three-dimensional imaging",
+            "seismic data",
+            "early-warning systems",
+            "ground-movement data",
+            "historical data",
+            "ground movement detectors",
+            "anomalous animal behaviour",
+            "strain meters",
+            "temperatures",
+            "pressure systems",
+            "building codes",
+            "disaster warning systems",
+            "education",
+            "meteorology",
+            "infrastructure",
+            "natural weather events"
+          ]
         }
-        .cube-spinner-dim {
-          display: inline-block;
-          width: 18px; height: 18px;
-          border: 3px solid rgba(90,122,154,0.2);
-          border-top-color: #5a7a9a;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-          vertical-align: middle;
-          flex-shrink: 0;
+      ]
+    },
+    "7": {
+      "title": "Climate Science",
+      "topics": [
+        {
+          "code": "7-1",
+          "title": "Natural Processes of Variations in Climate",
+          "dotPoints": [
+            {
+              "label": "7-1a",
+              "text": "Use modelling to explain the causes of the natural greenhouse effect and examine the timescales in which changes occur"
+            },
+            {
+              "label": "7-1b",
+              "text": "Using secondary sources, assess the different causes of natural climate variation and the timescales in which changes occur, including the plate tectonic supercycle, massive volcanic eruptions in the Deccan and Siberian Traps, changes in the Earth's orbit around the Sun, and changes in ocean currents and ocean circulation"
+            }
+          ],
+          "keywords": [
+            "natural greenhouse effect",
+            "natural climate variation",
+            "timescales",
+            "plate tectonic supercycle",
+            "volcanic eruptions",
+            "Deccan Traps",
+            "Siberian Traps",
+            "Earth's orbit",
+            "ocean currents",
+            "ocean circulation"
+          ]
+        },
+        {
+          "code": "7-2",
+          "title": "Evidence for Climate Variation",
+          "dotPoints": [
+            {
+              "label": "7-2a",
+              "text": "Describe and discuss ancient evidence of variations in global temperature, including pollen grains in sedimentary rocks, changes in rock types, fossils and microfossils, and changing isotope ratios in rocks and deep sea sediments"
+            },
+            {
+              "label": "7-2b",
+              "text": "Identify and explain more recent evidence of climate variation, including ice cores containing gas bubbles and oxygen isotopes, dendrochronology, Aboriginal art sites showing now-extinct species and environments, human instrumental records, and isotope ratios shown in stalagmites, stalactites and corals"
+            }
+          ],
+          "keywords": [
+            "pollen grains",
+            "sedimentary rocks",
+            "rock types",
+            "fossils",
+            "microfossils",
+            "isotope ratios",
+            "deep sea sediments",
+            "ice cores",
+            "gas bubbles",
+            "oxygen isotopes",
+            "dendrochronology",
+            "Aboriginal art",
+            "instrumental records",
+            "stalagmites",
+            "stalactites",
+            "corals"
+          ]
+        },
+        {
+          "code": "7-3",
+          "title": "Influence of Human Activities on Changes to Climate",
+          "dotPoints": [
+            {
+              "label": "7-3a",
+              "text": "Distinguish between the natural greenhouse effect and any anthropogenic greenhouse effects"
+            },
+            {
+              "label": "7-3b",
+              "text": "Investigate any influence that human activities may have had on the environment since the Industrial Revolution, including increases in greenhouse gases and ocean acidification"
+            },
+            {
+              "label": "7-3c",
+              "text": "Investigate flow-on effects of changes to climate, including changing weather patterns, changes in glaciers, sea ice and ice sheets, and changing range of species due to rising sea level"
+            }
+          ],
+          "keywords": [
+            "natural greenhouse effect",
+            "anthropogenic",
+            "human activities",
+            "environment",
+            "Industrial Revolution",
+            "greenhouse gases",
+            "ocean acidification",
+            "weather patterns",
+            "glaciers",
+            "sea ice",
+            "ice sheets",
+            "sea level",
+            "species"
+          ]
+        },
+        {
+          "code": "7-4",
+          "title": "Mitigation and Adaptation Strategies",
+          "dotPoints": [
+            {
+              "label": "7-4a",
+              "text": "Investigate possible human-induced causes for the enhanced greenhouse effect, including the burning of fossil fuels for energy and land use and land cover change"
+            },
+            {
+              "label": "7-4b",
+              "text": "Investigate scientific evidence suggesting ways in which humans may assist to minimise any human contribution to the greenhouse effect in their daily lives"
+            },
+            {
+              "label": "7-4c",
+              "text": "Evaluate scientific evidence for the usefulness of a range of mitigation and adaptation strategies, including urban design and geo-engineering strategies, alternative energy sources, and using or changing agricultural practices including those of Aboriginal and Torres Strait Islander Peoples"
+            }
+          ],
+          "keywords": [
+            "enhanced greenhouse effect",
+            "fossil fuels",
+            "land use",
+            "land cover change",
+            "greenhouse effect",
+            "mitigation",
+            "adaptation",
+            "urban design",
+            "geo-engineering",
+            "alternative energy",
+            "agricultural practices",
+            "Aboriginal and Torres Strait Islander Peoples"
+          ]
         }
-      `}</style>
-
-      {/* ── HEADER ── */}
-      <div style={{background:"linear-gradient(90deg,#0a1e35,#071528)",borderBottom:`3px solid ${gold}`,padding:"12px 24px",position:"sticky",top:0,zIndex:100}}>
-        <div style={{maxWidth:"860px",margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"16px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
-            <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
-            <div>
-              <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>CUBE Marking Coach</div>
-              <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
-                <span className="hide-mobile">{config.subjectName}</span>
-                <span className="show-mobile">{config.subjectShortName||config.subjectCode}</span>
-              </div>
-            </div>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-            {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:"14px"}}>day{streak!==1?"s":""}</span></div>}
-            {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
-            {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
-              <span style={{fontSize:"17px"}}>↩</span> New Question
-            </button>}
-          </div>
-        </div>
-      </div>
-
-      <div style={{maxWidth:"860px",margin:"0 auto",padding:"28px 18px"}}>
-
-        {/* ── PHASE 0: UPLOAD ── */}
-        {phase===0&&(
-          <div>
-            
-            <div style={{textAlign:"center",marginBottom:"24px"}}>
-              <h1 style={{fontSize:"26px",margin:"0 0 8px",color:"#f0e6c8",fontWeight:700}}>Check Your Answer</h1>
-            </div>
-
-            {/* ── Student name field ── */}
-            <div style={{marginBottom:"20px"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
-                <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"0.5px"}}>{(()=>{const p=studentName.trim().split(/\s+/).filter(Boolean); return p.length>=2&&p[p.length-1].length===1 ? "Your name" : "Enter your FIRST name and 1st INITIAL of surname";})()}</div>
-                {studentName.trim()&&<button onClick={()=>{setStudentName("");try{localStorage.removeItem("cube_student_name")}catch{}}} style={{background:"none",border:"none",color:"#7a9ab8",fontSize:"12px",cursor:"pointer",fontFamily:"sans-serif",textDecoration:"underline",padding:0}}>Not you?</button>}
-              </div>
-              <input
-                type="text"
-                value={studentName}
-                onChange={e=>setStudentName(e.target.value.slice(0,60))}
-                placeholder="First name  Initial  (e.g. Sue W)"
-                autoComplete="name"
-                className={studentName.trim().length>1 ? "name-input-filled" : "name-input-empty"}
-                style={{width:"100%",padding:"12px 16px",borderRadius:"10px",
-                  border:`3px solid ${studentName.trim().length>1?"rgba(201,168,76,0.5)":"#c9a84c"}`,
-                  background: studentName.trim().length>1 ? "rgba(201,168,76,0.06)" : "rgba(201,168,76,0.18)",
-                  color:"#f0e6c8",fontSize:"16px",fontFamily:"sans-serif",outline:"none",boxSizing:"border-box",transition:"all 0.3s"}}
-              />
-              {!studentName.trim()&&<div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"5px"}}>Your name allows for personalised feedback.</div>}
-              {(()=>{const p=studentName.trim().split(/\s+/).filter(Boolean); if(!studentName.trim()) return null; if(p.length<2) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Please enter your first name AND the first initial of your surname — e.g. Sue W</div>; if(p[p.length-1].length>1) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Only provide the first initial of your surname — e.g. Sue W, not Sue Wilson</div>; return null;})()}
-            </div>
-
-            {/* Single upload zone — hidden once photo selected */}
-            {(()=>{
-              const p = studentName.trim().split(/\s+/).filter(Boolean);
-              const nameValid = p.length >= 2 && p[p.length-1].length === 1;
-              const handleUploadClick = () => {
-                if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
-                setError(null); fileRef.current.click();
-              };
-              return !pageImg&&<div onClick={handleUploadClick} style={{border:`2px dashed ${nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"40px 24px",textAlign:"center",cursor:"pointer",background:nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}} onMouseOver={e=>e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.08)":"rgba(229,115,115,0.08)"} onMouseOut={e=>e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)"}>
-                <div style={{fontSize:"52px",marginBottom:"12px"}}>{nameValid?"📄":"🔒"}</div>
-                <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>{nameValid?"Tap to upload or take a photo":"Enter your name above first"}</div>
-                <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}</div>
-              </div>;
-            })()}
-            <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
-
-            {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
-
-            {/* Question number selector */}
-            {pageImg&&<div style={{marginBottom:"16px"}}>
-              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed?</div>
-              {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
-                {questionsOnPage.map(n=>(
-                  <button key={n} onClick={()=>setQuestionNumber(String(n))} style={{minWidth:"52px",height:"52px",padding:"0 14px",borderRadius:"10px",border:`2px solid ${questionNumber===String(n)?gold:"rgba(255,255,255,0.12)"}`,background:questionNumber===String(n)?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:questionNumber===String(n)?gold:"#7a9ab8",fontSize:"22px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",boxShadow:questionNumber===String(n)?`0 0 0 2px ${gold}`:"none"}}>
-                    {n}
-                  </button>
-                ))}
-                <input value={!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?questionNumber:""} onChange={e=>setQuestionNumber(e.target.value)} placeholder="Other" style={{width:"72px",height:"52px",borderRadius:"10px",border:`2px solid ${!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?gold:"rgba(255,255,255,0.12)"}`,background:"rgba(255,255,255,0.04)",color:"#e8eaf0",fontSize:"15px",fontWeight:700,textAlign:"center",fontFamily:"sans-serif",outline:"none"}}/>
-              </div>}
-            </div>}
-
-            {error&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px 16px",marginBottom:"16px",fontFamily:"sans-serif"}}>
-              <div style={{color:"#ff8a80",fontSize:"14px",whiteSpace:"pre-line",marginBottom:"10px"}}>{error}</div>
-              <button onClick={()=>{setError(null);}} style={{background:"rgba(244,67,54,0.2)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",padding:"6px 16px",color:"#ff8a80",fontSize:"13px",cursor:"pointer",fontFamily:"sans-serif",fontWeight:700}}>✕ Dismiss and try again</button>
-            </div>}
-
-            {pageImg&&(
-              questionsOnPage === null
-                ? <div style={{width:"100%",padding:"18px",background:"#1a2a3a",borderRadius:"14px",fontSize:"17px",fontWeight:900,letterSpacing:"1px",fontFamily:"'Courier New',monospace",color:"#5a7a9a",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center",gap:"12px",boxSizing:"border-box"}}>
-                    <span className="cube-spinner-dim"></span>
-                    Reading your image for available questions...
-                  </div>
-                : <button onClick={analyse} disabled={loading} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
-                    {loading
-                      ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner-dim"></span>{loadingMsg}</span>
-                      : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE"}
-                  </button>
-            )}
-          </div>
-        )}
-
-        {/* ── PHASE 2: RESULTS ── */}
-        {phase===2&&results&&(()=>{
-          const { phase1_cube: c, phase2_plan: p, phase3_analysis: _a0 } = results;
-          // Use Stage 2 results when available (separate call), fall back to combined call result
-          // a is undefined until Stage 2 runs — all a-references must be guarded
-          const a = stage2Results || _a0 || null;
-          // ── normalise: support both new array schema and old single-object schema ──
-          const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
-          const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : c.syllabusMatch ? [c.syllabusMatch] : [];
-          const primaryDir = dirs.find(d=>d.isPrimary) || dirs[0] || {};
-          const primaryKwd = kwds[0] || {};
-          const verbType = primaryDir.verbType || "other";
-          const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
-          const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
-          const score = a ? totalScore(a) : 0;
-          const marksKnown = c.marks !== null && c.marks !== undefined;
-          const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
-          // Derive modality applicable from directive — do not trust Sonnet's value
-          const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
-          const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
-          const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
-          const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
-          const band = marksKnown ? null : getBand(score, maxScore);
-
-          return <div>
-            {/* ── ORDER: 1) Question bar  2) Steps nav  3) Tab content — DO NOT REORDER ── */}
-            {/* ── Question summary bar ── */}
-            <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
-              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
-                {dirs.map((dv,i)=>(
-                  <div key={i} style={{display:"inline-block",border:"2.5px solid #c0392b",borderRadius:"50%",padding:"2px 10px",color:"#c0392b",fontWeight:900,fontSize:"13px"}}>{dv.word}</div>
-                ))}
-                <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",whiteSpace:"nowrap"}}>Mod {primaryKwd.module}</div>
-                {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
-                {stage2Results&&marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{Math.round((score/maxScore)*c.marks)}/{c.marks}</div>}
-                {stage2Results&&!marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{score}/{maxScore}</div>}
-                {stage2Results&&!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>Indicative {band}</div>}
-                {studentName.trim()&&<div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"5px"}}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4"/><path d="M12 13c-5 0-8 2.5-8 4v1h16v-1c0-1.5-3-4-8-4z"/></svg>
-                  {studentName.trim()}
-                </div>}
-              </div>
-              {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
-            </div>
-
-            <Steps current={4} activeTab={activeTab} onTabChange={(tab)=>{
-                setActiveTab(tab);
-                if(tab==="rank" && !leaderboard && !lbLoading) fetchLeaderboard("week","all");
-              }}/>
-
-            {/* ═══ TAB: CUBE ═══ */}
-            {activeTab==="cube"&&<div>
-              <SectionTitle>STEP 2 — CUBE ANALYSIS</SectionTitle>
-
-              <SVGAnnotatedPaper
-                text={c.questionText}
-                directives={dirs}
-                syllabusKeywords={kwds}
-                constraints={c.constraints}
-                mode="cube"
-              />
-
-              {/* Legend */}
-              <div style={{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px",padding:"10px 14px",background:"rgba(255,255,255,0.04)",borderRadius:"10px",border:"1px solid rgba(255,255,255,0.08)"}}>
-                {[
-                  {color:"#c0392b", ch:"C", desc:"Directive verb(s)"},
-                  {color:"#1a6db5", ch:"U", desc:"Syllabus keyword(s)"},
-                  {color:"#2e7d32", ch:"B", desc:"Constraints / scope words"},
-                  {color:"#6a1b9a", ch:"E", desc:"Evidence / example (when required)"},
-                ].map(k=>(
-                  <div key={k.ch} style={{display:"flex",alignItems:"center",gap:"7px",fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
-                    <strong style={{color:k.color}}>{k.ch}</strong> = {k.desc}
-                  </div>
-                ))}
-              </div>
-
-              {/* ── CUBE XP card — student CUBE marking score ── */}
-              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                {/* Row 1: student's actual CUBE marking score */}
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px"}}>
-                  <div>
-                    <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>
-                      ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
-                    </div>
-                    {results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>{results.studentCube.feedback}</div>}
-                  </div>
-                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
-                    <span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span>
-                  </div>
-                </div>
-                {/* Divider */}
-                <div style={{height:"1px",background:"rgba(108,99,255,0.2)",marginBottom:"10px"}}/>
-                {/* Row 2: sample answer max XP */}
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
-                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"20px",fontWeight:900,color:"#555"}}>{results ? computeMaxCubeXP(results) : "—"}</span>
-                    <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
-                  </div>
-                </div>
-              </div>}
-
-              {/* ── Upload + Ready buttons in CUBE tab ── */}
-              {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
-
-                <button onClick={()=>{
-                  // Same as New Question — full reset then open file picker
-                  setStage2Results(null); setStage1Done(false); setStage2Error(null);
-                  setAnnoXP(null); setWriteXP(null); setCubeXP(null); setResults(null);
-                  setIterCount(n=>n+1); setPhase(0); setPageImg(null); setPageB64(null);
-                  setQuestionsOnPage(null); setQuestionNumber(""); setModelAnswer(null);
-                  setSessionXP(0); setActiveTab("cube");
-                  setTimeout(()=>fileRef.current?.click(),100);
-                }} style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"15px",fontWeight:900,cursor:"pointer",marginBottom:"10px",fontFamily:"sans-serif",display:"block",textAlign:"center",letterSpacing:"0.3px"}}>
-                  📸 Upload another attempt to CUBE the question (gains extra XP)
-                </button>
-              </div>}
-
-              {/* C card — all directives in one box */}
-              {dirs.length>0&&<Card bg="rgba(192,57,43,0.08)" border="rgba(192,57,43,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>C</div>
-                  <div style={{flex:1}}>
-                    {dirs.map((dv,i)=>(
-                      <div key={i} style={{borderTop:i>0?"1px solid rgba(192,57,43,0.2)":"none",paddingTop:i>0?"10px":"0",marginTop:i>0?"10px":"0"}}>
-                        <div style={{fontWeight:700,color:"#ff8a80",fontSize:"15px",marginBottom:"3px"}}>
-                          Directive Verb: <span style={{background:"rgba(192,57,43,0.2)",padding:"1px 8px",borderRadius:"20px"}}>{dv.word}</span>
-                          {dirs.length>1&&<span style={{marginLeft:"8px",fontSize:"11px",color:"#ffab91",fontFamily:"sans-serif"}}>{dv.isPrimary?"PRIMARY":"SECONDARY"}</span>}
-                        </div>
-                        <div style={{color:"#e8d0d0",fontSize:"14px",lineHeight:"1.5"}}>{dv.meaning}</div>
-                        {dv.verbType==="explain"&&<div style={{marginTop:"6px",display:"flex",gap:"8px"}}>
-                          {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"2px 10px",fontWeight:900,color:"#ce93d8",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
-                        </div>}
-                        {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"6px",display:"flex",gap:"8px",flexWrap:"wrap"}}>
-                          {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
-                        </div>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>}
-
-              {/* U card — all syllabus keywords in one box */}
-              {kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>U</div>
-                  <div style={{flex:1}}>
-                    {kwds.map((kw,i)=>(
-                      <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.2)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
-                        <div style={{fontWeight:700,color:"#ffffff",fontSize:"14px",marginBottom:"2px"}}>
-                          <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
-                          <span style={{marginLeft:"8px",fontSize:"11px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
-                        </div>
-                        <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>{kw.syllabusText}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>}
-
-              {/* B card — constraints */}
-              {c.constraints?.length>0&&<Card bg="rgba(46,125,50,0.08)" border="rgba(46,125,50,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>B</div>
-                  <div style={{width:"100%"}}>
-                    <div style={{fontWeight:700,color:"#a5d6a7",fontSize:"14px",marginBottom:"8px"}}>Constraints &amp; Scope Words:</div>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:"8px"}}>
-                      {c.constraints.map((ct,i)=><div key={i} style={{background:"rgba(46,125,50,0.12)",border:"2px solid #2e7d32",borderRadius:"6px",padding:"4px 12px"}}>
-                        <div style={{color:"#a5d6a7",fontWeight:700,fontSize:"13px"}}>{ct.text}</div>
-                        <div style={{color:"#81c784",fontSize:"11px",fontFamily:"sans-serif"}}>{ct.type?.replace(/_/g," ")}</div>
-                      </div>)}
-                    </div>
-                    {c.evidenceRequired&&<div style={{marginTop:"8px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"6px 12px",fontSize:"13px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
-                  </div>
-                </div>
-              </Card>}
-              {/* ── Now ready button at bottom of CUBE tab ── */}
-              {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
-                <button onClick={()=>markFullAnswer()} style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg,#6c63ff,#9c27b0)",color:"#fff",border:"none",borderRadius:"10px",fontSize:"16px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"block",textAlign:"center",boxShadow:"0 4px 14px rgba(108,99,255,0.4)",letterSpacing:"0.5px"}}>
-                  {stage2Loading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Marking your answer...</span> : "✍️ Now ready to have full answer marked"}
-                </button>
-                {stage2Error&&<div style={{background:"rgba(244,67,54,0.1)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",padding:"10px 14px",color:"#ff8a80",marginTop:"8px",fontSize:"13px",fontFamily:"sans-serif"}}>{stage2Error}</div>}
-              </div>}
-            </div>}
-
-            {/* ═══ TAB: PLAN ═══ */}
-            {activeTab==="plan"&&<div>
-              <SectionTitle>STEP 3 — ANSWER PLANNING</SectionTitle>
-
-              {/* ── Locked banner when Stage 2 not yet run ── */}
-              {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"18px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"32px",marginBottom:"8px"}}>🔒</div>
-                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"6px"}}>Get your CUBE right first</div>
-                <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"14px"}}>Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your full written response marking.</div>
-                <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
-              </div>}
-
-              {/* SVG + all plan content — only shown after Stage 2 has run */}
-              {stage2Results&&<div>
-              {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
-              <SVGAnnotatedPaper
-                text={c.questionText}
-                directives={dirs}
-                syllabusKeywords={kwds}
-                constraints={c.constraints}
-                planningArrows={stage2Results?.phase2_plan?.planningArrows||[]}
-                mode="plan"
-              />
-
-              {/* ── Annotation XP + Stage 1 total (combined) ── */}
-              {(()=>{
-                const maxCubeXP = (()=>{
-                  const dirs = results?.phase1_cube?.directives?.length ? results.phase1_cube.directives : [];
-                  const kwds = results?.phase1_cube?.syllabusKeywords?.length ? results.phase1_cube.syllabusKeywords : [];
-                  const constr = results?.phase1_cube?.constraints || [];
-                  const ev = results?.phase1_cube?.evidenceRequired ? 1 : 0;
-                  return dirs.length + kwds.length + constr.length + ev;
-                })();
-                const cubeScore = cubeXP || 0;
-                const cubeBelow50 = maxCubeXP > 0 && cubeScore < maxCubeXP * 0.5;
-                const needsWork = cubeBelow50;
-                return <div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:`1.5px solid ${needsWork?"#ef535055":"#6c63ff55"}`,borderRadius:"12px",padding:"14px 16px",marginBottom:"10px",fontFamily:"sans-serif"}}>
-                  {/* Section 1: Points for annotation presence */}
-                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:"6px"}}>
-                    <div>
-                      <div style={{fontSize:"13px",fontWeight:800,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>⚡ Points for ideas/annotations of question</div>
-                      <div style={{fontSize:"11px",color:"#c8d8e8",fontStyle:"italic"}}>+1 XP per annotation idea written (max 6)</div>
-                    </div>
-                    <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                      <span style={{fontSize:"22px",fontWeight:900,color:"#a89fff"}}>{stage2Results ? Math.min((stage2Results.annotationCheck||[]).length,6) : 0}</span>
-                      <span style={{fontSize:"13px",color:"#888"}}> XP</span>
-                    </div>
-                  </div>
-                  {/* Section 2: Points for ideas used in response */}
-                  <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:"8px"}}>
-                    <div>
-                      <div style={{fontSize:"13px",fontWeight:800,color:"#69f0ae",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>⚡ Points where these ideas used in written response</div>
-                      <div style={{fontSize:"11px",color:"#c8d8e8",fontStyle:"italic"}}>
-                        {stage2Results
-                          ? `Used ${(stage2Results.annotationCheck||[]).filter(a=>a.used).length}/${Math.min((stage2Results.annotationCheck||[]).length,6)} ideas  (+1 XP each)`
-                          : "+1 XP per idea used in your written response"}
-                      </div>
-                    </div>
-                    <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                      <span style={{fontSize:"22px",fontWeight:900,color:"#69f0ae"}}>{stage2Results ? (stage2Results.annotationCheck||[]).filter(a=>a.used).length : 0}</span>
-                      <span style={{fontSize:"13px",color:"#888"}}> XP</span>
-                    </div>
-                  </div>
-                  {/* Divider */}
-                  <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
-                  {/* Stage 1 total row — merged in */}
-                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                    <div style={{fontSize:"15px",color:needsWork?"#ef9a9a":"#e8eaf0",fontWeight:800}}>
-                      {needsWork
-                        ? <span>⚡ CUBE &amp; annotation needs to improve — <span style={{color:"#ffa726",fontWeight:900}}>TRY AGAIN ↑</span></span>
-                        : <span>⚡ CUBE + Annotation of question total</span>
-                      }
-                    </div>
-                    <div style={{fontSize:"32px",fontWeight:900,color:needsWork?"#ef5350":"#a89fff"}}>{cubeScore + (annoXP||0)} XP</div>
-                  </div>
-                </div>;
-              })()}
-
-              {/* Answer summary — from Stage 1 phase2_plan */}
-              {stage2Results?.phase2_plan?.summary&&<Card bg="rgba(201,168,76,0.08)" border="rgba(201,168,76,0.3)">
-                <div style={{fontSize:"15px",color:"#f0e6c8",lineHeight:"1.6"}}>
-                  <strong style={{color:gold}}>In short: </strong>{stage2Results.phase2_plan.summary}
-                </div>
-              </Card>}
-
-              {/* Writing scaffold — from Stage 1 phase2_plan */}
-              {stage2Results?.phase2_plan?.writingScaffold&&<Card bg="rgba(33,150,243,0.06)" border="rgba(33,150,243,0.25)">
-                <SectionTitle color="#ffffff">WRITING SCAFFOLD</SectionTitle>
-                {["step1","step2","step3","step4"].filter(k=>stage2Results.phase2_plan.writingScaffold[k]).map((k,i)=>(
-                  <div key={k} style={{display:"flex",gap:"12px",marginBottom:"12px",alignItems:"flex-start"}}>
-                    <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px",fontFamily:"sans-serif"}}>{i+1}</div>
-                    <div style={{color:"#e8eaf0",fontSize:"15px",lineHeight:"1.6"}}>{stage2Results.phase2_plan.writingScaffold[k]}</div>
-                  </div>
-                ))}
-              </Card>}
-
-              </div>}{/* end stage2Results gate */}
-
-            </div>}
-
-            {/* ═══ TAB: SCRIPT ═══ */}
-            {activeTab==="script"&&<div>
-              {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
-                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Marking your written response...</div>
-                <div style={{fontSize:"13px",color:"#9aabb8"}}>Reading your answer and checking your annotation ideas</div>
-              </div>}
-              {!stage1Done&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"32px",marginBottom:"10px"}}>🔒</div>
-                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Get your CUBE right first</div>
-                <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"16px"}}>Get your CUBE right first. Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your full written response marking.</div>
-                <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
-              </div>}
-              {(stage1Done||stage2Results)&&<div>
-              <SectionTitle>STEP 4 — YOUR RESPONSE (FORMATTED)</SectionTitle>
-              <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"6px 12px",marginBottom:"12px",border:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"center"}}>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
-                <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
-                <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
-              </div>
-              <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
-                <div style={{fontSize:"16px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>
-                  <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
-                </div>
-              </PaperCard>
-
-              {/* ── Annotation ideas check (from Stage 2) — all inside card, photo at bottom ── */}
-              {stage2Results?.annotationCheck?.length>0&&<Card bg="rgba(108,99,255,0.06)" border="rgba(108,99,255,0.3)">
-                <SectionTitle color="#a89fff">WHERE YOUR QUESTION ANNOTATIONS HAVE BEEN USED</SectionTitle>
-                {(()=>{
-                  const items = stage2Results.annotationCheck.slice(0,6);
-                  const totalAnnoXP = items.reduce((s,a)=>s+(!a.used?0:a.quality==="usable"?2:1),0);
-                  const usedCount = items.filter(a=>a.used).length;
-                  return <>
-                    {/* Summary line */}
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px",padding:"6px 10px",background:"rgba(108,99,255,0.1)",borderRadius:"8px",fontFamily:"sans-serif"}}>
-                      <span style={{fontSize:"12px",color:"#a89fff",fontWeight:700}}>
-                        Used {usedCount}/{items.length} ideas
-                        {usedCount===0&&<span style={{color:"#ff8a80",marginLeft:"8px"}}>⚠️ No annotation ideas found in response</span>}
-                      </span>
-                      <span style={{fontSize:"14px",fontWeight:900,color:totalAnnoXP===0?"#ef5350":totalAnnoXP>=8?"#69f0ae":"#ffa726"}}>
-                        {totalAnnoXP} / {items.length*2} XP
-                      </span>
-                    </div>
-                    {items.map((item,i)=>{
-                      const itemXP = !item.used ? 0 : item.quality==="usable" ? 2 : 1;
-                      const xpCol = itemXP===2?"#69f0ae":itemXP===1?"#ffa726":"#444";
-                      return <div key={i} style={{display:"flex",gap:"10px",alignItems:"flex-start",marginBottom:"8px",fontFamily:"sans-serif",fontSize:"13px"}}>
-                        <div style={{width:"20px",height:"20px",borderRadius:"50%",background:item.used?"#43a047":"#ef5350",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",color:"#fff",fontWeight:900,flexShrink:0,marginTop:"1px"}}>{item.used?"✓":"✗"}</div>
-                        <div style={{flex:1}}>
-                          <span style={{color:item.used?"#81c784":"#ff8a80",fontStyle:"italic"}}>{item.idea}</span>
-                          {item.used&&item.quality==="usable"&&<span style={{color:"#69f0ae",fontSize:"10px",fontWeight:800,marginLeft:"6px",background:"rgba(105,240,174,0.1)",padding:"0 5px",borderRadius:"3px"}}>DEVELOPED</span>}
-                          {item.used&&item.quality==="present"&&<span style={{color:"#ffa726",fontSize:"10px",fontWeight:800,marginLeft:"6px",background:"rgba(255,167,38,0.1)",padding:"0 5px",borderRadius:"3px"}}>MENTIONED</span>}
-                          {item.used&&item.evidence&&<span style={{color:"#888",fontSize:"11px",display:"block",marginTop:"2px"}}>"{item.evidence}"</span>}
-                          {!item.used&&<span style={{color:"#888",fontSize:"11px",display:"block",marginTop:"2px"}}>Not found in response — missed up to +2 XP</span>}
-                        </div>
-                        <div style={{fontSize:"13px",fontWeight:900,color:xpCol,minWidth:"40px",textAlign:"right"}}>{item.used?`+${itemXP} XP`:"+0"}</div>
-                      </div>;
-                    })}
-                  </>;
-                })()}
-              </Card>}
-
-              {/* Photo below the typed response */}
-              {pageB64&&<div style={{marginTop:"12px"}}>
-                <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
-                <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
-              </div>}
-            </div>}
-            </div>}
-
-            {/* ═══ TAB: RUBRIC ═══ */}
-            {activeTab==="rubric"&&<div>
-              {!stage2Results&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"32px",marginBottom:"10px"}}>🔒</div>
-                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Get your CUBE right first</div>
-                <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"16px"}}>Get your CUBE right first. Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your written analysis.</div>
-                <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
-              </div>}
-              {stage2Results&&<div>
-              <SectionTitle>STEP 5 — WRITTEN ANALYSIS</SectionTitle>
-
-              <Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.08)" style={{padding:0,overflow:"hidden"}}>
-                <table style={{width:"100%",borderCollapse:"collapse"}}>
-                  <thead>
-                    <tr style={{background:"rgba(201,168,76,0.12)"}}>
-                      <th style={{padding:"12px 14px",textAlign:"left",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px"}}>CRITERION</th>
-                      <th style={{padding:"12px 14px",textAlign:"center",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px",width:"64px"}}>SCORE</th>
-                      <th style={{padding:"12px 14px",textAlign:"center",color:"#69f0ae",fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px",width:"52px"}}>XP</th>
-                      <th style={{padding:"12px 14px",textAlign:"left",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px"}}>EVIDENCE &amp; COMMENT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={a.rubric?.causalConnectives?.applicable !== false}/>
-                    <RubricRow label="Complex Noun Groups" data={a.rubric?.complexNounGroups}/>
-                    <RubricRow label="Modality" data={a.rubric?.modality} applicable={modalityApplicable}/>
-                    <RubricRow label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow}/>
-
-                  </tbody>
-                </table>
-              </Card>
-
-              {/* ── XP summary strip ── */}
-              <div style={{background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"6px"}}>
-                  <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{score}</span> / {maxScore} XP</div>
-                </div>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{fontSize:"13px",color:"#aaa"}}>Total points CUBE + Annotation + Written</div>
-                  <div style={{fontSize:"28px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+(annoXP||0)+score} XP</div>
-                </div>
-              </div>
-
-              {/* Detected features */}
-              <div style={{display:"grid",gridTemplateColumns:`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
-                {causalApplicable&&<Card bg="rgba(123,31,162,0.08)" border="rgba(123,31,162,0.3)">
-                  <SectionTitle color="#ce93d8">CONNECTIVES FOUND</SectionTitle>
-                  {a.detectedConnectives?.length>0 ? <>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:"6px",marginBottom:"8px"}}>
-                      {a.detectedConnectives.map((c,i)=>{
-                        const isPref = (config.connectives?.preferred||["so","because","but"]).includes(c.toLowerCase());
-                        return <span key={i} style={{display:"inline-block",
-                          background:isPref?"rgba(123,31,162,0.3)":"rgba(46,125,50,0.2)",
-                          border:`1px solid ${isPref?"rgba(206,147,216,0.5)":"rgba(129,199,132,0.5)"}`,
-                          borderRadius:"5px",padding:"3px 10px",
-                          fontSize:"13px",fontWeight:700,
-                          color:isPref?"#ce93d8":"#81c784",fontFamily:"sans-serif"}}>{c}</span>;
-                      })}
-                    </div>
-                    <div style={{fontSize:"11px",color:"#888",fontFamily:"sans-serif"}}>
-                      <span style={{color:"#ce93d8"}}>■</span> SO/BECAUSE/BUT &nbsp;
-                      <span style={{color:"#81c784"}}>■</span> accepted alternative — both valid ✓
-                    </div>
-                  </> : <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontStyle:"italic"}}>None detected</div>}
-                </Card>}
-                <Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
-                  <SectionTitle color="#64b5f6">NOUN GROUPS FOUND</SectionTitle>
-                  {a.detectedNounGroups?.length>0 ? a.detectedNounGroups.map((ng,i)=><div key={i} style={{fontSize:"15px",color:"#e8eaf0",fontStyle:"italic",marginBottom:"3px"}}>"{ng}"</div>)
-                  :<div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontStyle:"italic"}}>None detected</div>}
-                </Card>
-              </div>
-
-
-            </div>}
-            </div>}
-
-            {/* ═══ TAB: FEEDBACK ═══ */}
-            {activeTab==="feedback"&&<div>
-              {!stage2Results&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
-                <div style={{fontSize:"32px",marginBottom:"10px"}}>🔒</div>
-                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Get your CUBE right first</div>
-                <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"16px"}}>Get your CUBE right first. Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your feedback.</div>
-                <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
-              </div>}
-              {stage2Results&&<div>
-              <SectionTitle>STEP 6 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
-
-              {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
-              {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
-                {a.medals?.medal1&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.medals?.medal2||a.mission?"12px":0}}>
-                  <div style={{fontSize:"26px",flexShrink:0}}>🥇</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal1.category}</div>
-                    <div style={{color:"#f5d67a",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal1.quote}"</div>
-                  </div>
-                </div>}
-                {a.medals?.medal2&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.mission?"12px":0,paddingTop:a.medals?.medal1?"10px":0,borderTop:a.medals?.medal1?"1px solid rgba(255,255,255,0.07)":"none"}}>
-                  <div style={{fontSize:"26px",flexShrink:0}}>🥈</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal2.category}</div>
-                    <div style={{color:"#d0d0d0",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal2.quote}"</div>
-                  </div>
-                </div>}
-                {a.mission&&<div style={{paddingTop:(a.medals?.medal1||a.medals?.medal2)?"10px":0,borderTop:(a.medals?.medal1||a.medals?.medal2)?"1px solid rgba(255,255,255,0.07)":"none"}}>
-                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                    <div style={{fontSize:"26px",flexShrink:0}}>🎯</div>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:800,color:"#ff8a80",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>Your mission</div>
-                      <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:"8px"}}>To improve: {(w=>(w.replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")))(a.mission.weakness||"")}</div>
-                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px"}}>
-                        <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(244,67,54,0.25)"}}>
-                          <div style={{fontSize:"9px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
-                          <div style={{fontSize:"12px",color:"#ffcdd2",fontStyle:"italic"}}>"{a.mission.originalPhrase}"</div>
-                        </div>
-                        <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(76,175,80,0.25)"}}>
-                          <div style={{fontSize:"9px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>TO THIS</div>
-                          <div style={{fontSize:"12px",color:"#c8e6c9",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>}
-              </Card>}
-
-              {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
-              {a.specialCheck?.modelSentenceStarter&&<Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
-
-                {/* ── STEP 1: Structure Pattern ── */}
-                <SectionTitle color={gold}>💡 HOW TO STRUCTURE YOUR ANSWER</SectionTitle>
-                <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
-                  This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
-                </div>
-                <div style={{background:"rgba(255,255,255,0.93)",borderRadius:"12px",padding:"14px 16px",border:"1px solid rgba(201,168,76,0.35)",marginBottom:"6px"}}>
-                  <div style={{fontSize:"14px",color:"#222",fontFamily:"'Georgia',serif",lineHeight:"1.9"}}>
-                    {a.specialCheck.modelSentenceStarter.split(/\b(SO|BECAUSE|BUT|IS NOT|IS)\b/).map((part,i)=>
-                      ["SO","BECAUSE","BUT","IS NOT","IS"].includes(part)
-                        ?<span key={i} style={{background:"#7b1fa2",color:"white",borderRadius:"4px",padding:"1px 7px",fontWeight:900,fontFamily:"sans-serif",fontSize:"12px",margin:"0 2px"}}>{part}</span>
-                        :<span key={i}>{part}</span>
-                    )}
-                  </div>
-                  <div style={{marginTop:"8px",fontSize:"11px",color:"#888",fontFamily:"sans-serif",borderTop:"1px solid #eee",paddingTop:"6px"}}>
-                    ✏️ This is a <em>pattern</em>, not an answer — write your own version using your knowledge
-                  </div>
-                </div>
-
-              </Card>}
-
-
-              {/* ── 3. Special check (connectives / argument structure) ── */}
-              {a.specialCheck?.type!=="none"&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
-                <SectionTitle color={isExplain?"#ce93d8":"#ffab91"}>{isExplain?"⚠️ EXPLAIN — CAUSAL CONNECTIVES":"⚠️ ASSESS/EVALUATE — ARGUMENT STRUCTURE"}</SectionTitle>
-                {isExplain&&a.specialCheck?.explainCheck&&(()=>{
-                  const ec = a.specialCheck.explainCheck;
-                  const hasPreferred = ec.hasSO || ec.hasBECAUSE || ec.hasBUT;
-                  const hasAccepted  = ec.acceptedConnectivesFound?.length > 0;
-                  const hasAny = hasPreferred || hasAccepted;
-                  // Collect all connectives found (preferred + accepted) for display
-                  const allFound = [
-                    ...(ec.hasSO?["so"]:[]),
-                    ...(ec.hasBECAUSE?["because"]:[]),
-                    ...(ec.hasBUT?["but"]:[]),
-                    ...(ec.acceptedConnectivesFound||[])
-                  ];
-                  return <>
-                    {/* Cause-effect link check — always shown */}
-                    <div style={{display:"flex",gap:"10px",alignItems:"center",marginBottom:"10px",fontSize:"13px",fontFamily:"sans-serif"}}>
-                      <Tick ok={ec.causeEffectLinked}/><span style={{color:"#e8eaf0"}}>Cause linked to effect</span>
-                    </div>
-
-                    {/* If any connectives found — show them positively */}
-                    {hasAny && <div style={{background:"rgba(76,175,80,0.1)",border:"1px solid rgba(76,175,80,0.35)",borderRadius:"8px",padding:"10px 14px",marginBottom:"8px"}}>
-                      <div style={{fontSize:"11px",color:"#81c784",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>✅ CAUSAL CONNECTIVES USED</div>
-                      <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"8px"}}>
-                        {allFound.map((c,i)=>{
-                          const isPref = (config.connectives?.preferred||["so","because","but"]).includes(c.toLowerCase());
-                          return <span key={i} style={{
-                            background: isPref?"rgba(123,31,162,0.25)":"rgba(201,168,76,0.2)",
-                            border:`1px solid ${isPref?"rgba(206,147,216,0.5)":"rgba(201,168,76,0.4)"}`,
-                            borderRadius:"5px",padding:"3px 10px",fontSize:"13px",fontWeight:700,
-                            color:isPref?"#ce93d8":"#f0d080",fontFamily:"sans-serif"
-                          }}>{c}</span>;
-                        })}
-                      </div>
-                      {/* Tip: only show SO/BECAUSE/BUT nudge if they haven't already used them */}
-                      {!hasPreferred && <div style={{fontSize:"12px",color:"#c9a84c",fontFamily:"sans-serif",fontStyle:"italic"}}>
-                        Good use of causal connectives — also try SO / BECAUSE / BUT for maximum HSC impact.
-                      </div>}
-                    </div>}
-
-                    {/* If NO connectives at all */}
-                    {!hasAny && <div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.3)",borderRadius:"8px",padding:"10px 14px",marginBottom:"8px"}}>
-                      <div style={{fontSize:"13px",color:"#ff8a80",fontFamily:"sans-serif",fontWeight:600}}>❌ No causal connectives found</div>
-                      <div style={{fontSize:"12px",color:"#e8eaf0",fontFamily:"sans-serif",marginTop:"4px"}}>Try using: <strong style={{color:"#ce93d8"}}>SO</strong>, <strong style={{color:"#ce93d8"}}>BECAUSE</strong>, <strong style={{color:"#ce93d8"}}>BUT</strong> — or alternatives like <em>therefore, thus, however, since, as a result</em></div>
-                    </div>}
-
-                    {/* Key terms for explain questions too */}
-                    {a.specialCheck?.keyTermDefinitions?.length>0&&<div style={{marginTop:"10px",background:"rgba(100,181,246,0.08)",border:"1px solid rgba(100,181,246,0.25)",borderRadius:"8px",padding:"10px 12px"}}>
-                      <div style={{fontSize:"11px",color:"#64b5f6",fontWeight:800,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>✅ DEFINE key terms in the question</div>
-                      {a.specialCheck.keyTermDefinitions.map((t,i)=>(
-                        <div key={i} style={{marginBottom:"4px",fontSize:"13px",fontFamily:"sans-serif"}}>
-                          <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
-                          <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
-                        </div>
-                      ))}
-                    </div>}
-                    <div style={{marginTop:"6px",color:"#d1c4e9",fontSize:"13px",fontFamily:"sans-serif",lineHeight:"1.6"}}>{ec.comment}</div>
-                  </>;
-                })()}
-                {isAssessEval&&a.specialCheck?.assessEvalCheck&&<>
-                  {/* ── Define key terms — plain bullet row aligned with PRO/CON ── */}
-                  <div style={{marginBottom:"8px"}}>
-                    <div style={{display:"flex",gap:"10px",alignItems:"flex-start",fontSize:"13px",fontFamily:"sans-serif"}}>
-                      <Tick ok={true}/>
-                      <div style={{flex:1}}>
-                        <span style={{color:"#e8eaf0",fontWeight:600}}>DEFINE key terms in the question</span>
-                        {a.specialCheck?.keyTermDefinitions?.length>0
-                          ? a.specialCheck.keyTermDefinitions.map((t,i)=>(
-                              <div key={i} style={{marginTop:"3px",fontSize:"13px",fontFamily:"sans-serif"}}>
-                                <span style={{color:"#64b5f6",fontWeight:700}}>{t.term}</span>
-                                <span style={{color:"#c8d8e8"}}> — {t.definition}</span>
-                              </div>
-                            ))
-                          : <div style={{marginTop:"3px",fontSize:"12px",color:"#888",fontStyle:"italic",fontFamily:"sans-serif"}}>Identify any syllabus-specific terms in the question and define them in your opening sentence</div>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                  {/* ── PRO / CON rows ── */}
-                  {[
-                    [a.specialCheck.assessEvalCheck.hasPRO,"PRO / BENEFIT",a.specialCheck.assessEvalCheck.proText],
-                    [a.specialCheck.assessEvalCheck.hasCON,"CON / LIMITATION",a.specialCheck.assessEvalCheck.conText],
-                  ].map(([ok,label,quote],i)=><div key={i} style={{marginBottom:"8px"}}>
-                    <div style={{display:"flex",gap:"10px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#e8eaf0",fontWeight:600}}>{label}</span></div>
-                    {quote&&<div style={{marginLeft:"26px",color:"#ffccbc",fontSize:"15px",fontStyle:"italic",fontFamily:"sans-serif"}}>"{quote}"</div>}
-                  </div>)}
-                  {/* ── Combined judgement row: IS/IS NOT linked directly to arguments ── */}
-                  <div style={{marginBottom:"8px"}}>
-                    <div style={{display:"flex",gap:"10px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif",marginBottom:"4px"}}>
-                      <Tick ok={a.specialCheck.assessEvalCheck.hasJudgement&&a.specialCheck.assessEvalCheck.judgementLinked}/>
-                      <span style={{color:"#e8eaf0",fontWeight:600}}>Judgement — IS or IS NOT linked directly to your arguments</span>
-                    </div>
-                    {(()=>{
-                      const ec = a.specialCheck.assessEvalCheck;
-                      const proSnip  = ec.proText  ? ec.proText.split("...")[0].slice(0,60)  : null;
-                      const conSnip  = ec.conText  ? ec.conText.split("...")[0].slice(0,60)  : null;
-                      const judgeText = ec.judgementText;
-                      if (judgeText && (proSnip || conSnip)) {
-                        const eg = [conSnip?"Despite "+conSnip:null, "it "+judgeText, proSnip?"because "+proSnip:null].filter(Boolean).join(" ");
-                        return <div style={{marginLeft:"26px",color:"#ffccbc",fontSize:"13px",fontFamily:"sans-serif",fontStyle:"italic",lineHeight:"1.6"}}>
-                          <div style={{marginBottom:"3px",color:"#888",fontSize:"11px",fontStyle:"normal"}}>Your judgement:</div>
-                          "{judgeText}"
-                          <div style={{marginTop:"6px",color:"#888",fontSize:"11px",fontStyle:"normal"}}>Stronger linked version example:</div>
-                          "{eg}"
-                        </div>;
-                      }
-                      return judgeText ? <div style={{marginLeft:"26px",color:"#ffccbc",fontSize:"15px",fontStyle:"italic",fontFamily:"sans-serif"}}>"{judgeText}"</div> : null;
-                    })()}
-                  </div>
-                  <div style={{marginTop:"8px",color:"#ffccbc",fontSize:"13px",fontFamily:"sans-serif",lineHeight:"1.6"}}>{a.specialCheck.assessEvalCheck.comment}</div>
-                </>}
-              </Card>}
-              {/* ── Band 6 example — at very bottom so student reviews their work first ── */}
-              <div style={{marginTop:"8px",paddingTop:"16px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
-                {!modelAnswer&&<>
-                  <div style={{fontSize:"12px",color:"#9aabb8",fontFamily:"sans-serif",lineHeight:"1.5",marginBottom:"10px",textAlign:"center"}}>
-                    ✅ Once you've reviewed all your feedback above —
-                  </div>
-                  <button onClick={generateModelAnswer} disabled={modelLoading} style={{width:"100%",padding:"12px",background:modelLoading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:modelLoading?"#5a7a9a":"#040d18",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:800,cursor:modelLoading?"not-allowed":"pointer",fontFamily:"sans-serif"}}>
-                    {modelLoading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Generating...</span> : "✨ Show me an indicative Band 6 example answer — not to copy"}
-                  </button>
-                </>}
-                {modelAnswer&&<>
-                  <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
-                    ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
-                  </div>
-                  <PaperCard subtitle="">
-                    <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
-                  </PaperCard>
-                  <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
-                </>}
-              </div>
-
-
-            </div>}
-            </div>}
-
-            {/* ═══ TAB: RANK (Step 7) ═══ */}
-            {activeTab==="rank"&&<div>
-              <SectionTitle>🏆 LEADERBOARD</SectionTitle>
-
-              {/* Period + Directive filters */}
-              <div style={{display:"flex",gap:"8px",marginBottom:"10px",flexWrap:"wrap"}}>
-                {["week","alltime","improved"].map(p=>(
-                  <button key={p} onClick={()=>{ setLbPeriod(p); fetchLeaderboard(p, lbDirective); }}
-                    style={{padding:"7px 14px",borderRadius:"8px",border:"1.5px solid",fontSize:"12px",fontWeight:700,cursor:"pointer",fontFamily:"sans-serif",
-                      borderColor: lbPeriod===p ? "#6c63ff" : "#2a2d3e",
-                      background:  lbPeriod===p ? "rgba(108,99,255,0.2)" : "rgba(255,255,255,0.04)",
-                      color:       lbPeriod===p ? "#a89fff" : "#9aabb8"
-                    }}>
-                    {p==="week"?"This Week":p==="alltime"?"All Time":"Most Improved"}
-                  </button>
-                ))}
-              </div>
-              <div style={{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}}>
-                {[
-                  {id:"all",    label:"All questions",     color:"#e8eaf0", border:"#3a3d4e", bg:"rgba(255,255,255,0.06)"},
-                  {id:"explain",label:"Explain / Analyse", color:"#64b5f6", border:"#1565c0", bg:"rgba(100,181,246,0.1)"},
-                  {id:"assess", label:"Assess / Evaluate", color:"#ff8a65", border:"#bf360c", bg:"rgba(255,138,101,0.1)"},
-                  {id:"other",  label:"Other",             color:"#81c784", border:"#2e7d32", bg:"rgba(165,214,167,0.1)"},
-                ].map(d=>(
-                  <button key={d.id} onClick={()=>{ setLbDirective(d.id); fetchLeaderboard(lbPeriod, d.id); }}
-                    style={{padding:"5px 12px",borderRadius:"8px",border:"1.5px solid",fontSize:"11px",fontWeight:800,cursor:"pointer",fontFamily:"sans-serif",
-                      borderColor: lbDirective===d.id ? d.color : d.border,
-                      background:  lbDirective===d.id ? d.bg : "rgba(255,255,255,0.02)",
-                      color: d.color
-                    }}>
-                    {d.label}
-                  </button>
-                ))}
-              </div>
-              {config.leaderboardTip&&<div style={{background:"rgba(100,181,246,0.08)",border:"1px solid #1565c0",borderRadius:"8px",padding:"8px 12px",marginBottom:"12px",fontSize:"11px",color:"#64b5f6",fontFamily:"sans-serif"}}>
-                💡 <strong>{config.subjectCode} tip:</strong> {config.leaderboardTip}
-              </div>}
-
-              {/* Loading */}
-              {lbLoading&&<div style={{textAlign:"center",padding:"32px",color:"#9aabb8",fontFamily:"sans-serif"}}>
-                <div className="cube-spinner" style={{marginBottom:"12px"}}></div>
-                <div>Loading leaderboard...</div>
-              </div>}
-
-              {/* Error */}
-              {lbError&&!lbLoading&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px",marginBottom:"12px",fontFamily:"sans-serif"}}>
-                <div style={{color:"#ff8a80",fontSize:"13px",marginBottom:"8px"}}>{lbError}</div>
-                <button onClick={()=>fetchLeaderboard(lbPeriod,lbDirective)} style={{padding:"6px 16px",background:"rgba(244,67,54,0.2)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",color:"#ff8a80",fontSize:"12px",cursor:"pointer",fontFamily:"sans-serif"}}>Retry</button>
-              </div>}
-
-              {/* Leaderboard list */}
-              {leaderboard&&!lbLoading&&(()=>{
-                const board = lbPeriod==="improved"
-                  ? (leaderboard.leaderboard||[])
-                  : (leaderboard.leaderboard||[]);
-                const me = privacyName(studentName.trim()||"");
-
-                return <div>
-                  {/* Podium — top 3 */}
-                  {board.length>=3&&<div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",gap:"10px",marginBottom:"18px",paddingBottom:"4px"}}>
-                    {[board[1],board[0],board[2]].map((p,pi)=>{
-                      const sizes   = [52,64,42];
-                      const heights = [38,52,28];
-                      const colors  = ["#607d8b","linear-gradient(135deg,#c9a84c,#e8c96a)","#795548"];
-                      const txtColors= ["white","#040d18","white"];
-                      const ranks   = [2,1,3];
-                      const isMe    = p.student===me;
-                      return <div key={pi} style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
-                        {pi===1&&<div style={{fontSize:"18px",marginBottom:"2px"}}>👑</div>}
-                        <div style={{width:`${sizes[pi]}px`,height:`${sizes[pi]}px`,borderRadius:"50%",
-                          background: isMe?"linear-gradient(135deg,#6c63ff,#9c27b0)":p.colour||"#607d8b",
-                          display:"flex",alignItems:"center",justifyContent:"center",
-                          fontSize:`${pi===1?17:13}px`,fontWeight:900,color:"white",
-                          marginBottom:"4px",border:isMe?"2px solid #a89fff":"none"}}>
-                          {(p.student||"?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()}
-                        </div>
-                        <div style={{fontSize:"10px",fontWeight:700,color:"#e8eaf0",fontFamily:"sans-serif",marginBottom:"2px",maxWidth:"60px",textAlign:"center",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.student}</div>
-                        <div style={{fontSize:"9px",color:"#a89fff",fontFamily:"sans-serif",marginBottom:"3px"}}>{p.totalXP} XP</div>
-                        <div style={{width:`${sizes[pi]+10}px`,height:`${heights[pi]}px`,background:colors[pi],borderRadius:"6px 6px 0 0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:900,color:txtColors[pi]}}>
-                          {ranks[pi]}
-                        </div>
-                      </div>;
-                    })}
-                  </div>}
-
-                  {/* Full list */}
-                  {board.map((p,i)=>{
-                    const isMe = p.student===me;
-                    const initials = (p.student||"?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-                    return <div key={i} style={{display:"flex",alignItems:"center",gap:"10px",padding:"10px 12px",
-                      borderRadius:"10px",marginBottom:"6px",fontFamily:"sans-serif",
-                      background: isMe?"rgba(108,99,255,0.08)":"rgba(255,255,255,0.03)",
-                      border: isMe?"1.5px solid #6c63ff44":"1px solid rgba(255,255,255,0.08)"}}>
-                      <div style={{fontSize:"14px",fontWeight:900,color:i<3?"#c9a84c":"#555",width:"18px",textAlign:"center",flexShrink:0}}>{p.rank}</div>
-                      <div style={{width:"36px",height:"36px",borderRadius:"50%",flexShrink:0,
-                        background: isMe?"linear-gradient(135deg,#6c63ff,#9c27b0)":p.colour||"#607d8b",
-                        display:"flex",alignItems:"center",justifyContent:"center",
-                        fontSize:"12px",fontWeight:900,color:"white"}}>
-                        {initials}
-                      </div>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:"13px",fontWeight:800,color:"#e8eaf0",display:"flex",alignItems:"center",gap:"6px"}}>
-                          {p.student}
-                          {isMe&&<span style={{fontSize:"9px",background:"#6c63ff",color:"white",padding:"1px 7px",borderRadius:"10px",fontWeight:700}}>YOU</span>}
-                          {p.streak>0&&<span style={{fontSize:"11px"}}>🔥 {p.streak}</span>}
-                          {lbPeriod==="improved"&&p.improvement&&<span style={{fontSize:"10px",color:"#69f0ae",fontWeight:700}}>+{p.improvement} XP</span>}
-                        </div>
-                        <div style={{fontSize:"10px",color:"#9aabb8",marginTop:"2px",display:"flex",gap:"10px"}}>
-                          <span>✅ {p.annotatedCount} marked</span>
-                          <span>📐 {p.cubeCount} CUBE submission{p.cubeCount!==1?"s":""}</span>
-                        </div>
-                      </div>
-                      <div style={{textAlign:"right",flexShrink:0}}>
-                        {isMe&&<div style={{fontSize:"9px",color:"#9aabb8",fontFamily:"sans-serif",marginBottom:"2px",whiteSpace:"nowrap"}}>Your total score</div>}
-                        <div style={{fontSize:isMe?"26px":"16px",fontWeight:900,color:"#a89fff",lineHeight:1}}>{p.totalXP}</div>
-                        <div style={{fontSize:"9px",color:"#555"}}>XP</div>
-                      </div>
-                    </div>;
-                  })}
-
-                  {board.length===0&&<div style={{textAlign:"center",padding:"24px",color:"#9aabb8",fontFamily:"sans-serif",fontSize:"13px"}}>
-                    No submissions yet for this filter. Be the first! 🚀
-                  </div>}
-
-                  {/* Class stats */}
-                  {leaderboard.classStats&&<div style={{marginTop:"14px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"12px",padding:"12px 14px"}}>
-                    <div style={{fontSize:"10px",color:"#9aabb8",textTransform:"uppercase",letterSpacing:"1px",fontWeight:700,marginBottom:"10px",fontFamily:"sans-serif"}}>📊 Class {lbPeriod==="week"?"This Week":"Stats"}</div>
-                    <div style={{display:"flex",gap:"8px"}}>
-                      {[
-                        {val:(board||[]).reduce((s,p)=>s+(p.cubeCount||0),0), label:"CUBE submissions", color:"#c9a84c"},
-                        {val:leaderboard.classStats.submissions,          label:"Full submissions",           color:"#69f0ae"},
-                        {val:leaderboard.classStats.explainCount,         label:"Explain / Analyse",          color:"#64b5f6"},
-                        {val:leaderboard.classStats.assessCount,          label:"Assess / Evaluate",          color:"#ff8a65"},
-                      ].map((s,i)=>(
-                        <div key={i} style={{flex:1,background:"rgba(255,255,255,0.03)",borderRadius:"8px",padding:"8px 4px",textAlign:"center"}}>
-                          <div style={{fontSize:"18px",fontWeight:900,color:s.color}}>{s.val}</div>
-                          <div style={{fontSize:"8px",color:"#9aabb8",marginTop:"2px",lineHeight:1.3,fontFamily:"sans-serif",whiteSpace:"pre-line"}}>{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>}
-                </div>;
-              })()}
-
-            </div>}
-
-          </div>;
-        })()}
-      </div>
-    </div>
-  );
-}
-
-
-// ─── APP SHELL — waits for config.json before rendering ──────────────────────
-function AppShell() {
-  const [configReady, setConfigReady] = useState(false);
-  const [configError, setConfigError] = useState(null);
-
-  useEffect(() => {
-    loadConfig().then(() => {
-      if (!config.subjectCode) {
-        setConfigError("config.json loaded but missing subjectCode. Check your config.json.");
+      ]
+    },
+    "8": {
+      "title": "Resource Management",
+      "topics": [
+        {
+          "code": "8-1",
+          "title": "Using Australia's Natural Resources",
+          "dotPoints": [
+            {
+              "label": "8-1a",
+              "text": "Identify Australian renewable resources and where they are located, including agricultural resources (terrestrial and aquatic), water, and energy sources"
+            },
+            {
+              "label": "8-1b",
+              "text": "Investigate how mining sites affect the environment, including Aboriginal cultural sites, and examine methods of reclamation of the environment after mining operations cease, including open-pit mining, underground mining methods, and offshore and onshore drilling"
+            },
+            {
+              "label": "8-1c",
+              "text": "Prepare a case study to investigate the involvement of traditional owners in the planning procedures, mining practices and restoration of damaged lands after mining operations cease"
+            },
+            {
+              "label": "8-1d",
+              "text": "Prepare a case study of an important Australian renewable or non-renewable resource, including how the resource is found, extracted and/or managed, how the resource is used, whether the resource can be extracted and/or used sustainably, and the past, present and future use and importance of the resource"
+            }
+          ],
+          "keywords": [
+            "renewable resources",
+            "Australia",
+            "agricultural resources",
+            "water",
+            "energy sources",
+            "mining",
+            "environment",
+            "Aboriginal cultural sites",
+            "reclamation",
+            "open-pit mining",
+            "underground mining",
+            "offshore drilling",
+            "onshore drilling",
+            "traditional owners",
+            "planning procedures",
+            "mining practices",
+            "restoration",
+            "renewable resource",
+            "non-renewable resource",
+            "sustainably"
+          ]
+        },
+        {
+          "code": "8-2",
+          "title": "Waste Management",
+          "dotPoints": [
+            {
+              "label": "8-2a",
+              "text": "Conduct a practical investigation of the composition of household or organisational waste"
+            },
+            {
+              "label": "8-2b",
+              "text": "Outline the management options for different types of solid waste"
+            },
+            {
+              "label": "8-2c",
+              "text": "Evaluate the sustainability of a named waste management option, for example energy used to produce and/or recycle the waste, environmental impact of waste disposal, space for disposal or storage of waste, local waste management facilities, and demand for reused or recycled waste"
+            }
+          ],
+          "keywords": [
+            "composition",
+            "household waste",
+            "organisational waste",
+            "management options",
+            "solid waste",
+            "sustainability",
+            "waste management",
+            "recycle",
+            "environmental impact",
+            "disposal",
+            "waste management facilities"
+          ]
+        },
+        {
+          "code": "8-3",
+          "title": "Sustainability",
+          "dotPoints": [
+            {
+              "label": "8-3a",
+              "text": "Investigate different definitions of sustainability and the rationales that underpin those definitions"
+            },
+            {
+              "label": "8-3b",
+              "text": "Investigate human activities that affect sustainability, including overharvesting, water pollution, and habitat removal or destruction"
+            },
+            {
+              "label": "8-3c",
+              "text": "Investigate the processes used by Aboriginal and Torres Strait Islander Peoples as sustainable resource managers, for example cultural traditions that preserve Country and Place, ongoing engagement with land councils, national parks and municipal councils, and legislation and actions to protect significant areas of Country and Place"
+            },
+            {
+              "label": "8-3d",
+              "text": "Research and present information about a sustainability initiative in their community"
+            }
+          ],
+          "keywords": [
+            "sustainability",
+            "definitions",
+            "rationale",
+            "human activities",
+            "overharvesting",
+            "water pollution",
+            "habitat removal",
+            "habitat destruction",
+            "Aboriginal and Torres Strait Islander Peoples",
+            "Country",
+            "Place",
+            "land councils",
+            "national parks",
+            "municipal councils",
+            "legislation",
+            "community"
+          ]
+        }
+      ]
+    }
+  },
+  "bandRules": {
+    "file_name": "10_BAND_RESPONSE_GENERATOR_RULES.json",
+    "course": "NSW HSC Earth and Environmental Science",
+    "purpose": "Rules for generating model responses aligned to HSC performance band expectations.",
+    "global_rules": {
+      "always": [
+        "Align all content to the NSW HSC Earth and Environmental Science syllabus.",
+        "Answer the directive verb exactly as asked.",
+        "Use scientifically accurate terminology.",
+        "Keep all claims relevant to the question and stimulus.",
+        "Do not include content beyond syllabus requirements for full marks unless it directly improves clarity without changing the expected standard.",
+        "Prefer cause-and-effect explanations where relevant.",
+        "Use examples only when they strengthen the answer.",
+        "Avoid vague phrases such as 'things', 'stuff', 'it affects the Earth a lot'."
+      ],
+      "directive_rules": {
+        "identify": [
+          "Name the required feature, process, example, or component.",
+          "Do not explain unless the question demands it."
+        ],
+        "outline": [
+          "Provide the main features or general idea.",
+          "Keep detail limited but accurate."
+        ],
+        "describe": [
+          "State relevant characteristics and what they do or show.",
+          "Include features and function where appropriate."
+        ],
+        "explain": [
+          "Show cause and effect clearly.",
+          "Link ideas using explicit scientific reasoning."
+        ],
+        "analyse": [
+          "Break the concept into parts.",
+          "Show relationships, patterns, or causes and effects.",
+          "Use evidence, data, or examples where available."
+        ],
+        "assess": [
+          "Make a judgement based on strengths and limitations.",
+          "Support the judgement with evidence."
+        ],
+        "evaluate": [
+          "Judge overall value, usefulness, effectiveness, or significance.",
+          "Include strengths, limitations, and a clear final judgement."
+        ],
+        "justify": [
+          "Give reasons that support a conclusion or choice.",
+          "Make the conclusion explicit."
+        ],
+        "compare": [
+          "Show similarities and differences."
+        ],
+        "contrast": [
+          "Focus on differences."
+        ],
+        "account": [
+          "Give reasons for why something occurs."
+        ],
+        "predict": [
+          "State the most likely future outcome based on scientific evidence, trends, or principles."
+        ]
+      },
+      "stimulus_rules": [
+        "If a graph, table, map, diagram, or data is provided, directly refer to it.",
+        "Use exact trends, patterns, or features from the stimulus where possible.",
+        "Do not ignore the stimulus in higher-mark questions."
+      ]
+    },
+    "band_rules": {
+      "Band6": {
+        "nesa_descriptor": "Demonstrates extensive knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding succinctly and consistently using correct and precise scientific terms in a variety of formats and contexts. Designs investigations to obtain accurate, reliable and valid data, evaluating and mitigating risks and making modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships, explain phenomena and make predictions. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose comprehensive solutions or explanations for scientific issues or scenarios.",
+        "knowledge_standard": "Extensive knowledge and understanding of scientific concepts, including complex and abstract ideas.",
+        "must_include": [
+          "Accurate and precise scientific terminology used consistently.",
+          "Logical and coherent sequencing of ideas.",
+          "Explicit causal links where relevant.",
+          "Relevant examples, evidence, or data integrated into the response.",
+          "Clear interpretation of trends, patterns, relationships, or processes from data or stimulus.",
+          "Explanation of phenomena and prediction of outcomes where required.",
+          "Application to unfamiliar situations with comprehensive solutions or explanations.",
+          "A direct, well-supported judgement for assess/evaluate/justify questions.",
+          "For investigations: consideration of accuracy, reliability, validity, risk mitigation, and evidence-based modifications."
+        ],
+        "style_rules": [
+          "Communicate succinctly and consistently \u2014 avoid padding.",
+          "Integrate multiple ideas rather than listing disconnected facts.",
+          "Link mechanisms to outcomes and consequences.",
+          "Where relevant, move from process to consequence to significance.",
+          "Represent data and understanding across a variety of formats and contexts where required."
+        ],
+        "avoid": [
+          "Generic statements without mechanism.",
+          "Overly long introductions.",
+          "Definitions that replace explanation.",
+          "Irrelevant background information.",
+          "Word count inflation without additional scientific depth."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Directly answer the question in the first sentence.",
+            "Include at least one explicit scientific link or mechanism."
+          ],
+          "mid_response_4_6_marks": [
+            "Include multiple linked scientific points.",
+            "Use evidence, examples, or data if available.",
+            "Maintain clear structure."
+          ],
+          "extended_response_7_plus_marks": [
+            "Use a deliberate structure.",
+            "Sustain depth throughout the response.",
+            "Integrate evidence, terminology, and judgement.",
+            "Address all parts of the question."
+          ]
+        }
+      },
+      "Band5": {
+        "nesa_descriptor": "Demonstrates thorough knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding logically and effectively using correct scientific terms in a variety of formats and contexts. Designs investigations to obtain reliable and valid data, evaluating and mitigating risks and making some modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose explanations for scientific issues or scenarios.",
+        "knowledge_standard": "Thorough knowledge and understanding of scientific concepts, including complex and abstract ideas, but less extensive or precise than Band 6.",
+        "must_include": [
+          "Correct scientific terminology used logically and effectively.",
+          "Clear explanation of key concepts with mostly sound reasoning.",
+          "Interpretation of data to derive trends, patterns, or relationships.",
+          "Application to unfamiliar situations to propose explanations (but less comprehensive than Band 6).",
+          "Relevant example or evidence where useful.",
+          "For investigations: consideration of reliability, validity, and risk, with some modifications in response to evidence."
+        ],
+        "style_rules": [
+          "Communicate logically and effectively across a variety of formats.",
+          "Explain clearly with sound detail.",
+          "May be less integrated, less precise, or less succinctly expressed than Band 6."
+        ],
+        "avoid": [
+          "Major omissions in reasoning.",
+          "Significant scientific errors.",
+          "Ignoring the stimulus or data where provided."
+        ]
+      },
+      "Band4": {
+        "nesa_descriptor": "Demonstrates sound knowledge and understanding of scientific concepts. Communicates scientific understanding effectively using scientific terms. Designs and plans investigations to obtain data, and evaluates risks. Processes, interprets and represents data using a range of scientific formats. Identifies scientific problems, questions or hypotheses and applies processes to primary or secondary data. Applies knowledge and information relevant to scientific issues or scenarios.",
+        "knowledge_standard": "Sound knowledge and understanding of scientific concepts, without the depth or complexity of Band 5 or 6.",
+        "must_include": [
+          "Correct scientific terminology used effectively.",
+          "Clear explanation of core concepts.",
+          "Processing and interpretation of data using scientific formats.",
+          "Identification of scientific problems or hypotheses with application to data.",
+          "Application of knowledge to relevant scientific issues or scenarios.",
+          "For investigations: design and planning to obtain data, with risk evaluation."
+        ],
+        "style_rules": [
+          "Communicate effectively using scientific terms.",
+          "Focus on correct core ideas.",
+          "May be less detailed, less precise, or less well linked than Band 5 or 6.",
+          "Interpretation present but may lack depth or connection to broader concepts."
+        ],
+        "avoid": [
+          "Unsupported broad claims.",
+          "Confusing or poorly sequenced explanations.",
+          "Ignoring data or stimulus provided."
+        ]
+      },
+      "Band3": {
+        "nesa_descriptor": "Demonstrates basic knowledge and understanding of scientific concepts. Communicates scientific understanding using basic scientific terms. Implements scientific processes to obtain data, and identifies risks. Processes primary or secondary data, and represents it using scientific formats. Responds to scientific problems, questions, or hypotheses. Recalls scientific knowledge and information.",
+        "knowledge_standard": "Basic knowledge and understanding of scientific concepts, with limited depth or connection between ideas.",
+        "must_include": [
+          "Some correct scientific facts or knowledge.",
+          "Basic scientific terms used, though not always precisely.",
+          "Simple response to a scientific problem, question, or hypothesis.",
+          "Basic processing or representation of primary or secondary data.",
+          "Recall of relevant scientific knowledge or information.",
+          "For investigations: implementation of processes and identification of risks."
+        ],
+        "style_rules": [
+          "Short, straightforward, and mostly descriptive.",
+          "Communication is simple and may lack precision."
+        ],
+        "avoid": [
+          "Large sections of irrelevant material.",
+          "Invented or incorrect science presented as fact."
+        ]
+      },
+      "Band2": {
+        "nesa_descriptor": "Demonstrates limited knowledge and understanding of scientific concepts. Communicates scientific understanding using limited scientific terms. Partially outlines investigations to obtain data and information. Provides simple descriptions of scientific phenomena. Recalls basic scientific knowledge and information.",
+        "knowledge_standard": "Limited knowledge and understanding; responses are partial, underdeveloped, and mostly descriptive.",
+        "must_include": [
+          "A few isolated correct ideas or basic facts.",
+          "Very limited use of scientific language.",
+          "Simple descriptions of scientific phenomena.",
+          "Recall of basic scientific knowledge or information.",
+          "For investigations: partial outline only."
+        ],
+        "style_rules": [
+          "Partial and underdeveloped.",
+          "Communication is minimal and uses limited scientific terms."
+        ],
+        "avoid": [
+          "Invented or incorrect scientific claims.",
+          "Presenting Band 2 as a complete or adequate response."
+        ]
+      },
+      "Band1": {
+        "nesa_descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "knowledge_standard": "Does not demonstrate the minimum expected standard.",
+        "must_include": [
+          "No generation target. Used only as a fallback classification label for wholly inadequate responses."
+        ]
       }
-      setConfigReady(true);
-    }).catch(e => {
-      setConfigError("Could not load config.json: " + e.message);
-      setConfigReady(true); // still render with defaults
-    });
-  }, []);
-
-  if (!configReady) {
-    return (
-      <div style={{minHeight:"100vh",background:"#040d18",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"16px"}}>
-        <div style={{width:"32px",height:"32px",border:"3px solid rgba(201,168,76,0.25)",borderTopColor:"#c9a84c",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}></div>
-        <div style={{color:"#c9a84c",fontFamily:"sans-serif",fontSize:"14px"}}>Loading subject config...</div>
-        <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      </div>
-    );
+    },
+    "question_type_rules": {
+      "calculation": {
+        "must_include": [
+          "Formula or method used.",
+          "Substitution of values.",
+          "Working shown clearly.",
+          "Final answer with correct unit.",
+          "Reasonable significant figures where appropriate."
+        ]
+      },
+      "practical_investigation": {
+        "must_include": [
+          "Independent variable.",
+          "Dependent variable.",
+          "Controlled variables.",
+          "Method steps in logical order.",
+          "Reference to reliability, accuracy, validity, and risk where relevant."
+        ]
+      },
+      "data_interpretation": {
+        "must_include": [
+          "Quote or paraphrase the main trend, pattern, or anomaly.",
+          "Use comparative language such as increase, decrease, peak, lower, higher, fluctuates.",
+          "Link the pattern to scientific concepts.",
+          "Do not merely restate the graph without interpretation."
+        ]
+      },
+      "extended_response": {
+        "must_include": [
+          "Opening sentence that addresses the question directly.",
+          "Body paragraphs organised by concept or argument.",
+          "Concluding sentence with judgement if required."
+        ]
+      }
+    },
+    "generation_templates": {
+      "Band6_explain": [
+        "State the key scientific process or concept.",
+        "Explain the mechanism using precise terminology.",
+        "Link cause to effect explicitly.",
+        "State the resulting consequence, significance, or broader Earth system impact."
+      ],
+      "Band6_analyse": [
+        "Identify the major components or factors.",
+        "Show how they interact or relate.",
+        "Interpret any trend, pattern, relationship, or evidence.",
+        "Link these relationships back to the question."
+      ],
+      "Band6_evaluate": [
+        "State the issue, strategy, technology, or process being evaluated.",
+        "Explain at least one strength with evidence.",
+        "Explain at least one limitation with evidence.",
+        "Make a clear final judgement using phrases such as 'overall', 'therefore', or 'this is effective to a large extent'."
+      ],
+      "Band6_assess": [
+        "State the issue and the criteria for judgement.",
+        "Discuss positive aspects and negative aspects.",
+        "Use evidence or examples.",
+        "Conclude with a balanced but definite judgement."
+      ],
+      "Band6_justify": [
+        "State the chosen option or conclusion clearly.",
+        "Give scientific reasons supporting it.",
+        "Link each reason back to the question.",
+        "Finish with a sentence that confirms why the judgement is valid."
+      ]
+    },
+    "quality_checks": {
+      "before_output": [
+        "Has the directive verb been answered correctly?",
+        "Has every part of the question been addressed?",
+        "Is the scientific content syllabus-aligned?",
+        "Is the terminology appropriate to the target band?",
+        "Are the causal links or relationships clear?",
+        "Has the stimulus been used where relevant?",
+        "Has a judgement been made when required?",
+        "Has irrelevant information been removed?"
+      ],
+      "band6_checklist": [
+        "Precise scientific terminology used consistently.",
+        "Multiple linked concepts included.",
+        "Mechanisms explained, not just stated.",
+        "Evidence, examples, or data integrated.",
+        "Response is coherent and logically sequenced.",
+        "Judgement is explicit if required by the question."
+      ]
+    },
+    "output_controls": {
+      "target_band_selection_rule": {
+        "Band6": "Generate with extensive precision, integrated reasoning across complex and abstract ideas, evidence, prediction, and strong judgement. Responses must be succinct and consistently use precise scientific terminology.",
+        "Band5": "Generate with thorough, logically sound explanation and clear terminology. Slightly less integrated or precise than Band 6; applies to unfamiliar situations but with less comprehensiveness.",
+        "Band4": "Generate with sound core content, effective use of scientific terms, and clear structure. Interpret data and apply knowledge to relevant scenarios, but with reduced depth and sophistication.",
+        "Band3": "Generate basic, mostly descriptive responses using simple scientific terms. Recall facts and respond simply to problems. Limited explanation and basic data processing only.",
+        "Band2": "Generate very simple, partial, and underdeveloped responses using minimal scientific language. Simple descriptions and basic recall only.",
+        "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
+      },
+      "forbidden_behaviours": [
+        "Do not generate Band 6 responses by merely increasing word count.",
+        "Do not add irrelevant advanced content to imitate sophistication.",
+        "Do not ignore the syllabus or stimulus.",
+        "Do not use vague judgements such as 'it is good' without criteria."
+      ]
+    }
+  },
+  "directiveTiers": {
+    "account for": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "classify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "extract": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "clarify": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "demonstrate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "give an account of": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "recount": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "calculate": {
+      "tier": "procedural",
+      "modality": "ignore"
+    },
+    "construct": {
+      "tier": "procedural",
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "deduce": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "extrapolate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "predict": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "suggest": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "appreciate": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "investigate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "optional"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this causes",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas"
+    ]
   }
-
-  if (configError) {
-    return (
-      <div style={{minHeight:"100vh",background:"#040d18",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px"}}>
-        <div style={{background:"rgba(244,67,54,0.1)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"12px",padding:"24px",maxWidth:"500px",fontFamily:"sans-serif"}}>
-          <div style={{color:"#ff8a80",fontSize:"16px",fontWeight:700,marginBottom:"8px"}}>⚠️ Configuration Error</div>
-          <div style={{color:"#e8eaf0",fontSize:"13px"}}>{configError}</div>
-        </div>
-      </div>
-    );
-  }
-
-  return <App />;
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(AppShell));
-  </script>
-</body>
-</html>
