@@ -1,0 +1,1340 @@
+{
+  "subjectCode": "HM",
+  "subjectName": "Health & Movement Science",
+  "subjectShortName": "HM",
+  "dominantMode": "Inquiry + application",
+  "cleanRule": "Health = inquiry + application (not just theory)",
+  "leaderboardTip": "Discuss, Evaluate and Investigate are the dominant verbs \u2014 use health data and real-world strategies as evidence.",
+  "sheetTabCube": "HM CUBE",
+  "sheetTabFull": "HM FULL",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
+  "logUrl": "https://script.google.com/macros/s/AKfycbwLZRvVWCm4La32lFgGnp5DtUBbDYX7Bgbmi4SRDEVom9yZ-_pXL72ipjTxUW7RNzQk/exec",
+  "syllabus": {
+    "file_name": "04_HEALTH_MOVEMENT_SYLLABUS_DATABASE.json",
+    "version": "1.0",
+    "last_updated": "2026-04",
+    "course": "Health and Movement Science HSC",
+    "source": "Health and Movement Science 11-12 (2023), NESA NSW. Implementation from 2025.",
+    "purpose": "Syllabus keyword database for CUBE Marking Coach \u2014 Year 12 HSC content only. Keywords are strictly from NESA syllabus text.",
+    "hsc_outcomes": [
+      "HM-12-01: analyses the health status of Australians at a national and international level",
+      "HM-12-02: examines how technology and data can achieve better health for all Australians",
+      "HM-12-03: evaluates how the Sustainable Development Goals can be used to improve the health of a community",
+      "HM-12-04: investigates factors that impact movement and performance",
+      "HM-12-05: analyses individual and group training programs to improve performance",
+      "HM-12-06: Analysis \u2014 critically analyses the relationships and implications of health and movement concepts",
+      "HM-12-07: Communication \u2014 communicates health and movement concepts using modes appropriate to a range of audiences and contexts",
+      "HM-12-08: Creative thinking \u2014 generates and assesses new ideas that are meaningful and relevant to health and movement contexts",
+      "HM-12-09: Problem-solving \u2014 proposes and evaluates solutions to complex health and movement issues",
+      "HM-12-10: Research \u2014 analyses a range of sources to make conclusions and judgements about health and movement concepts"
+    ],
+    "topics": {
+      "HAG": {
+        "topic_code": "HAG",
+        "topic_title": "Health in an Australian and Global Context",
+        "outcomes": [
+          "HM-12-01",
+          "HM-12-02",
+          "HM-12-03",
+          "HM-12-06",
+          "HM-12-07",
+          "HM-12-08",
+          "HM-12-09",
+          "HM-12-10"
+        ],
+        "subtopics": {
+          "HAG.1": {
+            "subtopic_title": "How healthy are Australians?",
+            "inquiry_question": "How healthy are Australians?",
+            "dot_points": [
+              {
+                "id": "HAG.1.1",
+                "syllabus_text": "Analyse the current health status of Australians from Australia's Health and other health reports, tables and graphs, including: what does the data tell us; what are the major causes of morbidity and mortality, and the life expectancy for males, females and the general population; what are the sociological causes of risky health behaviours; where do inequities exist and what can we do about them",
+                "keywords": [
+                  "health status",
+                  "Australia's Health",
+                  "morbidity",
+                  "mortality",
+                  "life expectancy",
+                  "risky health behaviours",
+                  "inequities"
+                ]
+              },
+              {
+                "id": "HAG.1.2",
+                "syllabus_text": "Analyse groups experiencing inequities in health, including Aboriginal and Torres Strait Islander Peoples and one other group (socioeconomically disadvantaged people, rural and remote, culturally and linguistically diverse populations, people with disability or older people), including: how do the determinants interact to affect the health of population groups; what are some of the causes that underpin the inequities in health; what actions can be implemented to improve the health status of these groups",
+                "keywords": [
+                  "inequities in health",
+                  "Aboriginal and Torres Strait Islander Peoples",
+                  "socioeconomically disadvantaged",
+                  "rural and remote",
+                  "culturally and linguistically diverse",
+                  "disability",
+                  "older people",
+                  "determinants",
+                  "population groups"
+                ]
+              },
+              {
+                "id": "HAG.1.3",
+                "syllabus_text": "Compare the health status of Australia with that of other OECD countries, including: where does Australia rank in relation to other OECD countries; why do some countries rank higher or lower than Australia",
+                "keywords": [
+                  "health status",
+                  "OECD",
+                  "Australia"
+                ]
+              },
+              {
+                "id": "HAG.1.4",
+                "syllabus_text": "Examine cardiovascular disease, cancer and ONE other condition in Australia using Australia's Health and other health reports, including: what does the data tell us about the mortality and morbidity, prevalence and incidence rates of these conditions; what are the risk and protective factors for these conditions; where and for whom are these conditions changing",
+                "keywords": [
+                  "cardiovascular disease",
+                  "cancer",
+                  "mortality",
+                  "morbidity",
+                  "prevalence",
+                  "incidence",
+                  "risk factors",
+                  "protective factors"
+                ]
+              },
+              {
+                "id": "HAG.1.5",
+                "syllabus_text": "Investigate the impact of an ageing population on Australia's health, including: what is healthy ageing; what are the opportunities and challenges for an ageing population; what are current and future strategies to support healthy ageing; what do government and non-government agencies need to consider to address the future needs of a growing and ageing population",
+                "keywords": [
+                  "ageing population",
+                  "healthy ageing",
+                  "government",
+                  "non-government agencies"
+                ]
+              }
+            ],
+            "keywords": [
+              "health status",
+              "Australia's Health",
+              "morbidity",
+              "mortality",
+              "life expectancy",
+              "risky health behaviours",
+              "inequities",
+              "Aboriginal and Torres Strait Islander Peoples",
+              "socioeconomically disadvantaged",
+              "rural and remote",
+              "culturally and linguistically diverse",
+              "disability",
+              "older people",
+              "determinants",
+              "population groups",
+              "OECD",
+              "cardiovascular disease",
+              "cancer",
+              "prevalence",
+              "incidence",
+              "risk factors",
+              "protective factors",
+              "ageing population",
+              "healthy ageing",
+              "non-government agencies"
+            ]
+          },
+          "HAG.2": {
+            "subtopic_title": "How does Australia's healthcare system work towards achieving better health for all Australians?",
+            "inquiry_question": "How does Australia's healthcare system work towards achieving better health for all Australians?",
+            "dot_points": [
+              {
+                "id": "HAG.2.1",
+                "syllabus_text": "Assess the effectiveness of the healthcare system in Australia, including: the role of the healthcare system; equity of access to the healthcare system; future opportunities for the healthcare system",
+                "keywords": [
+                  "healthcare system",
+                  "equity of access",
+                  "effectiveness"
+                ]
+              },
+              {
+                "id": "HAG.2.2",
+                "syllabus_text": "Explain how government and non-government organisations share responsibility for the health system, including: federal, state and territory and local government; non-government sector \u2014 private and not-for-profit",
+                "keywords": [
+                  "government",
+                  "non-government organisations",
+                  "federal",
+                  "state and territory",
+                  "local government",
+                  "private",
+                  "not-for-profit"
+                ]
+              },
+              {
+                "id": "HAG.2.3",
+                "syllabus_text": "Outline how government and non-government organisations collaborate to provide person-centred healthcare",
+                "keywords": [
+                  "government",
+                  "non-government organisations",
+                  "person-centred healthcare"
+                ]
+              },
+              {
+                "id": "HAG.2.4",
+                "syllabus_text": "Discuss health expenditure and its impact on current and future populations, including: healthcare versus prevention; sustainability, access and equity; Medicare, private health insurance and related Commonwealth-funded programs",
+                "keywords": [
+                  "health expenditure",
+                  "prevention",
+                  "sustainability",
+                  "access",
+                  "equity",
+                  "Medicare",
+                  "private health insurance",
+                  "Commonwealth-funded programs"
+                ]
+              },
+              {
+                "id": "HAG.2.5",
+                "syllabus_text": "Explain complementary healthcare approaches, including: products and services available; as a preventative measure; treating the health issue; as a supplement to other medical treatments",
+                "keywords": [
+                  "complementary healthcare",
+                  "preventative measure",
+                  "medical treatments"
+                ]
+              },
+              {
+                "id": "HAG.2.6",
+                "syllabus_text": "Explain the importance of being a critical health consumer, including: how do you assess the accuracy and credibility of health information, products and services; what do you need to know to make informed decisions",
+                "keywords": [
+                  "critical health consumer",
+                  "health information",
+                  "informed decisions",
+                  "credibility"
+                ]
+              },
+              {
+                "id": "HAG.2.7",
+                "syllabus_text": "Investigate the current and emerging changes and challenges to the healthcare system",
+                "keywords": [
+                  "healthcare system",
+                  "changes",
+                  "challenges"
+                ]
+              }
+            ],
+            "keywords": [
+              "healthcare system",
+              "equity of access",
+              "effectiveness",
+              "government",
+              "non-government organisations",
+              "federal",
+              "state and territory",
+              "local government",
+              "private",
+              "not-for-profit",
+              "person-centred healthcare",
+              "health expenditure",
+              "prevention",
+              "sustainability",
+              "access",
+              "equity",
+              "Medicare",
+              "private health insurance",
+              "Commonwealth-funded programs",
+              "complementary healthcare",
+              "critical health consumer",
+              "health information",
+              "informed decisions"
+            ]
+          },
+          "HAG.3": {
+            "subtopic_title": "How is the growing and changing use of technology and data impacting Australia's healthcare system?",
+            "inquiry_question": "How is the growing and changing use of technology and data impacting Australia's healthcare system?",
+            "dot_points": [
+              {
+                "id": "HAG.3.1",
+                "syllabus_text": "Discuss the relationship between technology and health",
+                "keywords": [
+                  "technology",
+                  "health"
+                ]
+              },
+              {
+                "id": "HAG.3.2",
+                "syllabus_text": "Investigate new technologies and treatments in the healthcare system",
+                "keywords": [
+                  "new technologies",
+                  "treatments",
+                  "healthcare system"
+                ]
+              },
+              {
+                "id": "HAG.3.3",
+                "syllabus_text": "Evaluate the impact of digital health on the healthcare system, including: what is digital health; what services exist; to what extent has digital health been successful in connecting health information; what challenges and opportunities does digital health provide for individuals and organisations",
+                "keywords": [
+                  "digital health",
+                  "healthcare system",
+                  "health information"
+                ]
+              },
+              {
+                "id": "HAG.3.4",
+                "syllabus_text": "Examine how big data is shaping the health of Australians, including: how is it being used; how is it reducing healthcare spending; how is it being used to cure and manage diseases; what measures need to be taken to ensure privacy and confidentiality of personal information",
+                "keywords": [
+                  "big data",
+                  "healthcare spending",
+                  "diseases",
+                  "privacy",
+                  "confidentiality"
+                ]
+              }
+            ],
+            "keywords": [
+              "technology",
+              "health",
+              "new technologies",
+              "treatments",
+              "healthcare system",
+              "digital health",
+              "health information",
+              "big data",
+              "healthcare spending",
+              "privacy",
+              "confidentiality"
+            ]
+          },
+          "HAG.4": {
+            "subtopic_title": "What actions are needed to promote and improve the health of Australians?",
+            "inquiry_question": "What actions are needed to promote and improve the health of Australians?",
+            "dot_points": [
+              {
+                "id": "HAG.4.1",
+                "syllabus_text": "Describe the key features of Sustainable Development Goals (SDGs), including: SDG 3 Good Health and Wellbeing; SDG 4 Quality Education; SDG 10 Reduced Inequalities; SDG 11 Sustainable Cities and Communities",
+                "keywords": [
+                  "Sustainable Development Goals",
+                  "SDGs",
+                  "SDG 3",
+                  "SDG 4",
+                  "SDG 10",
+                  "SDG 11",
+                  "Good Health and Wellbeing",
+                  "Quality Education",
+                  "Reduced Inequalities",
+                  "Sustainable Cities and Communities"
+                ]
+              },
+              {
+                "id": "HAG.4.2",
+                "syllabus_text": "Evaluate the application of SDGs 3, 4, 10 and 11 to inform strategies to improve the health status of a community, including: how have these goals been applied in other communities; what lessons can be drawn from other communities; what are the major health issues for a community; what strategies are needed to advocate and improve a community's health status; how do you know these strategies may be effective",
+                "keywords": [
+                  "SDGs",
+                  "strategies",
+                  "health status",
+                  "community"
+                ]
+              }
+            ],
+            "keywords": [
+              "Sustainable Development Goals",
+              "SDGs",
+              "SDG 3",
+              "SDG 4",
+              "SDG 10",
+              "SDG 11",
+              "Good Health and Wellbeing",
+              "Quality Education",
+              "Reduced Inequalities",
+              "Sustainable Cities and Communities",
+              "strategies",
+              "health status",
+              "community"
+            ]
+          }
+        }
+      },
+      "TIP": {
+        "topic_code": "TIP",
+        "topic_title": "Training for Improved Performance",
+        "outcomes": [
+          "HM-12-04",
+          "HM-12-05",
+          "HM-12-06",
+          "HM-12-07",
+          "HM-12-08",
+          "HM-12-09",
+          "HM-12-10"
+        ],
+        "subtopics": {
+          "TIP.1": {
+            "subtopic_title": "How can exercise assessment and prescription be personalised?",
+            "inquiry_question": "How can exercise assessment and prescription be personalised?",
+            "dot_points": [
+              {
+                "id": "TIP.1.1",
+                "syllabus_text": "Explain the importance of using a pre-exercise questionnaire and undertaking relevant health screening by exercise and fitness professionals",
+                "keywords": [
+                  "pre-exercise questionnaire",
+                  "health screening",
+                  "fitness professionals"
+                ]
+              },
+              {
+                "id": "TIP.1.2",
+                "syllabus_text": "Discuss the use of performance/fitness testing for recreational participants and elite athletes to improve their health, participation and performance",
+                "keywords": [
+                  "performance testing",
+                  "fitness testing",
+                  "recreational participants",
+                  "elite athletes"
+                ]
+              },
+              {
+                "id": "TIP.1.3",
+                "syllabus_text": "Explain how exercise assessment can assist in developing training programs",
+                "keywords": [
+                  "exercise assessment",
+                  "training programs"
+                ]
+              }
+            ],
+            "keywords": [
+              "pre-exercise questionnaire",
+              "health screening",
+              "fitness professionals",
+              "performance testing",
+              "fitness testing",
+              "recreational participants",
+              "elite athletes",
+              "exercise assessment",
+              "training programs"
+            ]
+          },
+          "TIP.2": {
+            "subtopic_title": "How does training influence movement and performance?",
+            "inquiry_question": "How does training influence movement and performance?",
+            "dot_points": [
+              {
+                "id": "TIP.2.1",
+                "syllabus_text": "Assess the types of training and training methods and their relevance for a variety of sports, including: anaerobic training \u2014 anaerobic interval, High Intensity Interval Training (HIIT), Sprint Interval Training (SIT), plyometric, and resistance training; aerobic training \u2014 continuous, fartlek, aerobic interval, and circuit training; flexibility training \u2014 static, dynamic, ballistic, and Proprioceptive Neuromuscular Facilitation (PNF); strength training \u2014 free/fixed weights, body weight exercises and elastics; skill and tactical development \u2014 drills, modified games and games for specific outcomes",
+                "keywords": [
+                  "anaerobic training",
+                  "anaerobic interval",
+                  "High Intensity Interval Training",
+                  "HIIT",
+                  "Sprint Interval Training",
+                  "SIT",
+                  "plyometric",
+                  "resistance training",
+                  "aerobic training",
+                  "continuous",
+                  "fartlek",
+                  "aerobic interval",
+                  "circuit training",
+                  "flexibility training",
+                  "static",
+                  "dynamic",
+                  "ballistic",
+                  "Proprioceptive Neuromuscular Facilitation",
+                  "PNF",
+                  "strength training",
+                  "free weights",
+                  "fixed weights",
+                  "body weight exercises",
+                  "skill and tactical development",
+                  "drills",
+                  "modified games"
+                ]
+              },
+              {
+                "id": "TIP.2.2",
+                "syllabus_text": "Evaluate the application of the principles of training to both aerobic and strength training, including: progressive overload; training thresholds; reversibility; specificity; variety; warm-up and cool-down",
+                "keywords": [
+                  "principles of training",
+                  "progressive overload",
+                  "training thresholds",
+                  "reversibility",
+                  "specificity",
+                  "variety",
+                  "warm-up",
+                  "cool-down"
+                ]
+              },
+              {
+                "id": "TIP.2.3",
+                "syllabus_text": "Examine the relationship between the principles of training, physiological adaptations and improved performance, including: heart rate; stroke volume and cardiac output; oxygen uptake and lung capacity; haemoglobin level; muscle hypertrophy; fast/slow twitch muscle fibres",
+                "keywords": [
+                  "physiological adaptations",
+                  "heart rate",
+                  "stroke volume",
+                  "cardiac output",
+                  "oxygen uptake",
+                  "lung capacity",
+                  "haemoglobin",
+                  "muscle hypertrophy",
+                  "fast twitch muscle fibres",
+                  "slow twitch muscle fibres"
+                ]
+              }
+            ],
+            "keywords": [
+              "anaerobic training",
+              "HIIT",
+              "SIT",
+              "plyometric",
+              "resistance training",
+              "aerobic training",
+              "fartlek",
+              "circuit training",
+              "flexibility training",
+              "PNF",
+              "strength training",
+              "skill and tactical development",
+              "principles of training",
+              "progressive overload",
+              "training thresholds",
+              "reversibility",
+              "specificity",
+              "variety",
+              "warm-up",
+              "cool-down",
+              "physiological adaptations",
+              "heart rate",
+              "stroke volume",
+              "cardiac output",
+              "oxygen uptake",
+              "lung capacity",
+              "haemoglobin",
+              "muscle hypertrophy",
+              "fast twitch muscle fibres",
+              "slow twitch muscle fibres"
+            ]
+          },
+          "TIP.3": {
+            "subtopic_title": "How does training differ for individual and group sports?",
+            "inquiry_question": "How does training differ for individual and group sports?",
+            "dot_points": [
+              {
+                "id": "TIP.3.1",
+                "syllabus_text": "Compare aspects that need to be considered when designing a training session for individual and group sports, including: health and safety considerations; overview/aim of the session (goal specific); warm-up and cool-down; skill instruction and practice; conditioning; strategies and tactics; athlete reflection and/or coach evaluation",
+                "keywords": [
+                  "individual sports",
+                  "group sports",
+                  "training session",
+                  "health and safety",
+                  "warm-up",
+                  "cool-down",
+                  "skill instruction",
+                  "conditioning",
+                  "strategies and tactics",
+                  "athlete reflection",
+                  "coach evaluation"
+                ]
+              },
+              {
+                "id": "TIP.3.2",
+                "syllabus_text": "Compare a yearly training program for an individual and a group sport, including: phases of competition \u2014 pre-season, in-season and off-season; sub-phases; peaking and tapering; sport-specific attributes \u2014 fitness components, skill requirements",
+                "keywords": [
+                  "yearly training program",
+                  "pre-season",
+                  "in-season",
+                  "off-season",
+                  "sub-phases",
+                  "peaking",
+                  "tapering",
+                  "fitness components",
+                  "skill requirements"
+                ]
+              },
+              {
+                "id": "TIP.3.3",
+                "syllabus_text": "Investigate how individual and group sports apply psychological strategies, optimising arousal and management of stress and anxiety, to improve participation and performance",
+                "keywords": [
+                  "psychological strategies",
+                  "arousal",
+                  "stress",
+                  "anxiety",
+                  "participation",
+                  "performance"
+                ]
+              },
+              {
+                "id": "TIP.3.4",
+                "syllabus_text": "Discuss the factors that influence how strategies and tactics are applied to individual and group sports",
+                "keywords": [
+                  "strategies and tactics",
+                  "individual sports",
+                  "group sports"
+                ]
+              }
+            ],
+            "keywords": [
+              "individual sports",
+              "group sports",
+              "training session",
+              "health and safety",
+              "conditioning",
+              "strategies and tactics",
+              "pre-season",
+              "in-season",
+              "off-season",
+              "peaking",
+              "tapering",
+              "fitness components",
+              "skill requirements",
+              "psychological strategies",
+              "arousal",
+              "stress",
+              "anxiety"
+            ]
+          },
+          "TIP.4": {
+            "subtopic_title": "What impact does sleep, nutrition and supplementation have on movement and performance?",
+            "inquiry_question": "What impact does sleep, nutrition and supplementation have on movement and performance?",
+            "dot_points": [
+              {
+                "id": "TIP.4.1",
+                "syllabus_text": "Using research, analyse the dietary requirements, pre, during and post performance needed and fluid intake requirements of athletes from different sports",
+                "keywords": [
+                  "dietary requirements",
+                  "fluid intake",
+                  "athletes",
+                  "pre performance",
+                  "during performance",
+                  "post performance"
+                ]
+              },
+              {
+                "id": "TIP.4.2",
+                "syllabus_text": "Explain how sleep, nutrition and hydration can be used to reduce fatigue and positively influence movement and injury prevention, including: guidelines; planning; routines; monitoring",
+                "keywords": [
+                  "sleep",
+                  "nutrition",
+                  "hydration",
+                  "fatigue",
+                  "injury prevention"
+                ]
+              },
+              {
+                "id": "TIP.4.3",
+                "syllabus_text": "Discuss the use of supplements, micronutrients, protein, caffeine and creatine products for improved performance",
+                "keywords": [
+                  "supplements",
+                  "micronutrients",
+                  "protein",
+                  "caffeine",
+                  "creatine"
+                ]
+              }
+            ],
+            "keywords": [
+              "dietary requirements",
+              "fluid intake",
+              "athletes",
+              "sleep",
+              "nutrition",
+              "hydration",
+              "fatigue",
+              "injury prevention",
+              "supplements",
+              "micronutrients",
+              "protein",
+              "caffeine",
+              "creatine"
+            ]
+          },
+          "TIP.5": {
+            "subtopic_title": "How do individuals train for sustained movement and performance?",
+            "inquiry_question": "How do individuals train for sustained movement and performance?",
+            "dot_points": [
+              {
+                "id": "TIP.5.1",
+                "syllabus_text": "Explain how biomechanics can be used to develop efficient movements for sustained movement and improved performance",
+                "keywords": [
+                  "biomechanics",
+                  "efficient movements",
+                  "performance"
+                ]
+              },
+              {
+                "id": "TIP.5.2",
+                "syllabus_text": "Justify recovery strategies used for sustained movement and performance, including: physiological \u2014 cool-down, hydrotherapy; psychological \u2014 relaxation",
+                "keywords": [
+                  "recovery strategies",
+                  "cool-down",
+                  "hydrotherapy",
+                  "relaxation"
+                ]
+              },
+              {
+                "id": "TIP.5.3",
+                "syllabus_text": "Examine the role technology can play to improve performance, including: training innovations; equipment advances; recording and monitoring training and performance",
+                "keywords": [
+                  "technology",
+                  "training innovations",
+                  "equipment advances",
+                  "recording and monitoring"
+                ]
+              },
+              {
+                "id": "TIP.5.4",
+                "syllabus_text": "Explain the management and prevention of sporting injuries, including: classification of sports injuries \u2014 direct and indirect, soft and hard tissue or overuse; assessment of injuries \u2014 Talk, Observe, Touch, Active movement, Passive movement, Skill (TOTAPS) test; management of injuries; rehabilitation procedures \u2014 progressive mobilisation, graduated exercise, training, use of heat and cold; return-to-play policy and procedures",
+                "keywords": [
+                  "sporting injuries",
+                  "direct injuries",
+                  "indirect injuries",
+                  "soft tissue",
+                  "hard tissue",
+                  "overuse",
+                  "TOTAPS",
+                  "management of injuries",
+                  "rehabilitation",
+                  "progressive mobilisation",
+                  "graduated exercise",
+                  "heat and cold",
+                  "return-to-play"
+                ]
+              },
+              {
+                "id": "TIP.5.5",
+                "syllabus_text": "Discuss the impact of drug use on injury management and improving performance, including: health implications; ethical considerations; drug testing",
+                "keywords": [
+                  "drug use",
+                  "injury management",
+                  "ethical considerations",
+                  "drug testing"
+                ]
+              }
+            ],
+            "keywords": [
+              "biomechanics",
+              "efficient movements",
+              "recovery strategies",
+              "cool-down",
+              "hydrotherapy",
+              "relaxation",
+              "technology",
+              "training innovations",
+              "equipment advances",
+              "sporting injuries",
+              "direct injuries",
+              "indirect injuries",
+              "soft tissue",
+              "hard tissue",
+              "overuse",
+              "TOTAPS",
+              "rehabilitation",
+              "progressive mobilisation",
+              "graduated exercise",
+              "return-to-play",
+              "drug use",
+              "ethical considerations",
+              "drug testing"
+            ]
+          }
+        }
+      }
+    },
+    "cross_topic_concepts": [
+      "health status",
+      "equity",
+      "determinants of health",
+      "government and non-government organisations",
+      "technology",
+      "performance",
+      "strategies",
+      "community",
+      "data",
+      "evidence-based practice"
+    ],
+    "cube_app_usage_notes": {
+      "keyword_principle": "All keywords are strictly from NESA syllabus text only. Students may be examined on any syllabus keyword. Specific statistics, named examples and detailed data will be provided as stimulus material in the exam.",
+      "topic_structure": "Two Year 12 HSC topics: Health in an Australian and Global Context (HAG) and Training for Improved Performance (TIP). Each topic has inquiry questions as organising headings.",
+      "inquiry_questions": "NESA uses inquiry questions to organise content. These are included as subtopic titles to support question interpretation.",
+      "note_on_statistics": "Students do not need to know the latest statistics on rates of illness and death \u2014 they develop understanding of trends only.",
+      "topic_codes": "HAG = Health in an Australian and Global Context, TIP = Training for Improved Performance"
+    }
+  },
+  "bandRules": {
+    "file_name": "10_HEALTH_MOVEMENT_BAND_RESPONSE_GENERATOR_RULES.json",
+    "course": "Health and Movement Science HSC",
+    "purpose": "Band descriptor rules for generating indicative HSC responses at each band level. Used by CUBE Marking Coach model answer generator.",
+    "source_basis": "NESA Personal Development, Health and Physical Education (PDHPE) 2025 Course Report band descriptors \u2014 used as the closest available approximator for Health and Movement Science HSC (first examination 2027). The two subjects share cognate content in health, movement, performance, and the roles of individuals, groups and governments. Band descriptors will be updated when official Health and Movement Science descriptors are published.",
+    "approximation_note": "Health and Movement Science is a new Stage 6 course (2023 syllabus, implementation from 2025, first HSC examination 2027). No official band descriptors exist yet. PDHPE descriptors are used as the best available proxy given substantial content overlap in health analysis, training for performance, physiological adaptations, and health promotion frameworks.",
+    "global_rules": {
+      "always": [
+        "Align all content to the NSW HSC Health and Movement Science syllabus (2023).",
+        "Answer the directive verb exactly as asked.",
+        "Use accurate health and movement science terminology throughout.",
+        "Keep all claims relevant to the question \u2014 health status, training, performance, or health systems as applicable.",
+        "Apply cause-and-effect reasoning when explaining physiological or health mechanisms.",
+        "Support arguments with relevant examples, data references or research evidence.",
+        "Address the roles of individuals, groups and governments where relevant to health promotion questions."
+      ],
+      "directive_rules": {
+        "identify": [
+          "Name the required concept, factor, strategy, condition or group.",
+          "Do not explain unless the question demands it."
+        ],
+        "outline": [
+          "Provide the main features or general idea.",
+          "Keep detail limited but accurate."
+        ],
+        "describe": [
+          "State relevant characteristics and what they do or show.",
+          "Include features and function where appropriate."
+        ],
+        "explain": [
+          "Show cause and effect clearly.",
+          "Link ideas using explicit health or movement science reasoning."
+        ],
+        "analyse": [
+          "Break the concept into parts.",
+          "Show relationships, patterns, causes and effects using evidence."
+        ],
+        "assess": [
+          "Make a judgement based on strengths and limitations.",
+          "Support the judgement with evidence."
+        ],
+        "evaluate": [
+          "Judge overall value, effectiveness or significance.",
+          "Include strengths, limitations and a clear final judgement."
+        ],
+        "justify": [
+          "Give reasons that support a conclusion or choice.",
+          "Make the conclusion explicit."
+        ],
+        "compare": [
+          "Show similarities and differences between the health or movement concepts, strategies or groups."
+        ],
+        "contrast": [
+          "Focus on differences between the health or movement concepts, strategies or groups."
+        ],
+        "discuss": [
+          "Examine the concept by considering different aspects, perspectives or implications.",
+          "Link ideas and come to a considered position."
+        ],
+        "investigate": [
+          "Examine the concept by gathering and interpreting relevant evidence or data.",
+          "Draw conclusions supported by the investigation."
+        ],
+        "recommend": [
+          "Propose a course of action or strategy with justification.",
+          "Link the recommendation to health or performance outcomes."
+        ]
+      }
+    },
+    "band_rules": {
+      "Band6": {
+        "nesa_descriptor": "Demonstrates extensive knowledge and understanding of the range of concepts related to health and physical performance. Comprehensively applies theoretical principles to design and evaluate specific strategies for improving health, participation and performance. Demonstrates a superior understanding of the interrelated roles and responsibilities of individuals, groups and governments in the management and promotion of health. Critically analyses movement and the range of factors that affect physical performance and participation. Provides relevant and accurate examples to justify complex arguments about health, participation and performance.",
+        "knowledge_standard": "Demonstrates extensive knowledge and understanding of the range of concepts related to health and physical performance.",
+        "communication_standard": "Provides relevant and accurate examples to justify complex arguments about health, participation and performance.",
+        "must_include": [
+          "Extensive knowledge and understanding of health and movement science concepts demonstrated.",
+          "Theoretical principles comprehensively applied to design and evaluate specific strategies for improving health, participation and performance.",
+          "Superior understanding of the interrelated roles and responsibilities of individuals, groups and governments in health management and promotion.",
+          "Critical analysis of movement and the range of factors affecting physical performance and participation.",
+          "Relevant and accurate examples provided to justify complex arguments.",
+          "Arguments clearly structured and supported with precise health and movement science terminology."
+        ],
+        "style_rules": [
+          "Critically analyse \u2014 do not merely describe or list.",
+          "Integrate multiple health and movement concepts rather than treating them in isolation.",
+          "Apply theoretical principles explicitly to the specific health, participation or performance context.",
+          "Use precise health and movement science terminology consistently.",
+          "Support every argument with a relevant, accurate example or evidence reference."
+        ],
+        "avoid": [
+          "Generic statements without a health mechanism, evidence or example.",
+          "Describing strategies without evaluating their effectiveness.",
+          "Treating roles of individuals, groups and governments as separate rather than interrelated.",
+          "Vague examples that do not specifically support the argument."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Directly answer the question in the first sentence using precise terminology.",
+            "Include at least one explicit health or movement science link, mechanism or example."
+          ],
+          "mid_response_4_6_marks": [
+            "Include multiple linked health and movement science points.",
+            "Apply theoretical principles to the specific context.",
+            "Support with relevant examples or data references."
+          ],
+          "extended_response_7_plus_marks": [
+            "Use a deliberate structure addressing all parts of the question.",
+            "Critically analyse across health, participation and performance dimensions.",
+            "Integrate the interrelated roles of individuals, groups and governments where relevant.",
+            "Justify complex arguments with accurate, relevant examples throughout."
+          ]
+        }
+      },
+      "Band5": {
+        "nesa_descriptor": "Clearly expresses ideas that demonstrate a thorough understanding of health and physical performance concepts. Identifies strategies for improving health, participation and performance and discusses the links between individual health behaviour, social issues and community health status. Demonstrates a detailed understanding of the interrelated roles of individuals, groups and governments in the management and promotion of health. Demonstrates an understanding of the interrelationships between the various factors that impact on physical performance. Supports particular arguments thoroughly by using relevant examples and current information on health, participation and performance.",
+        "knowledge_standard": "Clearly expresses ideas that demonstrate a thorough understanding of health and physical performance concepts.",
+        "communication_standard": "Supports particular arguments thoroughly by using relevant examples and current information on health, participation and performance.",
+        "must_include": [
+          "Thorough understanding of health and physical performance concepts clearly expressed.",
+          "Strategies for improving health, participation and performance identified with links to individual health behaviour, social issues and community health status discussed.",
+          "Detailed understanding of the interrelated roles of individuals, groups and governments in health management and promotion.",
+          "Understanding of interrelationships between factors impacting physical performance.",
+          "Arguments supported thoroughly with relevant examples and current information."
+        ],
+        "style_rules": [
+          "Clearly express ideas \u2014 thorough but may be less critical in depth than Band 6.",
+          "Discuss links between individual behaviour, social issues and community health \u2014 not just one dimension.",
+          "Use relevant examples and current information to support arguments.",
+          "May be less comprehensive in strategy evaluation than Band 6."
+        ],
+        "avoid": [
+          "Major omissions in linking individual, social and community health dimensions.",
+          "Supporting arguments with vague or generic examples.",
+          "Ignoring the interrelated roles of individuals, groups and governments."
+        ]
+      },
+      "Band4": {
+        "nesa_descriptor": "Demonstrates a clear understanding of the broad concepts that relate to personal health and physical performance. Relates strategies for managing the major causes of sickness and death to the contributing risk factors. Demonstrates a sound understanding of the roles of individuals, groups and governments in promoting health. Describes a range of factors that affect the quality of physical performance. Communicates information in a clear and logical way providing some examples about health, participation and performance.",
+        "knowledge_standard": "Demonstrates a clear understanding of the broad concepts that relate to personal health and physical performance.",
+        "communication_standard": "Communicates information in a clear and logical way providing some examples about health, participation and performance.",
+        "must_include": [
+          "Clear understanding of broad health and physical performance concepts demonstrated.",
+          "Strategies for managing major causes of sickness and death related to contributing risk factors.",
+          "Sound understanding of the roles of individuals, groups and governments in promoting health.",
+          "Range of factors affecting quality of physical performance described.",
+          "Information communicated clearly and logically with some examples."
+        ],
+        "style_rules": [
+          "Communicate clearly and logically \u2014 some examples provided.",
+          "Relate strategies to risk factors rather than just listing them.",
+          "Sound but not detailed \u2014 less integration of interrelated roles than Band 5."
+        ],
+        "avoid": [
+          "Unsupported broad claims without risk factor connection.",
+          "Confusing or poorly sequenced explanation.",
+          "Providing no examples to support health or performance arguments."
+        ]
+      },
+      "Band3": {
+        "nesa_descriptor": "Uses basic definitions and facts when explaining health and physical performance concepts. Identifies the major causes of sickness and death and understands that a healthy lifestyle is a desirable goal. Demonstrates an understanding of the need for government and community action in relation to promoting health. Identifies some relevant factors which influence physical performance. Provides basic support for the arguments presented on health, participation and performance.",
+        "knowledge_standard": "Uses basic definitions and facts when explaining health and physical performance concepts.",
+        "communication_standard": "Provides basic support for the arguments presented on health, participation and performance.",
+        "must_include": [
+          "Basic definitions and facts used to explain health and physical performance concepts.",
+          "Major causes of sickness and death identified with understanding that healthy lifestyle is a desirable goal.",
+          "Understanding of the need for government and community action in promoting health.",
+          "Some relevant factors influencing physical performance identified.",
+          "Basic support provided for arguments on health, participation and performance."
+        ],
+        "style_rules": [
+          "Short, straightforward and mostly factual.",
+          "Basic support for arguments \u2014 definitions and facts rather than analysis."
+        ],
+        "avoid": [
+          "Large sections of irrelevant material.",
+          "Invented health or movement science facts presented as correct."
+        ]
+      },
+      "Band2": {
+        "nesa_descriptor": "Recalls some simple facts and writes brief descriptions. Demonstrates an understanding of elementary terms and recognises simple cause and effect relationships as they apply to health and movement. Outlines some factors affecting health and identifies relevant illness prevention measures. Demonstrates an understanding of general movement principles. Provides limited support for the arguments presented on health, participation and performance.",
+        "knowledge_standard": "Recalls some simple facts and writes brief descriptions.",
+        "communication_standard": "Provides limited support for the arguments presented on health, participation and performance.",
+        "must_include": [
+          "Some simple facts recalled with brief descriptions.",
+          "Elementary terms understood with simple cause and effect relationships recognised as they apply to health and movement.",
+          "Some factors affecting health outlined with relevant illness prevention measures identified.",
+          "General movement principles understood.",
+          "Limited support provided for arguments on health, participation and performance."
+        ],
+        "style_rules": [
+          "Brief descriptions only \u2014 partial and underdeveloped.",
+          "Elementary terms \u2014 simple cause and effect at most."
+        ],
+        "avoid": [
+          "Invented health or movement science facts.",
+          "Treating a partial or incomplete response as complete."
+        ]
+      },
+      "Band1": {
+        "nesa_descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "knowledge_standard": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "communication_standard": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "must_include": [
+          "No generation target. Used only as a fallback classification label for wholly inadequate responses."
+        ]
+      }
+    },
+    "directive_verb_rules": {
+      "identify": {
+        "typical_marks": "1\u20132",
+        "key_feature": "Name only \u2014 no explanation required unless directed"
+      },
+      "outline": {
+        "typical_marks": "2\u20133",
+        "key_feature": "Main features \u2014 limited but accurate"
+      },
+      "describe": {
+        "typical_marks": "2\u20134",
+        "key_feature": "Characteristics, features, function"
+      },
+      "explain": {
+        "typical_marks": "3\u20136",
+        "key_feature": "Cause and effect with health/movement reasoning"
+      },
+      "analyse": {
+        "typical_marks": "4\u20136",
+        "key_feature": "Break into parts, show relationships and patterns"
+      },
+      "assess": {
+        "typical_marks": "4\u20138",
+        "key_feature": "Judge strengths and limitations with evidence"
+      },
+      "evaluate": {
+        "typical_marks": "5\u20138",
+        "key_feature": "Judge overall value or effectiveness with final judgement"
+      },
+      "justify": {
+        "typical_marks": "3\u20135",
+        "key_feature": "Give reasons supporting a conclusion"
+      },
+      "compare": {
+        "typical_marks": "3\u20136",
+        "key_feature": "Similarities AND differences"
+      },
+      "contrast": {
+        "typical_marks": "3\u20134",
+        "key_feature": "Differences only"
+      },
+      "discuss": {
+        "typical_marks": "4\u20138",
+        "key_feature": "Examine multiple aspects and come to a considered position"
+      },
+      "investigate": {
+        "typical_marks": "4\u20136",
+        "key_feature": "Examine with evidence and draw conclusions"
+      },
+      "recommend": {
+        "typical_marks": "3\u20136",
+        "key_feature": "Propose with justification linked to outcomes"
+      }
+    },
+    "generation_templates": {
+      "Band6_explain": [
+        "State the key health or movement science concept precisely.",
+        "Explain the mechanism or process using accurate terminology.",
+        "Link cause to effect explicitly using health or physiological reasoning.",
+        "State the resulting consequence, significance or broader health/performance impact."
+      ],
+      "Band6_analyse": [
+        "Identify the major factors, components or influences being analysed.",
+        "Show how they interact, relate or produce health or performance outcomes.",
+        "Interpret any data, trends or patterns.",
+        "Link the analysis back to the specific health, participation or performance question."
+      ],
+      "Band6_evaluate": [
+        "State the strategy, program, technology or approach being evaluated.",
+        "Explain at least one strength with evidence or example.",
+        "Explain at least one limitation with evidence or example.",
+        "Make a clear final judgement using 'overall', 'therefore' or 'this is effective because'."
+      ],
+      "Band6_assess": [
+        "State the health issue, strategy or factor being assessed and the criteria for judgement.",
+        "Discuss positive aspects and negative aspects with evidence.",
+        "Use relevant examples or data references.",
+        "Conclude with a balanced but definite judgement."
+      ],
+      "Band6_discuss": [
+        "State the health or movement issue and the key dimensions to consider.",
+        "Examine at least two aspects, perspectives or implications with evidence.",
+        "Link ideas using connectives (however, therefore, as a result, in contrast).",
+        "Come to a considered position supported by the discussion."
+      ],
+      "Band6_describe": [
+        "State the key features, characteristics or components of the concept or process.",
+        "Explain what each feature does, shows or represents in a health/movement context.",
+        "Use precise health and movement science terminology.",
+        "Link features to their significance or function where relevant."
+      ],
+      "Band6_outline": [
+        "State the main features or steps of the concept or strategy.",
+        "Keep detail focused and accurate \u2014 not exhaustive.",
+        "Use correct health and movement science terminology.",
+        "Structure clearly if multiple features are required."
+      ],
+      "Band6_identify": [
+        "Name the required factor, condition, strategy, group or concept directly.",
+        "Use precise terminology.",
+        "Do not explain unless the question explicitly requires it.",
+        "If multiple items required, list clearly."
+      ],
+      "Band6_justify": [
+        "State the chosen strategy, approach or conclusion clearly.",
+        "Give health or movement science reasons supporting it with evidence.",
+        "Link each reason back to the health, participation or performance context.",
+        "Finish with a sentence confirming why the judgement is valid."
+      ],
+      "Band6_compare": [
+        "Identify the strategies, groups, conditions or factors being compared.",
+        "State similarities using precise health and movement science terminology.",
+        "State differences clearly.",
+        "Use comparative language (whereas, in contrast, similarly, unlike)."
+      ],
+      "Band6_contrast": [
+        "Identify the strategies, groups, conditions or factors being contrasted.",
+        "Clearly state the key differences with health or movement reasoning.",
+        "Use comparative language (whereas, in contrast, unlike).",
+        "Use precise terminology throughout."
+      ],
+      "Band6_recommend": [
+        "State the recommended strategy, program or course of action clearly.",
+        "Give specific health or movement science reasons justifying the recommendation.",
+        "Address the specific health, participation or performance context.",
+        "Conclude with a statement confirming the recommendation is appropriate and effective."
+      ],
+      "Band6_investigate": [
+        "State what is being investigated and why it matters.",
+        "Present relevant evidence, data or examples from health or movement research.",
+        "Interpret the evidence \u2014 what does it show or mean?",
+        "Draw a clear conclusion supported by the investigation."
+      ]
+    },
+    "quality_checks": {
+      "before_output": [
+        "Has the directive verb been answered correctly?",
+        "Has every part of the question been addressed?",
+        "Is the health and movement science content syllabus-aligned (2023 syllabus)?",
+        "Is the terminology appropriate to the target band?",
+        "Are the causal links or relationships clear?",
+        "Has a judgement been made when required by the directive?",
+        "Have relevant examples or evidence been included?",
+        "Has the interrelated role of individuals, groups and governments been addressed where relevant?"
+      ],
+      "band6_checklist": [
+        "Precise health and movement science terminology used consistently.",
+        "Multiple linked concepts included and critically analysed.",
+        "Strategies evaluated \u2014 not just identified or described.",
+        "Relevant and accurate examples justify complex arguments.",
+        "Response is coherent and logically structured.",
+        "Judgement is explicit if required by the directive.",
+        "Interrelated roles of individuals, groups and governments addressed where relevant."
+      ]
+    },
+    "output_controls": {
+      "target_band_selection_rule": {
+        "Band6": "Generate with extensive knowledge \u2014 comprehensively apply theoretical principles, critically analyse movement and performance factors, address interrelated roles of individuals, groups and governments, justify complex arguments with accurate examples.",
+        "Band5": "Generate with thorough understanding \u2014 identify strategies and discuss links between individual behaviour, social issues and community health. Detailed understanding of interrelated roles. Supported with relevant examples and current information.",
+        "Band4": "Generate with clear understanding of broad concepts \u2014 relate strategies to risk factors, sound understanding of roles, describe factors affecting performance, communicate clearly with some examples.",
+        "Band3": "Generate using basic definitions and facts \u2014 identify causes of sickness and death, note the need for government and community action, identify some factors influencing physical performance. Basic support for arguments.",
+        "Band2": "Generate brief descriptions \u2014 recall simple facts, recognise elementary cause and effect, outline factors affecting health, identify illness prevention measures. Limited support for arguments.",
+        "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
+      },
+      "forbidden_behaviours": [
+        "Do not generate Band 6 responses by merely increasing word count.",
+        "Do not add irrelevant advanced content to imitate sophistication.",
+        "Do not ignore the syllabus or stimulus material.",
+        "Do not use vague examples that do not specifically justify the argument.",
+        "Do not treat individual, group and government roles as entirely separate when the question requires interrelated analysis."
+      ]
+    }
+  },
+  "directiveTiers": {
+    "account for": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "classify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "extract": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "clarify": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "demonstrate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "give an account of": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "recount": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "calculate": {
+      "tier": "procedural",
+      "modality": "ignore"
+    },
+    "construct": {
+      "tier": "procedural",
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "deduce": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "extrapolate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "predict": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "suggest": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "appreciate": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "investigate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "debate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "reflect": {
+      "tier": 1,
+      "modality": "ignore"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this causes",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas"
+    ]
+  }
+}
