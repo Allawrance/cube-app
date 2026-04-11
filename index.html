@@ -58,13 +58,20 @@ let config = {
 // Load config.json from same directory — runs once before React mounts
 async function loadConfig() {
   try {
-    const res = await fetch("./config.json?v=" + Date.now());
-    if (!res.ok) throw new Error("config.json not found (HTTP " + res.status + ")");
+    // Read ?subject=EES (or BS/HM/ES) from the URL — default to EES
+    const params  = new URLSearchParams(window.location.search);
+    const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
+    // Map short URL codes to config filenames
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", HM:"config-HlthM", ES:"config-EngS" };
+    const configName  = CONFIG_FILES[subject] || "config-EES";
+    const configFile  = "./" + configName + ".json?v=" + Date.now();
+    const res = await fetch(configFile);
+    if (!res.ok) throw new Error(configName + ".json not found (HTTP " + res.status + ")");
     const data = await res.json();
     config = { ...config, ...data };
     console.log("✅ Config loaded:", config.subjectCode, config.subjectName);
   } catch(e) {
-    console.error("❌ Failed to load config.json:", e.message);
+    console.error("❌ Failed to load config:", e.message);
   }
 }
 
@@ -2021,11 +2028,11 @@ function AppShell() {
   useEffect(() => {
     loadConfig().then(() => {
       if (!config.subjectCode) {
-        setConfigError("config.json loaded but missing subjectCode. Check your config.json.");
+        setConfigError("Config file loaded but missing subjectCode — check your config JSON.");
       }
       setConfigReady(true);
     }).catch(e => {
-      setConfigError("Could not load config.json: " + e.message);
+      setConfigError("Could not load config: " + e.message);
       setConfigReady(true); // still render with defaults
     });
   }, []);
