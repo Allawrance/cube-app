@@ -1411,11 +1411,61 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                           <div style={{color:"#81c784",fontSize:"10px",fontFamily:"sans-serif"}}>{ct.type?.replace(/_/g," ")}</div>
                         </div>)}
                       </div>
-                      {c.evidenceRequired&&<div style={{marginTop:"6px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"5px 10px",fontSize:"12px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
+                      {c.evidenceRequired&&(()=>{
+                        // Find the planning arrow whose targetWord matches evidence type
+                        // to show a content-rich hint rather than the raw type string
+                        const arrows = results?.phase1_cube?.evidenceArrows ||
+                                       stage2Results?.phase2_plan?.planningArrows || [];
+                        const evArrow = arrows.find(a =>
+                          a.targetWord && (
+                            a.targetWord.toLowerCase().includes("example") ||
+                            a.targetWord.toLowerCase().includes("evidence") ||
+                            a.targetWord.toLowerCase().includes("named")
+                          )
+                        );
+                        const evTypeLabel = (c.evidenceType||"")
+                          .replace(/_/g," ")
+                          .replace(/\w/g, l=>l.toUpperCase());
+                        return null; // E card rendered separately below
+                      })()}
                     </div>
                   </div>
                 </div>}
               </Card>}
+
+              {/* ── E card — Evidence / Example (only when evidenceRequired) ── */}
+              {c.evidenceRequired&&(()=>{
+                const arrows = stage2Results?.phase2_plan?.planningArrows || results?.phase1_cube?.evidenceArrows || [];
+                const evArrow = arrows.find(a =>
+                  a.targetWord && (
+                    a.targetWord.toLowerCase().includes("example") ||
+                    a.targetWord.toLowerCase().includes("evidence") ||
+                    a.targetWord.toLowerCase().includes("named")
+                  )
+                );
+                const evTypeLabel = (c.evidenceType||"named example")
+                  .replace(/_/g," ")
+                  .replace(/\w/g, l=>l.toUpperCase());
+                return <Card bg="rgba(106,27,154,0.08)" border="rgba(149,117,205,0.4)">
+                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                    <div style={{background:"#6a1b9a",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>E</div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:700,color:"#ce93d8",fontSize:"13px",marginBottom:"4px"}}>
+                        Evidence / Example Required: <span style={{background:"rgba(106,27,154,0.2)",padding:"1px 8px",borderRadius:"20px",fontSize:"12px"}}>{evTypeLabel}</span>
+                      </div>
+                      {evArrow
+                        ? <div style={{color:"#e1bee7",fontSize:"13px",lineHeight:"1.5"}}>
+                            💡 <strong style={{color:"#ce93d8"}}>Suggested:</strong> {evArrow.label}
+                          </div>
+                        : <div style={{color:"#9e9e9e",fontSize:"12px",fontStyle:"italic",fontFamily:"sans-serif"}}>
+                            Complete the full marking (Step 4) to see a specific example suggestion.
+                          </div>
+                      }
+                    </div>
+                  </div>
+                </Card>;
+              })()}
+
               {/* ── Now ready button at bottom of CUBE tab ── */}
               {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
                 <button onClick={()=>markFullAnswer()} style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg,#6c63ff,#9c27b0)",color:"#fff",border:"none",borderRadius:"10px",fontSize:"16px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"block",textAlign:"center",boxShadow:"0 4px 14px rgba(108,99,255,0.4)",letterSpacing:"0.5px"}}>
