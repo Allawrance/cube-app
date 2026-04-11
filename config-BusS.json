@@ -1,0 +1,3144 @@
+{
+  "subjectCode": "BS",
+  "subjectName": "Business Studies",
+  "subjectShortName": "BS",
+  "dominantMode": "Argument + case study",
+  "cleanRule": "Business = argument + real-world examples",
+  "leaderboardTip": "Discuss and Evaluate are the dominant verbs \u2014 use HOWEVER and ALTHOUGH for multi-perspective answers.",
+  "sheetTabCube": "BS CUBE",
+  "sheetTabFull": "BS FULL",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
+  "logUrl": "https://script.google.com/macros/s/AKfycbwLZRvVWCm4La32lFgGnp5DtUBbDYX7Bgbmi4SRDEVom9yZ-_pXL72ipjTxUW7RNzQk/exec",
+  "syllabus": {
+    "file_name": "04_BUSINESS_STUDIES_SYLLABUS_DATABASE.json",
+    "version": "1.0",
+    "last_updated": "March 2026",
+    "course": "NSW HSC Business Studies",
+    "source": "Business Studies Stage 6 Syllabus, Board of Studies NSW, 2010 (Updated August 2013)",
+    "purpose": "Syllabus keyword database for CUBE HSC Marking Coach. Used to identify and annotate syllabus keywords in student exam questions. HSC topics only (Topics 10.1\u201310.4). Each dot point contains the exact syllabus text, extracted keywords and common exam phrasings.",
+    "hsc_outcomes": [
+      {
+        "code": "H1",
+        "text": "critically analyses the role of business in Australia and globally"
+      },
+      {
+        "code": "H2",
+        "text": "evaluates management strategies in response to changes in internal and external influences"
+      },
+      {
+        "code": "H3",
+        "text": "discusses the social and ethical responsibilities of management"
+      },
+      {
+        "code": "H4",
+        "text": "analyses business functions and processes in large and global businesses"
+      },
+      {
+        "code": "H5",
+        "text": "explains management strategies and their impact on businesses"
+      },
+      {
+        "code": "H6",
+        "text": "evaluates the effectiveness of management in the performance of businesses"
+      },
+      {
+        "code": "H7",
+        "text": "plans and conducts investigations into contemporary business issues"
+      },
+      {
+        "code": "H8",
+        "text": "organises and evaluates information for actual and hypothetical business situations"
+      },
+      {
+        "code": "H9",
+        "text": "communicates business information, issues and concepts in appropriate formats"
+      },
+      {
+        "code": "H10",
+        "text": "applies mathematical concepts appropriately in business situations"
+      }
+    ],
+    "topics": {
+      "10.1": {
+        "topic_code": "10.1",
+        "topic_title": "Operations",
+        "indicative_time": "25%",
+        "outcomes": [
+          "H1",
+          "H2",
+          "H3",
+          "H4",
+          "H5",
+          "H6",
+          "H7",
+          "H8",
+          "H9"
+        ],
+        "subtopics": {
+          "10.1.1": {
+            "subtopic_title": "Role of operations management",
+            "dot_points": [
+              {
+                "id": "10.1.1.1",
+                "syllabus_text": "strategic role of operations management \u2013 cost leadership, good/service differentiation",
+                "keywords": [
+                  "strategic role",
+                  "operations management",
+                  "cost leadership",
+                  "good/service differentiation",
+                  "differentiation"
+                ],
+                "exam_phrasings": [
+                  "strategic role of operations management",
+                  "cost leadership strategy",
+                  "differentiation strategy",
+                  "role of operations"
+                ],
+                "related_concepts": [
+                  "competitive advantage",
+                  "management strategy",
+                  "business performance"
+                ]
+              },
+              {
+                "id": "10.1.1.2",
+                "syllabus_text": "goods and/or services in different industries",
+                "keywords": [
+                  "goods",
+                  "services",
+                  "industries",
+                  "goods and/or services"
+                ],
+                "exam_phrasings": [
+                  "goods and services",
+                  "types of industries",
+                  "production of goods and services"
+                ],
+                "related_concepts": [
+                  "primary",
+                  "secondary",
+                  "tertiary industries"
+                ]
+              },
+              {
+                "id": "10.1.1.3",
+                "syllabus_text": "interdependence with other key business functions",
+                "keywords": [
+                  "interdependence",
+                  "key business functions"
+                ],
+                "exam_phrasings": [
+                  "interdependence of business functions",
+                  "relationship between operations and other functions",
+                  "how operations links to"
+                ],
+                "related_concepts": [
+                  "integrated business functions",
+                  "coordination",
+                  "business performance"
+                ]
+              }
+            ]
+          },
+          "10.1.2": {
+            "subtopic_title": "Influences on operations management",
+            "dot_points": [
+              {
+                "id": "10.1.2.1",
+                "syllabus_text": "globalisation, technology, quality expectations, cost-based competition, government policies, legal regulation, environmental sustainability",
+                "keywords": [
+                  "globalisation",
+                  "technology",
+                  "quality expectations",
+                  "cost-based competition",
+                  "government policies",
+                  "legal regulation",
+                  "environmental sustainability"
+                ],
+                "exam_phrasings": [
+                  "external influences on operations",
+                  "impact of globalisation on operations",
+                  "government regulation",
+                  "environmental sustainability in operations"
+                ],
+                "related_concepts": [
+                  "external environment",
+                  "PESTLE",
+                  "management response"
+                ]
+              },
+              {
+                "id": "10.1.2.2",
+                "syllabus_text": "corporate social responsibility \u2013 the difference between legal compliance and ethical responsibility; environmental sustainability and social responsibility",
+                "keywords": [
+                  "corporate social responsibility",
+                  "legal compliance",
+                  "ethical responsibility",
+                  "environmental sustainability",
+                  "social responsibility"
+                ],
+                "exam_phrasings": [
+                  "corporate social responsibility",
+                  "CSR in operations",
+                  "ethical vs legal",
+                  "sustainability"
+                ],
+                "related_concepts": [
+                  "ethics",
+                  "stakeholders",
+                  "triple bottom line",
+                  "reputation"
+                ]
+              }
+            ]
+          },
+          "10.1.3": {
+            "subtopic_title": "Operations processes",
+            "dot_points": [
+              {
+                "id": "10.1.3.1",
+                "syllabus_text": "inputs \u2013 transformed resources (materials, information, customers); transforming resources (human resources, facilities)",
+                "keywords": [
+                  "inputs",
+                  "transformed resources",
+                  "transforming resources",
+                  "materials",
+                  "information",
+                  "customers",
+                  "human resources",
+                  "facilities"
+                ],
+                "exam_phrasings": [
+                  "inputs to operations",
+                  "transformed resources",
+                  "transforming resources",
+                  "operations process"
+                ],
+                "related_concepts": [
+                  "operations system",
+                  "production process",
+                  "value chain"
+                ]
+              },
+              {
+                "id": "10.1.3.2",
+                "syllabus_text": "transformation processes \u2013 the influence of volume, variety, variation in demand and visibility (customer contact); sequencing and scheduling \u2013 Gantt charts, critical path analysis; technology, task design and process layout; monitoring, control and improvement",
+                "keywords": [
+                  "transformation processes",
+                  "volume",
+                  "variety",
+                  "variation in demand",
+                  "visibility",
+                  "customer contact",
+                  "sequencing",
+                  "scheduling",
+                  "Gantt charts",
+                  "critical path analysis",
+                  "technology",
+                  "task design",
+                  "process layout",
+                  "monitoring",
+                  "control",
+                  "improvement"
+                ],
+                "exam_phrasings": [
+                  "transformation process",
+                  "Gantt chart",
+                  "critical path analysis",
+                  "scheduling in operations",
+                  "process layout"
+                ],
+                "related_concepts": [
+                  "production efficiency",
+                  "lean management",
+                  "process design"
+                ]
+              },
+              {
+                "id": "10.1.3.3",
+                "syllabus_text": "outputs \u2013 customer service; warranties",
+                "keywords": [
+                  "outputs",
+                  "customer service",
+                  "warranties"
+                ],
+                "exam_phrasings": [
+                  "outputs of operations",
+                  "customer service",
+                  "after-sales service",
+                  "warranties"
+                ],
+                "related_concepts": [
+                  "quality",
+                  "customer satisfaction",
+                  "operations effectiveness"
+                ]
+              }
+            ]
+          },
+          "10.1.4": {
+            "subtopic_title": "Operations strategies",
+            "dot_points": [
+              {
+                "id": "10.1.4.1",
+                "syllabus_text": "performance objectives \u2013 quality, speed, dependability, flexibility, customisation, cost",
+                "keywords": [
+                  "performance objectives",
+                  "quality",
+                  "speed",
+                  "dependability",
+                  "flexibility",
+                  "customisation",
+                  "cost"
+                ],
+                "exam_phrasings": [
+                  "performance objectives",
+                  "operations performance objectives",
+                  "quality objective",
+                  "speed objective"
+                ],
+                "related_concepts": [
+                  "competitive advantage",
+                  "operations strategy",
+                  "customer value"
+                ]
+              },
+              {
+                "id": "10.1.4.2",
+                "syllabus_text": "new product or service design and development",
+                "keywords": [
+                  "new product or service design and development"
+                ],
+                "exam_phrasings": [
+                  "new product development",
+                  "product design",
+                  "service design and development"
+                ],
+                "related_concepts": [
+                  "innovation",
+                  "R&D",
+                  "competitive advantage"
+                ]
+              },
+              {
+                "id": "10.1.4.3",
+                "syllabus_text": "supply chain management \u2013 logistics, e-commerce, global sourcing",
+                "keywords": [
+                  "supply chain management",
+                  "logistics",
+                  "e-commerce",
+                  "global sourcing",
+                  "supply chain"
+                ],
+                "exam_phrasings": [
+                  "supply chain management",
+                  "SCM",
+                  "logistics",
+                  "global sourcing",
+                  "e-commerce in operations"
+                ],
+                "related_concepts": [
+                  "operations efficiency",
+                  "cost reduction",
+                  "globalisation"
+                ]
+              },
+              {
+                "id": "10.1.4.4",
+                "syllabus_text": "outsourcing \u2013 advantages and disadvantages",
+                "keywords": [
+                  "outsourcing",
+                  "advantages",
+                  "disadvantages"
+                ],
+                "exam_phrasings": [
+                  "outsourcing",
+                  "advantages of outsourcing",
+                  "disadvantages of outsourcing",
+                  "why businesses outsource"
+                ],
+                "related_concepts": [
+                  "cost reduction",
+                  "core competencies",
+                  "global operations"
+                ]
+              },
+              {
+                "id": "10.1.4.5",
+                "syllabus_text": "technology \u2013 leading edge, established",
+                "keywords": [
+                  "technology",
+                  "leading edge",
+                  "established"
+                ],
+                "exam_phrasings": [
+                  "technology in operations",
+                  "leading edge technology",
+                  "established technology",
+                  "role of technology"
+                ],
+                "related_concepts": [
+                  "innovation",
+                  "efficiency",
+                  "competitive advantage"
+                ]
+              },
+              {
+                "id": "10.1.4.6",
+                "syllabus_text": "inventory management \u2013 advantages and disadvantages of holding stock, LIFO (last-in-first-out), FIFO (first-in-first-out), JIT (just-in-time)",
+                "keywords": [
+                  "inventory management",
+                  "holding stock",
+                  "LIFO",
+                  "last-in-first-out",
+                  "FIFO",
+                  "first-in-first-out",
+                  "JIT",
+                  "just-in-time"
+                ],
+                "exam_phrasings": [
+                  "inventory management",
+                  "JIT",
+                  "just-in-time",
+                  "LIFO",
+                  "FIFO",
+                  "holding stock",
+                  "stock management"
+                ],
+                "related_concepts": [
+                  "cash flow",
+                  "cost management",
+                  "supply chain"
+                ]
+              },
+              {
+                "id": "10.1.4.7",
+                "syllabus_text": "quality management \u2013 control; assurance; improvement",
+                "keywords": [
+                  "quality management",
+                  "control",
+                  "assurance",
+                  "improvement"
+                ],
+                "exam_phrasings": [
+                  "quality management",
+                  "quality control",
+                  "quality assurance",
+                  "total quality management",
+                  "quality improvement"
+                ],
+                "related_concepts": [
+                  "customer satisfaction",
+                  "competitive advantage",
+                  "operations performance"
+                ]
+              },
+              {
+                "id": "10.1.4.8",
+                "syllabus_text": "overcoming resistance to change \u2013 financial costs, purchasing new equipment, redundancy payments, retraining, reorganising plant layout, inertia",
+                "keywords": [
+                  "resistance to change",
+                  "financial costs",
+                  "redundancy payments",
+                  "retraining",
+                  "reorganising plant layout",
+                  "inertia"
+                ],
+                "exam_phrasings": [
+                  "resistance to change in operations",
+                  "overcoming resistance to change",
+                  "barriers to change",
+                  "managing change"
+                ],
+                "related_concepts": [
+                  "change management",
+                  "management strategy",
+                  "organisational culture"
+                ]
+              },
+              {
+                "id": "10.1.4.9",
+                "syllabus_text": "global factors \u2013 global sourcing, economies of scale, scanning and learning, research and development",
+                "keywords": [
+                  "global factors",
+                  "global sourcing",
+                  "economies of scale",
+                  "scanning and learning",
+                  "research and development"
+                ],
+                "exam_phrasings": [
+                  "global factors in operations",
+                  "economies of scale",
+                  "global sourcing",
+                  "R&D",
+                  "research and development"
+                ],
+                "related_concepts": [
+                  "globalisation",
+                  "competitive advantage",
+                  "cost leadership"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "10.2": {
+        "topic_code": "10.2",
+        "topic_title": "Marketing",
+        "indicative_time": "25%",
+        "outcomes": [
+          "H1",
+          "H2",
+          "H3",
+          "H4",
+          "H5",
+          "H6",
+          "H7",
+          "H8",
+          "H9",
+          "H10"
+        ],
+        "subtopics": {
+          "10.2.1": {
+            "subtopic_title": "Role of marketing",
+            "dot_points": [
+              {
+                "id": "10.2.1.1",
+                "syllabus_text": "strategic role of marketing goods and services",
+                "keywords": [
+                  "strategic role",
+                  "marketing",
+                  "goods and services"
+                ],
+                "exam_phrasings": [
+                  "strategic role of marketing",
+                  "role of marketing",
+                  "why marketing is important"
+                ],
+                "related_concepts": [
+                  "competitive advantage",
+                  "customer value",
+                  "business strategy"
+                ]
+              },
+              {
+                "id": "10.2.1.2",
+                "syllabus_text": "interdependence with other key business functions",
+                "keywords": [
+                  "interdependence",
+                  "key business functions"
+                ],
+                "exam_phrasings": [
+                  "interdependence of marketing",
+                  "how marketing links to other functions",
+                  "relationship between marketing and operations/finance/HR"
+                ],
+                "related_concepts": [
+                  "integrated business functions",
+                  "coordination"
+                ]
+              },
+              {
+                "id": "10.2.1.3",
+                "syllabus_text": "production, selling, marketing approaches",
+                "keywords": [
+                  "production",
+                  "selling",
+                  "marketing approaches"
+                ],
+                "exam_phrasings": [
+                  "production approach",
+                  "selling approach",
+                  "marketing approach",
+                  "approaches to marketing"
+                ],
+                "related_concepts": [
+                  "market orientation",
+                  "customer focus",
+                  "business philosophy"
+                ]
+              },
+              {
+                "id": "10.2.1.4",
+                "syllabus_text": "types of markets \u2013 resource, industrial, intermediate, consumer, mass, niche",
+                "keywords": [
+                  "types of markets",
+                  "resource",
+                  "industrial",
+                  "intermediate",
+                  "consumer",
+                  "mass",
+                  "niche"
+                ],
+                "exam_phrasings": [
+                  "types of markets",
+                  "mass market",
+                  "niche market",
+                  "consumer market",
+                  "industrial market"
+                ],
+                "related_concepts": [
+                  "target market",
+                  "market segmentation",
+                  "customer base"
+                ]
+              }
+            ]
+          },
+          "10.2.2": {
+            "subtopic_title": "Influences on marketing",
+            "dot_points": [
+              {
+                "id": "10.2.2.1",
+                "syllabus_text": "factors influencing customer choice \u2013 psychological, sociocultural, economic, government",
+                "keywords": [
+                  "factors influencing customer choice",
+                  "psychological",
+                  "sociocultural",
+                  "economic",
+                  "government",
+                  "customer choice"
+                ],
+                "exam_phrasings": [
+                  "factors influencing customer choice",
+                  "influences on customer behaviour",
+                  "psychological factors",
+                  "sociocultural factors"
+                ],
+                "related_concepts": [
+                  "consumer behaviour",
+                  "buying decisions",
+                  "market research"
+                ]
+              },
+              {
+                "id": "10.2.2.2",
+                "syllabus_text": "consumer laws \u2013 deceptive and misleading advertising; price discrimination; implied conditions; warranties",
+                "keywords": [
+                  "consumer laws",
+                  "deceptive and misleading advertising",
+                  "price discrimination",
+                  "implied conditions",
+                  "warranties"
+                ],
+                "exam_phrasings": [
+                  "consumer laws",
+                  "misleading advertising",
+                  "deceptive advertising",
+                  "consumer protection",
+                  "price discrimination"
+                ],
+                "related_concepts": [
+                  "legal compliance",
+                  "consumer protection",
+                  "ethical marketing"
+                ]
+              },
+              {
+                "id": "10.2.2.3",
+                "syllabus_text": "ethical \u2013 truth, accuracy and good taste in advertising, products that may damage health, engaging in fair competition, sugging",
+                "keywords": [
+                  "truth",
+                  "accuracy",
+                  "good taste in advertising",
+                  "products that may damage health",
+                  "fair competition",
+                  "sugging"
+                ],
+                "exam_phrasings": [
+                  "ethical issues in marketing",
+                  "truth in advertising",
+                  "sugging",
+                  "fair competition",
+                  "social responsibility in marketing"
+                ],
+                "related_concepts": [
+                  "CSR",
+                  "marketing ethics",
+                  "consumer trust",
+                  "brand reputation"
+                ]
+              }
+            ]
+          },
+          "10.2.3": {
+            "subtopic_title": "Marketing process",
+            "dot_points": [
+              {
+                "id": "10.2.3.1",
+                "syllabus_text": "situational analysis \u2013 SWOT, product life cycle",
+                "keywords": [
+                  "situational analysis",
+                  "SWOT",
+                  "product life cycle"
+                ],
+                "exam_phrasings": [
+                  "situational analysis",
+                  "SWOT analysis",
+                  "product life cycle",
+                  "PLC stages"
+                ],
+                "related_concepts": [
+                  "strategic planning",
+                  "market analysis",
+                  "marketing planning"
+                ]
+              },
+              {
+                "id": "10.2.3.2",
+                "syllabus_text": "market research",
+                "keywords": [
+                  "market research"
+                ],
+                "exam_phrasings": [
+                  "market research",
+                  "primary market research",
+                  "secondary market research",
+                  "why businesses conduct market research"
+                ],
+                "related_concepts": [
+                  "consumer behaviour",
+                  "data collection",
+                  "business decision making"
+                ]
+              },
+              {
+                "id": "10.2.3.3",
+                "syllabus_text": "establishing market objectives",
+                "keywords": [
+                  "market objectives"
+                ],
+                "exam_phrasings": [
+                  "marketing objectives",
+                  "establishing market objectives",
+                  "setting marketing goals"
+                ],
+                "related_concepts": [
+                  "strategic planning",
+                  "SMART goals",
+                  "business direction"
+                ]
+              },
+              {
+                "id": "10.2.3.4",
+                "syllabus_text": "identifying target markets",
+                "keywords": [
+                  "target market",
+                  "target markets",
+                  "identifying target markets"
+                ],
+                "exam_phrasings": [
+                  "target market",
+                  "identifying the target market",
+                  "selecting target markets"
+                ],
+                "related_concepts": [
+                  "market segmentation",
+                  "positioning",
+                  "customer focus"
+                ]
+              },
+              {
+                "id": "10.2.3.5",
+                "syllabus_text": "developing marketing strategies",
+                "keywords": [
+                  "marketing strategies",
+                  "developing marketing strategies"
+                ],
+                "exam_phrasings": [
+                  "marketing strategies",
+                  "developing marketing strategies",
+                  "strategic marketing decisions"
+                ],
+                "related_concepts": [
+                  "marketing mix",
+                  "competitive positioning",
+                  "market planning"
+                ]
+              },
+              {
+                "id": "10.2.3.6",
+                "syllabus_text": "implementation, monitoring and controlling \u2013 developing a financial forecast; comparing actual and planned results, revising the marketing strategy",
+                "keywords": [
+                  "implementation",
+                  "monitoring",
+                  "controlling",
+                  "financial forecast",
+                  "actual and planned results",
+                  "revising the marketing strategy"
+                ],
+                "exam_phrasings": [
+                  "monitoring and controlling marketing",
+                  "implementation of marketing strategy",
+                  "financial forecast",
+                  "revising marketing strategy"
+                ],
+                "related_concepts": [
+                  "marketing plan",
+                  "performance measurement",
+                  "business control"
+                ]
+              }
+            ]
+          },
+          "10.2.4": {
+            "subtopic_title": "Marketing strategies",
+            "dot_points": [
+              {
+                "id": "10.2.4.1",
+                "syllabus_text": "market segmentation, product/service differentiation and positioning",
+                "keywords": [
+                  "market segmentation",
+                  "differentiation",
+                  "positioning"
+                ],
+                "exam_phrasings": [
+                  "market segmentation",
+                  "product differentiation",
+                  "positioning strategy",
+                  "segmentation targeting and positioning"
+                ],
+                "related_concepts": [
+                  "target market",
+                  "competitive advantage",
+                  "marketing mix"
+                ]
+              },
+              {
+                "id": "10.2.4.2",
+                "syllabus_text": "products \u2013 goods and/or services: branding; packaging",
+                "keywords": [
+                  "products",
+                  "goods and/or services",
+                  "branding",
+                  "packaging"
+                ],
+                "exam_phrasings": [
+                  "product strategy",
+                  "branding",
+                  "packaging",
+                  "role of branding",
+                  "product decisions"
+                ],
+                "related_concepts": [
+                  "marketing mix",
+                  "brand equity",
+                  "product differentiation"
+                ]
+              },
+              {
+                "id": "10.2.4.3",
+                "syllabus_text": "price including pricing methods \u2013 cost, market, competition-based; pricing strategies \u2013 skimming, penetration, loss leaders, price points; price and quality interaction",
+                "keywords": [
+                  "price",
+                  "pricing methods",
+                  "cost",
+                  "market",
+                  "competition-based",
+                  "skimming",
+                  "penetration",
+                  "loss leaders",
+                  "price points",
+                  "price and quality interaction"
+                ],
+                "exam_phrasings": [
+                  "pricing strategy",
+                  "price skimming",
+                  "penetration pricing",
+                  "loss leaders",
+                  "cost-based pricing",
+                  "competition-based pricing"
+                ],
+                "related_concepts": [
+                  "revenue",
+                  "profitability",
+                  "competitive positioning",
+                  "marketing mix"
+                ]
+              },
+              {
+                "id": "10.2.4.4",
+                "syllabus_text": "promotion \u2013 elements of the promotion mix: advertising, personal selling and relationship marketing, sales promotions, publicity and public relations; the communication process \u2013 opinion leaders, word of mouth",
+                "keywords": [
+                  "promotion",
+                  "promotion mix",
+                  "advertising",
+                  "personal selling",
+                  "relationship marketing",
+                  "sales promotions",
+                  "publicity",
+                  "public relations",
+                  "opinion leaders",
+                  "word of mouth"
+                ],
+                "exam_phrasings": [
+                  "promotion mix",
+                  "promotion strategy",
+                  "advertising",
+                  "personal selling",
+                  "sales promotion",
+                  "public relations",
+                  "word of mouth",
+                  "opinion leaders"
+                ],
+                "related_concepts": [
+                  "brand awareness",
+                  "marketing communications",
+                  "customer engagement"
+                ]
+              },
+              {
+                "id": "10.2.4.5",
+                "syllabus_text": "place/distribution \u2013 distribution channels; channel choice \u2013 intensive, selective, exclusive; physical distribution issues \u2013 transport, warehousing, inventory",
+                "keywords": [
+                  "place",
+                  "distribution",
+                  "distribution channels",
+                  "intensive",
+                  "selective",
+                  "exclusive",
+                  "transport",
+                  "warehousing",
+                  "inventory"
+                ],
+                "exam_phrasings": [
+                  "distribution strategy",
+                  "distribution channels",
+                  "place in the marketing mix",
+                  "intensive distribution",
+                  "selective distribution",
+                  "exclusive distribution",
+                  "physical distribution"
+                ],
+                "related_concepts": [
+                  "supply chain",
+                  "logistics",
+                  "marketing mix",
+                  "customer access"
+                ]
+              },
+              {
+                "id": "10.2.4.6",
+                "syllabus_text": "people, processes and physical evidence",
+                "keywords": [
+                  "people",
+                  "processes",
+                  "physical evidence"
+                ],
+                "exam_phrasings": [
+                  "people processes and physical evidence",
+                  "extended marketing mix",
+                  "service marketing mix",
+                  "7Ps"
+                ],
+                "related_concepts": [
+                  "services marketing",
+                  "customer experience",
+                  "service quality"
+                ]
+              },
+              {
+                "id": "10.2.4.7",
+                "syllabus_text": "e-marketing",
+                "keywords": [
+                  "e-marketing"
+                ],
+                "exam_phrasings": [
+                  "e-marketing",
+                  "digital marketing",
+                  "online marketing",
+                  "social media",
+                  "e-commerce marketing"
+                ],
+                "related_concepts": [
+                  "technology",
+                  "globalisation",
+                  "marketing innovation"
+                ]
+              },
+              {
+                "id": "10.2.4.8",
+                "syllabus_text": "global marketing \u2013 global branding; standardisation; customisation; global pricing; competitive positioning",
+                "keywords": [
+                  "global marketing",
+                  "global branding",
+                  "standardisation",
+                  "customisation",
+                  "global pricing",
+                  "competitive positioning"
+                ],
+                "exam_phrasings": [
+                  "global marketing",
+                  "standardisation vs customisation",
+                  "global branding",
+                  "competitive positioning globally",
+                  "international marketing"
+                ],
+                "related_concepts": [
+                  "globalisation",
+                  "international business",
+                  "market entry"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "10.3": {
+        "topic_code": "10.3",
+        "topic_title": "Finance",
+        "indicative_time": "25%",
+        "outcomes": [
+          "H2",
+          "H3",
+          "H4",
+          "H5",
+          "H6",
+          "H7",
+          "H8",
+          "H9",
+          "H10"
+        ],
+        "subtopics": {
+          "10.3.1": {
+            "subtopic_title": "Role of financial management",
+            "dot_points": [
+              {
+                "id": "10.3.1.1",
+                "syllabus_text": "strategic role of financial management",
+                "keywords": [
+                  "strategic role",
+                  "financial management"
+                ],
+                "exam_phrasings": [
+                  "strategic role of financial management",
+                  "role of finance",
+                  "why financial management is important"
+                ],
+                "related_concepts": [
+                  "business strategy",
+                  "resource allocation",
+                  "business performance"
+                ]
+              },
+              {
+                "id": "10.3.1.2",
+                "syllabus_text": "objectives of financial management \u2013 profitability, growth, efficiency, liquidity, solvency; short-term and long-term",
+                "keywords": [
+                  "objectives of financial management",
+                  "profitability",
+                  "growth",
+                  "efficiency",
+                  "liquidity",
+                  "solvency",
+                  "short-term",
+                  "long-term"
+                ],
+                "exam_phrasings": [
+                  "financial objectives",
+                  "profitability objective",
+                  "liquidity objective",
+                  "solvency",
+                  "short-term vs long-term financial objectives"
+                ],
+                "related_concepts": [
+                  "business goals",
+                  "financial performance",
+                  "stakeholder interests"
+                ]
+              },
+              {
+                "id": "10.3.1.3",
+                "syllabus_text": "interdependence with other key business functions",
+                "keywords": [
+                  "interdependence",
+                  "key business functions"
+                ],
+                "exam_phrasings": [
+                  "interdependence of finance",
+                  "how finance links to operations/marketing/HR",
+                  "relationship between finance and other functions"
+                ],
+                "related_concepts": [
+                  "integrated business functions",
+                  "resource management"
+                ]
+              }
+            ]
+          },
+          "10.3.2": {
+            "subtopic_title": "Influences on financial management",
+            "dot_points": [
+              {
+                "id": "10.3.2.1",
+                "syllabus_text": "internal sources of finance \u2013 retained profits",
+                "keywords": [
+                  "internal sources of finance",
+                  "retained profits"
+                ],
+                "exam_phrasings": [
+                  "retained profits",
+                  "internal sources of finance",
+                  "using retained earnings"
+                ],
+                "related_concepts": [
+                  "debt vs equity",
+                  "capital structure",
+                  "financial risk"
+                ]
+              },
+              {
+                "id": "10.3.2.2",
+                "syllabus_text": "external sources of finance \u2013 debt (short-term borrowing: overdraft, commercial bills, factoring; long-term borrowing: mortgage, debentures, unsecured notes, leasing); equity (ordinary shares: new issues, rights issues, placements, share purchase plans; private equity)",
+                "keywords": [
+                  "external sources of finance",
+                  "debt",
+                  "overdraft",
+                  "commercial bills",
+                  "factoring",
+                  "mortgage",
+                  "debentures",
+                  "unsecured notes",
+                  "leasing",
+                  "equity",
+                  "ordinary shares",
+                  "new issues",
+                  "rights issues",
+                  "placements",
+                  "share purchase plans",
+                  "private equity"
+                ],
+                "exam_phrasings": [
+                  "external sources of finance",
+                  "debt financing",
+                  "equity financing",
+                  "overdraft",
+                  "debentures",
+                  "rights issue",
+                  "ordinary shares",
+                  "leasing",
+                  "private equity"
+                ],
+                "related_concepts": [
+                  "capital structure",
+                  "gearing",
+                  "cost of finance",
+                  "financial risk"
+                ]
+              },
+              {
+                "id": "10.3.2.3",
+                "syllabus_text": "financial institutions \u2013 banks, investment banks, finance companies, superannuation funds, life insurance companies, unit trusts and the Australian Securities Exchange",
+                "keywords": [
+                  "financial institutions",
+                  "banks",
+                  "investment banks",
+                  "finance companies",
+                  "superannuation funds",
+                  "life insurance companies",
+                  "unit trusts",
+                  "Australian Securities Exchange"
+                ],
+                "exam_phrasings": [
+                  "financial institutions",
+                  "role of financial institutions",
+                  "ASX",
+                  "Australian Securities Exchange",
+                  "banks and finance"
+                ],
+                "related_concepts": [
+                  "capital markets",
+                  "external finance",
+                  "financial system"
+                ]
+              },
+              {
+                "id": "10.3.2.4",
+                "syllabus_text": "influence of government \u2013 Australian Securities and Investments Commission, company taxation",
+                "keywords": [
+                  "influence of government",
+                  "Australian Securities and Investments Commission",
+                  "company taxation"
+                ],
+                "exam_phrasings": [
+                  "government influence on finance",
+                  "ASIC",
+                  "Australian Securities and Investments Commission",
+                  "company tax",
+                  "taxation"
+                ],
+                "related_concepts": [
+                  "regulation",
+                  "compliance",
+                  "financial reporting"
+                ]
+              },
+              {
+                "id": "10.3.2.5",
+                "syllabus_text": "global market influences \u2013 economic outlook, availability of funds, interest rates",
+                "keywords": [
+                  "global market influences",
+                  "economic outlook",
+                  "availability of funds",
+                  "interest rates"
+                ],
+                "exam_phrasings": [
+                  "global influences on financial management",
+                  "interest rates",
+                  "economic outlook",
+                  "availability of funds",
+                  "global financial environment"
+                ],
+                "related_concepts": [
+                  "globalisation",
+                  "exchange rates",
+                  "financial risk"
+                ]
+              }
+            ]
+          },
+          "10.3.3": {
+            "subtopic_title": "Processes of financial management",
+            "dot_points": [
+              {
+                "id": "10.3.3.1",
+                "syllabus_text": "planning and implementing \u2013 financial needs, budgets, record systems, financial risks, financial controls; debt and equity financing \u2013 advantages and disadvantages of each; matching the terms and source of finance to business purpose",
+                "keywords": [
+                  "planning and implementing",
+                  "financial needs",
+                  "budgets",
+                  "record systems",
+                  "financial risks",
+                  "financial controls",
+                  "debt and equity financing",
+                  "matching the terms and source of finance to business purpose"
+                ],
+                "exam_phrasings": [
+                  "financial planning",
+                  "budgets",
+                  "financial controls",
+                  "debt vs equity",
+                  "matching finance to purpose"
+                ],
+                "related_concepts": [
+                  "financial strategy",
+                  "risk management",
+                  "capital structure"
+                ]
+              },
+              {
+                "id": "10.3.3.2",
+                "syllabus_text": "monitoring and controlling \u2013 cash flow statement, income statement, balance sheet",
+                "keywords": [
+                  "monitoring and controlling",
+                  "cash flow statement",
+                  "income statement",
+                  "balance sheet"
+                ],
+                "exam_phrasings": [
+                  "cash flow statement",
+                  "income statement",
+                  "balance sheet",
+                  "profit and loss statement",
+                  "financial statements",
+                  "monitoring financial performance"
+                ],
+                "related_concepts": [
+                  "financial reporting",
+                  "liquidity",
+                  "profitability",
+                  "solvency"
+                ]
+              },
+              {
+                "id": "10.3.3.3",
+                "syllabus_text": "financial ratios \u2013 liquidity: current ratio (current assets \u00f7 current liabilities); gearing: debt to equity ratio (total liabilities \u00f7 total equity); profitability: gross profit ratio, net profit ratio, return on equity ratio; efficiency: expense ratio, accounts receivable turnover ratio; comparative ratio analysis",
+                "keywords": [
+                  "financial ratios",
+                  "liquidity",
+                  "current ratio",
+                  "gearing",
+                  "debt to equity ratio",
+                  "profitability",
+                  "gross profit ratio",
+                  "net profit ratio",
+                  "return on equity ratio",
+                  "efficiency",
+                  "expense ratio",
+                  "accounts receivable turnover ratio",
+                  "comparative ratio analysis"
+                ],
+                "exam_phrasings": [
+                  "financial ratios",
+                  "current ratio",
+                  "debt to equity ratio",
+                  "gross profit ratio",
+                  "net profit ratio",
+                  "return on equity",
+                  "expense ratio",
+                  "accounts receivable turnover",
+                  "comparative ratio analysis",
+                  "ratio analysis"
+                ],
+                "related_concepts": [
+                  "financial performance",
+                  "business health",
+                  "decision making"
+                ],
+                "formulas": {
+                  "current_ratio": "current assets \u00f7 current liabilities",
+                  "debt_to_equity": "total liabilities \u00f7 total equity",
+                  "gross_profit_ratio": "gross profit \u00f7 sales \u00d7 100",
+                  "net_profit_ratio": "net profit \u00f7 sales \u00d7 100",
+                  "return_on_equity": "net profit \u00f7 total equity \u00d7 100",
+                  "expense_ratio": "total expenses \u00f7 sales \u00d7 100",
+                  "accounts_receivable_turnover": "sales \u00f7 accounts receivable"
+                }
+              },
+              {
+                "id": "10.3.3.4",
+                "syllabus_text": "limitations of financial reports \u2013 normalised earnings, capitalising expenses, valuing assets, timing issues, debt repayments, notes to the financial statements",
+                "keywords": [
+                  "limitations of financial reports",
+                  "normalised earnings",
+                  "capitalising expenses",
+                  "valuing assets",
+                  "timing issues",
+                  "debt repayments",
+                  "notes to the financial statements"
+                ],
+                "exam_phrasings": [
+                  "limitations of financial reports",
+                  "limitations of financial statements",
+                  "normalised earnings",
+                  "capitalising expenses",
+                  "asset valuation",
+                  "timing issues in reporting"
+                ],
+                "related_concepts": [
+                  "financial reporting",
+                  "accounting standards",
+                  "ethical reporting",
+                  "transparency"
+                ]
+              },
+              {
+                "id": "10.3.3.5",
+                "syllabus_text": "ethical issues related to financial reports",
+                "keywords": [
+                  "ethical issues",
+                  "financial reports"
+                ],
+                "exam_phrasings": [
+                  "ethical issues in financial reporting",
+                  "ethical financial reports",
+                  "window dressing",
+                  "creative accounting"
+                ],
+                "related_concepts": [
+                  "CSR",
+                  "transparency",
+                  "stakeholder trust",
+                  "corporate governance"
+                ]
+              }
+            ]
+          },
+          "10.3.4": {
+            "subtopic_title": "Financial management strategies",
+            "dot_points": [
+              {
+                "id": "10.3.4.1",
+                "syllabus_text": "cash flow management \u2013 cash flow statements; distribution of payments, discounts for early payment, factoring",
+                "keywords": [
+                  "cash flow management",
+                  "cash flow statements",
+                  "distribution of payments",
+                  "discounts for early payment",
+                  "factoring"
+                ],
+                "exam_phrasings": [
+                  "cash flow management",
+                  "managing cash flow",
+                  "cash flow strategies",
+                  "discounts for early payment",
+                  "factoring"
+                ],
+                "related_concepts": [
+                  "liquidity",
+                  "working capital",
+                  "business solvency"
+                ]
+              },
+              {
+                "id": "10.3.4.2",
+                "syllabus_text": "working capital management \u2013 control of current assets (cash, receivables, inventories); control of current liabilities (payables, loans, overdrafts); strategies \u2013 leasing, sale and lease back",
+                "keywords": [
+                  "working capital management",
+                  "current assets",
+                  "cash",
+                  "receivables",
+                  "inventories",
+                  "current liabilities",
+                  "payables",
+                  "loans",
+                  "overdrafts",
+                  "leasing",
+                  "sale and lease back"
+                ],
+                "exam_phrasings": [
+                  "working capital management",
+                  "current assets",
+                  "current liabilities",
+                  "leasing",
+                  "sale and lease back",
+                  "managing working capital"
+                ],
+                "related_concepts": [
+                  "liquidity",
+                  "current ratio",
+                  "operational efficiency"
+                ]
+              },
+              {
+                "id": "10.3.4.3",
+                "syllabus_text": "profitability management \u2013 cost controls (fixed and variable, cost centres, expense minimisation); revenue controls (marketing objectives)",
+                "keywords": [
+                  "profitability management",
+                  "cost controls",
+                  "fixed and variable",
+                  "cost centres",
+                  "expense minimisation",
+                  "revenue controls",
+                  "marketing objectives"
+                ],
+                "exam_phrasings": [
+                  "profitability management",
+                  "cost control strategies",
+                  "fixed and variable costs",
+                  "cost centres",
+                  "expense minimisation",
+                  "revenue management"
+                ],
+                "related_concepts": [
+                  "net profit",
+                  "gross profit",
+                  "business performance",
+                  "financial ratios"
+                ]
+              },
+              {
+                "id": "10.3.4.4",
+                "syllabus_text": "global financial management \u2013 exchange rates; interest rates; methods of international payment (payment in advance, letter of credit, clean payment, bill of exchange); hedging; derivatives",
+                "keywords": [
+                  "global financial management",
+                  "exchange rates",
+                  "interest rates",
+                  "international payment",
+                  "payment in advance",
+                  "letter of credit",
+                  "clean payment",
+                  "bill of exchange",
+                  "hedging",
+                  "derivatives"
+                ],
+                "exam_phrasings": [
+                  "global financial management",
+                  "exchange rates",
+                  "hedging",
+                  "derivatives",
+                  "methods of international payment",
+                  "letter of credit",
+                  "bill of exchange"
+                ],
+                "related_concepts": [
+                  "currency risk",
+                  "globalisation",
+                  "financial risk management",
+                  "international business"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "10.4": {
+        "topic_code": "10.4",
+        "topic_title": "Human Resources",
+        "indicative_time": "25%",
+        "outcomes": [
+          "H2",
+          "H3",
+          "H4",
+          "H5",
+          "H6",
+          "H7",
+          "H8",
+          "H9"
+        ],
+        "subtopics": {
+          "10.4.1": {
+            "subtopic_title": "Role of human resource management",
+            "dot_points": [
+              {
+                "id": "10.4.1.1",
+                "syllabus_text": "strategic role of human resources",
+                "keywords": [
+                  "strategic role",
+                  "human resources"
+                ],
+                "exam_phrasings": [
+                  "strategic role of human resources",
+                  "strategic HRM",
+                  "role of human resource management"
+                ],
+                "related_concepts": [
+                  "competitive advantage",
+                  "workforce planning",
+                  "business strategy"
+                ]
+              },
+              {
+                "id": "10.4.1.2",
+                "syllabus_text": "interdependence with other key business functions",
+                "keywords": [
+                  "interdependence",
+                  "key business functions"
+                ],
+                "exam_phrasings": [
+                  "interdependence of HR",
+                  "how HR links to operations/marketing/finance",
+                  "relationship between HR and other functions"
+                ],
+                "related_concepts": [
+                  "integrated business functions",
+                  "coordination",
+                  "productivity"
+                ]
+              },
+              {
+                "id": "10.4.1.3",
+                "syllabus_text": "outsourcing \u2013 human resource functions; using contractors \u2013 domestic, global",
+                "keywords": [
+                  "outsourcing",
+                  "human resource functions",
+                  "contractors",
+                  "domestic",
+                  "global"
+                ],
+                "exam_phrasings": [
+                  "outsourcing HR",
+                  "outsourcing human resource functions",
+                  "using contractors",
+                  "global contractors"
+                ],
+                "related_concepts": [
+                  "cost reduction",
+                  "flexibility",
+                  "core competencies",
+                  "global HR"
+                ]
+              }
+            ]
+          },
+          "10.4.2": {
+            "subtopic_title": "Key influences on human resource management",
+            "dot_points": [
+              {
+                "id": "10.4.2.1",
+                "syllabus_text": "stakeholders \u2013 employers, employees, employer associations, unions, government organisations, society",
+                "keywords": [
+                  "stakeholders",
+                  "employers",
+                  "employees",
+                  "employer associations",
+                  "unions",
+                  "government organisations",
+                  "society"
+                ],
+                "exam_phrasings": [
+                  "stakeholders in HR",
+                  "role of unions",
+                  "employer associations",
+                  "government in HR",
+                  "employee rights"
+                ],
+                "related_concepts": [
+                  "industrial relations",
+                  "employee relations",
+                  "workplace environment"
+                ]
+              },
+              {
+                "id": "10.4.2.2",
+                "syllabus_text": "legal \u2013 the employment contract: common law (rights and obligations of employers and employees), minimum employment standards, minimum wage rates, awards, enterprise agreements, other employment contracts; work health and safety and workers compensation; antidiscrimination and equal employment opportunity",
+                "keywords": [
+                  "employment contract",
+                  "common law",
+                  "minimum employment standards",
+                  "minimum wage rates",
+                  "awards",
+                  "enterprise agreements",
+                  "work health and safety",
+                  "workers compensation",
+                  "antidiscrimination",
+                  "equal employment opportunity"
+                ],
+                "exam_phrasings": [
+                  "employment contracts",
+                  "enterprise agreements",
+                  "minimum employment standards",
+                  "work health and safety",
+                  "WHS",
+                  "EEO",
+                  "antidiscrimination",
+                  "workers compensation",
+                  "awards",
+                  "minimum wage"
+                ],
+                "related_concepts": [
+                  "legal compliance",
+                  "employee rights",
+                  "Fair Work Act",
+                  "workplace regulation"
+                ]
+              },
+              {
+                "id": "10.4.2.3",
+                "syllabus_text": "economic",
+                "keywords": [
+                  "economic"
+                ],
+                "exam_phrasings": [
+                  "economic influences on HR",
+                  "impact of economic conditions on HR",
+                  "labour market conditions"
+                ],
+                "related_concepts": [
+                  "unemployment",
+                  "wages",
+                  "workforce planning"
+                ]
+              },
+              {
+                "id": "10.4.2.4",
+                "syllabus_text": "technological",
+                "keywords": [
+                  "technological"
+                ],
+                "exam_phrasings": [
+                  "technology and HR",
+                  "impact of technology on HR",
+                  "automation in the workplace"
+                ],
+                "related_concepts": [
+                  "job redesign",
+                  "retraining",
+                  "digital transformation"
+                ]
+              },
+              {
+                "id": "10.4.2.5",
+                "syllabus_text": "social \u2013 changing work patterns, living standards",
+                "keywords": [
+                  "social",
+                  "changing work patterns",
+                  "living standards"
+                ],
+                "exam_phrasings": [
+                  "social influences on HR",
+                  "changing work patterns",
+                  "living standards",
+                  "flexible work arrangements"
+                ],
+                "related_concepts": [
+                  "workforce diversity",
+                  "work-life balance",
+                  "employee wellbeing"
+                ]
+              },
+              {
+                "id": "10.4.2.6",
+                "syllabus_text": "ethics and corporate social responsibility",
+                "keywords": [
+                  "ethics",
+                  "corporate social responsibility"
+                ],
+                "exam_phrasings": [
+                  "ethical HR practices",
+                  "CSR in HR",
+                  "corporate social responsibility in human resources"
+                ],
+                "related_concepts": [
+                  "employee rights",
+                  "fair treatment",
+                  "diversity",
+                  "reputation"
+                ]
+              }
+            ]
+          },
+          "10.4.3": {
+            "subtopic_title": "Processes of human resource management",
+            "dot_points": [
+              {
+                "id": "10.4.3.1",
+                "syllabus_text": "acquisition",
+                "keywords": [
+                  "acquisition"
+                ],
+                "exam_phrasings": [
+                  "acquisition of staff",
+                  "recruiting and selecting employees",
+                  "HR acquisition process"
+                ],
+                "related_concepts": [
+                  "recruitment",
+                  "selection",
+                  "induction",
+                  "workforce planning"
+                ]
+              },
+              {
+                "id": "10.4.3.2",
+                "syllabus_text": "development",
+                "keywords": [
+                  "development"
+                ],
+                "exam_phrasings": [
+                  "employee development",
+                  "training and development",
+                  "developing staff",
+                  "HR development"
+                ],
+                "related_concepts": [
+                  "skills development",
+                  "productivity",
+                  "career progression"
+                ]
+              },
+              {
+                "id": "10.4.3.3",
+                "syllabus_text": "maintenance",
+                "keywords": [
+                  "maintenance"
+                ],
+                "exam_phrasings": [
+                  "maintenance of staff",
+                  "retaining employees",
+                  "HR maintenance",
+                  "employee retention strategies"
+                ],
+                "related_concepts": [
+                  "motivation",
+                  "rewards",
+                  "job satisfaction",
+                  "staff turnover"
+                ]
+              },
+              {
+                "id": "10.4.3.4",
+                "syllabus_text": "separation",
+                "keywords": [
+                  "separation"
+                ],
+                "exam_phrasings": [
+                  "separation of employees",
+                  "voluntary separation",
+                  "involuntary separation",
+                  "redundancy",
+                  "dismissal",
+                  "retrenchment"
+                ],
+                "related_concepts": [
+                  "termination",
+                  "restructuring",
+                  "legal obligations",
+                  "redundancy payments"
+                ]
+              }
+            ]
+          },
+          "10.4.4": {
+            "subtopic_title": "Strategies in human resource management",
+            "dot_points": [
+              {
+                "id": "10.4.4.1",
+                "syllabus_text": "leadership style",
+                "keywords": [
+                  "leadership style"
+                ],
+                "exam_phrasings": [
+                  "leadership style",
+                  "autocratic leadership",
+                  "democratic leadership",
+                  "laissez-faire leadership",
+                  "transformational leadership"
+                ],
+                "related_concepts": [
+                  "motivation",
+                  "employee performance",
+                  "organisational culture",
+                  "management approach"
+                ]
+              },
+              {
+                "id": "10.4.4.2",
+                "syllabus_text": "job design \u2013 general or specific tasks",
+                "keywords": [
+                  "job design",
+                  "general or specific tasks"
+                ],
+                "exam_phrasings": [
+                  "job design",
+                  "general or specific tasks",
+                  "job enrichment",
+                  "job enlargement",
+                  "task design"
+                ],
+                "related_concepts": [
+                  "motivation",
+                  "productivity",
+                  "employee satisfaction"
+                ]
+              },
+              {
+                "id": "10.4.4.3",
+                "syllabus_text": "recruitment \u2013 internal or external, general or specific skills",
+                "keywords": [
+                  "recruitment",
+                  "internal or external",
+                  "general or specific skills"
+                ],
+                "exam_phrasings": [
+                  "recruitment strategies",
+                  "internal recruitment",
+                  "external recruitment",
+                  "recruiting skilled staff",
+                  "recruitment process"
+                ],
+                "related_concepts": [
+                  "HR acquisition",
+                  "workforce planning",
+                  "cost of recruitment"
+                ]
+              },
+              {
+                "id": "10.4.4.4",
+                "syllabus_text": "training and development \u2013 current or future skills",
+                "keywords": [
+                  "training and development",
+                  "current or future skills"
+                ],
+                "exam_phrasings": [
+                  "training and development",
+                  "current vs future skills",
+                  "on-the-job training",
+                  "staff development programs"
+                ],
+                "related_concepts": [
+                  "productivity",
+                  "performance management",
+                  "succession planning"
+                ]
+              },
+              {
+                "id": "10.4.4.5",
+                "syllabus_text": "performance management \u2013 developmental or administrative",
+                "keywords": [
+                  "performance management",
+                  "developmental or administrative"
+                ],
+                "exam_phrasings": [
+                  "performance management",
+                  "performance appraisal",
+                  "developmental performance management",
+                  "administrative performance management"
+                ],
+                "related_concepts": [
+                  "employee development",
+                  "accountability",
+                  "HR effectiveness"
+                ]
+              },
+              {
+                "id": "10.4.4.6",
+                "syllabus_text": "rewards \u2013 monetary and non-monetary, individual or group, performance pay",
+                "keywords": [
+                  "rewards",
+                  "monetary and non-monetary",
+                  "individual or group",
+                  "performance pay"
+                ],
+                "exam_phrasings": [
+                  "reward strategies",
+                  "monetary rewards",
+                  "non-monetary rewards",
+                  "performance pay",
+                  "individual vs group rewards",
+                  "remuneration packages"
+                ],
+                "related_concepts": [
+                  "motivation",
+                  "retention",
+                  "employee satisfaction",
+                  "performance"
+                ]
+              },
+              {
+                "id": "10.4.4.7",
+                "syllabus_text": "global \u2013 costs, skills, supply",
+                "keywords": [
+                  "global",
+                  "costs",
+                  "skills",
+                  "supply"
+                ],
+                "exam_phrasings": [
+                  "global HR strategies",
+                  "global workforce",
+                  "international HR",
+                  "HR in global business"
+                ],
+                "related_concepts": [
+                  "globalisation",
+                  "outsourcing",
+                  "labour costs",
+                  "skills shortages"
+                ]
+              },
+              {
+                "id": "10.4.4.8",
+                "syllabus_text": "workplace disputes \u2013 resolution: negotiation, mediation, grievance procedures, involvement of courts and tribunals",
+                "keywords": [
+                  "workplace disputes",
+                  "resolution",
+                  "negotiation",
+                  "mediation",
+                  "grievance procedures",
+                  "courts and tribunals"
+                ],
+                "exam_phrasings": [
+                  "workplace disputes",
+                  "dispute resolution",
+                  "negotiation",
+                  "mediation",
+                  "grievance procedures",
+                  "Fair Work Commission",
+                  "tribunals"
+                ],
+                "related_concepts": [
+                  "industrial relations",
+                  "employee relations",
+                  "legal framework",
+                  "workplace harmony"
+                ]
+              }
+            ]
+          },
+          "10.4.5": {
+            "subtopic_title": "Effectiveness of human resource management",
+            "dot_points": [
+              {
+                "id": "10.4.5.1",
+                "syllabus_text": "indicators \u2013 corporate culture; benchmarking key variables; changes in staff turnover; absenteeism; accidents; levels of disputation; worker satisfaction",
+                "keywords": [
+                  "corporate culture",
+                  "benchmarking key variables",
+                  "changes in staff turnover",
+                  "absenteeism",
+                  "accidents",
+                  "levels of disputation",
+                  "worker satisfaction"
+                ],
+                "exam_phrasings": [
+                  "indicators of HR effectiveness",
+                  "staff turnover",
+                  "absenteeism",
+                  "worker satisfaction",
+                  "benchmarking in HR",
+                  "corporate culture",
+                  "levels of disputation"
+                ],
+                "related_concepts": [
+                  "HR performance measurement",
+                  "business productivity",
+                  "employee wellbeing",
+                  "management effectiveness"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "cross_topic_concepts": {
+      "description": "Concepts that appear across multiple HSC topics and are commonly tested in integrated questions.",
+      "concepts": [
+        {
+          "concept": "interdependence of business functions",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.3",
+            "10.4"
+          ],
+          "exam_note": "Questions may ask students to discuss how one function (e.g. operations) impacts another (e.g. finance or HR). Always link the functions explicitly."
+        },
+        {
+          "concept": "globalisation",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.3",
+            "10.4"
+          ],
+          "exam_note": "Globalisation is a major theme across all four topics. Consider its impact on cost, competition, technology and strategy."
+        },
+        {
+          "concept": "corporate social responsibility",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.4"
+          ],
+          "exam_note": "CSR appears in operations (environmental sustainability), marketing (ethical advertising) and HR (ethical treatment of workers)."
+        },
+        {
+          "concept": "management responses to internal and external influences",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.3",
+            "10.4"
+          ],
+          "exam_note": "A core HSC focus. Always identify whether the influence is internal or external before discussing the management response."
+        },
+        {
+          "concept": "technology",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.3",
+            "10.4"
+          ],
+          "exam_note": "Technology affects operations (process efficiency), marketing (e-marketing), finance (financial systems) and HR (automation, flexible work)."
+        },
+        {
+          "concept": "ethics",
+          "appears_in": [
+            "10.1",
+            "10.2",
+            "10.3",
+            "10.4"
+          ],
+          "exam_note": "Ethical issues appear in operations (CSR), marketing (deceptive advertising), finance (financial reporting) and HR (employee treatment)."
+        },
+        {
+          "concept": "outsourcing",
+          "appears_in": [
+            "10.1",
+            "10.4"
+          ],
+          "exam_note": "Outsourcing is covered in both operations and HR. Link to cost reduction, core competencies and potential quality risks."
+        }
+      ]
+    },
+    "cube_app_usage_notes": {
+      "keyword_matching_priority": [
+        "Match against 'keywords' array first \u2014 these are the primary syllabus terms.",
+        "Use 'exam_phrasings' for variant wordings commonly used in HSC questions.",
+        "Use 'related_concepts' to identify implicit syllabus links not stated in the question.",
+        "Always report the matched dot_point id, topic_code and topic_title with any keyword match."
+      ],
+      "syllabus_annotation_rules": [
+        "Underline (blue) any word or phrase matching a keyword or exam_phrasing from any dot_point.",
+        "When a keyword appears, annotate with: topic_code + subtopic_title + dot_point id.",
+        "If a question uses a cross-topic concept, note all relevant topics it could be assessed under.",
+        "Financial ratio formulas must be displayed when a ratio keyword is matched in a Finance question.",
+        "For extended response questions, identify the primary dot_point being assessed and the likely outcome code."
+      ],
+      "hsc_only_scope": "This database covers HSC topics 10.1\u201310.4 only. Preliminary topics (9.1\u20139.3) are excluded as they are not directly assessed in the HSC examination."
+    }
+  },
+  "bandRules": {
+    "file_name": "10_BUSINESS_STUDIES_BAND_RESPONSE_GENERATOR_RULES.json",
+    "version": "3.0",
+    "last_updated": "March 2026",
+    "course": "NSW HSC Business Studies",
+    "purpose": "Rules for generating model responses, scoring student responses and generating structured feedback aligned to HSC Business Studies performance band expectations. Used by the CUBE HSC Marking Coach application. Version 3.0 adds verb-specific generation rules, mark-depth scaling and 20-mark report structure drawn from NESA 2019\u20132025 marking guidelines.",
+    "source_basis": {
+      "band_descriptors": "Band Descriptors for the Business Studies HSC \u2014 2025 Course Report (NESA)",
+      "marking_guidelines": "NSW HSC Business Studies Marking Guidelines and Sample Answers 2019\u20132025 (NESA)",
+      "template_reference": "CUBE_App_Spec_v3.docx \u2014 Rubric and Analysis Engine architecture",
+      "candidature": 20454,
+      "notes": "v3.0 \u2014 Verb-specific rules (purpose, marks, structure, pattern, NESA example phrases) added for all directive verbs. Mark-depth scaling added per verb. 20-mark report structure formalised. All rules grounded in NESA 2019\u20132025 Business Studies marking guidelines and sample answers."
+    },
+    "global_rules": {
+      "always": [
+        "Answer the directive verb exactly as required \u2014 do not over- or under-respond.",
+        "Engage explicitly with the scenario, stimulus or case \u2014 not generic statements.",
+        "Use precise Business Studies terminology and syllabus concepts consistently (e.g. 'FIFO', 'economies of scale', 'customer contact', 'gearing').",
+        "Structure logically and cohesively: concept \u2192 mechanism \u2192 outcome, organised into focused paragraphs.",
+        "Tie explanations back to business goals or outcomes \u2014 state the impact explicitly (e.g. 'This achieves cost savings', 'improving customer satisfaction').",
+        "Support with evidence or examples where appropriate \u2014 incorporate mini case examples or data to illustrate points.",
+        "Keep all content directly relevant to the question, stimulus, case study and mark value.",
+        "Interpret and apply numerical data, graphs, tables and financial figures when provided.",
+        "Avoid vague wording such as 'things improved', 'it helped the business a lot' or 'they did better'.",
+        "Maintain a formal, objective tone \u2014 avoid first person.",
+        "Always cite the context (e.g. 'For this caf\u00e9\u2026', 'In the smartwatch market\u2026') rather than making abstract statements.",
+        "Adhere strictly to mark allocations \u2014 depth and number of developed points must match the marks available."
+      ],
+      "stimulus_rules": [
+        "If a graph, table, chart, financial data set, business scenario or case study is provided, directly use it in the response.",
+        "Refer to exact figures, trends, percentages, changes or patterns where possible.",
+        "Do not ignore the stimulus in questions worth 4 marks or more.",
+        "If the question includes a business report or recommendation format, maintain that format throughout."
+      ],
+      "case_study_rules": [
+        "Use relevant case studies when they strengthen analysis or evaluation.",
+        "Do not mention a business without linking it to the concept being discussed.",
+        "Case studies should support the argument, not replace theory.",
+        "Avoid case study name-dropping without substantive explanation."
+      ],
+      "tone_and_style": [
+        "Use formal academic tone \u2014 no colloquial language.",
+        "Answer the question's demand: discussing the influence of X means going beyond describing X to explaining its effects.",
+        "Avoid generic or off-topic content.",
+        "When appropriate, mention advantages and disadvantages explicitly \u2014 especially for DISCUSS, EVALUATE and COMPARE directives.",
+        "Use linking phrases such as 'therefore', 'thus', 'as a result', 'consequently' to demonstrate logical flow.",
+        "Do not pad answers with content that does not add reasoning or evidence."
+      ]
+    },
+    "directive_verb_rules": {
+      "define": {
+        "nesa_tier": 1,
+        "purpose": "Give a precise, textbook definition of the term. Link it to the business context if possible.",
+        "typical_marks": "1\u20132",
+        "mark_depth_scaling": {
+          "1_mark": "Single keyword or short phrase with minimal context.",
+          "2_marks": "Full one-sentence definition with a supporting clause for context or brief elaboration."
+        },
+        "structure": "Term is X (definition). Add brief elaboration or example for 2 marks.",
+        "pattern": "Term \u2192 definition explanation \u2192 optional consequence or example.",
+        "content_requirements": [
+          "Exact definition using syllabus language.",
+          "Identify the essential qualities or features of the term.",
+          "Optionally link to context with a brief example.",
+          "Use formal terms \u2014 no personal opinion."
+        ],
+        "nesa_example_phrases": [
+          "Voluntary separation is when an employee has chosen to leave their employment of their own accord.",
+          "Gearing refers to the ability of a business to meet its financial obligations in the longer term."
+        ],
+        "causal_connectives_required": false,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "identify": {
+        "nesa_tier": 1,
+        "purpose": "Pick out and name a specific item, factor, strategy or stakeholder from the case. Minimal explanation unless 2 marks.",
+        "typical_marks": "1\u20132",
+        "mark_depth_scaling": {
+          "1_mark": "Single term or short phrase \u2014 naming only.",
+          "2_marks": "Term plus brief explanation of its role or relevance to the context."
+        },
+        "structure": "Name the item \u2192 briefly explain its role or relevance (for 2 marks).",
+        "pattern": "Name \u2192 brief definition or role in context.",
+        "content_requirements": [
+          "Exact item (person, factor, strategy, stakeholder, etc.) that clearly answers the question.",
+          "For 2 marks: justify or elaborate by explaining relevance to the business.",
+          "Bullet format acceptable for 1-mark questions."
+        ],
+        "nesa_example_phrases": [
+          "The employee is a stakeholder who has an interest in the business, as they receive a wage or salary.",
+          "Weakness \u2014 leaking bottles; Threat \u2014 changing environmental expectations."
+        ],
+        "causal_connectives_required": false,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "outline": {
+        "nesa_tier": 2,
+        "purpose": "Give a brief summary of the main points or features of a concept, process or strategy. Less detail than DESCRIBE or EXPLAIN.",
+        "typical_marks": "2\u20134",
+        "mark_depth_scaling": {
+          "2_marks": "1\u20132 brief points with context \u2014 bullet or short sentence format acceptable.",
+          "4_marks": "3\u20134 points in full sentences with context \u2014 cover main features without deep explanation."
+        },
+        "structure": "List or short paragraphs \u2014 point by point. For higher marks, use multiple related sentences.",
+        "pattern": "Point 1 (with context) \u2192 Point 2 \u2192 Point 3 (no deep explanation required).",
+        "content_requirements": [
+          "Key characteristics or steps, possibly with context from the case.",
+          "Do not provide deep explanation \u2014 outline the 'what', not the 'why' in detail.",
+          "Include case-specific context to show relevance."
+        ],
+        "nesa_example_phrases": [
+          "The caf\u00e9 can demonstrate CSR by donating food to a local charity.",
+          "Air conditioners are bulky \u2014 Baby formula needs FIFO or JIT as it is perishable."
+        ],
+        "causal_connectives_required": false,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "describe": {
+        "nesa_tier": 2,
+        "purpose": "Provide detailed characteristics, features or functions of X. Expect multiple points with context.",
+        "typical_marks": "2\u20136",
+        "mark_depth_scaling": {
+          "2_3_marks": "1\u20132 characteristics, each explained briefly with context.",
+          "4_marks": "2\u20133 distinct characteristics in separate sentences, each with brief explanation.",
+          "5_6_marks": "3\u20134 well-developed characteristics in separate paragraphs or sentences, each with context or consequence."
+        },
+        "structure": "Organised into distinct points \u2014 separate sentences or bullet-style. Each point explained briefly.",
+        "pattern": "Characteristic \u2192 explanation (optionally with context or consequence).",
+        "content_requirements": [
+          "Several relevant facts or characteristics \u2014 avoid vague generalisations.",
+          "Use case specifics where available.",
+          "Each characteristic should be clearly identifiable as a separate point.",
+          "Do not move into cause-effect reasoning \u2014 that is EXPLAIN territory."
+        ],
+        "nesa_example_phrases": [
+          "Dependability would be a key performance objective as customers expect consistency. They want burgers served in the same timeframe each visit.",
+          "Option 2 allows employees to make a finished burger efficiently as the process is sequential. Option 1's narrow layout requires back-and-forth movement."
+        ],
+        "causal_connectives_required": false,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "explain": {
+        "nesa_tier": 3,
+        "purpose": "Link cause and effect \u2014 explain HOW or WHY X happens or impacts the business. Develop reasoning through a mechanism.",
+        "typical_marks": "4\u20136",
+        "mark_depth_scaling": {
+          "4_marks": "1\u20132 cause-effect chains, each with a business mechanism and outcome.",
+          "5_6_marks": "2\u20133 cause-effect chains, each clearly connected by a causal connective, with business outcome stated."
+        },
+        "structure": "State the concept (X) \u2192 explain the mechanism using 'because/due to' \u2192 state the business outcome.",
+        "pattern": "Concept \u2192 Reason or Mechanism \u2192 Business Impact (Concept\u2013Mechanism\u2013Outcome).",
+        "content_requirements": [
+          "State a cause or mechanism and its effect \u2014 do not just describe.",
+          "Use a causal connective (because, therefore, as a result, which means, consequently) to link mechanism to outcome.",
+          "Use case context or stimulus details.",
+          "Conclude each chain with a business outcome: profitability, productivity, efficiency, customer satisfaction or competitiveness."
+        ],
+        "nesa_example_phrases": [
+          "Changes in technology can influence a business's ability to create and sell its product/service. A change in technology usually allows for an increase in speed and production, which means labour costs decrease and output increases.",
+          "Competition-based pricing could be an effective pricing method as it covers materials and operations costs while matching the competitor's price, which saves money on promotional expenditure."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "discuss": {
+        "nesa_tier": 3,
+        "purpose": "Provide a balanced analysis of X \u2014 cover multiple aspects, including pros and cons or multiple perspectives. Depth and breadth required.",
+        "typical_marks": "6\u201310",
+        "mark_depth_scaling": {
+          "6_7_marks": "2\u20133 well-developed points, including one supported by an example or figure. Include a basic conclusion.",
+          "8_10_marks": "3+ fully developed arguments with at least one two-sided analysis (pros and cons). Include a conclusion with a summarising judgement ('thus\u2026')."
+        },
+        "structure": "Issue identification \u2192 supporting explanation with context \u2192 contrasting point \u2192 summarise relevance.",
+        "pattern": "Identify the issue \u2192 explain the positive effect \u2192 explain the negative effect or limitation \u2192 link to business outcomes.",
+        "content_requirements": [
+          "Cover multiple dimensions of the issue.",
+          "Include both positive and negative effects where relevant.",
+          "Use case details, stimulus data and business examples.",
+          "Use qualifiers such as 'however', 'although', 'on the other hand'.",
+          "Conclude with a summary of relevance to the business."
+        ],
+        "nesa_example_phrases": [
+          "Outsourcing allows the business to focus on its core activity, reducing overhead costs. However, quality control may be compromised when production occurs offshore, which could damage the business's reputation.",
+          "The business should address the influence of technology and adopt more leading-edge payment methods \u2014 customers might be more inclined to shop, increasing sales and enhancing speed of service."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "justify": {
+        "nesa_tier": 4,
+        "purpose": "Recommend actions and provide reasons why they suit the scenario. Argue persuasively \u2014 state each strategy and link to business needs.",
+        "typical_marks": "6\u20138",
+        "mark_depth_scaling": {
+          "6_marks": "One strategy fully justified with a clear mechanism and expected business result.",
+          "7_8_marks": "Two distinct strategies, each with a supporting rationale and an expected result."
+        },
+        "structure": "Strategy \u2192 supporting rationale \u2192 expected result. Two distinct strategies for 8 marks.",
+        "pattern": "Strategy \u2192 immediate effect \u2192 long-term business benefit.",
+        "content_requirements": [
+          "Clearly state each strategy by name.",
+          "Link each strategy to the specific business need identified in the question.",
+          "Explain how the strategy benefits the business \u2014 mechanism and outcome.",
+          "Make the conclusion or recommendation explicit.",
+          "Acknowledge a limitation or condition where relevant."
+        ],
+        "nesa_example_phrases": [
+          "Just-in-time would be an effective inventory method as it takes advantage of fresh produce and saves storage space, reducing holding costs and improving cash flow.",
+          "Using competition-based pricing would be justified as it ensures the business matches competitor prices, covering costs while remaining competitive in the market."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": true,
+        "judgement_required": true
+      },
+      "analyse": {
+        "nesa_tier": 3,
+        "purpose": "Break down a relationship or concept into its parts and explain how elements influence each other. Show deep understanding of interactions.",
+        "typical_marks": "6\u20138",
+        "mark_depth_scaling": {
+          "6_marks": "One relationship analysed in depth \u2014 identify components, explain interaction, state implication.",
+          "7_8_marks": "2\u20133 relationships or factors dissected in detail \u2014 compare or contrast elements, include data or ratios if relevant."
+        },
+        "structure": "Multiple paragraphs focusing on each factor or relationship. May include calculations or ratio interpretation if relevant.",
+        "pattern": "Factor A affects Factor B by \u2192 evidence \u2192 therefore the business outcome is\u2026",
+        "content_requirements": [
+          "Identify the relevant factors or components.",
+          "Compare or contrast factors \u2014 show how they relate to each other.",
+          "Explain linkages using business logic, not just description.",
+          "Use data, stimulus specifics or ratio calculations if available.",
+          "State the business implication or performance outcome of the relationship."
+        ],
+        "nesa_example_phrases": [
+          "The lower the expense ratio, the more efficient the business is. If the business can reduce costs and increase sales, it demonstrates efficient resource use and higher profit, improving overall financial performance.",
+          "Efficiency is a measure of the ability of a business to use its resources effectively. A declining expense ratio indicates that management has successfully controlled costs relative to sales revenue."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "evaluate": {
+        "nesa_tier": 4,
+        "purpose": "Make a judgement about the success, effectiveness or value of X. Weigh pros and cons using evidence and reach a conclusion.",
+        "typical_marks": "8\u201310",
+        "mark_depth_scaling": {
+          "8_9_marks": "2\u20133 evaluative points including at least one strength and one limitation. Conclude with a judgement.",
+          "10_marks": "3+ evaluative points \u2014 sustained criterion-based analysis. Clear final judgement with evidence."
+        },
+        "structure": "State the strategy or issue \u2192 weigh positive and negative aspects with evidence \u2192 conclude with an explicit overall judgement.",
+        "pattern": "Criterion-based analysis (what makes it effective or not) \u2192 balanced reasoning \u2192 concluding judgement.",
+        "content_requirements": [
+          "State a clear criterion for evaluation (what effectiveness means in this context).",
+          "Explain at least one strength with a business mechanism and implication.",
+          "Explain at least one limitation or risk with a business mechanism and implication.",
+          "Use case study material, contemporary issues or numerical data.",
+          "Conclude with an explicit overall judgement \u2014 use modal language: 'overall', 'to a large extent', 'therefore'.",
+          "The judgement must be IS or IS NOT effective \u2014 do not leave it implied."
+        ],
+        "nesa_example_phrases": [
+          "A standardised marketing strategy achieves economies of scale \u2014 lower per-unit costs \u2014 and ensures consistency for customers across global markets. However, it may fail to meet local consumer preferences, limiting market penetration. Overall, standardisation is most effective for businesses with broadly homogeneous global markets.",
+          "Evaluating the marketing approach, customer-focused strategy better identifies consumer needs and builds long-term loyalty; however, it requires greater investment in market research. Therefore, for a business seeking sustainable competitive advantage, a marketing approach is more effective than a selling approach."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": true,
+        "judgement_required": true
+      },
+      "recommend": {
+        "nesa_tier": 4,
+        "purpose": "Advise one or more actions for the business and support with reasons. Propose strategies that directly solve the problem or improve outcomes.",
+        "typical_marks": "6\u201310",
+        "mark_depth_scaling": {
+          "6_7_marks": "1\u20132 justified recommendations, each with a clear mechanism and benefit.",
+          "8_10_marks": "2\u20133 recommendations, each with context-specific reasoning, expected outcome and at least one assumption or condition noted."
+        },
+        "structure": "Recommendation \u2192 context-specific rationale \u2192 expected outcome. Note any assumptions.",
+        "pattern": "Action \u2192 context-specific reasoning \u2192 business benefit.",
+        "content_requirements": [
+          "Propose one or more strategies \u2014 2 strategies is safe for 8\u201310 mark questions.",
+          "For each strategy, explain how it solves the problem or improves outcomes.",
+          "Link each recommendation to the specific business situation in the question.",
+          "State the expected business outcome: profitability, efficiency, competitiveness, etc.",
+          "Acknowledge any assumption, limitation or risk where relevant."
+        ],
+        "nesa_example_phrases": [
+          "The business should divide the market into segments so it can target each group effectively, increasing sales and improving customer satisfaction. For example, targeting the youth segment via social media could generate significant brand awareness at low cost.",
+          "It is recommended that the business adopt a social media promotional strategy, as this allows direct engagement with the target market at lower cost than traditional advertising, improving promotional efficiency and increasing brand awareness."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": true,
+        "judgement_required": true
+      },
+      "compare": {
+        "nesa_tier": 2,
+        "purpose": "Show how two or more items are both similar AND different. Use a structured format.",
+        "typical_marks": "2\u20136",
+        "mark_depth_scaling": {
+          "2_3_marks": "Identify one similarity and one difference with brief explanation.",
+          "4_6_marks": "2\u20133 similarities and differences, each developed with business context."
+        },
+        "structure": "Similarity 1 \u2192 Difference 1 \u2192 Similarity/Difference 2 \u2192 business relevance.",
+        "pattern": "Both X and Y share [similarity] \u2014 however, X differs from Y in that [difference].",
+        "content_requirements": [
+          "Show both similarities AND differences \u2014 not just differences.",
+          "Use business terminology to name each feature being compared.",
+          "Link comparisons to business context or performance outcomes."
+        ],
+        "nesa_example_phrases": [
+          "Both debt and equity financing provide external funds for a business; however, debt requires regular interest repayments whereas equity does not impose a fixed repayment obligation."
+        ],
+        "causal_connectives_required": false,
+        "modality_required": false,
+        "judgement_required": false
+      },
+      "assess": {
+        "nesa_tier": 4,
+        "purpose": "Make a judgement about extent, value, significance or effectiveness. Discuss both strengths and limitations. End with a clear overall judgement.",
+        "typical_marks": "8\u201310",
+        "mark_depth_scaling": {
+          "8_9_marks": "2\u20133 developed assessment points with at least one positive and one negative. Conclude with a judgement.",
+          "10_marks": "3+ points \u2014 criterion-based assessment sustained throughout. Explicit IS/IS NOT judgement at conclusion."
+        },
+        "structure": "State the issue and criteria \u2192 discuss positive aspects \u2192 discuss negative aspects/limitations \u2192 conclude with a balanced but definite judgement.",
+        "pattern": "Criteria for assessment \u2192 strengths \u2192 weaknesses \u2192 explicit overall judgement.",
+        "content_requirements": [
+          "State what criteria are being used to form the assessment.",
+          "Discuss positive aspects \u2014 link to business performance outcomes.",
+          "Discuss negative aspects or limitations \u2014 link to business performance.",
+          "Use case study material, contemporary issues or data where relevant.",
+          "Conclude with a balanced but definite IS/IS NOT judgement using modal language."
+        ],
+        "nesa_example_phrases": [
+          "Assessing the effectiveness of the training program, it has increased staff productivity and reduced error rates, demonstrating strong short-term performance gains. However, the high cost of external training may not be sustainable long-term. Overall, the strategy is effective in the short term but should be reviewed against financial objectives."
+        ],
+        "causal_connectives_required": true,
+        "modality_required": true,
+        "judgement_required": true
+      }
+    },
+    "mark_depth_rules": {
+      "overview": "The depth, number of points and level of development must scale with the marks available. These rules apply to ALL directive verbs.",
+      "scaling": {
+        "1_2_marks": {
+          "points_required": 1,
+          "development": "Single direct answer \u2014 term, definition or brief identification. One sentence sufficient.",
+          "example_or_context": "Optional \u2014 only if it directly clarifies the answer.",
+          "judgement": "Not required."
+        },
+        "3_4_marks": {
+          "points_required": "1\u20132 developed points",
+          "development": "Each point explained in 1\u20132 sentences. Include context from stimulus.",
+          "example_or_context": "At least one context-linked example or case reference.",
+          "judgement": "Not required unless directive verb demands it."
+        },
+        "5_6_marks": {
+          "points_required": "2\u20133 developed points",
+          "development": "Each point with mechanism and outcome. Use business terminology throughout.",
+          "example_or_context": "At least one case-specific example or data reference.",
+          "judgement": "Not required for EXPLAIN; begin to emerge for DISCUSS."
+        },
+        "7_8_marks": {
+          "points_required": "3\u20134 developed points or 2 fully sustained arguments",
+          "development": "Each argument with concept, mechanism, outcome and link to business performance. Include at least one two-sided analysis.",
+          "example_or_context": "Case study detail or stimulus data integrated throughout.",
+          "judgement": "Required for EVALUATE, ASSESS, JUSTIFY, RECOMMEND."
+        },
+        "9_10_marks": {
+          "points_required": "3+ fully developed arguments",
+          "development": "Sustained, logical argument throughout. Each point fully developed with concept, mechanism, outcome and implication.",
+          "example_or_context": "Multiple case references or data points integrated naturally.",
+          "judgement": "Explicit \u2014 IS/IS NOT or 'overall to a large extent' conclusion required."
+        },
+        "13_20_marks_report": {
+          "points_required": "Multiple sections covering all parts of the question",
+          "development": "Introduction + body (subheadings for each key issue) + conclusion/recommendations. Each section: concept \u2192 mechanism \u2192 outcome. Include mini-conclusions or transitions.",
+          "example_or_context": "At least one real or hypothetical case example, plus stimulus data where provided.",
+          "judgement": "Explicit concluding judgement or summary of recommendations required.",
+          "band6_standard": "Presents a sustained, logical and cohesive business report integrating relevant terminology, concepts and comprehensive case studies. Extensive knowledge with critical analysis."
+        }
+      }
+    },
+    "report_structure_20_marks": {
+      "purpose": "The 20-mark long-answer question requires a formally structured report or essay addressing multiple parts of the question.",
+      "band6_standard": "Presents a sustained, logical and cohesive business report integrating relevant terminology and concepts, comprehensive case studies, and critical analysis of management responses. Score range: 17\u201320.",
+      "required_sections": {
+        "introduction": {
+          "purpose": "Briefly state the scope of the report and key definitions (1\u20132 sentences).",
+          "rules": [
+            "Define the key business concept(s) being addressed.",
+            "State the scope \u2014 what the report will cover.",
+            "Do not pad the introduction \u2014 2\u20133 sentences maximum."
+          ]
+        },
+        "body": {
+          "purpose": "Subheadings or paragraphs for each key issue or directive verb in the question. Each section uses concept \u2192 mechanism \u2192 outcome.",
+          "rules": [
+            "Use a subheading or clear topic sentence for each key section.",
+            "Each paragraph: concept \u2192 mechanism \u2192 outcome \u2192 business implication.",
+            "Include mini-conclusions or transitions between sections.",
+            "Use case details, stimulus data and business terminology liberally.",
+            "Address all parts of the question \u2014 do not omit any directive verb.",
+            "Include at least one real or hypothetical example for each major point.",
+            "Cover advantages and disadvantages where the question asks for evaluation."
+          ]
+        },
+        "conclusion_or_recommendations": {
+          "purpose": "Summarise main findings or state final judgements. For reports, phrase as bullet-point recommendations where appropriate.",
+          "rules": [
+            "Summarise the key points made in the body.",
+            "State the overall judgement clearly.",
+            "If recommendations are required, list them as specific, actionable strategies linked to the problems identified.",
+            "Do not introduce new content in the conclusion."
+          ]
+        }
+      },
+      "score_band_mapping": {
+        "17_20": "Band 6 \u2014 sustained, logical, cohesive report. Critical analysis, synthesis, extensive terminology, comprehensive case studies, explicit judgements.",
+        "13_16": "Band 5 \u2014 well-structured with good analysis. May lack full critical depth or synthesis.",
+        "9_12": "Band 4 \u2014 addresses most parts of the question. Explanation present but limited depth.",
+        "5_8": "Band 3 \u2014 basic response, mostly descriptive, limited analysis.",
+        "1_4": "Band 2 \u2014 very limited, partial, underdeveloped."
+      }
+    },
+    "band_rules": {
+      "Band6": {
+        "nesa_descriptor": "Demonstrates comprehensive knowledge and understanding of business functions and operations. Critically analyses the nature, role and structure of business. Evaluates the effectiveness of management responses to internal and external influences that affect business. Interprets and applies specific numerical data to analyse and solve business problems and predict future trends. Synthesises contemporary business issues when evaluating management responses and strategies. Clearly communicates using business terminology, concepts and comprehensive case studies in a variety of appropriate formats.",
+        "knowledge_standard": "Demonstrates comprehensive knowledge and understanding of business functions and operations.",
+        "communication_standard": "Clearly communicates using business terminology, concepts and comprehensive case studies in a variety of appropriate formats.",
+        "score_range_indicative": "90\u2013100 (exam alignment)",
+        "must_include": [
+          "Accurate and precise business terminology used consistently throughout.",
+          "Critical analysis of the business issue, strategy, function or influence.",
+          "Explicit evaluation of management responses where required by the directive verb.",
+          "Specific application and interpretation of numerical data where provided.",
+          "Synthesis of contemporary business issues where relevant.",
+          "Relevant case study evidence used purposefully to support reasoning.",
+          "Strong cause-and-effect reasoning linking management actions to business outcomes.",
+          "A clear and well-supported judgement for assess, evaluate, justify or recommend questions.",
+          "Communication in the correct format required by the question."
+        ],
+        "writing_features": {
+          "causal_connectives": "Multiple varied connectives used correctly \u2014 e.g. because, therefore, as a result, which means, consequently, this leads to.",
+          "complex_noun_groups": "Consistent use of expanded noun phrases that communicate precise business ideas \u2014 e.g. 'declining net profit margin due to increased labour costs'.",
+          "modality": "Explicit modal language used in assessment/evaluation \u2014 e.g. 'this strategy would most likely', 'arguably the most effective', 'overall this demonstrates'.",
+          "logical_flow": "Highly coherent argument \u2014 concept \u2192 application \u2192 implication \u2192 evaluation \u2014 sustained throughout the response."
+        },
+        "style_rules": [
+          "Communicate clearly and with purpose rather than adding unnecessary length.",
+          "Integrate theory, case study, data and judgement rather than listing points separately.",
+          "Move from concept to application to implication to evaluation.",
+          "Where relevant, explain both short-term and long-term business consequences."
+        ],
+        "avoid": [
+          "Generic statements without a business mechanism.",
+          "Case study name-dropping without explanation.",
+          "Definitions that replace analysis.",
+          "Ignoring numerical data or contemporary issues when they are available.",
+          "Word count inflation without stronger reasoning."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Directly answer the question in the first sentence.",
+            "Include at least one explicit business mechanism or implication."
+          ],
+          "mid_response_4_6_marks": [
+            "Include multiple linked business points.",
+            "Use data, examples or case study material if available.",
+            "Maintain clear structure and a strong line of reasoning."
+          ],
+          "extended_response_7_plus_marks": [
+            "Use a deliberate structure aligned to the directive verb.",
+            "Sustain depth and evaluation throughout \u2014 do not drop standard at any point.",
+            "Integrate business theory, case studies, data and judgement.",
+            "Address all parts of the question explicitly."
+          ]
+        }
+      },
+      "Band5": {
+        "nesa_descriptor": "Demonstrates thorough knowledge and understanding of business functions and operations. Analyses the nature, role and structure of business. Analyses management responses to internal and external influences that affect business. Interprets and applies numerical data to analyse and solve business problems and predict future trends. Applies contemporary business issues when analysing management responses and strategies. Communicates using business terminology, concepts and comprehensive case studies in a variety of appropriate formats.",
+        "knowledge_standard": "Demonstrates thorough knowledge and understanding of business functions and operations.",
+        "communication_standard": "Communicates using business terminology, concepts and comprehensive case studies in a variety of appropriate formats.",
+        "score_range_indicative": "80\u201389 (exam alignment)",
+        "must_include": [
+          "Correct business terminology used effectively throughout.",
+          "Clear analysis of the business issue, strategy or management response.",
+          "Application of numerical data where provided.",
+          "Relevant contemporary business issue or case study material where useful.",
+          "Logical cause-and-effect explanation.",
+          "Appropriate business format."
+        ],
+        "writing_features": {
+          "causal_connectives": "Connectives present and mostly correct \u2014 analysis is clear but may lack full variety or precision.",
+          "complex_noun_groups": "Noun groups present and accurate \u2014 may be less technically precise than Band 6.",
+          "modality": "Modal language used where appropriate \u2014 may be less explicit in final judgements.",
+          "logical_flow": "Clear organisation with sound reasoning \u2014 may occasionally lack integration across ideas."
+        },
+        "style_rules": [
+          "Communicate logically and effectively.",
+          "Use clear business reasoning and sound examples.",
+          "May be less integrated, less evaluative or less precise than Band 6."
+        ],
+        "avoid": [
+          "Major omissions in reasoning or missing links in the argument.",
+          "Weak or generic business examples without explanation.",
+          "Ignoring the stimulus, case study or data where provided."
+        ]
+      },
+      "Band4": {
+        "nesa_descriptor": "Demonstrates knowledge and some understanding of business functions and operations. Explains the nature, role and structure of business. Explains management responses to internal and external influences that affect business. Interprets and applies numerical data with some analysis of management responses and strategies. Communicates using business terminology, concepts and comprehensive case studies in descriptive formats.",
+        "knowledge_standard": "Demonstrates knowledge and some understanding of business functions and operations.",
+        "communication_standard": "Communicates using business terminology, concepts and comprehensive case studies in descriptive formats.",
+        "score_range_indicative": "70\u201379 (exam alignment)",
+        "must_include": [
+          "Relevant business terminology used correctly.",
+          "Explanation of the core concept, strategy or management response.",
+          "Some application of numerical data where provided.",
+          "Some link to management responses or business performance outcomes.",
+          "At least basic case study or business context if useful."
+        ],
+        "writing_features": {
+          "causal_connectives": "Some connectives present \u2014 cause-and-effect links present but not always sustained.",
+          "complex_noun_groups": "Some expanded noun phrases \u2014 may lack full technical precision.",
+          "modality": "Limited or inconsistent \u2014 judgement attempted but not always explicit.",
+          "logical_flow": "Mostly logical structure \u2014 some sequencing present but ideas may not be fully integrated."
+        },
+        "style_rules": [
+          "Communicate clearly with descriptive explanation.",
+          "Focus on core business ideas.",
+          "May include some analysis but not sustained depth."
+        ],
+        "avoid": [
+          "Unsupported broad claims without evidence.",
+          "Confusing or disorganised sequencing.",
+          "Ignoring obvious stimulus material."
+        ]
+      },
+      "Band3": {
+        "nesa_descriptor": "Demonstrates basic understanding of business functions and operations. Describes the nature, role and structure of business. Describes management responses. Refers to numerical data when solving business problems. Displays limited analysis of contemporary business issues. Communicates using basic business terminology in simple formats.",
+        "knowledge_standard": "Demonstrates basic understanding of business functions and operations.",
+        "communication_standard": "Communicates using basic business terminology in simple formats.",
+        "score_range_indicative": "60\u201369 (exam alignment)",
+        "must_include": [
+          "Some correct business knowledge.",
+          "Basic business terminology.",
+          "Simple description of management response or business issue.",
+          "Reference to numerical data if provided \u2014 does not need to interpret it deeply.",
+          "Simple communication in a basic format."
+        ],
+        "writing_features": {
+          "causal_connectives": "Minimal or inconsistent \u2014 may attempt cause-effect but connection is weak.",
+          "complex_noun_groups": "Mostly simple noun phrases \u2014 limited technical precision.",
+          "modality": "Rare or absent.",
+          "logical_flow": "Basic sequencing \u2014 ideas are present but disconnected."
+        },
+        "style_rules": [
+          "Short, straightforward and mostly descriptive.",
+          "Limited depth and limited integration of business concepts."
+        ],
+        "avoid": [
+          "Large sections of irrelevant material.",
+          "Inaccurate business terminology used as if correct."
+        ]
+      },
+      "Band2": {
+        "nesa_descriptor": "Demonstrates limited understanding of business functions and operations. Demonstrates limited knowledge of the nature, role and structure of business. Identifies management responses. Uses elementary numerical data. Shows limited communication skills.",
+        "knowledge_standard": "Demonstrates limited understanding of business functions and operations.",
+        "communication_standard": "Shows limited communication skills.",
+        "score_range_indicative": "50\u201359 (exam alignment)",
+        "must_include": [
+          "A few isolated correct business ideas or facts.",
+          "Very limited business terminology.",
+          "Identification rather than explanation of management responses.",
+          "Only elementary use of numerical data if present."
+        ],
+        "writing_features": {
+          "causal_connectives": "Absent or incorrectly used.",
+          "complex_noun_groups": "Simple or absent.",
+          "modality": "Absent.",
+          "logical_flow": "Disconnected \u2014 little or no structure."
+        },
+        "style_rules": [
+          "Partial and underdeveloped.",
+          "Communication is minimal and often simplistic."
+        ],
+        "avoid": [
+          "Invented business theory.",
+          "Treating a partial or incomplete answer as complete."
+        ]
+      },
+      "Band1": {
+        "nesa_descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "knowledge_standard": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "communication_standard": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "score_range_indicative": "0\u201349 (exam alignment)",
+        "must_include": [
+          "No generation target. Use only as a fallback classification label for wholly inadequate responses."
+        ]
+      }
+    },
+    "rubric_scoring_framework": {
+      "overview": "Each writing component is scored on a 0\u20135 scale. Total score across applicable components maps to an indicative HSC band. Causal connectives and modality applicability depend on the directive verb tier.",
+      "components": {
+        "causal_connectives": {
+          "applicable_when": "Directive verb tier 3 or tier 4 (explain, analyse, discuss, predict, suggest, justify, assess, evaluate, recommend).",
+          "not_applicable_when": "Directive verb tier 1 or tier 2 (identify, define, outline, describe, compare, contrast).",
+          "preferred_connectives": [
+            "so",
+            "because",
+            "but"
+          ],
+          "accepted_connectives": [
+            "as a result",
+            "therefore",
+            "thus",
+            "hence",
+            "consequently",
+            "which means",
+            "this causes",
+            "leading to",
+            "resulting in",
+            "due to",
+            "since",
+            "however",
+            "although",
+            "yet",
+            "as"
+          ],
+          "scoring_rule": "Accepted connectives award full credit \u2014 they are equally valid HSC connectives. SO/BECAUSE/BUT are noted as stylistic tips only, not corrections.",
+          "scoring": {
+            "0": "No causal connectives present.",
+            "1": "Attempted but incorrectly or ineffectively used.",
+            "2": "One correct cause-and-effect relationship linked by a connective.",
+            "3": "Two clear cause-and-effect relationships.",
+            "4": "Three or more correct relationships \u2014 varied connectives used.",
+            "5": "Multiple varied connectives used consistently across the response."
+          }
+        },
+        "complex_noun_groups": {
+          "applicable_when": "All responses \u2014 always assessed.",
+          "description": "Expanded noun phrases that communicate precise business ideas using technical language.",
+          "examples": [
+            "declining net profit margin due to increased wage costs",
+            "senior management's strategic response to external market pressures",
+            "consumer confidence in domestic retail spending patterns",
+            "cost-based competition in the global manufacturing sector"
+          ],
+          "scoring": {
+            "0": "No complex noun groups present \u2014 only simple nouns used.",
+            "1": "Minimal detail in noun phrases.",
+            "2": "One clear expanded noun group with business precision.",
+            "3": "Two or more noun groups used accurately.",
+            "4": "Several precise noun groups \u2014 technical language consistent.",
+            "5": "Consistent technical noun groups throughout \u2014 demonstrates comprehensive vocabulary."
+          }
+        },
+        "modality": {
+          "applicable_when": "Directive verb tier 4 (assess, evaluate, justify, recommend).",
+          "optional_when": "Directive verb = analyse or discuss.",
+          "not_applicable_when": "Directive verb tier 1 or tier 2, or explain, describe, outline.",
+          "examples": [
+            "arguably",
+            "overall",
+            "to a large extent",
+            "this would most likely",
+            "the most effective strategy is",
+            "therefore",
+            "certainly",
+            "strongly suggests"
+          ],
+          "scoring": {
+            "0": "No modality present where required.",
+            "1": "Incorrect or inappropriate modal language.",
+            "2": "One modal expression \u2014 judgement present but weak.",
+            "3": "Two clear modal expressions \u2014 judgement is developing.",
+            "4": "Three modal expressions \u2014 judgement is clear.",
+            "5": "Multiple varied and well-placed modal expressions \u2014 judgement is explicit and sustained."
+          }
+        },
+        "logical_flow": {
+          "applicable_when": "All responses \u2014 always assessed.",
+          "indicators": [
+            "Logical ordering of sentences and paragraphs.",
+            "Appropriate transitions between ideas.",
+            "Avoidance of repetition.",
+            "Presence of conclusion or final judgement where required by directive verb."
+          ],
+          "scoring": {
+            "0": "No structure \u2014 ideas are random or incoherent.",
+            "1": "Disconnected ideas \u2014 no clear sequence.",
+            "2": "Basic sequencing \u2014 some order present but limited cohesion.",
+            "3": "Mostly logical structure \u2014 ideas connect but may lack full integration.",
+            "4": "Clear organisation \u2014 concept, application and implication sequenced well.",
+            "5": "Highly coherent \u2014 concept \u2192 application \u2192 implication \u2192 evaluation sustained throughout."
+          }
+        }
+      },
+      "band_estimation": {
+        "method": "Sum all applicable component scores. Map total to indicative HSC band using the thresholds below.",
+        "thresholds": {
+          "0\u20135": "Band 2",
+          "6\u20139": "Band 3",
+          "10\u201313": "Band 4",
+          "14\u201317": "Band 5",
+          "18\u201320": "Band 6"
+        },
+        "caveat": "This is an indicative estimate based on writing features only. It does not replace teacher professional judgement or NESA marking. Content accuracy, syllabus alignment and case study quality are assessed separately."
+      }
+    },
+    "generation_templates": {
+      "Band6_define": [
+        "State the term exactly as used in the syllabus.",
+        "Define it using precise business language \u2014 state the essential qualities.",
+        "Add a brief elaboration or context-linked example for 2-mark questions."
+      ],
+      "Band6_identify": [
+        "Name the exact item, factor, strategy or stakeholder.",
+        "For 2 marks: add one sentence explaining its role or relevance to the business context."
+      ],
+      "Band6_outline": [
+        "List the key points or features \u2014 one per sentence.",
+        "Include context from the case or stimulus for each point.",
+        "Do not explain deeply \u2014 outline the 'what', not the full 'why'."
+      ],
+      "Band6_describe": [
+        "Identify 2\u20134 distinct characteristics of the concept, process or strategy.",
+        "Describe each characteristic in 1\u20132 sentences with business context.",
+        "Use precise terminology \u2014 each characteristic should be clearly named."
+      ],
+      "Band6_explain": [
+        "State the business concept or strategy clearly in precise terms.",
+        "Explain the mechanism using precise business terminology \u2014 HOW or WHY, not just WHAT.",
+        "Link the mechanism to its business impact using a causal connective (because, therefore, as a result, which means).",
+        "State the final business consequence \u2014 profitability, productivity, competitiveness, efficiency or effectiveness."
+      ],
+      "Band6_discuss": [
+        "Identify the key issue or aspect being discussed.",
+        "Explain the positive effect or argument \u2014 include mechanism and context.",
+        "Explain the contrasting effect, limitation or counter-argument \u2014 include mechanism and context.",
+        "Summarise relevance to the business using a linking phrase ('thus', 'therefore')."
+      ],
+      "Band6_justify": [
+        "State the strategy or choice clearly in the first sentence.",
+        "Explain the immediate effect using a causal connective.",
+        "Link to the long-term business benefit \u2014 profitability, efficiency, competitiveness.",
+        "For 8 marks: repeat for a second distinct strategy.",
+        "Finish with a sentence confirming why each strategy suits the specific business situation."
+      ],
+      "Band6_analyse": [
+        "Identify the key components or factors relevant to the relationship being analysed.",
+        "Show how they relate to each other \u2014 explain the interaction, not just the presence.",
+        "Include data, ratios or stimulus specifics to support the analysis.",
+        "State the business implication or performance outcome of the relationship."
+      ],
+      "Band6_evaluate": [
+        "State the strategy, management response or issue being evaluated and define the criterion.",
+        "Explain at least one strength with a business mechanism and evidence or implication.",
+        "Explain at least one limitation or risk with a business mechanism and evidence or implication.",
+        "Make a clear final IS/IS NOT judgement using modal language: 'overall', 'to a large extent', 'therefore'."
+      ],
+      "Band6_assess": [
+        "State the issue and the criteria being used to form the assessment.",
+        "Discuss positive aspects \u2014 link to business performance outcomes.",
+        "Discuss negative aspects or limitations \u2014 link to business performance.",
+        "Use case study material, contemporary issues or data where relevant.",
+        "Conclude with a balanced but definite IS/IS NOT judgement."
+      ],
+      "Band6_recommend": [
+        "State the recommended strategy clearly in the opening sentence.",
+        "Explain why it suits the specific business situation \u2014 use stimulus or case study detail.",
+        "Link to at least one specific business benefit (profitability, efficiency, customer satisfaction).",
+        "For 8\u201310 marks: recommend a second strategy using the same pattern.",
+        "Acknowledge one limitation or condition and explain why the recommendation still stands."
+      ],
+      "Band6_report_20_marks": [
+        "Introduction: Define key terms and state the scope of the report (2\u20133 sentences).",
+        "Body \u2014 section per directive verb or issue: concept \u2192 mechanism \u2192 outcome \u2192 business implication. Use subheadings.",
+        "Include mini-conclusions or transitions between sections.",
+        "Use case details, stimulus data and business terminology throughout.",
+        "Conclusion/Recommendations: Summarise key findings. State overall judgement or list actionable recommendations."
+      ],
+      "Band6_compare": [
+        "Identify the two concepts, strategies, management responses, or business situations being compared.",
+        "State clearly what they have in common using precise business terminology.",
+        "State clearly how they differ, with specific reference to business context.",
+        "Use comparative language (whereas, in contrast, similarly, unlike) throughout.",
+        "Where relevant, link similarities and differences to business outcomes or effectiveness."
+      ]
+    },
+    "feedback_generation": {
+      "medal_1": {
+        "purpose": "Identify the strongest rubric component \u2014 provide specific positive reinforcement with a quoted example from the student's response.",
+        "format": "Name the component \u2192 explain why it is strong \u2192 quote the evidence from the student's answer."
+      },
+      "medal_2": {
+        "purpose": "Identify the second strongest rubric component \u2014 reinforce a second area of success.",
+        "format": "Name the component \u2192 explain why it is working \u2192 quote the evidence from the student's answer."
+      },
+      "mission": {
+        "purpose": "Target the lowest-scoring applicable component \u2014 provide a specific, actionable improvement with a rewritten example.",
+        "format": "Name the weakness \u2192 quote the original phrase \u2192 provide an improved version using business language.",
+        "rules": [
+          "Do not give generic advice \u2014 always rewrite using the student's own content.",
+          "The improved version must be plausible given the question and syllabus context.",
+          "Keep the improvement realistic for the student's current level \u2014 aim one band higher, not Band 6 instantly."
+        ]
+      },
+      "model_sentence_starter": {
+        "purpose": "Provide a 2\u20133 sentence scaffold showing how to open a stronger response.",
+        "rules": [
+          "Use the student's own business topic and question context.",
+          "Write connectives in CAPS to highlight them explicitly.",
+          "Do not write the full answer \u2014 scaffold only the opening moves."
+        ]
+      },
+      "verb_specific_feedback_rules": {
+        "DEFINE": "Check: is the definition precise? Does it state the essential quality of the term? Suggest adding a brief elaboration if missing.",
+        "IDENTIFY": "Check: is the item clearly named? For 2 marks, is there a brief explanation of its role? Suggest adding context if absent.",
+        "OUTLINE": "Check: are the main points covered? Is there context from the case? Suggest additional points if mark value demands more.",
+        "DESCRIBE": "Check: are multiple distinct characteristics named and described? Is each characteristic tied to business context? Suggest more specific features if generic.",
+        "EXPLAIN": "Check: is there a clear cause, a connecting mechanism and a stated business outcome? Highlight missing connective if absent. Suggest completing the chain: X happens \u2192 BECAUSE/THEREFORE \u2192 business outcome.",
+        "DISCUSS": "Check: are both positive and negative aspects addressed? Is there a conclusion? Suggest adding a contrasting point if only one side is presented.",
+        "JUSTIFY": "Check: is the strategy named? Is there a rationale and an expected business result? For 8 marks \u2014 is there a second strategy? Suggest completing the justification chain.",
+        "ANALYSE": "Check: are the components identified? Is the relationship between them explained? Is there a business implication stated? Suggest adding the 'therefore' implication if missing.",
+        "EVALUATE": "Check: are there strengths AND weaknesses? Is there an explicit overall judgement? Suggest adding IS/IS NOT language if the judgement is only implied.",
+        "ASSESS": "Check: are criteria stated? Are both positive and negative aspects addressed? Is the final judgement clear and explicit?",
+        "RECOMMEND": "Check: is the recommendation specific? Is there a rationale and an expected outcome? For 8\u201310 marks \u2014 are there two recommendations?"
+      }
+    },
+    "quality_checks": {
+      "before_output": [
+        "Has the directive verb been answered correctly and at the right depth for the mark value?",
+        "Has every part of the multi-part question been addressed?",
+        "Is the content aligned to the NSW HSC Business Studies syllabus?",
+        "Is the business terminology appropriate to the target band?",
+        "Has the stimulus, case study or numerical data been used where relevant?",
+        "Are the cause-and-effect links clear and correctly connected by a connective?",
+        "Has an explicit judgement been made where required by the directive verb?",
+        "Does the number of developed points match the mark allocation?",
+        "Has irrelevant or padding material been removed?"
+      ],
+      "band6_checklist": [
+        "Precise business terminology used consistently throughout.",
+        "Multiple linked business concepts included and developed.",
+        "Management responses analysed or evaluated \u2014 not merely described.",
+        "Specific data, case studies or contemporary issues integrated purposefully.",
+        "Reasoning is coherent, sustained and logically sequenced.",
+        "Judgement is explicit and well-supported if required by the question.",
+        "Complex noun groups present \u2014 technical language demonstrates comprehensive knowledge.",
+        "Causal connectives used correctly and varied across the response.",
+        "Mark-depth alignment confirmed \u2014 depth matches the marks available.",
+        "Context from the case study or stimulus is referenced, not ignored."
+      ]
+    },
+    "output_controls": {
+      "target_band_selection_rule": {
+        "Band6": "Generate with comprehensive knowledge, critical analysis, clear evaluation, specific use of numerical data, contemporary business issues, integrated case studies, strong causal connectives and explicit modal judgement. Match depth to mark allocation.",
+        "Band5": "Generate with thorough knowledge, sound analysis, effective use of terminology, relevant case studies and application of data \u2014 but with less critical depth and less evaluative integration than Band 6.",
+        "Band4": "Generate with clear explanation of core business ideas, correct terminology and some application to business situations \u2014 more descriptive than evaluative; some analysis but not sustained.",
+        "Band3": "Generate basic, descriptive business responses using simple terminology, minimal analysis and limited integration of business concepts.",
+        "Band2": "Generate very simple, partial and underdeveloped business responses using minimal business language and identification rather than explanation.",
+        "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
+      },
+      "forbidden_behaviours": [
+        "Do not imitate Band 6 by adding length without stronger reasoning or analysis.",
+        "Do not use irrelevant advanced content to sound sophisticated.",
+        "Do not ignore case study material, stimulus data or the directive verb.",
+        "Do not make vague judgements such as 'this is good' or 'it was effective' without criteria.",
+        "Do not use case studies as decoration \u2014 always link them to the argument.",
+        "Do not reproduce band descriptors verbatim in student-facing feedback.",
+        "Do not conflate description with analysis \u2014 ensure the response does what the directive verb demands.",
+        "Do not provide more developed points than the mark allocation requires.",
+        "Do not omit the context \u2014 always reference the specific business scenario in the question."
+      ]
+    }
+  },
+  "directiveTiers": {
+    "account for": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "classify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "extract": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "clarify": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "demonstrate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "give an account of": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "recount": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "calculate": {
+      "tier": "procedural",
+      "modality": "ignore"
+    },
+    "construct": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "deduce": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "extrapolate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "predict": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "suggest": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "appreciate": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "investigate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "optional"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this causes",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas"
+    ]
+  }
+}
