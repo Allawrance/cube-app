@@ -1024,7 +1024,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
         const annoTotal  = annoPresXP + annoUsdXP;
         const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.round((sc/mx)*c1.marks) : "";
-        const indBand    = (c1.marks == null || c1.marks === "") ? `Band ${band}` : "";
+        const indBand    = (c1.marks == null || c1.marks === "") ? band : "";
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
             type:             "FULL_ROW",
