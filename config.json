@@ -7,7 +7,7 @@
   "leaderboardTip": "~60% of HSC questions are Explain/Analyse type \u2014 causal connectives (SO, BECAUSE, BUT) are essential.",
   "sheetTabCube": "EES CUBE",
   "sheetTabFull": "EES FULL",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbyj9dbw2_Fdh5zZF1NsWMfcN5T4dZHnYOH5cAIrXBcnV10L78xiZYcFm7tV7jQ8wIvk/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
   "syllabus": {
     "5": {
       "title": "Earth's Processes",
@@ -1022,5 +1022,6 @@
       "while",
       "whereas"
     ]
-  }
+  },
+  "logUrl": "https://script.google.com/macros/s/AKfycbwLZRvVWCm4La32lFgGnp5DtUBbDYX7Bgbmi4SRDEVom9yZ-_pXL72ipjTxUW7RNzQk/exec"
 }
