@@ -892,7 +892,7 @@ Return ONLY the model response text, no heading, no preamble.`
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   // Sync streak from server when student name is entered
@@ -1337,63 +1337,84 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </button>
               </div>}
 
-              {/* C card — all directives in one box */}
-              {dirs.length>0&&<Card bg="rgba(192,57,43,0.08)" border="rgba(192,57,43,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>C</div>
-                  <div style={{flex:1}}>
-                    {dirs.map((dv,i)=>(
-                      <div key={i} style={{borderTop:i>0?"1px solid rgba(192,57,43,0.2)":"none",paddingTop:i>0?"10px":"0",marginTop:i>0?"10px":"0"}}>
-                        <div style={{fontWeight:700,color:"#ff8a80",fontSize:"15px",marginBottom:"3px"}}>
-                          Directive Verb: <span style={{background:"rgba(192,57,43,0.2)",padding:"1px 8px",borderRadius:"20px"}}>{dv.word}</span>
-                          {dirs.length>1&&<span style={{marginLeft:"8px",fontSize:"11px",color:"#ffab91",fontFamily:"sans-serif"}}>{dv.isPrimary?"PRIMARY":"SECONDARY"}</span>}
+              {/* ── Combined C U B card ── */}
+              {(dirs.length>0||kwds.length>0||c.constraints?.length>0)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)" style={{padding:"0",overflow:"hidden"}}>
+                {/* C — Directive */}
+                {dirs.length>0&&<div style={{padding:"14px 16px",borderBottom:kwds.length>0||c.constraints?.length>0?"1px solid rgba(192,57,43,0.2)":"none",background:"rgba(192,57,43,0.06)"}}>
+                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                    <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>C</div>
+                    <div style={{flex:1}}>
+                      {dirs.map((dv,i)=>(
+                        <div key={i} style={{borderTop:i>0?"1px solid rgba(192,57,43,0.15)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
+                          <div style={{fontWeight:700,color:"#ff8a80",fontSize:"14px",marginBottom:"2px"}}>
+                            <span style={{background:"rgba(192,57,43,0.2)",padding:"1px 8px",borderRadius:"20px"}}>{dv.word}</span>
+                            {dirs.length>1&&<span style={{marginLeft:"8px",fontSize:"11px",color:"#ffab91",fontFamily:"sans-serif"}}>{dv.isPrimary?"PRIMARY":"SECONDARY"}</span>}
+                          </div>
+                          <div style={{color:"#e8d0d0",fontSize:"13px",lineHeight:"1.4"}}>{dv.meaning}</div>
+                          {dv.verbType==="explain"&&<div style={{marginTop:"5px",display:"flex",gap:"6px"}}>
+                            {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"1px 8px",fontWeight:900,color:"#ce93d8",fontSize:"13px",fontFamily:"sans-serif"}}>{w}</span>)}
+                          </div>}
+                          {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"5px",display:"flex",gap:"6px",flexWrap:"wrap"}}>
+                            {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"1px 8px",fontWeight:700,color:"#ffab91",fontSize:"13px",fontFamily:"sans-serif"}}>{w}</span>)}
+                          </div>}
                         </div>
-                        <div style={{color:"#e8d0d0",fontSize:"14px",lineHeight:"1.5"}}>{dv.meaning}</div>
-                        {dv.verbType==="explain"&&<div style={{marginTop:"6px",display:"flex",gap:"8px"}}>
-                          {["SO","BECAUSE","BUT"].map(w=><span key={w} style={{background:"rgba(123,31,162,0.3)",border:"1px solid rgba(206,147,216,0.5)",borderRadius:"5px",padding:"2px 10px",fontWeight:900,color:"#ce93d8",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
-                        </div>}
-                        {["assess","evaluate","critically evaluate"].includes(dv.verbType)&&<div style={{marginTop:"6px",display:"flex",gap:"8px",flexWrap:"wrap"}}>
-                          {["✅ PRO / BENEFIT","❌ CON / LIMITATION","⚖️ IS/IS NOT"].map(w=><span key={w} style={{background:"rgba(230,81,0,0.2)",border:"1px solid rgba(255,171,145,0.4)",borderRadius:"5px",padding:"2px 10px",fontWeight:700,color:"#ffab91",fontSize:"14px",fontFamily:"sans-serif"}}>{w}</span>)}
-                        </div>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>}
-
-              {/* U card — all syllabus keywords in one box */}
-              {kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>U</div>
-                  <div style={{flex:1}}>
-                    {kwds.map((kw,i)=>(
-                      <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.2)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
-                        <div style={{fontWeight:700,color:"#ffffff",fontSize:"14px",marginBottom:"2px"}}>
-                          <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
-                          <span style={{marginLeft:"8px",fontSize:"11px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
-                        </div>
-                        <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>{kw.syllabusText}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>}
-
-              {/* B card — constraints */}
-              {c.constraints?.length>0&&<Card bg="rgba(46,125,50,0.08)" border="rgba(46,125,50,0.3)">
-                <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                  <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"28px",height:"28px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"14px",flexShrink:0,marginTop:"2px"}}>B</div>
-                  <div style={{width:"100%"}}>
-                    <div style={{fontWeight:700,color:"#a5d6a7",fontSize:"14px",marginBottom:"8px"}}>Constraints &amp; Scope Words:</div>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:"8px"}}>
-                      {c.constraints.map((ct,i)=><div key={i} style={{background:"rgba(46,125,50,0.12)",border:"2px solid #2e7d32",borderRadius:"6px",padding:"4px 12px"}}>
-                        <div style={{color:"#a5d6a7",fontWeight:700,fontSize:"13px"}}>{ct.text}</div>
-                        <div style={{color:"#81c784",fontSize:"11px",fontFamily:"sans-serif"}}>{ct.type?.replace(/_/g," ")}</div>
-                      </div>)}
+                      ))}
                     </div>
-                    {c.evidenceRequired&&<div style={{marginTop:"8px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"6px 12px",fontSize:"13px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
                   </div>
-                </div>
+                </div>}
+                {/* U — Syllabus keywords */}
+                {kwds.length>0&&<div style={{padding:"14px 16px",borderBottom:c.constraints?.length>0?"1px solid rgba(21,101,192,0.2)":"none",background:"rgba(21,101,192,0.06)"}}>
+                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                    <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>U</div>
+                    <div style={{flex:1}}>
+                      {kwds.map((kw,i)=>(
+                        <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.15)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
+                          <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"3px"}}>
+                            <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+                            <span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
+                          </div>
+                          <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>
+                            {(()=>{
+                              const sylText = kw.syllabusText || "";
+                              const kwWord  = (kw.word||kw.topicTitle||"").toLowerCase().replace(/[^a-z0-9]/g," ").trim();
+                              if (!kwWord || !sylText) return sylText;
+                              // Build regex: match keyword stem (first 5+ chars) case-insensitively
+                              const stem = kwWord.split(" ")[0].slice(0,Math.max(5,kwWord.split(" ")[0].length-2));
+                              try {
+                                const re = new RegExp(`(${stem}\\S*)`, "gi");
+                                const parts = [];
+                                let last = 0, m;
+                                while ((m = re.exec(sylText)) !== null) {
+                                  if (m.index > last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
+                                  parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[1]}</span>);
+                                  last = m.index + m[1].length;
+                                }
+                                if (last < sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
+                                return parts.length > 1 ? parts : sylText;
+                              } catch { return sylText; }
+                            })()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>}
+                {/* B — Constraints */}
+                {c.constraints?.length>0&&<div style={{padding:"14px 16px",background:"rgba(46,125,50,0.06)"}}>
+                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                    <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>B</div>
+                    <div style={{width:"100%"}}>
+                      <div style={{fontWeight:700,color:"#a5d6a7",fontSize:"13px",marginBottom:"6px"}}>Constraints &amp; Scope Words:</div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:"6px"}}>
+                        {c.constraints.map((ct,i)=><div key={i} style={{background:"rgba(46,125,50,0.12)",border:"2px solid #2e7d32",borderRadius:"6px",padding:"3px 10px"}}>
+                          <div style={{color:"#a5d6a7",fontWeight:700,fontSize:"12px"}}>{ct.text}</div>
+                          <div style={{color:"#81c784",fontSize:"10px",fontFamily:"sans-serif"}}>{ct.type?.replace(/_/g," ")}</div>
+                        </div>)}
+                      </div>
+                      {c.evidenceRequired&&<div style={{marginTop:"6px",background:"rgba(201,168,76,0.1)",border:"1px solid rgba(201,168,76,0.3)",borderRadius:"6px",padding:"5px 10px",fontSize:"12px",color:gold,fontFamily:"sans-serif"}}>⚠️ Evidence required: {c.evidenceType}</div>}
+                    </div>
+                  </div>
+                </div>}
               </Card>}
               {/* ── Now ready button at bottom of CUBE tab ── */}
               {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
@@ -1407,6 +1428,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             {/* ═══ TAB: PLAN ═══ */}
             {activeTab==="plan"&&<div>
               <SectionTitle>STEP 3 — ANSWER PLANNING</SectionTitle>
+
+              {/* ── Loading while Stage 2 running ── */}
+              {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
+                <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
+                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Marking your written response...</div>
+                <div style={{fontSize:"13px",color:"#9aabb8"}}>Reading your answer and checking your annotation ideas</div>
+              </div>}
 
               {/* ── Locked banner when Stage 2 not yet run ── */}
               {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"18px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
@@ -1577,7 +1605,12 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
             {/* ═══ TAB: RUBRIC ═══ */}
             {activeTab==="rubric"&&<div>
-              {!stage2Results&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
+              {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
+                <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
+                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Marking your written response...</div>
+                <div style={{fontSize:"13px",color:"#9aabb8"}}>Reading your answer and checking your annotation ideas</div>
+              </div>}
+              {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"10px"}}>🔒</div>
                 <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Get your CUBE right first</div>
                 <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"16px"}}>Get your CUBE right first. Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your written analysis.</div>
@@ -1652,7 +1685,12 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
             {/* ═══ TAB: FEEDBACK ═══ */}
             {activeTab==="feedback"&&<div>
-              {!stage2Results&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
+              {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
+                <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
+                <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Marking your written response...</div>
+                <div style={{fontSize:"13px",color:"#9aabb8"}}>Reading your answer and checking your annotation ideas</div>
+              </div>}
+              {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"24px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"10px"}}>🔒</div>
                 <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Get your CUBE right first</div>
                 <div style={{fontSize:"13px",color:"#9aabb8",lineHeight:"1.6",marginBottom:"16px"}}>Get your CUBE right first. Go to the CUBE tab, review your CUBE, then tap <strong style={{color:"#c9a84c"}}>"Now ready to have full answer marked"</strong> to unlock your feedback.</div>
