@@ -1040,7 +1040,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ")||"—",
             callType:         "STAGE2_MARK",
             sheetTab:         config.sheetTabFull,
-            model:            MODEL,
+            model:            "claude-sonnet-4-20250514",
             cubeXP:           cubeXP || 0,
             cubeMax:          dirs.length + kwds.length + (c1.constraints||[]).length + (c1.evidenceRequired?1:0),
             annoIdeas:        annoPresXP,
