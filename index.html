@@ -46,6 +46,7 @@ let config = {
   subjectShortName: "EES",
   leaderboardTip: "",
   leaderboardUrl: "",
+  logUrl: "",
   sheetTabCube: "EES CUBE",
   sheetTabFull: "EES FULL",
   syllabus: {},
@@ -806,6 +807,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type:             "FULL_ROW",
+            webhookUrl:       config.logUrl,
             subject:          config.subjectName,
             student:          privacyName(studentName.trim() || "anonymous"),
             sessionId:        sid,
@@ -883,7 +885,7 @@ Return ONLY the model response text, no heading, no preamble.`
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setStudentName(""); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   // Sync streak from server when student name is entered
@@ -986,9 +988,9 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       }
       setStage2Results(parsed);
       setStage1Done(true);
-      setActiveTab("plan");
+      setActiveTab("script");
       // Update session XP with annotation ideas used
-      const annoItems = (parsed.annotationCheck||[]).slice(0,6); // cap at 6
+      const annoItems = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6); // cap at 6, filter empty
       // Two-tier annotation XP:
       // +1 XP per idea present (student wrote it) — up to 6 XP
       // +1 XP per idea used in response — up to 6 XP
@@ -1010,7 +1012,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const sc  = totalScore(parsed);
         const mx  = 10 + (causalApp?5:0) + (modalApp?5:0);
         const band = getBand(sc, mx);
-        const annoItems  = (parsed.annotationCheck||[]).slice(0,6);
+        const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
         const annoTotal  = annoPresXP + annoUsdXP;
@@ -1019,6 +1021,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
             type:             "FULL_ROW",
+            webhookUrl:       config.logUrl,
             subject:          config.subjectName,
             student:          privacyName(studentName.trim()||"anonymous"),
             sessionId:        sessionId,
@@ -1313,7 +1316,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               {/* ── Upload + Ready buttons in CUBE tab ── */}
               {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
-
+                {/* ── Student's photo: compare their CUBE marks with the model answer ── */}
+                {pageB64&&<div style={{marginBottom:"12px",borderRadius:"10px",overflow:"hidden",border:"1.5px solid rgba(201,168,76,0.3)",background:"rgba(0,0,0,0.2)"}}>
+                  <div style={{fontSize:"10px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",padding:"6px 10px",background:"rgba(201,168,76,0.08)",fontFamily:"sans-serif"}}>
+                    📷 YOUR CUBE ATTEMPT — compare with the model answer above
+                  </div>
+                  <img src={`data:image/jpeg;base64,${pageB64}`} style={{width:"100%",display:"block",maxHeight:"220px",objectFit:"cover",objectPosition:"top"}} alt="Your CUBE attempt"/>
+                </div>}
                 <button onClick={()=>{
                   // Same as New Question — full reset then open file picker
                   setStage2Results(null); setStage1Done(false); setStage2Error(null);
