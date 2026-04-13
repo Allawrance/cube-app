@@ -6,7 +6,7 @@
   "cleanRule": "EES = causal explanation + evidence from stimulus where provided",
   "leaderboardTip": "~60% of HSC questions are Explain/Analyse type \u2014 causal connectives (SO, BECAUSE, BUT) are essential.",
   "sheetTabCube": "EES CUBE",
-  "sheetTabFull": "EES FULL",
+  "sheetTabFull": "EES",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
   "syllabus": {
     "5": {
