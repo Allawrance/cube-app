@@ -564,9 +564,11 @@ function PaperCard({children, subtitle}) {
 }
 
 // ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
-function RubricRow({label, data, applicable=true}) {
-  // XP: +2 per writing feature (max score=5 maps to +2 XP when >=3, else proportional)
-  const xpEarned = !applicable ? null : (data?.score||0); // raw score = XP directly
+function RubricRow({label, data, applicable=true, dimMax=5}) {
+  // Cap raw Sonnet score at dimMax (scales with question marks value)
+  const rawScore = data?.score||0;
+  const score    = Math.min(rawScore, dimMax);
+  const xpEarned = !applicable ? null : score;
   if (!applicable) return <tr>
     <td style={{padding:"10px 14px",color:"#c8d8e8",fontSize:"13px",fontFamily:"sans-serif"}}>{label}</td>
     <td style={{padding:"10px 14px",textAlign:"center"}}><span style={{color:"#555",fontSize:"12px",fontStyle:"italic"}}>N/A</span></td>
@@ -575,9 +577,9 @@ function RubricRow({label, data, applicable=true}) {
   </tr>;
   return <tr>
     <td style={{padding:"10px 14px",color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontWeight:600,borderBottom:"1px solid rgba(255,255,255,0.06)"}}>{label}</td>
-    <td style={{padding:"10px 14px",borderBottom:"1px solid rgba(255,255,255,0.06)",textAlign:"center"}}><ScoreDot score={data?.score||0}/></td>
+    <td style={{padding:"10px 14px",borderBottom:"1px solid rgba(255,255,255,0.06)",textAlign:"center"}}><ScoreDot score={score} max={dimMax}/></td>
     <td style={{padding:"10px 14px",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
-      <span style={{fontWeight:900,fontSize:"15px",color:xpEarned>=4?"#69f0ae":xpEarned>=2?"#ffa726":"#ef5350"}}>+{xpEarned}</span>
+      <span style={{fontWeight:900,fontSize:"15px",color:xpEarned>=dimMax?"#69f0ae":xpEarned>=(dimMax*0.5)?"#ffa726":"#ef5350"}}>+{xpEarned}</span>
       <span style={{fontSize:"10px",color:"#888",fontFamily:"sans-serif",display:"block"}}>XP</span>
     </td>
     <td style={{padding:"10px 14px",color:"#e8eaf0",fontSize:"12px",fontFamily:"sans-serif",lineHeight:"1.5",borderBottom:"1px solid rgba(255,255,255,0.06)"}}>
@@ -1701,10 +1703,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     </tr>
                   </thead>
                   <tbody>
-                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable}/>
-                    <RubricRow label="Complex Noun Groups" data={a.rubric?.complexNounGroups}/>
-                    <RubricRow label="Modality" data={a.rubric?.modality} applicable={modalityApplicable}/>
-                    <RubricRow label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow}/>
+                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
+                    <RubricRow label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
+                    <RubricRow label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
+                    <RubricRow label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
 
                   </tbody>
                 </table>
