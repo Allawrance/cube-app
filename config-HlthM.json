@@ -8,7 +8,7 @@
   "sheetTabCube": "HM CUBE",
   "sheetTabFull": "HM FULL",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
-  "logUrl": "https://script.google.com/macros/s/AKfycbwLZRvVWCm4La32lFgGnp5DtUBbDYX7Bgbmi4SRDEVom9yZ-_pXL72ipjTxUW7RNzQk/exec",
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
   "syllabus": {
     "file_name": "04_HEALTH_MOVEMENT_SYLLABUS_DATABASE.json",
     "version": "1.0",
@@ -1215,7 +1215,7 @@
     },
     "analyse": {
       "tier": 3,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "apply": {
       "tier": 3,
@@ -1287,11 +1287,11 @@
     },
     "justify": {
       "tier": 4,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "recommend": {
       "tier": 4,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "debate": {
       "tier": 3,
