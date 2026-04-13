@@ -1437,7 +1437,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
 
               {/* ── Now ready button at bottom of CUBE tab ── */}
-              {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
+              {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
                 <button onClick={()=>markFullAnswer()} style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg,#6c63ff,#9c27b0)",color:"#fff",border:"none",borderRadius:"10px",fontSize:"16px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"block",textAlign:"center",boxShadow:"0 4px 14px rgba(108,99,255,0.4)",letterSpacing:"0.5px"}}>
                   {stage2Loading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Marking your answer...</span> : "✍️ Now ready to have full answer marked"}
                 </button>
