@@ -920,11 +920,14 @@ Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.ver
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
 
-CUBE ELEMENTS TO LOOK FOR ON THE QUESTION TEXT (use these to judge student marks):
-- Directive verbs to be CIRCLED: ${dirs.map(d=>d.word).join(", ")||"none"}
-- Syllabus keywords to be UNDERLINED: ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
-- Constraint words to be BOXED: ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
-${c1.evidenceRequired ? "- Evidence marker to be noted with wavy line (required for this question)" : ""}
+CUBE MARKING — CHECK THE PRINTED QUESTION LINE ONLY (ignore the handwritten answer below):
+The question text is: "${sanitiseInput(c1.questionText)}"
+Look ONLY at this printed line in the image. For each word below, check if the student made a pen mark on it:
+- Words to be CIRCLED (directive verbs): ${dirs.map(d=>d.word).join(", ")||"none"}
+- Words to be UNDERLINED with solid pen (syllabus keywords): ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
+- Words to be BOXED (constraint/scope words): ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
+${c1.evidenceRequired ? "- Words to be marked wavy (evidence required)" : ""}
+NOTE: The worksheet has DOTTED ruled lines for writing. These are background — not student marks. A student underline is a SOLID continuous pen stroke under specific words on the question line.
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
 STRICT RULES for annotations:
