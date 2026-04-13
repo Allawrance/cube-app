@@ -1027,7 +1027,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const annoPresXP = Math.min(annoItems.length, 6);
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
         const annoTotal  = annoPresXP + annoUsdXP;
-        const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.round((sc/mx)*c1.marks) : "";
+        const scCapped  = Math.min(sc, mx);  // cap raw score at scaled max
+        const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((scCapped/mx)*c1.marks), c1.marks) : "";
         const indBand    = (c1.marks == null || c1.marks === "") ? band.replace("Band ","") : "";
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
@@ -1060,6 +1061,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             awdMark:          awdMark,
             questionMarks:    c1.marks ?? "",
             indBand:          indBand,
+            missionCategory:  parsed.mission?.targetCategory || "",
+            missionFix:       parsed.mission?.weakness || "",
+            studentPhrase:    parsed.mission?.originalPhrase || "",
+            improvedVersion:  parsed.mission?.improvedVersion || "",
+            illegibleCount:   (parsed.studentResponseText||"").split("[?]").length - 1,
+            wordCount:        (parsed.studentResponseText||"").replace(/\[\?]/g,"").trim().split(/\s+/).filter(w=>w.length>0).length,
+            markPct:          (c1.marks && awdMark !== "") ? Math.round((awdMark/c1.marks)*100)+"%" : "",
           })
         });
       } catch {}
@@ -1259,7 +1267,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 ))}
                 <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",whiteSpace:"nowrap"}}>Mod {primaryKwd.module}</div>
                 {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
-                {stage2Results&&marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{Math.round((score/maxScore)*c.marks)}/{c.marks}</div>}
+                {stage2Results&&marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)}/{c.marks}</div>}
                 {stage2Results&&!marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{score}/{maxScore}</div>}
                 {stage2Results&&!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>Indicative {band}</div>}
                 {studentName.trim()&&<div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"5px"}}>
