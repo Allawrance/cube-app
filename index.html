@@ -1049,6 +1049,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       setStage2Error("Marking failed: " + e.message + ". Please try again.");
     }
     setStage2Loading(false);
+    // Refresh leaderboard after a short delay to include this submission in the totals
+    setTimeout(() => fetchLeaderboard(lbPeriod, lbDirective), 3000);
   };
 
   const totalScore = (r, causalOverride, modalOverride) => {
@@ -1257,7 +1259,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
 
             <Steps current={4} activeTab={activeTab} onTabChange={(tab)=>{
                 setActiveTab(tab);
-                if(tab==="rank" && !leaderboard && !lbLoading) fetchLeaderboard("week","all");
+                if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
               }}/>
 
             {/* ═══ TAB: CUBE ═══ */}
