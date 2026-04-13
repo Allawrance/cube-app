@@ -913,12 +913,18 @@ Return ONLY the model response text, no heading, no preamble.`
           subject: config.subjectCode,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`Mark the written response to Question ${sanitiseInput(questionNumber)} from this image.
+            { type:"text", text:`Mark the written response to Question ${sanitiseInput(questionNumber)} from this image. Also score the student's CUBE markings on the question text.
 
 Question: "${sanitiseInput(c1.questionText)}"
 Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.verbType||"")})
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
+
+CUBE ELEMENTS TO LOOK FOR ON THE QUESTION TEXT (use these to judge student marks):
+- Directive verbs to be CIRCLED: ${dirs.map(d=>d.word).join(", ")||"none"}
+- Syllabus keywords to be UNDERLINED: ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
+- Constraint words to be BOXED: ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
+${c1.evidenceRequired ? "- Evidence marker to be noted with wavy line (required for this question)" : ""}
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
 STRICT RULES for annotations:
@@ -968,8 +974,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       const annoUsedXP = annoItems.filter(a=>a.used).length; // +1 per used in response
       const annoXpVal = annoPresenceXP + annoUsedXP;
       setAnnoXP(annoXpVal);
-      // ── Score student CUBE attempt in Stage 2 using the stored Haiku result ──
-      const cxpStage2 = computeCubeXP(results);
+      // ── Score student CUBE attempt using Sonnet Stage 2 result ──
+      const cxpStage2 = parsed?.studentCube?.score ?? 0;
       setCubeXP(cxpStage2);
       // Also store breakdown for display
       setAnnotationIdeas({presence: annoPresenceXP, used: annoUsedXP, items: annoItems});
@@ -1491,6 +1497,21 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 const annoItems = (stage2Results?.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
                 const usedItems = annoItems.filter(a=>a.used);
                 return <div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:`1.5px solid ${needsWork?"#ef535055":"#6c63ff55"}`,borderRadius:"12px",padding:"14px 16px",marginBottom:"10px",fontFamily:"sans-serif"}}>
+                  {/* Section 0: CUBE score — scored by Sonnet in Stage 2 */}
+                  {cubeXP!==null&&<>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"4px"}}>
+                      <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px"}}>
+                        ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 5px",color:"#c9a84c"}}>CUBE</span> elements found in your response
+                      </div>
+                      <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
+                        <span style={{fontSize:"22px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
+                        <span style={{fontSize:"11px",color:"#c9a84c",marginLeft:"3px"}}>/ {maxCubeXP} XP</span>
+                      </div>
+                    </div>
+                    {stage2Results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic",marginBottom:"4px"}}>{stage2Results.studentCube.feedback}</div>}
+                    <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
+                  </>}
+
                   {/* Section 1: Points for annotation presence — specific per idea */}
                   <div style={{marginBottom:"8px"}}>
                     <div style={{fontSize:"13px",fontWeight:800,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"6px"}}>⚡ Points for ideas/annotations of question</div>
@@ -1584,30 +1605,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
                 </div>
               </PaperCard>
-
-              {/* ── CUBE score (from Stage 2, using Haiku result) — shown above annotation ── */}
-              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
-                  <div>
-                    <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>
-                      ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
-                    </div>
-                    {results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>{results.studentCube.feedback}</div>}
-                  </div>
-                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
-                    <span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span>
-                  </div>
-                </div>
-                <div style={{height:"1px",background:"rgba(108,99,255,0.2)",marginBottom:"8px"}}/>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
-                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"18px",fontWeight:900,color:"#555"}}>{results ? computeMaxCubeXP(results) : "—"}</span>
-                    <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
-                  </div>
-                </div>
-              </div>}
 
               {/* ── Annotation ideas check (from Stage 2) — all inside card, photo at bottom ── */}
               {stage2Results?.annotationCheck?.length>0&&<Card bg="rgba(108,99,255,0.06)" border="rgba(108,99,255,0.3)">
