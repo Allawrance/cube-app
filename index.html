@@ -1021,7 +1021,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
-        const sc  = totalScore(parsed);
+        const sc  = totalScore(parsed, causalApp, modalApp);
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
         const mx  = (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
         const band = getBand(sc, mx);
@@ -1079,11 +1079,14 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
     setStage2Loading(false);
   };
 
-  const totalScore = (r) => {
+  const totalScore = (r, causalOverride, modalOverride) => {
     if (!r) return 0;
     const { rubric } = r;
-    const causal  = rubric.causalConnectives?.applicable !== false ? (rubric.causalConnectives?.score||0) : 0;
-    const modality = rubric.modality?.applicable ? (rubric.modality?.score||0) : 0;
+    // Use client-side derived applicable values if provided, else fall back to AI value
+    const causalAppl  = causalOverride !== undefined ? causalOverride : (rubric.causalConnectives?.applicable !== false);
+    const modalAppl   = modalOverride  !== undefined ? modalOverride  : (rubric.modality?.applicable === true);
+    const causal   = causalAppl ? (rubric.causalConnectives?.score||0) : 0;
+    const modality = modalAppl  ? (rubric.modality?.score||0) : 0;
     return causal + (rubric.complexNounGroups?.score||0) + modality + (rubric.logicalFlow?.score||0);
   };
 
@@ -1245,7 +1248,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const verbType = primaryDir.verbType || "other";
           const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
-          const score = a ? totalScore(a) : 0;
+          const score = a ? totalScore(a, causalApplicable, modalityApplicable) : 0;
           const marksKnown = c.marks !== null && c.marks !== undefined;
           // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
           const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
