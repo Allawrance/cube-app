@@ -1020,7 +1020,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
         const sc  = totalScore(parsed);
-        const mx  = 10 + (causalApp?5:0) + (modalApp?5:0);
+        const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
+        const mx  = (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
         const band = getBand(sc, mx);
         const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
@@ -1244,7 +1245,8 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
-          const maxScore = 10 + (causalApplicable ? 5 : 0) + (modalityApplicable ? 5 : 0);
+          const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
+          const maxScore = (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
@@ -1703,7 +1705,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               {/* ── XP summary strip ── */}
               <div style={{background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"6px"}}>
-                  <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{score}</span> / {maxScore} XP</div>
+                  <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{Math.min(score,maxScore)}</span> / {maxScore} XP{c.marks&&c.marks<=4?<span style={{fontSize:"11px",color:"#9aabb8",marginLeft:"8px",fontWeight:400}}>({c.marks}-mark question)</span>:null}</div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div style={{fontSize:"13px",color:"#aaa"}}>Total points CUBE + Annotation + Written</div>
