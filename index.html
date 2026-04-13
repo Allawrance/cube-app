@@ -1011,7 +1011,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       setSessionXP((cubeXP||0) + annoXpVal + totalScore(parsed));
       // Log to webhook
       try {
-        const causalApp  = parsed.rubric?.causalConnectives?.applicable !== false;
+        // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
+        const causalDirWord = (primaryDir.word||"").toLowerCase().trim();
+        const causalDirObj  = config.directiveTiers[causalDirWord] || config.directiveTiers[causalDirWord.replace("critically ","")];
+        const causalApp     = causalDirObj ? (causalDirObj.tier === 3 || causalDirObj.tier === 4) : parsed.rubric?.causalConnectives?.applicable !== false;
         // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
@@ -1233,7 +1236,10 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
           const score = a ? totalScore(a) : 0;
           const marksKnown = c.marks !== null && c.marks !== undefined;
-          const causalApplicable  = a ? (a.rubric?.causalConnectives?.applicable !== false) : true;
+          // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
+          const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
+          const causalDirObjR  = config.directiveTiers[causalDirWordR] || config.directiveTiers[causalDirWordR.replace("critically ","")];
+          const causalApplicable = causalDirObjR ? (causalDirObjR.tier === 3 || causalDirObjR.tier === 4) : (a ? (a.rubric?.causalConnectives?.applicable !== false) : true);
           // Derive modality applicable from directive — do not trust Sonnet's value
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
@@ -1685,7 +1691,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                     </tr>
                   </thead>
                   <tbody>
-                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={a.rubric?.causalConnectives?.applicable !== false}/>
+                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable}/>
                     <RubricRow label="Complex Noun Groups" data={a.rubric?.complexNounGroups}/>
                     <RubricRow label="Modality" data={a.rubric?.modality} applicable={modalityApplicable}/>
                     <RubricRow label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow}/>
