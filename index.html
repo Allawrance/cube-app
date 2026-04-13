@@ -38,7 +38,7 @@ const { useState, useRef, useEffect } = React;
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
 // It contains: subjectCode, subjectName, syllabus, bandRules, leaderboardUrl,
-//              sheetTabCube, sheetTabFull, leaderboardTip, directiveTiers, connectives
+//              sheetTabFull, leaderboardTip, directiveTiers, connectives
 // This index.html is subject-agnostic — do not add subject-specific logic here.
 let config = {
   subjectCode: "EES",
@@ -47,8 +47,7 @@ let config = {
   leaderboardTip: "",
   leaderboardUrl: "",
   logUrl: "",
-  sheetTabCube: "EES CUBE",
-  sheetTabFull: "EES FULL",
+  sheetTabFull: "EES",
   syllabus: {},
   bandRules: {},
   directiveTiers: {},
@@ -797,51 +796,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setResults(parsed);
       setPhase(2);
       setActiveTab("cube");
-      // ── GAMIFICATION: compute Stage 1 XP ──
-      const cxp = computeCubeXP(parsed);
-      setCubeXP(cxp);
+      // ── Stage 1: no CUBE XP awarded — student sees model CUBE only; XP scored in Stage 2 ──
+      setCubeXP(null);
       setAnnoXP(null); setWriteXP(null); setStage1Done(false);
       bumpStreak();
-      setSessionXP(cxp);
-
-      // ── Log Stage 1 (CUBE only) to Google Sheet ──────────────────────────────
-      try {
-        const kwds   = parsed?.phase1_cube?.syllabusKeywords || [];
-        const dirs   = parsed?.phase1_cube?.directives || [];
-        const marks  = parsed?.phase1_cube?.marks ?? null;
-        const cxpVal = computeCubeXP(parsed);
-        const cmaxVal = computeMaxCubeXP(parsed);
-        fetch("https://cube-proxy.alan-3e2.workers.dev/log", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type:             "FULL_ROW",
-            webhookUrl:       config.logUrl,
-            subject:          config.subjectName,
-            student:          privacyName(studentName.trim() || "anonymous"),
-            sessionId:        sid,
-            attempt:          iterCount,
-            streak:           streak,
-            question:         questionNumber,
-            modules:          [...new Set(kwds.map(k=>k.topicCode||k.module).filter(Boolean))].join(", ") || "—",
-            directives:       dirs.map(d=>d.word).join(", ") || "—",
-            syllabusKeywords: kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(" | ") || "—",
-            callType:         "STAGE1_CUBE",
-            sheetTab:         config.sheetTabCube,
-            model:            "claude-haiku-4-5-20251001",
-            cubeXP:           cxpVal,
-            cubeMax:          cmaxVal,
-            // Stage 2 fields blank at Stage 1
-            annoIdeas:"", annoUsed:"", annoXP:"",
-            wConn:"", wNoun:"", wMod:"", wFlow:"",
-            writeXP:"", writeMax:"",
-            totalXP:          cxpVal,
-            awdMark:          "",
-            questionMarks:    marks ?? "",
-            indBand:          "",
-          })
-        }); // fire-and-forget
-      } catch {}
+      setSessionXP(0);
+      // Stage 1 no longer logged separately — Stage 2 captures full session
     } catch(e) {
       if (e.name !== "AbortError") {
         console.error("Stage 1 analysis error:", e.message, e);
@@ -1008,9 +968,12 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       const annoUsedXP = annoItems.filter(a=>a.used).length; // +1 per used in response
       const annoXpVal = annoPresenceXP + annoUsedXP;
       setAnnoXP(annoXpVal);
+      // ── Score student CUBE attempt in Stage 2 using the stored Haiku result ──
+      const cxpStage2 = computeCubeXP(results);
+      setCubeXP(cxpStage2);
       // Also store breakdown for display
       setAnnotationIdeas({presence: annoPresenceXP, used: annoUsedXP, items: annoItems});
-      setSessionXP((cubeXP||0) + annoXpVal + totalScore(parsed));
+      setSessionXP(cxpStage2 + annoXpVal + totalScore(parsed));
       // Log to webhook
       try {
         // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
@@ -1048,7 +1011,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             callType:         "STAGE2_MARK",
             sheetTab:         config.sheetTabFull,
             model:            "claude-sonnet-4-20250514",
-            cubeXP:           cubeXP || 0,
+            cubeXP:           cxpStage2,
             cubeMax:          dirs.length + kwds.length + (c1.constraints||[]).length + (c1.evidenceRequired?1:0),
             annoIdeas:        annoPresXP,
             annoUsed:         annoUsdXP,
@@ -1059,7 +1022,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             wFlow:            Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
             writeXP:          Math.min(sc, mx),
             writeMax:         mx,
-            totalXP:          (cubeXP||0) + annoTotal + Math.min(sc, mx),
+            totalXP:          cxpStage2 + annoTotal + Math.min(sc, mx),
             awdMark:          awdMark,
             questionMarks:    c1.marks ?? "",
             indBand:          indBand,
@@ -1314,35 +1277,23 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 ))}
               </div>
 
-              {/* ── CUBE XP card — student CUBE marking score ── */}
-              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                {/* Row 1: student's actual CUBE marking score */}
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px"}}>
-                  <div>
-                    <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>
-                      ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
-                    </div>
-                    {results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>{results.studentCube.feedback}</div>}
-                  </div>
-                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
-                    <span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span>
-                  </div>
-                </div>
-                {/* Divider */}
-                <div style={{height:"1px",background:"rgba(108,99,255,0.2)",marginBottom:"10px"}}/>
-                {/* Row 2: sample answer max XP */}
+              {/* ── CUBE XP card — shows model CUBE max XP for question (Stage 1 only) ── */}
+              {results&&!stage1Done&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+                {/* Sample answer max XP — student sees what is possible; their own XP scored in Stage 2 */}
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
+                  <div>
+                    <div style={{fontSize:"12px",color:"#9aabb8",marginBottom:"2px"}}>Sample answer CUBE elements in question</div>
+                    <div style={{fontSize:"11px",color:"#6c63ff",fontStyle:"italic"}}>Your CUBE attempt will be scored when your written response is marked in Stage 2</div>
+                  </div>
                   <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
-                    <span style={{fontSize:"20px",fontWeight:900,color:"#555"}}>{results ? computeMaxCubeXP(results) : "—"}</span>
+                    <span style={{fontSize:"20px",fontWeight:900,color:"#a89fff"}}>{computeMaxCubeXP(results)}</span>
                     <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
                   </div>
                 </div>
               </div>}
 
               {/* ── Upload + Ready buttons in CUBE tab ── */}
-              {cubeXP!==null&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
+              {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
 
                 <button onClick={()=>{
@@ -1633,6 +1584,30 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                   <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
                 </div>
               </PaperCard>
+
+              {/* ── CUBE score (from Stage 2, using Haiku result) — shown above annotation ── */}
+              {cubeXP!==null&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
+                  <div>
+                    <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"2px"}}>
+                      ⚡ <span style={{background:"rgba(201,168,76,0.25)",border:"1px solid #c9a84c",borderRadius:"4px",padding:"0 6px",color:"#c9a84c"}}>CUBE</span> elements found in your response
+                    </div>
+                    {results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic"}}>{results.studentCube.feedback}</div>}
+                  </div>
+                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
+                    <span style={{fontSize:"26px",fontWeight:900,color:"#a89fff"}}>{cubeXP}</span>
+                    <span style={{fontSize:"12px",color:"#c9a84c",marginLeft:"4px"}}>your XP</span>
+                  </div>
+                </div>
+                <div style={{height:"1px",background:"rgba(108,99,255,0.2)",marginBottom:"8px"}}/>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{fontSize:"12px",color:"#9aabb8"}}>Sample answer CUBE elements in question</div>
+                  <div style={{textAlign:"right",flexShrink:0,marginLeft:"12px"}}>
+                    <span style={{fontSize:"18px",fontWeight:900,color:"#555"}}>{results ? computeMaxCubeXP(results) : "—"}</span>
+                    <span style={{fontSize:"11px",color:"#555",marginLeft:"3px"}}>max XP</span>
+                  </div>
+                </div>
+              </div>}
 
               {/* ── Annotation ideas check (from Stage 2) — all inside card, photo at bottom ── */}
               {stage2Results?.annotationCheck?.length>0&&<Card bg="rgba(108,99,255,0.06)" border="rgba(108,99,255,0.3)">
