@@ -1543,6 +1543,28 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                       : <div style={{fontSize:"11px",color:"#666",fontStyle:"italic"}}>No ideas to check</div>
                     }
                   </div>
+                  {/* Section 3: WHERE YOUR ANNOTATIONS HAVE BEEN USED — evidence from written response */}
+                  {stage2Results?.annotationCheck?.length>0&&(()=>{
+                    const checkItems = stage2Results.annotationCheck.slice(0,6);
+                    const usedCount = checkItems.filter(a=>a.used).length;
+                    return <div style={{marginBottom:"8px",borderTop:"1px solid rgba(108,99,255,0.15)",paddingTop:"8px"}}>
+                      <div style={{fontSize:"13px",fontWeight:800,color:"#a89fff",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"6px"}}>📍 Where your annotations appear in your response</div>
+                      {usedCount===0&&<div style={{fontSize:"11px",color:"#ff8a80",fontStyle:"italic",marginBottom:"4px"}}>⚠️ None of your annotation ideas were found in your response</div>}
+                      {checkItems.map((item,i)=>(
+                        <div key={i} style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"6px",fontSize:"12px"}}>
+                          <div style={{width:"18px",height:"18px",borderRadius:"50%",background:item.used?"#43a047":"#ef5350",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px",color:"#fff",fontWeight:900,flexShrink:0,marginTop:"1px"}}>{item.used?"✓":"✗"}</div>
+                          <div style={{flex:1}}>
+                            <span style={{color:item.used?"#81c784":"#ff8a80",fontStyle:"italic"}}>{item.idea}</span>
+                            {item.used&&item.quality==="usable"&&<span style={{color:"#69f0ae",fontSize:"10px",fontWeight:800,marginLeft:"5px",background:"rgba(105,240,174,0.1)",padding:"0 4px",borderRadius:"3px"}}>DEVELOPED</span>}
+                            {item.used&&item.quality==="present"&&<span style={{color:"#ffa726",fontSize:"10px",fontWeight:800,marginLeft:"5px",background:"rgba(255,167,38,0.1)",padding:"0 4px",borderRadius:"3px"}}>MENTIONED</span>}
+                            {item.used&&item.evidence&&<span style={{color:"#777",fontSize:"11px",display:"block",marginTop:"1px"}}>"{item.evidence}"</span>}
+                            {!item.used&&<span style={{color:"#555",fontSize:"11px",display:"block",marginTop:"1px"}}>Not found in response</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>;
+                  })()}
+
                   {/* Divider */}
                   <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
                   {/* Fix 3: Remove TRY AGAIN — replace with constructive message */}
@@ -1606,44 +1628,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 </div>
               </PaperCard>
 
-              {/* ── Annotation ideas check (from Stage 2) — all inside card, photo at bottom ── */}
-              {stage2Results?.annotationCheck?.length>0&&<Card bg="rgba(108,99,255,0.06)" border="rgba(108,99,255,0.3)">
-                <SectionTitle color="#a89fff">WHERE YOUR QUESTION ANNOTATIONS HAVE BEEN USED</SectionTitle>
-                {(()=>{
-                  const items = stage2Results.annotationCheck.slice(0,6);
-                  const totalAnnoXP = items.reduce((s,a)=>s+(!a.used?0:a.quality==="usable"?2:1),0);
-                  const usedCount = items.filter(a=>a.used).length;
-                  return <>
-                    {/* Summary line */}
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"10px",padding:"6px 10px",background:"rgba(108,99,255,0.1)",borderRadius:"8px",fontFamily:"sans-serif"}}>
-                      <span style={{fontSize:"12px",color:"#a89fff",fontWeight:700}}>
-                        Used {usedCount}/{items.length} ideas
-                        {usedCount===0&&<span style={{color:"#ff8a80",marginLeft:"8px"}}>⚠️ No annotation ideas found in response</span>}
-                      </span>
-                      <span style={{fontSize:"14px",fontWeight:900,color:totalAnnoXP===0?"#ef5350":totalAnnoXP>=8?"#69f0ae":"#ffa726"}}>
-                        {totalAnnoXP} / {items.length*2} XP
-                      </span>
-                    </div>
-                    {items.map((item,i)=>{
-                      const itemXP = !item.used ? 0 : item.quality==="usable" ? 2 : 1;
-                      const xpCol = itemXP===2?"#69f0ae":itemXP===1?"#ffa726":"#444";
-                      return <div key={i} style={{display:"flex",gap:"10px",alignItems:"flex-start",marginBottom:"8px",fontFamily:"sans-serif",fontSize:"13px"}}>
-                        <div style={{width:"20px",height:"20px",borderRadius:"50%",background:item.used?"#43a047":"#ef5350",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",color:"#fff",fontWeight:900,flexShrink:0,marginTop:"1px"}}>{item.used?"✓":"✗"}</div>
-                        <div style={{flex:1}}>
-                          <span style={{color:item.used?"#81c784":"#ff8a80",fontStyle:"italic"}}>{item.idea}</span>
-                          {item.used&&item.quality==="usable"&&<span style={{color:"#69f0ae",fontSize:"10px",fontWeight:800,marginLeft:"6px",background:"rgba(105,240,174,0.1)",padding:"0 5px",borderRadius:"3px"}}>DEVELOPED</span>}
-                          {item.used&&item.quality==="present"&&<span style={{color:"#ffa726",fontSize:"10px",fontWeight:800,marginLeft:"6px",background:"rgba(255,167,38,0.1)",padding:"0 5px",borderRadius:"3px"}}>MENTIONED</span>}
-                          {item.used&&item.evidence&&<span style={{color:"#888",fontSize:"11px",display:"block",marginTop:"2px"}}>"{item.evidence}"</span>}
-                          {!item.used&&<span style={{color:"#888",fontSize:"11px",display:"block",marginTop:"2px"}}>Not found in response — missed up to +2 XP</span>}
-                        </div>
-                        <div style={{fontSize:"13px",fontWeight:900,color:xpCol,minWidth:"40px",textAlign:"right"}}>{item.used?`+${itemXP} XP`:"+0"}</div>
-                      </div>;
-                    })}
-                  </>;
-                })()}
-              </Card>}
-
-              {/* Photo below the typed response */}
+              {/* Photo below the typed response — annotation detail moved to Plan tab */}
               {pageB64&&<div style={{marginTop:"12px"}}>
                 <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
                 <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
