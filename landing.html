@@ -65,13 +65,13 @@ nav {
 
 /* ── HERO ── */
 .hero {
-  min-height: 70vh;
+  min-height: auto;
   background: 
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 90% 80%, rgba(108,99,255,0.08) 0%, transparent 50%),
     var(--navy);
   display: flex; align-items: center;
-  padding: 20px 5% 60px;
+  padding: 24px 5% 32px;
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -165,7 +165,7 @@ section { padding: 80px 5%; }
 .section-desc { color: var(--text-dim); font-size: 15px; max-width: 560px; line-height: 1.7; }
 
 /* ── HOW IT WORKS ── */
-.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 28px; }
 .how-card {
   background: linear-gradient(135deg, #0e1e34, #0a1628);
   border: 1.5px solid rgba(201,168,76,0.4); border-radius: 16px; padding: 28px 24px;
@@ -415,7 +415,7 @@ footer {
 <!-- RESEARCH STRIP -->
 <section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;">
   <div style="max-width:1100px;margin:0 auto;">
-    <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Supporting Research</div>
+    <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Supporting Research</div>
     <h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:20px;">Research supporting timely feedback</h2>
     <div style="font-size:16px;color:#b8cce0;line-height:1.85;max-width:900px;">
       <p style="margin-bottom:18px;">Timely feedback is critical for improving HSC responses because it allows students to act on advice while their thinking is still fresh, correcting errors before misconceptions become embedded and applying improvements immediately.</p>
@@ -428,7 +428,7 @@ footer {
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how">
+<section id="how" style="padding-bottom:40px !important;">
   <div class="section-inner">
     <div class="section-tag">How it works</div>
     <h2 class="section-title">Three steps to better HSC answers</h2>
@@ -572,18 +572,18 @@ footer {
 
 
 <!-- PRIVACY -->
-<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
+<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);padding-top:40px !important;padding-bottom:40px !important;">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
     <h2 class="section-title">Privacy &amp; NSW Department of Education Guidelines</h2>
-    <p style="font-size:15px;color:#b8cce0;line-height:1.7;margin-bottom:32px;max-width:820px;">This tool has been developed and is maintained by Mr Lawrance to support student learning. It is designed to align with NSW Department of Education guidance on the use of AI, including data minimisation, de-identification, and secure processing of student work.</p>
+    <p style="font-size:14px;color:#b8cce0;line-height:1.6;margin-bottom:20px;max-width:820px;">This tool has been developed and is maintained by Mr Lawrance to support student learning. It is designed to align with NSW Department of Education guidance on the use of AI, including data minimisation, de-identification, and secure processing of student work.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
 
       <!-- What IS collected -->
-      <div style="background:rgba(105,240,174,0.05);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#69f0ae;letter-spacing:0.5px;margin-bottom:12px;">✅ What is collected and used</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(105,240,174,0.05);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#69f0ae;letter-spacing:0.5px;margin-bottom:8px;">✅ What is collected and used</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>Student submissions consist of images of written work only (e.g. handwritten responses)</li>
           <li>Submissions must not include names, faces, or any identifying features</li>
           <li>Only first name and surname initial (e.g. "Steve L") may be used to personalise feedback and display class progress</li>
@@ -591,9 +591,9 @@ footer {
       </div>
 
       <!-- What is NOT collected -->
-      <div style="background:rgba(255,82,82,0.05);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#ff8a80;letter-spacing:0.5px;margin-bottom:12px;">🚫 What is NOT collected or stored</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(255,82,82,0.05);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#ff8a80;letter-spacing:0.5px;margin-bottom:8px;">🚫 What is NOT collected or stored</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>No student photos showing faces</li>
           <li>No full names</li>
           <li>No student ID numbers</li>
@@ -604,9 +604,9 @@ footer {
       </div>
 
       <!-- How data is handled -->
-      <div style="background:rgba(100,181,246,0.05);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#64b5f6;letter-spacing:0.5px;margin-bottom:12px;">🔄 How data is handled</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(100,181,246,0.05);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#64b5f6;letter-spacing:0.5px;margin-bottom:8px;">🔄 How data is handled</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>Student work is securely transmitted to an external AI service to generate feedback</li>
           <li>Images and responses are not stored after processing is complete</li>
           <li>The only data retained is first name and surname initial for classroom use (e.g. feedback display or leaderboard)</li>
@@ -614,27 +614,27 @@ footer {
       </div>
 
       <!-- De-identification -->
-      <div style="background:rgba(255,171,64,0.05);border:1px solid rgba(255,171,64,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#ffab40;letter-spacing:0.5px;margin-bottom:12px;">🪪 De-identification requirement</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(255,171,64,0.05);border:1px solid rgba(255,171,64,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#ffab40;letter-spacing:0.5px;margin-bottom:8px;">🪪 De-identification requirement</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>All submitted work must be de-identified before upload</li>
           <li>Teachers and students are responsible for ensuring no identifying information is visible</li>
         </ul>
       </div>
 
       <!-- Security -->
-      <div style="background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#a89fff;letter-spacing:0.5px;margin-bottom:12px;">🔐 Security</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#a89fff;letter-spacing:0.5px;margin-bottom:8px;">🔐 Security</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>All API access is managed securely server-side</li>
           <li>No API keys or system credentials are exposed to students</li>
         </ul>
       </div>
 
       <!-- Consent -->
-      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:20px 22px;">
-        <div style="font-weight:700;font-size:13px;color:#c9a84c;letter-spacing:0.5px;margin-bottom:12px;">📋 Consent</div>
-        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#c9a84c;letter-spacing:0.5px;margin-bottom:8px;">📋 Consent</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.6;padding-left:16px;margin:0;">
           <li>This tool is used for educational purposes to improve student writing and feedback</li>
           <li>Parent/carer consent should be obtained prior to use</li>
         </ul>
