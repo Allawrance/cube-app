@@ -65,13 +65,13 @@ nav {
 
 /* ── HERO ── */
 .hero {
-  min-height: auto;
+  min-height: 0;
   background: 
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 90% 80%, rgba(108,99,255,0.08) 0%, transparent 50%),
     var(--navy);
   display: flex; align-items: center;
-  padding: 24px 5% 32px;
+  padding: 20px 5% 24px;
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -296,15 +296,7 @@ footer {
   .staff-callout { flex-direction: column; }
 }
 
-/* Anchor offset for sticky nav inside iframe */
-[id]::before {
-  content: '';
-  display: block;
-  height: 70px;
-  margin-top: -70px;
-  visibility: hidden;
-  pointer-events: none;
-}
+/* anchor offset removed */
 </style>
 </head>
 <body id="top">
@@ -428,7 +420,7 @@ footer {
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" style="padding-bottom:40px !important;">
+<section id="how" style="padding-top:48px !important;padding-bottom:36px !important;">
   <div class="section-inner">
     <div class="section-tag">How it works</div>
     <h2 class="section-title">Three steps to better HSC answers</h2>
