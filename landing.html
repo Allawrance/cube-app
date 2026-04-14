@@ -239,7 +239,7 @@ section { padding: 80px 5%; }
 }
 .faculty-text {
   font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800;
-  letter-spacing: 3px; color: var(--gold); white-space: nowrap;
+  letter-spacing: 1px; color: var(--gold); white-space: nowrap; font-size: 13px;
 }
 .faculty-line { flex: 1; height: 1px; background: rgba(201,168,76,0.15); }
 .subjects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -381,6 +381,19 @@ footer {
   </div>
 </div>
 
+<!-- RESEARCH STRIP -->
+<div style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:28px 5%;">
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;">
+    <div style="font-size:36px;line-height:1;">🔬</div>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#a89fff;margin-bottom:6px;">Why timely feedback matters</div>
+      <div style="font-size:13px;color:#9aabb8;line-height:1.6;max-width:800px;">
+        Timely feedback is critical for improving HSC responses because it allows students to act on advice while their thinking is still fresh, correcting errors before misconceptions become embedded and applying improvements immediately. Research consistently identifies feedback as one of the <strong style="color:#e8eaf0;">highest-impact strategies in education</strong> — the Education Endowment Foundation (2021) reports it can advance learning by several months' worth of progress on average, with benefits especially pronounced in science subjects. Students who receive prompt, specific feedback score significantly higher on assessments than those who do not, and also show improved engagement and confidence in their learning (Oliver, 2025). Crucially, immediate feedback produces significantly larger performance gains than delayed feedback on the same material (Stenger, 2014). Without timely feedback, students risk embedding incorrect understanding and compounding gaps in their knowledge (Boxer, 2020; Indiana University Center for Innovative Teaching and Learning, 2023). Emerging research also confirms that <strong style="color:#e8eaf0;">AI-generated feedback can meaningfully improve students' revision quality, motivation, and cognitive outcomes</strong> (Meyer et al., 2024). The CUBE Marking Coach applies these principles directly — providing immediate, targeted feedback on how well students analyse the question and construct their response, making the thinking process visible and actionable. Rather than simply seeing a Band, students understand exactly what to change and why, building habits of accurate question breakdown, clearer reasoning, and continuous improvement across HSC-style responses.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
 <section id="how">
   <div class="section-inner">
@@ -392,7 +405,7 @@ footer {
       <div class="how-card">
         <div class="how-num">1</div>
         <div class="how-icon">✏️</div>
-        <div class="how-title">CUBE the question</div>
+        <div class="how-title">CUBE &amp; Answer</div>
         <div class="how-desc">Circle the directive verb, Underline syllabus keywords, Box constraints and scope words. Then write your response. The AI checks whether you identified the right elements.</div>
       </div>
       <div class="how-card">
@@ -474,7 +487,7 @@ footer {
   <div class="section-inner">
     <div class="section-tag">What to know</div>
     <h2 class="section-title">Limitations &amp; honest expectations</h2>
-    <p class="section-desc">This tool is designed to support your learning — not replace your teacher. Here's what it can and can't do.</p>
+    <p class="section-desc">This tool is designed to support your learning — not replace your teacher, and here is what it can and can't do.</p>
 
     <div class="limits-grid">
       <div class="limit-card">
@@ -532,116 +545,114 @@ footer {
 
     <div style="margin-top:40px;">
 
-      <!-- SCIENCE -->
-      <div class="faculty-block">
-        <div class="faculty-label">
-          <div class="faculty-line"></div>
-          <div class="faculty-text">Science</div>
-          <div class="faculty-line"></div>
+      <!-- ── ACTIVE SUBJECTS FIRST — prominent row ── -->
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <span style="flex:1;height:1px;background:rgba(201,168,76,0.2);display:block;"></span>
+          <span>Available now</span>
+          <span style="flex:1;height:1px;background:rgba(201,168,76,0.2);display:block;"></span>
         </div>
-        <div class="subjects-grid">
-          <a href="#" class="subj-card ees">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px;">
+          <!-- Science -->
+          <a href="#" class="subj-card ees" style="border-color:rgba(46,125,50,0.6);">
+            <div style="font-size:10px;font-weight:700;color:#69f0ae;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Science</div>
             <div class="subj-emoji">🌏</div>
             <div class="subj-name">Earth &amp; Environmental Science</div>
             <div class="subj-code">EES</div>
           </a>
-          <div class="subj-card soon">
-            <div class="subj-emoji">🧬</div>
-            <div class="subj-name">Biology</div>
-            <div class="subj-code">BIO</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
-          <div class="subj-card soon">
-            <div class="subj-emoji">⚗️</div>
-            <div class="subj-name">Chemistry</div>
-            <div class="subj-code">CHEM</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
-          <div class="subj-card soon">
-            <div class="subj-emoji">🗺️</div>
-            <div class="subj-name">Geography</div>
-            <div class="subj-code">GEO</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- HISE -->
-      <div class="faculty-block">
-        <div class="faculty-label">
-          <div class="faculty-line"></div>
-          <div class="faculty-text">HISE</div>
-          <div class="faculty-line"></div>
-        </div>
-        <div class="subjects-grid">
-          <a href="#" class="subj-card bus">
+          <!-- HISE -->
+          <a href="#" class="subj-card bus" style="border-color:rgba(21,101,192,0.6);">
+            <div style="font-size:10px;font-weight:700;color:#64b5f6;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">HISE</div>
             <div class="subj-emoji">📊</div>
             <div class="subj-name">Business Studies</div>
             <div class="subj-code">BusS</div>
           </a>
-          <div class="subj-card soon">
-            <div class="subj-emoji">📜</div>
-            <div class="subj-name">Modern History</div>
-            <div class="subj-code">MH</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
-          <div class="subj-card soon">
-            <div class="subj-emoji">⚖️</div>
-            <div class="subj-name">Legal Studies</div>
-            <div class="subj-code">LEG</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
-          <div class="subj-card soon">
-            <div class="subj-emoji">💹</div>
-            <div class="subj-name">Economics</div>
-            <div class="subj-code">ECO</div>
-            <div class="subj-soon">coming soon</div>
-          </div>
+          <!-- PDHPE -->
+          <a href="#" class="subj-card hlth" style="border-color:rgba(0,105,92,0.6);">
+            <div style="font-size:10px;font-weight:700;color:#80cbc4;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">PDHPE</div>
+            <div class="subj-emoji">🏃</div>
+            <div class="subj-name">Health &amp; Movement Science</div>
+            <div class="subj-code">HlthM</div>
+          </a>
+          <!-- TAS -->
+          <a href="#" class="subj-card engs" style="border-color:rgba(191,54,12,0.6);">
+            <div style="font-size:10px;font-weight:700;color:#ffab91;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">TAS</div>
+            <div class="subj-emoji">⚙️</div>
+            <div class="subj-name">Engineering Studies</div>
+            <div class="subj-code">EngS</div>
+          </a>
         </div>
       </div>
 
-      <!-- PDHPE + TAS side by side -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
-        <div class="faculty-block" style="margin-bottom:0;">
-          <div class="faculty-label">
-            <div class="faculty-line"></div>
-            <div class="faculty-text">PDHPE</div>
-            <div class="faculty-line"></div>
+      <!-- ── COMING SOON — by faculty ── -->
+      <div style="font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+        <span style="flex:1;height:1px;background:rgba(255,255,255,0.06);display:block;"></span>
+        <span>Coming soon</span>
+        <span style="flex:1;height:1px;background:rgba(255,255,255,0.06);display:block;"></span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;">
+
+        <!-- Science column -->
+        <div>
+          <div style="font-size:11px;font-weight:800;color:rgba(105,240,174,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(105,240,174,0.1);">Science</div>
+          <div class="subj-card soon" style="margin-bottom:8px;">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">🧬</div>
+            <div class="subj-name" style="font-size:12px;">Biology</div>
+            <div class="subj-code">BIO</div>
           </div>
-          <div class="subjects-grid" style="grid-template-columns:1fr 1fr;">
-            <a href="#" class="subj-card hlth">
-              <div class="subj-emoji">🏃</div>
-              <div class="subj-name">Health &amp; Movement Science</div>
-              <div class="subj-code">HlthM</div>
-            </a>
-            <div class="subj-card soon">
-              <div class="subj-emoji">🤸</div>
-              <div class="subj-name">PDHPE</div>
-              <div class="subj-code">PDH</div>
-              <div class="subj-soon">coming soon</div>
-            </div>
+          <div class="subj-card soon" style="margin-bottom:8px;">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">⚗️</div>
+            <div class="subj-name" style="font-size:12px;">Chemistry</div>
+            <div class="subj-code">CHEM</div>
           </div>
-        </div>
-        <div class="faculty-block" style="margin-bottom:0;">
-          <div class="faculty-label">
-            <div class="faculty-line"></div>
-            <div class="faculty-text">TAS</div>
-            <div class="faculty-line"></div>
-          </div>
-          <div class="subjects-grid" style="grid-template-columns:1fr 1fr;">
-            <a href="#" class="subj-card engs">
-              <div class="subj-emoji">⚙️</div>
-              <div class="subj-name">Engineering Studies</div>
-              <div class="subj-code">EngS</div>
-            </a>
-            <div class="subj-card soon">
-              <div class="subj-emoji">💻</div>
-              <div class="subj-name">Software Design</div>
-              <div class="subj-code">SDD</div>
-              <div class="subj-soon">coming soon</div>
-            </div>
+          <div class="subj-card soon">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">🗺️</div>
+            <div class="subj-name" style="font-size:12px;">Geography</div>
+            <div class="subj-code">GEO</div>
           </div>
         </div>
+
+        <!-- HISE column -->
+        <div>
+          <div style="font-size:11px;font-weight:800;color:rgba(100,181,246,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(100,181,246,0.1);">HISE</div>
+          <div class="subj-card soon" style="margin-bottom:8px;">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">📜</div>
+            <div class="subj-name" style="font-size:12px;">Modern History</div>
+            <div class="subj-code">MH</div>
+          </div>
+          <div class="subj-card soon" style="margin-bottom:8px;">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">⚖️</div>
+            <div class="subj-name" style="font-size:12px;">Legal Studies</div>
+            <div class="subj-code">LEG</div>
+          </div>
+          <div class="subj-card soon">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">💹</div>
+            <div class="subj-name" style="font-size:12px;">Economics</div>
+            <div class="subj-code">ECO</div>
+          </div>
+        </div>
+
+        <!-- PDHPE column -->
+        <div>
+          <div style="font-size:11px;font-weight:800;color:rgba(128,203,196,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(128,203,196,0.1);">PDHPE</div>
+          <div class="subj-card soon">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">🤸</div>
+            <div class="subj-name" style="font-size:12px;">PDHPE</div>
+            <div class="subj-code">PDH</div>
+          </div>
+        </div>
+
+        <!-- TAS column -->
+        <div>
+          <div style="font-size:11px;font-weight:800;color:rgba(255,171,145,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,171,145,0.1);">TAS</div>
+          <div class="subj-card soon">
+            <div class="subj-emoji" style="font-size:18px;margin-bottom:4px;">💻</div>
+            <div class="subj-name" style="font-size:12px;">Software Design &amp; Development</div>
+            <div class="subj-code">SDD</div>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -652,8 +663,7 @@ footer {
       <div>
         <div class="staff-title">For Head Teachers &amp; Senior Staff</div>
         <div class="staff-desc">
-          This tool is independently built and maintained by a classroom teacher using the Anthropic Claude API. It operates within NSW DET guidelines — no student data beyond first name + initial is stored, and no full responses are retained.<br><br>
-          Subjects marked <em>"coming soon"</em> can be added by configuring a subject-specific syllabus file. If you'd like to pilot CUBE Marking Coach in your faculty, please speak to your subject coordinator. Syllabus coverage, directive verb maps and rubric criteria are fully customisable per subject.
+          This tool is independently built and maintained by a classroom teacher using the Anthropic Claude API. It operates within NSW DET guidelines — no student data beyond first name + initial is stored, and no full responses are retained. If you'd like to see CUBE Marking Coach extended to your subject, please speak to Mr Lawrance.
         </div>
       </div>
     </div>
@@ -667,8 +677,20 @@ footer {
     <div class="nav-badge" style="font-size:11px;padding:2px 8px;">CUBE</div>
     <span>CUBE Marking Coach — HSC Learning Support Tool</span>
   </div>
-  <div>Built by a teacher, for students · NSW HSC aligned</div>
+  <div>Built by Mr Lawrance · NSW HSC aligned</div>
 </footer>
 
+<script>
+// Tell Google Sites iframe the full document height so it removes the internal scrollbar
+function sendHeight() {
+  const h = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: 'setHeight', height: h }, '*');
+}
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+// Also send after fonts/images load
+setTimeout(sendHeight, 500);
+setTimeout(sendHeight, 1500);
+</script>
 </body>
 </html>
