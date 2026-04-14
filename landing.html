@@ -575,30 +575,71 @@ footer {
 <section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
-    <h2 class="section-title">Privacy &amp; NSW DET Guidelines</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px;">
-      <div>
-        <div style="font-size:15px;color:#b8cce0;line-height:1.8;">
-          <p style="margin-bottom:16px;">This tool is a teacher-initiated classroom support tool built and maintained by Mr Lawrance using the Anthropic Claude API. It has not been submitted for formal DET Safe AI Ethics Assessment — responsibility for its use rests with the teacher, in line with NSW DET guidance on teacher-initiated AI tools.</p>
-          <p style="margin-bottom:16px;">By design, this tool minimises personal data in line with DET minimum safety practices: no student surnames, IDs, school names or full responses are collected or stored. The only persistent data is first name + surname initial (e.g. "Steve M"), used solely to personalise feedback and appear on the class leaderboard.</p>
-          <p style="margin-bottom:16px;">Student photos are transmitted securely via an encrypted Cloudflare proxy to the Anthropic Claude API for processing and are not retained after marking. All API keys are stored server-side — no credentials are accessible to students or embedded in the app.</p>
-          <p>If you would like to see CUBE Marking Coach extended to your subject or have questions about its use, please speak to Mr Lawrance.</p>
-        </div>
+    <h2 class="section-title">Privacy &amp; NSW Department of Education Guidelines</h2>
+    <p style="font-size:15px;color:#b8cce0;line-height:1.7;margin-bottom:32px;max-width:820px;">This tool has been developed and is maintained by Mr Lawrance to support student learning. It is designed to align with NSW Department of Education guidance on the use of AI, including data minimisation, de-identification, and secure processing of student work.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+      <!-- What IS collected -->
+      <div style="background:rgba(105,240,174,0.05);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#69f0ae;letter-spacing:0.5px;margin-bottom:12px;">✅ What is collected and used</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>Student submissions consist of images of written work only (e.g. handwritten responses)</li>
+          <li>Submissions must not include names, faces, or any identifying features</li>
+          <li>Only first name and surname initial (e.g. "Steve L") may be used to personalise feedback and display class progress</li>
+        </ul>
       </div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="background:rgba(105,240,174,0.06);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:16px 18px;">
-          <div style="font-weight:700;font-size:13px;color:#69f0ae;margin-bottom:4px;">✅ What is stored</div>
-          <div style="font-size:13px;color:#b8cce0;line-height:1.6;">First name + surname initial only (e.g. "Steve M"). No photos, no full responses, no student IDs.</div>
-        </div>
-        <div style="background:rgba(255,82,82,0.06);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:16px 18px;">
-          <div style="font-weight:700;font-size:13px;color:#ff8a80;margin-bottom:4px;">🚫 What is not stored</div>
-          <div style="font-size:13px;color:#b8cce0;line-height:1.6;">Photos, full student responses, surnames, student IDs, class lists or any other identifying information.</div>
-        </div>
-        <div style="background:rgba(100,181,246,0.06);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:16px 18px;">
-          <div style="font-weight:700;font-size:13px;color:#64b5f6;margin-bottom:4px;">🔐 API security</div>
-          <div style="font-size:13px;color:#b8cce0;line-height:1.6;">All API keys are stored server-side via a Cloudflare proxy. No credentials are exposed to students or embedded in the app.</div>
-        </div>
+
+      <!-- What is NOT collected -->
+      <div style="background:rgba(255,82,82,0.05);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#ff8a80;letter-spacing:0.5px;margin-bottom:12px;">🚫 What is NOT collected or stored</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>No student photos showing faces</li>
+          <li>No full names</li>
+          <li>No student ID numbers</li>
+          <li>No class lists</li>
+          <li>No identifying personal information</li>
+          <li>No full student responses are retained after processing</li>
+        </ul>
       </div>
+
+      <!-- How data is handled -->
+      <div style="background:rgba(100,181,246,0.05);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#64b5f6;letter-spacing:0.5px;margin-bottom:12px;">🔄 How data is handled</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>Student work is securely transmitted to an external AI service to generate feedback</li>
+          <li>Images and responses are not stored after processing is complete</li>
+          <li>The only data retained is first name and surname initial for classroom use (e.g. feedback display or leaderboard)</li>
+        </ul>
+      </div>
+
+      <!-- De-identification -->
+      <div style="background:rgba(255,171,64,0.05);border:1px solid rgba(255,171,64,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#ffab40;letter-spacing:0.5px;margin-bottom:12px;">🪪 De-identification requirement</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>All submitted work must be de-identified before upload</li>
+          <li>Teachers and students are responsible for ensuring no identifying information is visible</li>
+        </ul>
+      </div>
+
+      <!-- Security -->
+      <div style="background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#a89fff;letter-spacing:0.5px;margin-bottom:12px;">🔐 Security</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>All API access is managed securely server-side</li>
+          <li>No API keys or system credentials are exposed to students</li>
+        </ul>
+      </div>
+
+      <!-- Consent -->
+      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:20px 22px;">
+        <div style="font-weight:700;font-size:13px;color:#c9a84c;letter-spacing:0.5px;margin-bottom:12px;">📋 Consent</div>
+        <ul style="font-size:13px;color:#b8cce0;line-height:1.8;padding-left:18px;margin:0;">
+          <li>This tool is used for educational purposes to improve student writing and feedback</li>
+          <li>Parent/carer consent should be obtained prior to use</li>
+        </ul>
+      </div>
+
     </div>
   </div>
 </section>
