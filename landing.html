@@ -93,7 +93,7 @@ nav {
   color: var(--text); margin-bottom: 20px;
 }
 .hero h1 span { color: var(--gold); }
-.hero-desc { font-size: 16px; color: var(--text-dim); line-height: 1.7; margin-bottom: 32px; max-width: 480px; }
+.hero-desc { font-size: 16px; color: #c8daea; line-height: 1.7; margin-bottom: 32px; max-width: 480px; }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn-primary {
   background: linear-gradient(135deg, var(--gold), var(--gold-light));
@@ -168,21 +168,21 @@ section { padding: 80px 5%; }
 .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
 .how-card {
   background: linear-gradient(135deg, #0e1e34, #0a1628);
-  border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px;
+  border: 1.5px solid rgba(201,168,76,0.4); border-radius: 16px; padding: 28px 24px;
   position: relative; transition: border-color 0.3s, transform 0.3s;
 }
-.how-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-3px); }
+.how-card:hover { border-color: rgba(201,168,76,0.8); transform: translateY(-3px); }
 .how-num {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 800;
-  color: rgba(201,168,76,0.15); position: absolute; top: 16px; right: 20px;
-  line-height: 1;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800;
+  color: var(--gold); position: absolute; top: 14px; right: 18px;
+  line-height: 1; opacity: 0.9;
 }
 .how-icon { font-size: 32px; margin-bottom: 16px; }
 .how-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 8px; }
 .how-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
 /* ── PHOTO GUIDE ── */
-.photo-section { background: linear-gradient(135deg, #080f1c, #0a1220); }
+.photo-section { background: linear-gradient(135deg, #080f1c, #0a1220); padding-top: 48px !important; }
 .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
 .photo-col h3 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .photo-col h3.good { color: #69f0ae; }
@@ -297,7 +297,7 @@ footer {
 }
 </style>
 </head>
-<body>
+<body id="top">
 
 <!-- NAV -->
 <nav>
@@ -309,13 +309,13 @@ footer {
     </div>
   </div>
   <div class="nav-links">
+    <a href="#top">Home</a>
     <a href="#how">How it works</a>
     <a href="#research">Supporting Research</a>
     <a href="#photos">Photo guide</a>
     <a href="#limits">Limitations</a>
-    <a href="#privacy">Privacy</a>
   </div>
-  <a href="#privacy" class="nav-cta">Privacy →</a>
+
 </nav>
 
 <!-- HERO -->
@@ -326,10 +326,7 @@ footer {
       <p class="hero-desc">
         The CUBE Marking Coach uses AI to analyse your written responses, check your CUBE annotations, and give you personalised feedback — instantly, any time.
       </p>
-      <div class="hero-actions" style="margin-bottom:32px;">
-        <a href="#how" class="btn-secondary">How it works</a>
-      </div>
-      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:28px;">
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:28px;margin-top:8px;">
         <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Select your subject</div>
         <div id="subjects" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
           <a href="#" class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:14px;">
@@ -452,7 +449,7 @@ footer {
     <h2 class="section-title">Getting your photo right</h2>
     <p class="section-desc">Photo quality directly affects marking accuracy. Take 10 seconds to get it right and you'll get much better feedback.</p>
 
-    <div class="photo-grid" style="margin-top:40px;">
+    <div class="photo-grid" style="margin-top:16px;">
       <div class="photo-col">
         <h3 class="good">✅ Do this</h3>
         <div class="photo-item good">
@@ -575,7 +572,7 @@ footer {
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div style="background:rgba(105,240,174,0.06);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:16px 18px;">
           <div style="font-weight:700;font-size:13px;color:#69f0ae;margin-bottom:4px;">✅ What is stored</div>
-          <div style="font-size:13px;color:#b8cce0;line-height:1.6;">First name + surname initial only (e.g. "Alan L"). No photos, no full responses, no student IDs.</div>
+          <div style="font-size:13px;color:#b8cce0;line-height:1.6;">First name + surname initial only (e.g. "Steve M"). No photos, no full responses, no student IDs.</div>
         </div>
         <div style="background:rgba(255,82,82,0.06);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:16px 18px;">
           <div style="font-weight:700;font-size:13px;color:#ff8a80;margin-bottom:4px;">🚫 What is not stored</div>
@@ -613,4 +610,3 @@ setTimeout(sendHeight, 1500);
 </script>
 </body>
 </html>
-
