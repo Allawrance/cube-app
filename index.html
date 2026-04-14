@@ -922,21 +922,30 @@ Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
 
 CUBE MARKING — CHECK THE PRINTED QUESTION LINE ONLY (ignore the handwritten answer below):
 The question text is: "${sanitiseInput(c1.questionText)}"
-Look ONLY at this printed line in the image. For each word below, check if the student made a pen mark on it:
-- Words to be CIRCLED (directive verbs): ${dirs.map(d=>d.word).join(", ")||"none"}
-- Words to be UNDERLINED with solid pen (syllabus keywords): ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
-- Words to be BOXED (constraint/scope words): ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
-${c1.evidenceRequired ? "- Words to be marked wavy (evidence required)" : ""}
-NOTE: The worksheet has DOTTED ruled lines for writing. These are background — not student marks. A student underline is a SOLID continuous pen stroke under specific words on the question line.
+
+For EACH word/phrase listed below, carefully inspect the printed question text in the image for ANY pen mark made by the student ON or AROUND that word:
+- CIRCLED words (directive verbs — look for oval/circle drawn around the word): ${dirs.map(d=>d.word).join(", ")||"none"}
+- UNDERLINED words (syllabus keywords — look for any pen line under the word, straight or wavy): ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
+- BOXED words (constraint/scope — look for rectangle or bracket drawn around the word or phrase): ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
+${c1.evidenceRequired ? "- WAVY underline words (evidence required)" : ""}
+
+IMPORTANT MARKING RULES:
+- The dotted ruled lines on the worksheet are PRINTED BACKGROUND — ignore them entirely. Only count pen marks students drew themselves.
+- Be GENEROUS in crediting marks: if you can see ANY pen mark at all on or around the word, count it as marked. Only mark as missed if there is clearly NO mark whatsoever.
+- A circle may be rough or imperfect — any oval or loop around a directive word counts.
+- An underline may be straight or wavy — any pen stroke under a keyword counts.
+- A box may be rough or use brackets — any rectangle or enclosure around a constraint phrase counts.
+- Report each correctly marked word in the appropriate array (circled/underlined/boxed).
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
 STRICT RULES for annotations:
-- Annotations are BRIEF planning notes: single words or short phrases of 2-4 words MAX (e.g. "Mt Pinatubo", "PRO/CON", "seismic monitoring").
-- A full sentence is NEVER an annotation — if it is a sentence, it is part of the written response. Reject it.
-- Handwriting above the question that looks like a continuation of a previous answer is NOT an annotation. Ignore it.
-- Only count brief handwritten notes that are clearly beside or immediately above the printed question.
-- If you see no such brief notes → annotationIdeas = []
-- If in doubt → annotationIdeas = []
+- Annotations are planning notes written ABOVE or BESIDE the printed question — NOT part of the written response below.
+- They may be single words, short phrases, or brief dot-points including symbols (e.g. "PRO/CON", "↑Fertility long term", "covered with ash", "superposition (relative dating)").
+- They may include arrows, +/- symbols, pro/con labels, chemical formulas, or brief labels up to ~6 words.
+- A full grammatical sentence (subject + verb + object) is NEVER an annotation — reject it.
+- Handwriting that is clearly a continuation of an answer from the question above is NOT an annotation. Ignore it.
+- Only count notes clearly written near the printed question stem, not inside the lined answer space.
+- If you see no such notes → annotationIdeas = []
 After identifying any genuine brief annotations, check whether each appears in the written response.
 
 Transcribe and mark ONLY the handwritten response to this question. Return JSON only.` }
@@ -1513,7 +1522,26 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                         <span style={{fontSize:"11px",color:"#c9a84c",marginLeft:"3px"}}>/ {maxCubeXP} XP</span>
                       </div>
                     </div>
-                    {stage2Results?.studentCube?.feedback&&<div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic",marginBottom:"4px"}}>{stage2Results.studentCube.feedback}</div>}
+                    {(()=>{
+                      const sc = stage2Results?.studentCube;
+                      const c1 = results?.phase1_cube;
+                      if (!sc || !c1) return null;
+                      const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
+                      const kwds = c1.syllabusKeywords?.length ? c1.syllabusKeywords : [];
+                      const cons = c1.constraints||[];
+                      const circled = sc.circled||[];
+                      const underlined = sc.underlined||[];
+                      const boxed = sc.boxed||[];
+                      const found=[], missed=[];
+                      dirs.forEach(d=>{ const w=d.word||d; (circled.some(c=>(c.word||c).toLowerCase()===w.toLowerCase())?found:missed).push(`circled '${w}'`); });
+                      kwds.forEach(k=>{ const w=k.word||k.topicTitle||k; (underlined.some(u=>(u.word||u).toLowerCase()===w.toLowerCase())?found:missed).push(`underlined '${w}'`); });
+                      cons.forEach(c=>{ const w=c.text||c; (boxed.some(b=>(b.word||b).toLowerCase()===w.toLowerCase())?found:missed).push(`boxed '${w}'`); });
+                      const parts=[];
+                      if(found.length) parts.push("Correctly "+found.join(", "));
+                      if(missed.length) parts.push("missed "+missed.join(", "));
+                      const msg = parts.join(" — ");
+                      return msg ? <div style={{fontSize:"11px",color:"#9aabb8",fontStyle:"italic",marginBottom:"4px"}}>{msg}.</div> : null;
+                    })()}
                     <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
                   </>}
 
