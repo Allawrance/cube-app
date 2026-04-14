@@ -155,7 +155,7 @@ nav {
 .xp-score { font-family: 'Syne',sans-serif; font-weight: 800; font-size: 20px; color: var(--gold); }
 
 /* ── SECTION WRAPPER ── */
-section { padding: 80px 5%; scroll-margin-top: 70px; }
+section { padding: 80px 5%; }
 .section-inner { max-width: 1100px; margin: 0 auto; }
 .section-tag {
   font-size: 11px; font-weight: 700; color: var(--gold);
@@ -295,9 +295,19 @@ footer {
   .nav-links { display: none; }
   .staff-callout { flex-direction: column; }
 }
+
+/* Anchor offset for sticky nav inside iframe */
+[id]::before {
+  content: '';
+  display: block;
+  height: 70px;
+  margin-top: -70px;
+  visibility: hidden;
+  pointer-events: none;
+}
 </style>
 </head>
-<body id="top" style="scroll-behavior:smooth;">
+<body id="top">
 
 <!-- NAV -->
 <nav>
@@ -399,7 +409,7 @@ footer {
 </div>
 
 <!-- RESEARCH STRIP -->
-<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;scroll-margin-top:70px;">
+<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;">
   <div style="max-width:1100px;margin:0 auto;">
     <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Supporting Research</div>
     <h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:20px;">Research supporting timely feedback</h2>
@@ -558,7 +568,7 @@ footer {
 
 
 <!-- PRIVACY -->
-<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);scroll-margin-top:70px;">
+<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
     <h2 class="section-title">Privacy &amp; NSW DET Guidelines</h2>
