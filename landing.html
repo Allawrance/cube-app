@@ -52,8 +52,8 @@ nav {
 }
 .nav-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px; color: var(--text); }
 .nav-sub { font-size: 11px; color: var(--text-dim); }
-.nav-links { display: flex; gap: 24px; }
-.nav-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.nav-links { display: flex; gap: 16px; }
+.nav-links a { color: var(--text-dim); text-decoration: none; font-size: 12px; transition: color 0.2s; white-space: nowrap; }
 .nav-links a:hover { color: var(--gold); }
 .nav-cta {
   background: var(--gold); color: var(--navy);
@@ -155,7 +155,7 @@ nav {
 .xp-score { font-family: 'Syne',sans-serif; font-weight: 800; font-size: 20px; color: var(--gold); }
 
 /* ── SECTION WRAPPER ── */
-section { padding: 80px 5%; }
+section { padding: 80px 5%; scroll-margin-top: 70px; }
 .section-inner { max-width: 1100px; margin: 0 auto; }
 .section-tag {
   font-size: 11px; font-weight: 700; color: var(--gold);
@@ -297,7 +297,7 @@ footer {
 }
 </style>
 </head>
-<body id="top">
+<body id="top" style="scroll-behavior:smooth;">
 
 <!-- NAV -->
 <nav>
@@ -330,19 +330,19 @@ footer {
       <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:28px;margin-top:8px;">
         <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Select your subject</div>
         <div id="subjects" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-          <a href="#" class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:14px;">
+          <a href="https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home" target="_blank" class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:14px;">
             <div style="font-size:9px;font-weight:700;color:#69f0ae;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Science</div>
             <div style="font-size:14px;font-weight:700;color:var(--text);">🌏 Earth &amp; Environmental Science</div>
           </a>
-          <a href="#" class="subj-card bus" style="border-color:rgba(21,101,192,0.6);text-align:left;padding:14px;">
+          <a href="https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/buss" target="_blank" class="subj-card bus" style="border-color:rgba(21,101,192,0.6);text-align:left;padding:14px;">
             <div style="font-size:9px;font-weight:700;color:#64b5f6;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">HISE</div>
             <div style="font-size:14px;font-weight:700;color:var(--text);">📊 Business Studies</div>
           </a>
-          <a href="#" class="subj-card hlth" style="border-color:rgba(0,105,92,0.6);text-align:left;padding:14px;">
+          <a href="https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/hlthm" target="_blank" class="subj-card hlth" style="border-color:rgba(0,105,92,0.6);text-align:left;padding:14px;">
             <div style="font-size:9px;font-weight:700;color:#80cbc4;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">PDHPE</div>
             <div style="font-size:14px;font-weight:700;color:var(--text);">🏃 Health &amp; Movement Science</div>
           </a>
-          <a href="#" class="subj-card engs" style="border-color:rgba(191,54,12,0.6);text-align:left;padding:14px;">
+          <a href="https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/engs" target="_blank" class="subj-card engs" style="border-color:rgba(191,54,12,0.6);text-align:left;padding:14px;">
             <div style="font-size:9px;font-weight:700;color:#ffab91;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">TAS</div>
             <div style="font-size:14px;font-weight:700;color:var(--text);">⚙️ Engineering Studies</div>
           </a>
@@ -399,7 +399,7 @@ footer {
 </div>
 
 <!-- RESEARCH STRIP -->
-<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;">
+<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;scroll-margin-top:70px;">
   <div style="max-width:1100px;margin:0 auto;">
     <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Supporting Research</div>
     <h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:20px;">Research supporting timely feedback</h2>
@@ -558,7 +558,7 @@ footer {
 
 
 <!-- PRIVACY -->
-<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
+<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);scroll-margin-top:70px;">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
     <h2 class="section-title">Privacy &amp; NSW DET Guidelines</h2>
