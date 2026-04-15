@@ -763,7 +763,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           syllabus: config.syllabus,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`For Question ${sanitiseInput(questionNumber)} in this image, do TWO things and return BOTH in JSON:\n1. Apply CUBE to the printed question text (phase1_cube).\n2. Look carefully at the printed question text for any handwritten pen marks the student made DIRECTLY ON the question words — circles/ovals around words, underlines under words, boxes/rectangles around words, or wavy lines. Report these in studentCube. If you see NO marks on the question text, return empty arrays and score:0.\nDo NOT read or transcribe the student written answer below the question.` }
+            { type:"text", text:`For Question ${sanitiseInput(questionNumber)} in this image, do TWO things and return BOTH in JSON:\n1. Apply CUBE to the printed question text (phase1_cube).\n2. CAREFULLY inspect the printed question text for any handwritten marks a student made DIRECTLY ON the question words. These marks may be in pen OR pencil (pencil appears light grey/faint — look closely at all words). Look for: circles or ovals drawn around words, rectangular boxes around words or phrases, underlines (straight or wavy) beneath words. Even faint or partial pencil marks count. Report these in studentCube. If after careful inspection you see NO marks on the question text, return empty arrays and score:0.\nDo NOT read or transcribe the student written answer below the question.` }
           ]}]
         })
       });
@@ -936,11 +936,11 @@ For EACH word/phrase listed below, carefully inspect the printed question text i
 ${c1.evidenceRequired ? "- WAVY underline words (evidence required)" : ""}
 
 IMPORTANT MARKING RULES:
-- The dotted ruled lines on the worksheet are PRINTED BACKGROUND — ignore them entirely. Only count pen marks students drew themselves.
-- Be GENEROUS in crediting marks: if you can see ANY pen mark at all on or around the word, count it as marked. Only mark as missed if there is clearly NO mark whatsoever.
-- A circle may be rough or imperfect — any oval or loop around a directive word counts.
-- An underline may be straight or wavy — any pen stroke under a keyword counts.
-- A box may be rough or use brackets — any rectangle or enclosure around a constraint phrase counts.
+- The dotted ruled lines on the worksheet are PRINTED BACKGROUND — ignore them entirely. Only count marks (pen OR pencil) students drew themselves — pencil marks appear light grey and may be faint.
+- Be GENEROUS in crediting marks: if you can see ANY mark (pen or pencil) on or around the word, count it as marked. Pencil is faint — look carefully. Only mark as missed if there is clearly NO mark whatsoever.
+- A circle may be rough or imperfect — any oval or loop (pen or pencil) around a directive word counts.
+- An underline may be straight or wavy — any pen or pencil stroke under a keyword counts.
+- A box may be rough or use brackets — any rectangle or enclosure (pen or pencil) around a constraint phrase counts.
 - Report each correctly marked word in the appropriate array (circled/underlined/boxed).
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
