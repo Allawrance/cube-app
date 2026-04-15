@@ -1,4 +1,4 @@
-# cube-app
+# CUBE Marking Coach APP
 Providing Student Questions Response Assistance
 
 The BASE index.html is the page that introduces what the CUBE Marking Coach is and how it works. 
