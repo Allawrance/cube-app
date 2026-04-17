@@ -891,10 +891,16 @@ Return ONLY the model response text, no heading, no preamble.`
         const me = privacyName(studentName.trim()||"anonymous");
         const myRow = (data.leaderboard||[]).find(p=>p.student===me);
         if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
-          // Server streak is source of truth — update local state and cache
+          // Server streak is source of truth for the COUNT — but preserve the
+          // real lastDate so bumpStreak() can still correctly calculate days
+          // elapsed and increment. Setting lastDate:today here would cause
+          // bumpStreak() to think it already ran today and skip incrementing.
+          const existing = JSON.parse(localStorage.getItem("cube_streak") || "{}");
           setStreak(myRow.streak);
-          const today = new Date().toDateString();
-          localStorage.setItem("cube_streak", JSON.stringify({count:myRow.streak, lastDate:today}));
+          localStorage.setItem("cube_streak", JSON.stringify({
+            count:    myRow.streak,
+            lastDate: existing.lastDate || null,
+          }));
         }
       } catch {}
     } catch(e) {
