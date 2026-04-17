@@ -87,14 +87,14 @@ const toB64 = f => new Promise((res, rej) => {
   const objectUrl = URL.createObjectURL(f);
   img.onload = () => {
     URL.revokeObjectURL(objectUrl);
-    const MAX_W = 1200;
+    const MAX_W = 1600;
     const scale = img.width > MAX_W ? MAX_W / img.width : 1;
     const w = Math.round(img.width * scale);
     const h = Math.round(img.height * scale);
     const canvas = document.createElement("canvas");
     canvas.width = w; canvas.height = h;
     canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.90);
     res(dataUrl.split(",")[1]);
   };
   img.onerror = rej;
