@@ -934,21 +934,34 @@ Directive: ${sanitiseInput(primaryDir.word||"")} (${sanitiseInput(primaryDir.ver
 Marks value: ${c1.marks||"not stated"}
 Directive meaning: ${sanitiseInput(primaryDir.meaning||"")}
 
-CUBE MARKING — CHECK THE PRINTED QUESTION LINE ONLY (ignore the handwritten answer below):
+CUBE MARKING — inspect ONLY the printed question text, not the handwritten answer below.
 The question text is: "${sanitiseInput(c1.questionText)}"
 
-For EACH word/phrase listed below, carefully inspect the printed question text in the image for ANY pen mark made by the student ON or AROUND that word:
-- CIRCLED words (directive verbs — look for oval/circle drawn around the word): ${dirs.map(d=>d.word).join(", ")||"none"}
-- UNDERLINED words (syllabus keywords — look for any pen line under the word, straight or wavy): ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
-- BOXED words (constraint/scope — look for rectangle or bracket drawn around the word or phrase): ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
-${c1.evidenceRequired ? "- WAVY underline words (evidence required)" : ""}
+Work through each step below in order. For each, locate the specific word in the printed question text and look carefully for a student-drawn mark.
 
-IMPORTANT MARKING RULES:
-- The dotted ruled lines on the worksheet are PRINTED BACKGROUND — ignore them entirely. Only count marks (pen OR pencil) students drew themselves — pencil marks appear light grey and may be faint.
-- Be GENEROUS in crediting marks: if you can see ANY mark (pen or pencil) on or around the word, count it as marked. Pencil is faint — look carefully. Only mark as missed if there is clearly NO mark whatsoever.
-- A circle may be rough or imperfect — any oval or loop (pen or pencil) around a directive word counts.
-- An underline may be straight or wavy — any pen or pencil stroke under a keyword counts.
-- A box may be rough or use brackets — any rectangle or enclosure (pen or pencil) around a constraint phrase counts.
+STEP 1 — CIRCLE CHECK (directive verbs):
+${dirs.map(d => {
+  const totalLen = (c1.questionText||"").length;
+  const pos = d.startIndex != null
+    ? (d.startIndex < totalLen * 0.33 ? "near the START of the question"
+      : d.startIndex < totalLen * 0.66 ? "in the MIDDLE of the question"
+      : "near the END of the question")
+    : "somewhere in the question";
+  return `Find the word "${sanitiseInput(d.word)}" — it appears ${pos}. Has the student drawn a loop, oval, or circle (pen OR pencil) around this word? The circle encloses the word on all sides and may be rough or imperfect. Credit ANY enclosing loop, even faint pencil.`;
+}).join("\n")}
+NOTE: The printed "M5" / "M6" module badge is NOT a student mark — ignore it entirely.
+
+STEP 2 — UNDERLINE CHECK (syllabus keywords):
+Keywords to check: ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
+For each keyword, look directly beneath those specific letters in the printed question. A student underline is SHORT and sits directly under the word. The full-width dotted horizontal lines across the page are PRINTED BACKGROUND — ignore them entirely. Only credit a mark if it sits directly under one of the listed keywords.${c1.evidenceRequired ? " A wavy underline also counts for evidence-required words." : ""}
+
+STEP 3 — BOX CHECK (constraints):
+Phrases to check: ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
+Look for a rectangle, bracket, or enclosure (pen OR pencil) drawn around any of these phrases in the printed question. May be rough or only three sides. Credit any enclosure, even partial.
+
+MARKING RULES (apply to all steps):
+- Pencil marks appear light grey and may be faint — look carefully before marking as missed.
+- Be GENEROUS: credit ANY visible mark. Only mark as missed if there is clearly NO mark whatsoever.
 - Report each correctly marked word in the appropriate array (circled/underlined/boxed).
 
 ANNOTATION TASK: Look ONLY for short handwritten notes the student wrote ABOVE or BESIDE the printed question text — brief words/phrases written before the response as planning notes.
