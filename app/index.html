@@ -953,7 +953,8 @@ NOTE: The printed "M5" / "M6" module badge is NOT a student mark — ignore it e
 
 STEP 2 — UNDERLINE CHECK (syllabus keywords):
 Keywords to check: ${kwds.map(k=>k.word||k.topicTitle||"").filter(Boolean).join(", ")||"none"}
-For each keyword, look directly beneath those specific letters in the printed question. A student underline is SHORT and sits directly under the word. The full-width dotted horizontal lines across the page are PRINTED BACKGROUND — ignore them entirely. Only credit a mark if it sits directly under one of the listed keywords.${c1.evidenceRequired ? " A wavy underline also counts for evidence-required words." : ""}
+For each keyword, look directly beneath those specific letters in the printed question. A student underline is SHORT and sits directly under the word. The full-width dotted horizontal lines across the page are PRINTED BACKGROUND — ignore them entirely. Only credit a mark if it sits directly under one of the listed keywords.
+IMPORTANT — LINE BREAKS: A single underline stroke may span multiple words or continue across a line break onto the next line. If you see a continuous underline covering several words, credit ALL listed keywords that fall within that stroke — not just the first word. Check every line of the question for underlines, including the last line.${c1.evidenceRequired ? " A wavy underline also counts for evidence-required words." : ""}
 
 STEP 3 — BOX CHECK (constraints):
 Phrases to check: ${(c1.constraints||[]).map(con=>con.text||"").filter(Boolean).join(", ")||"none"}
