@@ -1094,7 +1094,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
       setCubeXP(cxpStage2);
       // Also store breakdown for display
       setAnnotationIdeas({presence: annoPresenceXP, used: annoUsedXP, items: annoItems});
-      setSessionXP(cxpStage2 + annoXpVal + totalScore(parsed));
       // Log to webhook
       try {
         // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
@@ -1105,9 +1104,12 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
-        const sc  = totalScore(parsed, causalApp, modalApp);
+        // Calculate dimMax FIRST so totalScore can cap per-dimension — prevents AI over-scoring exceeding maxScore
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
+        const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
         const mx  = (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
+        // Update session XP using correctly capped score and max
+        setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
         const band = getBand(sc, mx);
         const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
@@ -1169,15 +1171,18 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
     setTimeout(() => fetchLeaderboard(lbPeriod, lbDirective), 3000);
   };
 
-  const totalScore = (r, causalOverride, modalOverride) => {
+  const totalScore = (r, causalOverride, modalOverride, dimMax=5) => {
     if (!r) return 0;
     const { rubric } = r;
     // Use client-side derived applicable values if provided, else fall back to AI value
     const causalAppl  = causalOverride !== undefined ? causalOverride : (rubric.causalConnectives?.applicable !== false);
     const modalAppl   = modalOverride  !== undefined ? modalOverride  : (rubric.modality?.applicable === true);
-    const causal   = causalAppl ? (rubric.causalConnectives?.score||0) : 0;
-    const modality = modalAppl  ? (rubric.modality?.score||0) : 0;
-    return causal + (rubric.complexNounGroups?.score||0) + modality + (rubric.logicalFlow?.score||0);
+    // Cap each dimension at dimMax before summing — prevents AI over-scoring from exceeding maxScore
+    const causal   = causalAppl ? Math.min(rubric.causalConnectives?.score||0, dimMax) : 0;
+    const noun     = Math.min(rubric.complexNounGroups?.score||0, dimMax);
+    const modality = modalAppl  ? Math.min(rubric.modality?.score||0, dimMax) : 0;
+    const flow     = Math.min(rubric.logicalFlow?.score||0, dimMax);
+    return causal + noun + modality + flow;
   };
 
   // ── STYLES ──
@@ -1338,7 +1343,6 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const verbType = primaryDir.verbType || "other";
           const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
-          const score = a ? totalScore(a, causalApplicable, modalityApplicable) : 0;
           const marksKnown = c.marks !== null && c.marks !== undefined;
           // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
           const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
@@ -1348,7 +1352,9 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
+          // Calculate dimMaxR BEFORE score so totalScore can apply per-dimension caps — prevents score > maxScore
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
+          const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
           const maxScore = (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
           const band = marksKnown ? null : getBand(score, maxScore);
 
