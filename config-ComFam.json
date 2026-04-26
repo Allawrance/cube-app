@@ -1,0 +1,1958 @@
+{
+  "subjectCode": "CF",
+  "subjectName": "Community and Family Studies",
+  "subjectShortName": "CaFS",
+  "dominantMode": "Social analysis + research evidence",
+  "cleanRule": "CaFS = interrelationships + management process + wellbeing",
+  "leaderboardTip": "Evaluate and Analyse are dominant verbs — always address interrelationships between individuals, groups, families and communities, and link every point to wellbeing outcomes.",
+  "sheetTabCube": "CF CUBE",
+  "sheetTabFull": "ComFam",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_URL",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_URL",
+  "syllabus": {
+    "file_name": "05_COMMUNITY_FAMILY_STUDIES_SYLLABUS_DATABASE.json",
+    "version": "1.0",
+    "last_updated": "2026-04",
+    "course": "Community and Family Studies Stage 6",
+    "source": "Community and Family Studies Stage 6 Syllabus (Amended 2022), NESA NSW.",
+    "purpose": "Syllabus keyword database for CUBE Marking Coach — HSC course content only (Preliminary content included for context). Keywords are strictly from NESA syllabus text.",
+    "hsc_outcomes": [
+      "H1.1: analyses the effect of resource management on the wellbeing of individuals, groups, families and communities",
+      "H2.1: analyses different approaches to parenting and caring relationships",
+      "H2.2: evaluates strategies to contribute to positive relationships and the wellbeing of individuals, groups, families and communities",
+      "H2.3: critically examines how individual rights and responsibilities in various environments contribute to wellbeing",
+      "H3.1: analyses the sociocultural factors that lead to special needs of individuals in groups",
+      "H3.2: evaluates networks available to individuals, groups and families within communities",
+      "H3.3: critically analyses the role of policy and community structures in supporting diversity",
+      "H3.4: critically evaluates the impact of social, legal and technological change on individuals, groups, families and communities",
+      "H4.1: justifies and applies appropriate research methodologies",
+      "H4.2: communicates ideas, debates issues and justifies opinions",
+      "H5.1: proposes management strategies to enable individuals and groups to satisfy their specific needs and to ensure equitable access to resources",
+      "H5.2: develops strategies for managing multiple roles and demands of family, work and other environments",
+      "H6.1: analyses how the empowerment of women and men influences the way they function within society",
+      "H6.2: formulates strategic plans that preserve rights, promote responsibilities and establish roles leading to the creation of positive social environments"
+    ],
+    "topics": {
+      "RM": {
+        "topic_code": "RM",
+        "topic_title": "Research Methodology (HSC Core)",
+        "outcomes": [
+          "H4.1",
+          "H4.2"
+        ],
+        "subtopics": {
+          "RM.1": {
+            "subtopic_title": "Research fundamentals",
+            "inquiry_question": "What are the foundations of effective research?",
+            "dot_points": [
+              {
+                "id": "RM.1.1",
+                "syllabus_text": "The purpose of research, eg advance knowledge, increase understanding, educate others, inform practice",
+                "keywords": [
+                  "purpose of research",
+                  "advance knowledge",
+                  "increase understanding",
+                  "educate others",
+                  "inform practice"
+                ]
+              },
+              {
+                "id": "RM.1.2",
+                "syllabus_text": "The focus of research, eg question/hypothesis",
+                "keywords": [
+                  "research focus",
+                  "research question",
+                  "hypothesis"
+                ]
+              },
+              {
+                "id": "RM.1.3",
+                "syllabus_text": "Sampling — methods, sample group, sample size",
+                "keywords": [
+                  "sampling",
+                  "sampling methods",
+                  "sample group",
+                  "sample size"
+                ]
+              },
+              {
+                "id": "RM.1.4",
+                "syllabus_text": "Types of data — primary and secondary; qualitative and quantitative",
+                "keywords": [
+                  "primary data",
+                  "secondary data",
+                  "qualitative",
+                  "quantitative"
+                ]
+              },
+              {
+                "id": "RM.1.5",
+                "syllabus_text": "Sources of data — individuals and groups; print and digital",
+                "keywords": [
+                  "sources of data",
+                  "individuals",
+                  "groups",
+                  "print",
+                  "digital"
+                ]
+              },
+              {
+                "id": "RM.1.6",
+                "syllabus_text": "Reliability and validity",
+                "keywords": [
+                  "reliability",
+                  "validity"
+                ]
+              },
+              {
+                "id": "RM.1.7",
+                "syllabus_text": "Ethical behaviour — respect, integrity, privacy, bias",
+                "keywords": [
+                  "ethical behaviour",
+                  "respect",
+                  "integrity",
+                  "privacy",
+                  "bias",
+                  "confidentiality",
+                  "crediting sources"
+                ]
+              }
+            ],
+            "keywords": [
+              "purpose of research",
+              "hypothesis",
+              "sampling",
+              "sample group",
+              "sample size",
+              "primary data",
+              "secondary data",
+              "qualitative",
+              "quantitative",
+              "sources of data",
+              "reliability",
+              "validity",
+              "ethical behaviour",
+              "bias",
+              "confidentiality"
+            ]
+          },
+          "RM.2": {
+            "subtopic_title": "Research methods",
+            "inquiry_question": "What research methods are appropriate for different social research topics?",
+            "dot_points": [
+              {
+                "id": "RM.2.1",
+                "syllabus_text": "Questionnaires — developing reliable questions, collecting and recording data, advantages and disadvantages",
+                "keywords": [
+                  "questionnaires",
+                  "reliable questions",
+                  "collecting data",
+                  "recording data"
+                ]
+              },
+              {
+                "id": "RM.2.2",
+                "syllabus_text": "Interviews — structured and unstructured, advantages and disadvantages, analysing research results",
+                "keywords": [
+                  "interviews",
+                  "structured interview",
+                  "unstructured interview"
+                ]
+              },
+              {
+                "id": "RM.2.3",
+                "syllabus_text": "Case studies — collecting and recording data, advantages and disadvantages",
+                "keywords": [
+                  "case studies",
+                  "case study"
+                ]
+              },
+              {
+                "id": "RM.2.4",
+                "syllabus_text": "Observations — conducting and recording observations, advantages and disadvantages, presenting research findings",
+                "keywords": [
+                  "observations",
+                  "recording observations",
+                  "research findings"
+                ]
+              },
+              {
+                "id": "RM.2.5",
+                "syllabus_text": "Literature reviews — accessing sources of data, advantages and disadvantages",
+                "keywords": [
+                  "literature review",
+                  "secondary data",
+                  "sources of data"
+                ]
+              }
+            ],
+            "keywords": [
+              "questionnaires",
+              "interviews",
+              "structured interview",
+              "unstructured interview",
+              "case studies",
+              "observations",
+              "literature review",
+              "research methods",
+              "advantages",
+              "disadvantages"
+            ]
+          },
+          "RM.3": {
+            "subtopic_title": "Research process",
+            "inquiry_question": "How is a research project planned, conducted and interpreted?",
+            "dot_points": [
+              {
+                "id": "RM.3.1",
+                "syllabus_text": "Planning for research — formulating a research proposal; managing resources, eg time, materials",
+                "keywords": [
+                  "research proposal",
+                  "planning",
+                  "managing resources",
+                  "timeline"
+                ]
+              },
+              {
+                "id": "RM.3.2",
+                "syllabus_text": "Conducting research — accessing sources of data; collecting and recording data; documenting actions and issues",
+                "keywords": [
+                  "collecting data",
+                  "recording data",
+                  "documenting",
+                  "sources of data"
+                ]
+              },
+              {
+                "id": "RM.3.3",
+                "syllabus_text": "Interpreting research — presenting research findings; analysing research results; drawing conclusions from research",
+                "keywords": [
+                  "presenting findings",
+                  "analysing results",
+                  "conclusions",
+                  "bibliography",
+                  "recommendations"
+                ]
+              }
+            ],
+            "keywords": [
+              "research proposal",
+              "planning",
+              "timeline",
+              "collecting data",
+              "analysing results",
+              "conclusions",
+              "bibliography",
+              "recommendations",
+              "Independent Research Project",
+              "IRP"
+            ]
+          }
+        }
+      },
+      "GIC": {
+        "topic_code": "GIC",
+        "topic_title": "Groups in Context (HSC Core)",
+        "outcomes": [
+          "H1.1",
+          "H2.2",
+          "H2.3",
+          "H3.1",
+          "H3.3",
+          "H4.1",
+          "H4.2",
+          "H5.1",
+          "H6.2"
+        ],
+        "subtopics": {
+          "GIC.1": {
+            "subtopic_title": "Specific groups within the community",
+            "inquiry_question": "Who are the specific groups within the community and what are their needs?",
+            "dot_points": [
+              {
+                "id": "GIC.1.1",
+                "syllabus_text": "Category A — mandatory groups: Youth; Rural and remote families",
+                "keywords": [
+                  "youth",
+                  "rural and remote families",
+                  "rural",
+                  "remote"
+                ]
+              },
+              {
+                "id": "GIC.1.2",
+                "syllabus_text": "Category B — select 2 groups: Aged; Culturally and Linguistically Diverse communities; Aboriginal and Torres Strait Islander peoples; People with disabilities; Lesbian, Gay, Bisexual, Transgender, Queer, Intersex, Asexual plus (LGBTQIA+) communities; Sole parents; Homeless people",
+                "keywords": [
+                  "aged",
+                  "culturally and linguistically diverse",
+                  "CALD",
+                  "Aboriginal and Torres Strait Islander",
+                  "people with disabilities",
+                  "LGBTQIA+",
+                  "sole parents",
+                  "homeless people"
+                ]
+              },
+              {
+                "id": "GIC.1.3",
+                "syllabus_text": "Prevalence of each group within the community; individual diversity within each group; terminology used by the community to describe the group",
+                "keywords": [
+                  "prevalence",
+                  "individual diversity",
+                  "terminology"
+                ]
+              }
+            ],
+            "keywords": [
+              "youth",
+              "rural and remote families",
+              "aged",
+              "culturally and linguistically diverse",
+              "Aboriginal and Torres Strait Islander",
+              "people with disabilities",
+              "LGBTQIA+",
+              "sole parents",
+              "homeless",
+              "prevalence",
+              "diversity",
+              "terminology"
+            ]
+          },
+          "GIC.2": {
+            "subtopic_title": "Issues of concern for specific groups",
+            "inquiry_question": "What are the issues of concern affecting specific groups in the community?",
+            "dot_points": [
+              {
+                "id": "GIC.2.1",
+                "syllabus_text": "Satisfaction of needs — specific needs of each group: adequate standard of living (food, clothing, shelter); health; education; employment; safety and security; sense of identity",
+                "keywords": [
+                  "satisfaction of needs",
+                  "adequate standard of living",
+                  "food",
+                  "clothing",
+                  "shelter",
+                  "health",
+                  "education",
+                  "employment",
+                  "safety and security",
+                  "sense of identity"
+                ]
+              },
+              {
+                "id": "GIC.2.2",
+                "syllabus_text": "Access to services — types of services, eg financial support, transport, accommodation and housing, health care, counselling, education, employment, legal aid; factors affecting access to services — characteristics of individuals within the group, eg age, gender, level of education, culture, type of disability, first language spoken, socioeconomic status; resources, eg time, money, energy, knowledge; aspects of the service, eg opening hours, confidentiality, location, staffing",
+                "keywords": [
+                  "access to services",
+                  "financial support",
+                  "transport",
+                  "accommodation",
+                  "housing",
+                  "health care",
+                  "counselling",
+                  "legal aid",
+                  "socioeconomic status",
+                  "opening hours",
+                  "confidentiality",
+                  "location"
+                ]
+              }
+            ],
+            "keywords": [
+              "satisfaction of needs",
+              "adequate standard of living",
+              "health",
+              "education",
+              "employment",
+              "safety and security",
+              "sense of identity",
+              "access to services",
+              "financial support",
+              "transport",
+              "accommodation",
+              "housing",
+              "counselling",
+              "legal aid",
+              "socioeconomic status",
+              "factors affecting access"
+            ]
+          },
+          "GIC.3": {
+            "subtopic_title": "Creating positive social environments",
+            "inquiry_question": "How can positive social environments be created for specific groups?",
+            "dot_points": [
+              {
+                "id": "GIC.3.1",
+                "syllabus_text": "Addressing the groups' issues of concern — government policy and legislation; organisations within the community that support the group; equity issues",
+                "keywords": [
+                  "government policy",
+                  "legislation",
+                  "community organisations",
+                  "equity",
+                  "inequity"
+                ]
+              },
+              {
+                "id": "GIC.3.2",
+                "syllabus_text": "Positive influences on community attitudes — contributions the group makes within the community; advocacy (speaking up for the group's needs and concerns) — raising awareness within the community; educating the community; promoting the rights of the group",
+                "keywords": [
+                  "community attitudes",
+                  "advocacy",
+                  "raising awareness",
+                  "rights",
+                  "contributions",
+                  "positive social environment"
+                ]
+              }
+            ],
+            "keywords": [
+              "government policy",
+              "legislation",
+              "equity",
+              "inequity",
+              "community organisations",
+              "advocacy",
+              "raising awareness",
+              "rights",
+              "positive social environment",
+              "wellbeing"
+            ]
+          }
+        }
+      },
+      "PAC": {
+        "topic_code": "PAC",
+        "topic_title": "Parenting and Caring (HSC Core)",
+        "outcomes": [
+          "H1.1",
+          "H2.1",
+          "H2.2",
+          "H2.3",
+          "H3.2",
+          "H3.4",
+          "H5.1",
+          "H5.2",
+          "H6.1"
+        ],
+        "subtopics": {
+          "PAC.1": {
+            "subtopic_title": "Becoming a parent or carer",
+            "inquiry_question": "What does it mean to become a parent or carer?",
+            "dot_points": [
+              {
+                "id": "PAC.1.1",
+                "syllabus_text": "Types of parents and carers — biological parents; social parents: adoption, fostering, step-parenting, surrogacy; carers: primary, informal and formal",
+                "keywords": [
+                  "biological parents",
+                  "social parents",
+                  "adoption",
+                  "fostering",
+                  "step-parenting",
+                  "surrogacy",
+                  "primary carer",
+                  "informal carer",
+                  "formal carer"
+                ]
+              },
+              {
+                "id": "PAC.1.2",
+                "syllabus_text": "The roles of parents and carers — satisfying the specific needs of the dependant; building a positive relationship with the dependant; promoting the wellbeing of the dependant",
+                "keywords": [
+                  "roles of parents",
+                  "roles of carers",
+                  "specific needs",
+                  "dependant",
+                  "positive relationship",
+                  "wellbeing"
+                ]
+              },
+              {
+                "id": "PAC.1.3",
+                "syllabus_text": "Preparations for becoming a parent or carer — changing health behaviours, eg nutrition, physical activity, social or spiritual connections; enhancing knowledge and skills, eg education, information, training; modifying the physical environment, eg housing, amenities, equipment; organising finances, eg budgeting, saving, support payments",
+                "keywords": [
+                  "preparation",
+                  "health behaviours",
+                  "nutrition",
+                  "physical activity",
+                  "education",
+                  "training",
+                  "physical environment",
+                  "housing",
+                  "budgeting",
+                  "finances"
+                ]
+              }
+            ],
+            "keywords": [
+              "biological parents",
+              "adoption",
+              "fostering",
+              "step-parenting",
+              "surrogacy",
+              "primary carer",
+              "informal carer",
+              "formal carer",
+              "dependant",
+              "wellbeing",
+              "preparation",
+              "nutrition",
+              "budgeting"
+            ]
+          },
+          "PAC.2": {
+            "subtopic_title": "Factors affecting the parenting and caring role",
+            "inquiry_question": "What factors affect the roles of parents and carers?",
+            "dot_points": [
+              {
+                "id": "PAC.2.1",
+                "syllabus_text": "Characteristics of the dependant — age; skills/capabilities; special needs, eg illness, disability",
+                "keywords": [
+                  "characteristics of the dependant",
+                  "age",
+                  "skills",
+                  "capabilities",
+                  "special needs",
+                  "illness",
+                  "disability"
+                ]
+              },
+              {
+                "id": "PAC.2.2",
+                "syllabus_text": "Influences on parents and carers — personal: culture, customs and tradition; religion/spirituality; education; previous experience; own upbringing; multiple commitments, eg work, study, sport, family; socioeconomic status; special needs, eg illness, disability",
+                "keywords": [
+                  "personal influences",
+                  "culture",
+                  "customs",
+                  "tradition",
+                  "religion",
+                  "spirituality",
+                  "education",
+                  "previous experience",
+                  "own upbringing",
+                  "multiple commitments",
+                  "socioeconomic status"
+                ]
+              },
+              {
+                "id": "PAC.2.3",
+                "syllabus_text": "Social influences — community attitudes; gender expectations; media stereotypes",
+                "keywords": [
+                  "social influences",
+                  "community attitudes",
+                  "gender expectations",
+                  "media stereotypes"
+                ]
+              },
+              {
+                "id": "PAC.2.4",
+                "syllabus_text": "Styles of parenting or caring — authoritarian; democratic; permissive/indulgent; negligent",
+                "keywords": [
+                  "parenting styles",
+                  "authoritarian",
+                  "democratic",
+                  "permissive",
+                  "indulgent",
+                  "negligent"
+                ]
+              },
+              {
+                "id": "PAC.2.5",
+                "syllabus_text": "Rights and responsibilities in parenting and caring — legal rights of parents, carers and dependants; responsibilities of parents and carers: duty of care, setting limits, discipline",
+                "keywords": [
+                  "legal rights",
+                  "responsibilities",
+                  "duty of care",
+                  "setting limits",
+                  "discipline",
+                  "health and medical decisions",
+                  "financial support"
+                ]
+              }
+            ],
+            "keywords": [
+              "characteristics of the dependant",
+              "special needs",
+              "personal influences",
+              "culture",
+              "religion",
+              "socioeconomic status",
+              "multiple commitments",
+              "social influences",
+              "community attitudes",
+              "gender expectations",
+              "media stereotypes",
+              "parenting styles",
+              "authoritarian",
+              "democratic",
+              "permissive",
+              "negligent",
+              "duty of care",
+              "discipline",
+              "legal rights",
+              "responsibilities"
+            ]
+          },
+          "PAC.3": {
+            "subtopic_title": "Support for parents and carers",
+            "inquiry_question": "What support is available for parents and carers?",
+            "dot_points": [
+              {
+                "id": "PAC.3.1",
+                "syllabus_text": "Types of support — informal: relatives, friends, neighbours; formal: government agencies, community organisations",
+                "keywords": [
+                  "informal support",
+                  "formal support",
+                  "relatives",
+                  "friends",
+                  "neighbours",
+                  "government agencies",
+                  "community organisations"
+                ]
+              },
+              {
+                "id": "PAC.3.2",
+                "syllabus_text": "Types of services provided through formal support — health care; education; financial support; childcare; respite care; counselling",
+                "keywords": [
+                  "health care",
+                  "education",
+                  "financial support",
+                  "childcare",
+                  "respite care",
+                  "counselling",
+                  "young carers",
+                  "aged carers",
+                  "first-time parents",
+                  "working parents"
+                ]
+              }
+            ],
+            "keywords": [
+              "informal support",
+              "formal support",
+              "relatives",
+              "government agencies",
+              "community organisations",
+              "health care",
+              "financial support",
+              "childcare",
+              "respite care",
+              "counselling",
+              "young carers",
+              "aged carers",
+              "working parents"
+            ]
+          }
+        }
+      },
+      "FSI": {
+        "topic_code": "FSI",
+        "topic_title": "Family and Societal Interactions (HSC Option)",
+        "outcomes": [
+          "H2.3",
+          "H3.2",
+          "H3.3",
+          "H3.4",
+          "H6.1",
+          "H6.2"
+        ],
+        "subtopics": {
+          "FSI.1": {
+            "subtopic_title": "Supporting and protecting individuals and families",
+            "inquiry_question": "How do legislation and community organisations support and protect individuals and families?",
+            "dot_points": [
+              {
+                "id": "FSI.1.1",
+                "syllabus_text": "Role of legislation — to protect members of society; to promote a just and cohesive society; to set guidelines for socially acceptable behaviour; to provide processes to settle disputes peacefully; to outline what governments can and cannot do",
+                "keywords": [
+                  "legislation",
+                  "protect",
+                  "just and cohesive society",
+                  "socially acceptable behaviour",
+                  "settle disputes",
+                  "government"
+                ]
+              },
+              {
+                "id": "FSI.1.2",
+                "syllabus_text": "Role of community organisations and agencies — how community organisations support government legislation and initiatives",
+                "keywords": [
+                  "community organisations",
+                  "agencies",
+                  "government legislation",
+                  "initiatives"
+                ]
+              }
+            ],
+            "keywords": [
+              "legislation",
+              "protect",
+              "cohesive society",
+              "socially acceptable behaviour",
+              "community organisations",
+              "agencies",
+              "government"
+            ]
+          },
+          "FSI.2": {
+            "subtopic_title": "Protecting children",
+            "inquiry_question": "How does government protect the welfare of children?",
+            "dot_points": [
+              {
+                "id": "FSI.2.1",
+                "syllabus_text": "The government's role — legislation relating to the protection and welfare of children: child protection; education, eg school attendance; safety, eg travel restraints, product safety standards; government agencies that implement and monitor these laws",
+                "keywords": [
+                  "child protection",
+                  "welfare of children",
+                  "school attendance",
+                  "safety",
+                  "product safety standards",
+                  "government agencies",
+                  "working with children checks"
+                ]
+              },
+              {
+                "id": "FSI.2.2",
+                "syllabus_text": "The community's role in providing for the wellbeing of children — children's services; schools and out-of-school care; leisure activities; not-for-profit organisations and support groups",
+                "keywords": [
+                  "children's services",
+                  "out-of-school care",
+                  "leisure activities",
+                  "not-for-profit organisations",
+                  "wellbeing of children"
+                ]
+              }
+            ],
+            "keywords": [
+              "child protection",
+              "welfare of children",
+              "school attendance",
+              "safety",
+              "government agencies",
+              "working with children checks",
+              "children's services",
+              "out-of-school care",
+              "not-for-profit organisations"
+            ]
+          },
+          "FSI.3": {
+            "subtopic_title": "Assisting young people to become young adults",
+            "inquiry_question": "How does society support young people as they transition to adulthood?",
+            "dot_points": [
+              {
+                "id": "FSI.3.1",
+                "syllabus_text": "The government's role in regulating rights of young people — licensing drivers; school attendance; access to tobacco and alcohol; gambling regulations; right to vote; legal age for sexual relationships and marriage; gaining other entitlements, eg passport; workplace protections, eg minimum wage",
+                "keywords": [
+                  "rights of young people",
+                  "licensing drivers",
+                  "school attendance",
+                  "tobacco",
+                  "alcohol",
+                  "gambling",
+                  "right to vote",
+                  "legal age",
+                  "minimum wage",
+                  "rites of passage"
+                ]
+              },
+              {
+                "id": "FSI.3.2",
+                "syllabus_text": "The community's role in supporting young people — health care; leisure and recreation; community support organisations, eg online youth mental health services",
+                "keywords": [
+                  "supporting young people",
+                  "health care",
+                  "leisure and recreation",
+                  "youth mental health",
+                  "community support organisations"
+                ]
+              }
+            ],
+            "keywords": [
+              "rights of young people",
+              "licensing drivers",
+              "tobacco",
+              "alcohol",
+              "gambling",
+              "right to vote",
+              "legal age",
+              "minimum wage",
+              "rites of passage",
+              "youth mental health",
+              "community support organisations"
+            ]
+          },
+          "FSI.4": {
+            "subtopic_title": "Being a responsible adult family member",
+            "inquiry_question": "How does government support adults and families?",
+            "dot_points": [
+              {
+                "id": "FSI.4.1",
+                "syllabus_text": "Government's role in supporting adults and families — current legislation supporting adults and families: laws relating to family; laws relating to adoption; laws relating to assisted reproductive technology; Family Law Act",
+                "keywords": [
+                  "Family Law Act",
+                  "adoption",
+                  "assisted reproductive technology",
+                  "marriage",
+                  "de facto relationships",
+                  "divorce",
+                  "spousal support",
+                  "child support",
+                  "family violence"
+                ]
+              },
+              {
+                "id": "FSI.4.2",
+                "syllabus_text": "Community support for adults and families — counselling for individuals and families; health services; women's refuges; community support organisations",
+                "keywords": [
+                  "counselling",
+                  "health services",
+                  "women's refuges",
+                  "community support organisations"
+                ]
+              }
+            ],
+            "keywords": [
+              "Family Law Act",
+              "adoption",
+              "assisted reproductive technology",
+              "divorce",
+              "spousal support",
+              "child support",
+              "family violence",
+              "counselling",
+              "health services",
+              "women's refuges",
+              "community support organisations"
+            ]
+          },
+          "FSI.5": {
+            "subtopic_title": "The aged",
+            "inquiry_question": "How does society support the aged?",
+            "dot_points": [
+              {
+                "id": "FSI.5.1",
+                "syllabus_text": "Issues for the aged — government legislation and entitlements for the aged; community support for the aged; recognising the aged as a valuable community resource",
+                "keywords": [
+                  "the aged",
+                  "government entitlements",
+                  "retirement",
+                  "housing needs",
+                  "community support",
+                  "valuable community resource"
+                ]
+              }
+            ],
+            "keywords": [
+              "aged",
+              "government entitlements",
+              "retirement",
+              "housing needs",
+              "community support",
+              "valuable community resource"
+            ]
+          }
+        }
+      },
+      "SIT": {
+        "topic_code": "SIT",
+        "topic_title": "Social Impact of Technology (HSC Option)",
+        "outcomes": [
+          "H2.3",
+          "H3.4",
+          "H4.1",
+          "H4.2",
+          "H6.1"
+        ],
+        "subtopics": {
+          "SIT.1": {
+            "subtopic_title": "Defining technology and historical perspectives",
+            "inquiry_question": "How has technology evolved over time?",
+            "dot_points": [
+              {
+                "id": "SIT.1.1",
+                "syllabus_text": "Technology as hardware, eg appliances, gadgets, toys; technology as software, eg applications, databases, websites; technology as organisation of knowledge, eg communications, media, internet, home entertainment",
+                "keywords": [
+                  "hardware",
+                  "software",
+                  "applications",
+                  "databases",
+                  "communications",
+                  "media",
+                  "internet",
+                  "home entertainment"
+                ]
+              },
+              {
+                "id": "SIT.1.2",
+                "syllabus_text": "Historical perspectives — the Digital Revolution; the Information Age",
+                "keywords": [
+                  "Digital Revolution",
+                  "Information Age",
+                  "information and communication technology",
+                  "ICT"
+                ]
+              }
+            ],
+            "keywords": [
+              "hardware",
+              "software",
+              "applications",
+              "communications",
+              "media",
+              "internet",
+              "Digital Revolution",
+              "Information Age",
+              "ICT"
+            ]
+          },
+          "SIT.2": {
+            "subtopic_title": "Reasons for the development of technology",
+            "inquiry_question": "Why is technology developed?",
+            "dot_points": [
+              {
+                "id": "SIT.2.1",
+                "syllabus_text": "Improve upon existing technology; economic benefit; consumer demand and human needs; social betterment; the global community; response to social problems",
+                "keywords": [
+                  "economic benefit",
+                  "consumer demand",
+                  "human needs",
+                  "social betterment",
+                  "global community",
+                  "social problems",
+                  "transport",
+                  "communication",
+                  "consumer services"
+                ]
+              }
+            ],
+            "keywords": [
+              "economic benefit",
+              "consumer demand",
+              "human needs",
+              "social betterment",
+              "global community",
+              "transport",
+              "communication",
+              "consumer services"
+            ]
+          },
+          "SIT.3": {
+            "subtopic_title": "Factors affecting access to and acceptance of technology",
+            "inquiry_question": "What factors affect access to and acceptance of technology?",
+            "dot_points": [
+              {
+                "id": "SIT.3.1",
+                "syllabus_text": "Factors affecting access to and acceptance of technology — age; culture; education; economic status; disability; geographical location; gender; religion",
+                "keywords": [
+                  "age",
+                  "culture",
+                  "education",
+                  "economic status",
+                  "disability",
+                  "geographical location",
+                  "gender",
+                  "religion",
+                  "access to technology",
+                  "acceptance of technology"
+                ]
+              }
+            ],
+            "keywords": [
+              "age",
+              "culture",
+              "education",
+              "economic status",
+              "disability",
+              "geographical location",
+              "gender",
+              "religion",
+              "access",
+              "acceptance"
+            ]
+          },
+          "SIT.4": {
+            "subtopic_title": "The impact of technology on lifestyle and wellbeing",
+            "inquiry_question": "How does technology impact on lifestyle and wellbeing?",
+            "dot_points": [
+              {
+                "id": "SIT.4.1",
+                "syllabus_text": "Technologies and the family — household technology; information and communication technology; entertainment technology",
+                "keywords": [
+                  "household technology",
+                  "information and communication technology",
+                  "entertainment technology",
+                  "interpersonal relationships",
+                  "family"
+                ]
+              },
+              {
+                "id": "SIT.4.2",
+                "syllabus_text": "Technologies and the community — education and training; transport and travel; health and medicine; food; leisure and entertainment",
+                "keywords": [
+                  "education and training",
+                  "transport and travel",
+                  "health and medicine",
+                  "leisure and entertainment",
+                  "community health",
+                  "community wellbeing"
+                ]
+              },
+              {
+                "id": "SIT.4.3",
+                "syllabus_text": "Technologies and the workplace — safety technology; information and communication technology; structure of the workplace: health and safety, equipment, efficiency, flexibility, education and training; introduction of technology into the workplace",
+                "keywords": [
+                  "workplace safety",
+                  "work/life balance",
+                  "career pathways",
+                  "efficiency",
+                  "flexibility",
+                  "employers",
+                  "employees"
+                ]
+              }
+            ],
+            "keywords": [
+              "household technology",
+              "information and communication technology",
+              "entertainment technology",
+              "interpersonal relationships",
+              "education and training",
+              "transport",
+              "health and medicine",
+              "community wellbeing",
+              "workplace safety",
+              "work/life balance",
+              "efficiency",
+              "flexibility"
+            ]
+          },
+          "SIT.5": {
+            "subtopic_title": "Issues related to technological development",
+            "inquiry_question": "What issues are associated with technological development?",
+            "dot_points": [
+              {
+                "id": "SIT.5.1",
+                "syllabus_text": "Issues related to information and communication technology — privacy and safety; security of information; accuracy of information; information overload; copyright",
+                "keywords": [
+                  "privacy",
+                  "safety",
+                  "security of information",
+                  "accuracy of information",
+                  "information overload",
+                  "copyright"
+                ]
+              },
+              {
+                "id": "SIT.5.2",
+                "syllabus_text": "Impact of emerging technologies — ethics; equity and access; health and safety; economic; environmental; education and learning",
+                "keywords": [
+                  "ethics",
+                  "equity and access",
+                  "health and safety",
+                  "economic impact",
+                  "environmental impact",
+                  "education and learning",
+                  "emerging technologies"
+                ]
+              },
+              {
+                "id": "SIT.5.3",
+                "syllabus_text": "A selected piece of technology — reasons for the development; factors affecting access to and acceptance; impact on lifestyle and wellbeing; case study",
+                "keywords": [
+                  "case study",
+                  "selected technology",
+                  "development of technology",
+                  "political impact",
+                  "economic impact",
+                  "social impact"
+                ]
+              }
+            ],
+            "keywords": [
+              "privacy",
+              "security of information",
+              "accuracy",
+              "information overload",
+              "copyright",
+              "ethics",
+              "equity and access",
+              "emerging technologies",
+              "environmental impact",
+              "case study"
+            ]
+          }
+        }
+      },
+      "IAW": {
+        "topic_code": "IAW",
+        "topic_title": "Individuals and Work (HSC Option)",
+        "outcomes": [
+          "H2.2",
+          "H2.3",
+          "H3.3",
+          "H3.4",
+          "H5.2",
+          "H6.1",
+          "H6.2"
+        ],
+        "subtopics": {
+          "IAW.1": {
+            "subtopic_title": "The nature of work",
+            "inquiry_question": "What is the nature of work?",
+            "dot_points": [
+              {
+                "id": "IAW.1.1",
+                "syllabus_text": "Reasons people work — to meet specific needs; economic; value and status",
+                "keywords": [
+                  "reasons for work",
+                  "specific needs",
+                  "economic",
+                  "value of work",
+                  "status",
+                  "paid work",
+                  "unpaid work"
+                ]
+              },
+              {
+                "id": "IAW.1.2",
+                "syllabus_text": "The labour force — labour force concepts and terms: labour force, employed, unemployed, employed part time, employed full time, participation rate; labour force participation across the life span",
+                "keywords": [
+                  "labour force",
+                  "employed",
+                  "unemployed",
+                  "part time",
+                  "full time",
+                  "participation rate",
+                  "labour force participation"
+                ]
+              },
+              {
+                "id": "IAW.1.3",
+                "syllabus_text": "Patterns of work — full-time, part-time, job share, casual; permanent, temporary/contract; self-employed; shift work; voluntary; seasonal; working remotely; others",
+                "keywords": [
+                  "full-time",
+                  "part-time",
+                  "job share",
+                  "casual",
+                  "permanent",
+                  "temporary",
+                  "contract",
+                  "self-employed",
+                  "shift work",
+                  "voluntary",
+                  "seasonal",
+                  "working remotely",
+                  "patterns of work"
+                ]
+              }
+            ],
+            "keywords": [
+              "paid work",
+              "unpaid work",
+              "labour force",
+              "employed",
+              "unemployed",
+              "participation rate",
+              "full-time",
+              "part-time",
+              "job share",
+              "casual",
+              "permanent",
+              "self-employed",
+              "shift work",
+              "seasonal",
+              "working remotely"
+            ]
+          },
+          "IAW.2": {
+            "subtopic_title": "Changing work patterns",
+            "inquiry_question": "How and why are work patterns changing?",
+            "dot_points": [
+              {
+                "id": "IAW.2.1",
+                "syllabus_text": "Social factors leading to changing work patterns — education/retraining; technology: computers, automation/robotics, research and development; employment/unemployment; perceptions of gender; family circumstances, including structural change; government policy; economics",
+                "keywords": [
+                  "changing work patterns",
+                  "education",
+                  "retraining",
+                  "technology",
+                  "automation",
+                  "robotics",
+                  "employment",
+                  "unemployment",
+                  "gender perceptions",
+                  "family circumstances",
+                  "government policy",
+                  "economics"
+                ]
+              }
+            ],
+            "keywords": [
+              "changing work patterns",
+              "education",
+              "retraining",
+              "technology",
+              "automation",
+              "robotics",
+              "unemployment",
+              "gender perceptions",
+              "family circumstances",
+              "government policy",
+              "economics"
+            ]
+          },
+          "IAW.3": {
+            "subtopic_title": "Structures that support individuals in the workplace",
+            "inquiry_question": "What structures support individuals in the workplace?",
+            "dot_points": [
+              {
+                "id": "IAW.3.1",
+                "syllabus_text": "Rights and responsibilities — employees; employers",
+                "keywords": [
+                  "rights",
+                  "responsibilities",
+                  "employees",
+                  "employers"
+                ]
+              },
+              {
+                "id": "IAW.3.2",
+                "syllabus_text": "Workplace structures — legislation, eg health and safety, equal employment opportunity; work conditions, eg awards, grievance procedures; trade unions; flexible work patterns and practices, eg job share, flexible work arrangements; workplace culture, eg childcare, prayer room, kitchen; leave entitlements, eg parental, carers",
+                "keywords": [
+                  "health and safety legislation",
+                  "equal employment opportunity",
+                  "awards",
+                  "grievance procedures",
+                  "trade unions",
+                  "flexible work arrangements",
+                  "workplace culture",
+                  "childcare",
+                  "leave entitlements",
+                  "parental leave",
+                  "carers leave"
+                ]
+              }
+            ],
+            "keywords": [
+              "rights",
+              "responsibilities",
+              "employees",
+              "employers",
+              "health and safety",
+              "equal employment opportunity",
+              "awards",
+              "trade unions",
+              "flexible work arrangements",
+              "workplace culture",
+              "leave entitlements",
+              "parental leave"
+            ]
+          },
+          "IAW.4": {
+            "subtopic_title": "Managing individual and workplace roles",
+            "inquiry_question": "How can individuals manage multiple roles effectively?",
+            "dot_points": [
+              {
+                "id": "IAW.4.1",
+                "syllabus_text": "Individual roles — personal commitments and interests: work, leadership, parenting, caring, volunteering, religion, recreation, studying, hobbies",
+                "keywords": [
+                  "multiple roles",
+                  "personal commitments",
+                  "leadership",
+                  "parenting",
+                  "caring",
+                  "volunteering",
+                  "religion",
+                  "recreation",
+                  "studying"
+                ]
+              },
+              {
+                "id": "IAW.4.2",
+                "syllabus_text": "Individual strategies for managing multiple roles — negotiating and sharing roles; managing resources; using technology; accessing support; utilising workplace structures",
+                "keywords": [
+                  "strategies",
+                  "negotiating roles",
+                  "sharing roles",
+                  "managing resources",
+                  "using technology",
+                  "accessing support",
+                  "utilising workplace structures",
+                  "work/life balance"
+                ]
+              }
+            ],
+            "keywords": [
+              "multiple roles",
+              "personal commitments",
+              "parenting",
+              "caring",
+              "volunteering",
+              "negotiating roles",
+              "managing resources",
+              "accessing support",
+              "work/life balance",
+              "workplace structures"
+            ]
+          },
+          "IAW.5": {
+            "subtopic_title": "Youth employment",
+            "inquiry_question": "What issues impact on youth employment?",
+            "dot_points": [
+              {
+                "id": "IAW.5.1",
+                "syllabus_text": "Issues that impact on youth employment — personal management skills required in the workplace; steps taken to prepare and plan for a career; predominant patterns of work of young people; rights and responsibilities of young people in the workplace",
+                "keywords": [
+                  "youth employment",
+                  "youth unemployment",
+                  "personal management skills",
+                  "career planning",
+                  "patterns of work",
+                  "rights",
+                  "responsibilities",
+                  "young people"
+                ]
+              }
+            ],
+            "keywords": [
+              "youth employment",
+              "youth unemployment",
+              "personal management skills",
+              "career planning",
+              "rights",
+              "responsibilities",
+              "young people"
+            ]
+          }
+        }
+      }
+    },
+    "cross_topic_concepts": [
+      "wellbeing",
+      "resource management",
+      "equity",
+      "government and non-government organisations",
+      "community support",
+      "legislation",
+      "gender",
+      "sociocultural factors",
+      "technology",
+      "roles and relationships",
+      "needs and wants",
+      "advocacy"
+    ],
+    "cube_app_usage_notes": {
+      "keyword_principle": "All keywords are strictly from NESA syllabus text only. Students may be examined on any syllabus keyword.",
+      "topic_structure": "HSC course: three core topics (Research Methodology, Groups in Context, Parenting and Caring) plus one option from three (Family and Societal Interactions, Social Impact of Technology, Individuals and Work). Topic codes: RM, GIC, PAC, FSI, SIT, IAW.",
+      "inquiry_questions": "Inquiry-style headings are included as subtopic titles to support question interpretation.",
+      "groups_note": "Groups in Context requires students to study Youth and Rural and Remote Families (Category A, mandatory) plus any 2 from Category B. The database includes all groups — the CUBE app should not assume which Category B groups a student has studied.",
+      "option_note": "Students study only ONE of FSI, SIT, or IAW. The CUBE app should allow subject configuration to select which option applies."
+    }
+  },
+  "bandRules": {
+    "file_name": "10_COMMUNITY_FAMILY_STUDIES_BAND_RESPONSE_GENERATOR_RULES.json",
+    "course": "Community and Family Studies HSC",
+    "purpose": "Band descriptor rules for generating indicative HSC responses at each band level. Used by CUBE Marking Coach model answer generator.",
+    "source_basis": "NESA Community and Family Studies HSC Performance Band Descriptions (official). Source: educationstandards.nsw.edu.au",
+    "approximation_note": "Official NESA CAFS band descriptors are used directly. No proxy subject is required.",
+    "global_rules": {
+      "always": [
+        "Align all content to the NSW HSC Community and Family Studies syllabus (Amended 2022).",
+        "Answer the directive verb exactly as asked.",
+        "Use accurate CAFS terminology throughout (e.g. wellbeing, resource management, societal factors, interrelationships, management process).",
+        "Keep all claims relevant to the question — individuals, groups, families and communities as applicable.",
+        "Apply cause-and-effect reasoning when explaining social or management mechanisms.",
+        "Support arguments with relevant research, examples or data references where appropriate.",
+        "Address the interrelationships between individuals, groups, families and communities where relevant to the question."
+      ],
+      "directive_rules": {
+        "identify": [
+          "Name the required concept, factor, group, strategy or resource.",
+          "Do not explain unless the question demands it."
+        ],
+        "outline": [
+          "Provide the main features or general idea.",
+          "Keep detail limited but accurate."
+        ],
+        "describe": [
+          "State relevant characteristics and what they do or show.",
+          "Include features and function where appropriate."
+        ],
+        "explain": [
+          "Show cause and effect clearly.",
+          "Link ideas using explicit CAFS reasoning about individuals, groups, families or communities."
+        ],
+        "analyse": [
+          "Break the concept into parts.",
+          "Show relationships, patterns, causes and effects using evidence or examples.",
+          "Demonstrate understanding of the interrelationships between societal factors."
+        ],
+        "assess": [
+          "Make a judgement based on strengths and limitations.",
+          "Support the judgement with relevant research or examples."
+        ],
+        "evaluate": [
+          "Judge overall value, effectiveness or significance.",
+          "Include strengths, limitations and a clear final judgement.",
+          "Link the judgement to wellbeing outcomes for individuals, groups, families or communities."
+        ],
+        "justify": [
+          "Give reasons that support a conclusion, choice or recommendation.",
+          "Make the conclusion explicit.",
+          "Link reasons to relevant CAFS concepts."
+        ],
+        "compare": [
+          "Show similarities and differences between the concepts, groups, strategies or structures."
+        ],
+        "contrast": [
+          "Focus on differences between the concepts, groups, strategies or structures."
+        ],
+        "discuss": [
+          "Examine the concept by considering different aspects, perspectives or implications.",
+          "Link ideas and come to a considered position.",
+          "Draw on relevant research and examples."
+        ],
+        "propose": [
+          "Suggest a strategy, solution or course of action.",
+          "Justify the proposal by linking it to wellbeing or resource management outcomes."
+        ],
+        "investigate": [
+          "Examine the concept by gathering and interpreting relevant evidence or data.",
+          "Draw conclusions supported by the investigation."
+        ],
+        "recommend": [
+          "Propose a course of action or strategy with justification.",
+          "Link the recommendation to wellbeing or equity outcomes."
+        ],
+        "critique": [
+          "Make a detailed analysis of strengths and weaknesses.",
+          "Support with evidence and reach a considered judgement."
+        ]
+      }
+    },
+    "band_rules": {
+      "Band6": {
+        "nesa_descriptor": "A student who performs at this level in the exam typically: demonstrates extensive knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities; demonstrates superior understanding and application of research methodologies to the study of social issues; predicts and draws valid conclusions by analysing data relevant to the study of social issues; proposes, develops and sustains arguments based on relevant research and examples to justify points of view; comprehensively applies the management process and proposes relevant strategies in a wide range of contexts; evaluates the impact of resource management on the wellbeing of individuals, groups, families and communities in a wide range of contexts; demonstrates superior analysis of interrelationships between individuals, groups, families and communities; effectively communicates ideas, issues and opinions in an organised, logical and coherent manner, using appropriate terminology.",
+        "knowledge_standard": "Demonstrates extensive knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities.",
+        "communication_standard": "Effectively communicates ideas, issues and opinions in an organised, logical and coherent manner, using appropriate terminology.",
+        "must_include": [
+          "Extensive knowledge and understanding about the influence of a range of societal factors on individuals, groups, families and communities.",
+          "Superior understanding and application of research methodologies to the study of social issues.",
+          "Valid conclusions drawn by predicting and analysing data relevant to social issues.",
+          "Arguments proposed, developed and sustained based on relevant research and examples to justify points of view.",
+          "Comprehensive application of the management process with relevant strategies proposed across a wide range of contexts.",
+          "Evaluation of the impact of resource management on wellbeing across a wide range of contexts.",
+          "Superior analysis of interrelationships between individuals, groups, families and communities.",
+          "Ideas, issues and opinions communicated in an organised, logical and coherent manner using appropriate CAFS terminology."
+        ],
+        "style_rules": [
+          "Critically analyse and evaluate — do not merely describe or list.",
+          "Integrate multiple societal factors and demonstrate their interrelationships rather than treating them in isolation.",
+          "Apply the management process explicitly to the specific context.",
+          "Use precise CAFS terminology consistently throughout.",
+          "Support every argument with a relevant, accurate research example, data reference or real-world case."
+        ],
+        "avoid": [
+          "Generic statements without a causal link, research reference or example.",
+          "Describing strategies without evaluating their effectiveness.",
+          "Treating individuals, groups, families and communities as separate rather than interrelated.",
+          "Vague examples that do not specifically support the argument.",
+          "Simply restating the question or defining terms without applying them."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Directly answer the question in the first sentence using precise CAFS terminology.",
+            "Include at least one explicit causal link, mechanism or relevant example."
+          ],
+          "mid_response_4_6_marks": [
+            "Include multiple linked CAFS concepts or factors.",
+            "Apply the management process or societal factors to the specific context.",
+            "Support with relevant research examples or data references."
+          ],
+          "extended_response_7_plus_marks": [
+            "Use a deliberate structure addressing all parts of the question.",
+            "Analyse interrelationships between individuals, groups, families and communities.",
+            "Evaluate the impact of resource management or societal factors on wellbeing.",
+            "Sustain arguments with accurate, relevant research and examples throughout.",
+            "Communicate in an organised, logical and coherent manner."
+          ]
+        }
+      },
+      "Band5": {
+        "nesa_descriptor": "A student who performs at this level in the exam typically: demonstrates thorough knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities; demonstrates accomplished understanding and application of research methodologies to the study of social issues; successfully draws conclusions using available data relevant to the study of social issues; sustains arguments using relevant research and individual experiences; effectively applies the management process and proposes strategies in a range of contexts; explains the impact of resource management on the wellbeing of individuals, groups, families and communities in a range of contexts; competently identifies and explains interrelationships between individuals, groups, families and communities; competently communicates ideas, issues and opinions in an organised, logical and coherent manner, using appropriate terminology.",
+        "knowledge_standard": "Demonstrates thorough knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities.",
+        "communication_standard": "Competently communicates ideas, issues and opinions in an organised, logical and coherent manner, using appropriate terminology.",
+        "must_include": [
+          "Thorough knowledge and understanding of societal factors and their influence on individuals, groups, families and communities.",
+          "Accomplished understanding and application of research methodologies.",
+          "Conclusions drawn from available data relevant to social issues.",
+          "Arguments sustained using relevant research and individual experiences.",
+          "Effective application of the management process with strategies proposed across a range of contexts.",
+          "Impact of resource management on wellbeing explained across a range of contexts.",
+          "Interrelationships between individuals, groups, families and communities identified and explained.",
+          "Ideas and opinions communicated in an organised, logical and coherent manner using appropriate terminology."
+        ],
+        "style_rules": [
+          "Explain and discuss — move beyond description toward analysis.",
+          "Identify and explain interrelationships rather than listing factors in isolation.",
+          "Apply the management process to the context with clearly proposed strategies.",
+          "Draw conclusions from data or examples rather than just restating them.",
+          "Use consistent and appropriate CAFS terminology."
+        ],
+        "avoid": [
+          "Superficial treatment of societal factors without explanation of their influence.",
+          "Listing strategies without applying the management process.",
+          "Substituting personal anecdote entirely for research-based examples.",
+          "Failing to explain interrelationships between groups, families and communities.",
+          "Imprecise or inconsistent use of CAFS terminology."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Answer the question directly using appropriate CAFS terminology.",
+            "Include a clear causal link or relevant example."
+          ],
+          "mid_response_4_6_marks": [
+            "Apply the management process or societal factors with clear explanation.",
+            "Support with research examples and/or relevant individual experiences.",
+            "Draw a conclusion from the evidence presented."
+          ],
+          "extended_response_7_plus_marks": [
+            "Structure the response to address all parts of the question.",
+            "Explain the interrelationships between individuals, groups, families and communities.",
+            "Apply the management process and propose strategies across a range of contexts.",
+            "Use research and examples to sustain arguments.",
+            "Communicate logically and coherently."
+          ]
+        }
+      },
+      "Band4": {
+        "nesa_descriptor": "A student who performs at this level in the exam typically: demonstrates sound knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities; demonstrates sound understanding and application of research methodologies to the study of social issues; interprets data relevant to the study of social issues in various forms; draws on personal experience to support discussion; demonstrates clear knowledge of the management process and provides some examples of strategies; adequately communicates the relationship between resource management and wellbeing; shows a sound understanding of interrelationships between individuals, families and communities; communicates ideas, issues and opinions in a clear and logical way using appropriate terminology.",
+        "knowledge_standard": "Demonstrates sound knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities.",
+        "communication_standard": "Communicates ideas, issues and opinions in a clear and logical way using appropriate terminology.",
+        "must_include": [
+          "Sound knowledge and understanding of societal factors influencing individuals, groups, families and communities.",
+          "Sound understanding and application of research methodologies.",
+          "Data interpreted in various forms relevant to social issues.",
+          "Personal experience drawn on to support discussion.",
+          "Clear knowledge of the management process with some strategy examples provided.",
+          "Adequate communication of the relationship between resource management and wellbeing.",
+          "Sound understanding of interrelationships between individuals, families and communities.",
+          "Ideas and opinions communicated clearly and logically using appropriate terminology."
+        ],
+        "style_rules": [
+          "Interpret data rather than simply restating it.",
+          "Apply the management process — not just define it.",
+          "Use personal experience to support discussion but supplement with relevant examples.",
+          "Communicate the relationship between resource management and wellbeing clearly.",
+          "Use appropriate CAFS terminology consistently."
+        ],
+        "avoid": [
+          "Relying entirely on personal experience without linking to CAFS concepts.",
+          "Defining terms without applying them to the question context.",
+          "Ignoring the interrelationships between individuals, families and communities.",
+          "Listing factors without any interpretation or analysis.",
+          "Describing the management process without showing how it applies."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "Answer the question using relevant CAFS terminology.",
+            "Include at least one example or personal experience to support the response."
+          ],
+          "mid_response_4_6_marks": [
+            "Apply the management process or societal factors to the context.",
+            "Interpret relevant data or examples.",
+            "Communicate the relationship between resource management and wellbeing."
+          ],
+          "extended_response_7_plus_marks": [
+            "Address all parts of the question with a clear structure.",
+            "Show sound understanding of interrelationships.",
+            "Apply the management process with strategy examples.",
+            "Communicate clearly and logically using appropriate terminology."
+          ]
+        }
+      },
+      "Band3": {
+        "nesa_descriptor": "A student who performs at this level in the exam typically: demonstrates a basic knowledge and understanding of the influence of a range of societal factors on individuals and on the nature of groups, families and communities; demonstrates basic understanding and limited application of research methodologies to the study of social issues; demonstrates basic data-interpretation skills relevant to the study of social issues; relies heavily on personal experience to support discussion; demonstrates basic knowledge of the management process; shows a basic understanding of interrelationships between individuals, groups, families and communities; communicates ideas and opinions in basic form using some relevant terminology.",
+        "knowledge_standard": "Demonstrates a basic knowledge and understanding of the influence of a range of societal factors on individuals and on the nature of groups, families and communities.",
+        "communication_standard": "Communicates ideas and opinions in basic form using some relevant terminology.",
+        "must_include": [
+          "Basic knowledge and understanding of societal factors influencing individuals, groups, families and communities.",
+          "Basic understanding and limited application of research methodologies.",
+          "Basic data-interpretation relevant to social issues.",
+          "Personal experience used to support discussion.",
+          "Basic knowledge of the management process shown.",
+          "Basic understanding of interrelationships between individuals, groups, families and communities.",
+          "Ideas and opinions communicated in basic form using some relevant CAFS terminology."
+        ],
+        "style_rules": [
+          "State relevant facts and basic definitions.",
+          "Show some awareness of societal factors and their general influence.",
+          "Use some CAFS terminology — even if not consistently applied.",
+          "Make some reference to the management process.",
+          "Include personal experience as a primary support."
+        ],
+        "avoid": [
+          "Answers that show no understanding of CAFS concepts at all.",
+          "Responses relying entirely on everyday language with no CAFS terminology.",
+          "Making no reference to interrelationships or societal factors."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "State a relevant fact or basic concept using some CAFS terminology.",
+            "Include a personal experience or basic example."
+          ],
+          "mid_response_4_6_marks": [
+            "Show basic knowledge of the management process.",
+            "Demonstrate basic awareness of relevant societal factors.",
+            "Support with personal experience or simple examples."
+          ],
+          "extended_response_7_plus_marks": [
+            "Address the main aspect of the question.",
+            "Show basic understanding of interrelationships.",
+            "Use some relevant CAFS terminology.",
+            "Communicate ideas in a basic but coherent way."
+          ]
+        }
+      },
+      "Band2": {
+        "nesa_descriptor": "A student who performs at this level in the exam typically: demonstrates some knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities; demonstrates limited understanding of research methodologies applicable to the study of social issues; relies only on personal experience; shows limited knowledge of the management process; communicates simple and limited ideas and opinions using limited and elementary terminology.",
+        "knowledge_standard": "Demonstrates some knowledge and understanding about the influence of a range of societal factors on individuals and on the nature of groups, families and communities.",
+        "communication_standard": "Communicates simple and limited ideas and opinions using limited and elementary terminology.",
+        "must_include": [
+          "Some knowledge of societal factors and their general influence — even if partial or incomplete.",
+          "Limited understanding of research methodologies.",
+          "Personal experience as the primary support (no external research).",
+          "Limited knowledge of the management process.",
+          "Simple and limited ideas communicated using elementary CAFS terminology."
+        ],
+        "style_rules": [
+          "Recall simple, relevant facts.",
+          "Show partial awareness of societal factors.",
+          "Use elementary terminology — mostly everyday language.",
+          "Rely on personal experience throughout."
+        ],
+        "avoid": [
+          "Responses showing zero knowledge of any CAFS concepts.",
+          "Answers that are wholly irrelevant to the question."
+        ],
+        "minimum_response_features": {
+          "short_response_2_3_marks": [
+            "State a simple relevant idea or fact.",
+            "Use at least one recognisable CAFS term."
+          ],
+          "mid_response_4_6_marks": [
+            "Show some awareness of societal factors.",
+            "Rely on personal experience to support a simple discussion.",
+            "Attempt to use some CAFS terminology."
+          ],
+          "extended_response_7_plus_marks": [
+            "Address part of the question with simple ideas.",
+            "Show limited awareness of the management process.",
+            "Communicate with elementary terminology."
+          ]
+        }
+      },
+      "Band1": {
+        "nesa_descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+        "knowledge_standard": "Minimum standard not demonstrated.",
+        "communication_standard": "Minimum standard not demonstrated.",
+        "must_include": [],
+        "style_rules": [
+          "Do not intentionally generate Band 1 responses unless explicitly requested as a wholly inadequate response example."
+        ],
+        "avoid": [],
+        "minimum_response_features": {}
+      }
+    },
+    "generation_templates": {
+      "Band6_explain": [
+        "State the key CAFS concept or societal factor precisely.",
+        "Explain the mechanism or social process using accurate CAFS terminology.",
+        "Link cause to effect explicitly using social or management reasoning.",
+        "State the resulting consequence for wellbeing or the functioning of individuals, groups, families or communities."
+      ],
+      "Band6_analyse": [
+        "Identify the major societal factors, components or influences being analysed.",
+        "Show how they interact, relate or produce outcomes for individuals, groups, families or communities.",
+        "Interpret any data, trends or patterns relevant to social issues.",
+        "Link the analysis back to the specific question context."
+      ],
+      "Band6_evaluate": [
+        "State the strategy, policy, organisation or approach being evaluated.",
+        "Explain at least one strength with evidence or example.",
+        "Explain at least one limitation with evidence or example.",
+        "Make a clear final judgement using 'overall', 'therefore' or 'this is effective because'.",
+        "Link the judgement to wellbeing outcomes."
+      ],
+      "Band6_assess": [
+        "State the factor, strategy or situation being assessed and the criteria for judgement.",
+        "Discuss positive aspects and negative aspects with evidence or examples.",
+        "Use relevant research references or data.",
+        "Conclude with a balanced but definite judgement linked to wellbeing."
+      ],
+      "Band6_discuss": [
+        "State the CAFS issue and the key dimensions to consider.",
+        "Examine at least two aspects, perspectives or implications with evidence.",
+        "Link ideas using connectives (however, therefore, as a result, in contrast).",
+        "Come to a considered position supported by relevant research and examples."
+      ],
+      "Band6_describe": [
+        "State the key features, characteristics or components of the concept, group, process or structure.",
+        "Explain what each feature does, shows or represents in a CAFS context.",
+        "Use precise CAFS terminology.",
+        "Link features to their significance or function where relevant."
+      ],
+      "Band6_outline": [
+        "State the main features or steps of the concept, process or strategy.",
+        "Keep detail focused and accurate — not exhaustive.",
+        "Use correct CAFS terminology.",
+        "Structure clearly if multiple features are required."
+      ],
+      "Band6_identify": [
+        "Name the required factor, group, strategy, resource or concept directly.",
+        "Use precise CAFS terminology.",
+        "Do not explain unless the question explicitly requires it.",
+        "If multiple items are required, list clearly."
+      ],
+      "Band6_justify": [
+        "State the chosen strategy, approach, or conclusion clearly.",
+        "Give CAFS-grounded reasons supporting it with evidence or examples.",
+        "Link each reason back to wellbeing or the management process.",
+        "Finish with a sentence confirming why the judgement is valid."
+      ],
+      "Band6_compare": [
+        "Identify the concepts, groups, structures or strategies being compared.",
+        "State similarities using precise CAFS terminology.",
+        "State differences clearly.",
+        "Use comparative language (whereas, in contrast, similarly, unlike)."
+      ],
+      "Band6_contrast": [
+        "Identify the concepts, groups, structures or strategies being contrasted.",
+        "Clearly state the key differences with CAFS reasoning.",
+        "Use comparative language (whereas, in contrast, unlike).",
+        "Use precise terminology throughout."
+      ],
+      "Band6_propose": [
+        "State the proposed strategy or solution clearly and directly.",
+        "Give CAFS-grounded reasons justifying the proposal.",
+        "Link the proposal to wellbeing or resource management outcomes.",
+        "Conclude by confirming the proposal is appropriate and effective in the given context."
+      ],
+      "Band6_recommend": [
+        "State the recommended strategy, program or course of action clearly.",
+        "Give specific CAFS reasons justifying the recommendation.",
+        "Address the specific wellbeing or equity context.",
+        "Conclude with a statement confirming the recommendation is appropriate and effective."
+      ],
+      "Band6_investigate": [
+        "State what is being investigated and why it matters in a CAFS context.",
+        "Present relevant evidence, data or examples from research or contemporary social issues.",
+        "Interpret the evidence — what does it show or mean for individuals, groups, families or communities?",
+        "Draw a clear conclusion supported by the investigation."
+      ]
+    },
+    "quality_checks": {
+      "before_output": [
+        "Has the directive verb been answered correctly?",
+        "Has every part of the question been addressed?",
+        "Is the CAFS content syllabus-aligned (Amended 2022 syllabus)?",
+        "Is the terminology appropriate to the target band?",
+        "Are the causal links or interrelationships clear?",
+        "Has a judgement been made when required by the directive?",
+        "Have relevant research examples or evidence been included?",
+        "Have the interrelationships between individuals, groups, families and communities been addressed where relevant?"
+      ],
+      "band6_checklist": [
+        "Precise CAFS terminology used consistently.",
+        "Multiple linked societal factors included and analysed.",
+        "Strategies evaluated — not just identified or described.",
+        "Arguments sustained using relevant research and examples.",
+        "Response is coherent and logically structured.",
+        "Judgement is explicit if required by the directive.",
+        "Interrelationships between individuals, groups, families and communities addressed where relevant.",
+        "Impact on wellbeing addressed where relevant."
+      ]
+    },
+    "output_controls": {
+      "target_band_selection_rule": {
+        "Band6": "Generate with extensive knowledge — comprehensively apply the management process, critically analyse societal factors and their interrelationships, evaluate impact on wellbeing across a wide range of contexts, sustain arguments with relevant research and examples. Communicate in an organised, logical and coherent manner using appropriate CAFS terminology.",
+        "Band5": "Generate with thorough understanding — accomplish application of research methodologies, sustain arguments using research and individual experiences, effectively apply the management process and propose strategies across a range of contexts. Explain interrelationships and resource management impact. Communicate competently and logically.",
+        "Band4": "Generate with sound knowledge — interpret data in various forms, apply the management process clearly with strategy examples, draw on personal experience to support discussion, show sound understanding of interrelationships. Communicate clearly and logically.",
+        "Band3": "Generate using basic knowledge — demonstrate basic understanding of societal factors, show basic knowledge of the management process, rely heavily on personal experience, show basic data-interpretation skills. Communicate in basic form using some relevant terminology.",
+        "Band2": "Generate brief and limited responses — show some knowledge of societal factors, demonstrate limited understanding of research methodologies, rely only on personal experience, show limited knowledge of the management process. Communicate simple ideas using limited and elementary terminology.",
+        "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
+      },
+      "forbidden_behaviours": [
+        "Do not generate Band 6 responses by merely increasing word count.",
+        "Do not add irrelevant advanced content to imitate sophistication.",
+        "Do not ignore the syllabus or stimulus material.",
+        "Do not use vague examples that do not specifically justify the argument.",
+        "Do not treat individuals, groups, families and communities as entirely separate when the question requires interrelated analysis.",
+        "Do not substitute personal experience entirely for research-based evidence in Band 5 or 6 responses."
+      ]
+    }
+  },
+  "directiveTiers": {
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recognise": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "predict": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "suggest": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "investigate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically examine": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "critique": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "formulate": {
+      "tier": 4,
+      "modality": "optional"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this causes",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas"
+    ]
+  }
+}
