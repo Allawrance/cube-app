@@ -1290,6 +1290,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>{nameValid?"Tap to upload or take a photo":"Enter your name above first"}</div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}</div>
+                {nameValid&&<div style={{marginTop:"14px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
               </div>;
             })()}
             <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
@@ -2274,4 +2275,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(
   </script>
 </body>
 </html>
-
