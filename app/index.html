@@ -44,7 +44,7 @@ const { useState, useRef, useEffect } = React;
 // This index.html is subject-agnostic — do not add subject-specific logic here.
 let config = {
   subjectCode: "EES",
-  subjectName: "Earth & Environmental Science",
+  subjectName: "HSC Marking Coach",
   subjectShortName: "EES",
   leaderboardTip: "",
   leaderboardUrl: "",
@@ -63,7 +63,7 @@ async function loadConfig() {
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
     // Map short URL codes to config filenames
-    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS" };
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
     const res = await fetch(configFile);
@@ -912,7 +912,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           bandRules: config.bandRules,
 
           messages:[{ role:"user", content:[{type:"text", text:
-            `Write a Band 6 model response for this NSW HSC Earth and Environmental Science question.
+            `Write a Band 6 model response for this NSW HSC ${config.subjectName} question.
 
 Question: "${sanitiseInput(questionText)}"
 Directive(s): ${dirs2.map(d=>`${sanitiseInput(d.word)} — ${sanitiseInput(d.meaning)}`).join("; ")}
