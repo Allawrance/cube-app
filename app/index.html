@@ -975,7 +975,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         </div>}
       </div>
 
-      {/* ── SECTION 2: ANNOTATED CUBE ── */}
+      {/* ── SECTION 2: ANNOTATED CUBE with planning arrows ── */}
       <div className="pr-cube-section pr-no-break">
         <div className="pr-section-label">2 — Annotated CUBE</div>
         <SVGAnnotatedPaper
@@ -983,12 +983,14 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           directives={dirs}
           syllabusKeywords={kwds}
           constraints={c.constraints}
-          mode="cube"
+          planningArrows={stage2Results?.phase2_plan?.planningArrows||[]}
+          mode="plan"
         />
         <div className="pr-cube-legend">
           <span><strong style={{color:"#c0392b"}}>C</strong> = Directive verb(s) — circled</span>
           <span><strong style={{color:"#1a6db5"}}>U</strong> = Syllabus keyword(s) — underlined</span>
-          <strong style={{color:"#2e7d32"}}>B</strong> = Constraints — boxed
+          <span><strong style={{color:"#2e7d32"}}>B</strong> = Constraints — boxed</span>
+          <span><strong style={{color:"#6a1b9a"}}>↑↓</strong> = Planning annotations</span>
         </div>
       </div>
 
