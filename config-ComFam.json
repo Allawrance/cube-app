@@ -7,7 +7,7 @@
   "leaderboardTip": "Evaluate and Analyse are dominant verbs — always address interrelationships between individuals, groups, families and communities, and link every point to wellbeing outcomes.",
   "sheetTabCube": "CF CUBE",
   "sheetTabFull": "ComFam",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_URL",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
   "logUrl": "REPLACE_WITH_LOG_WEBHOOK_URL",
   "syllabus": {
     "file_name": "05_COMMUNITY_FAMILY_STUDIES_SYLLABUS_DATABASE.json",
