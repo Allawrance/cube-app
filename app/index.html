@@ -27,10 +27,221 @@
   }
   .name-input-empty { animation: borderPulse 2s ease-in-out infinite; }
   .name-input-filled { animation: none; }
+
+  /* ── PRINT / PDF REPORT ─────────────────────────────────────────────────── */
+  #print-report { display: none; }
+
+  @media print {
+    /* Hide everything except the report */
+    body > #root { display: none !important; }
+    #print-report {
+      display: block !important;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #1a1a2e;
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    /* Force white background, black text throughout */
+    #print-report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Page breaks */
+    .pr-page-break { page-break-before: always; }
+    .pr-no-break   { page-break-inside: avoid; }
+
+    /* Header */
+    .pr-header {
+      background: #040d18 !important;
+      color: white !important;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid #c9a84c;
+      margin-bottom: 24px;
+    }
+    .pr-header-left { display: flex; align-items: center; gap: 16px; }
+    .pr-cube-badge {
+      background: #c9a84c !important;
+      color: #040d18 !important;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 4px;
+      font-family: sans-serif;
+    }
+    .pr-header-title { font-size: 18px; font-weight: 700; color: #f0e6c8 !important; font-family: sans-serif; }
+    .pr-header-sub   { font-size: 12px; color: #c8d8e8 !important; font-family: sans-serif; margin-top: 2px; }
+    .pr-header-meta  { text-align: right; font-family: sans-serif; font-size: 11px; color: #9aabb8 !important; }
+
+    /* Section headings */
+    .pr-section-label {
+      font-family: sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c9a84c !important;
+      margin-bottom: 8px;
+    }
+
+    /* Question block */
+    .pr-question-block {
+      border: 2px solid #c9a84c;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 0 28px 20px;
+      background: #fffef8 !important;
+    }
+    .pr-question-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .pr-directive-pill {
+      border: 2.5px solid #c0392b;
+      border-radius: 50%;
+      padding: 2px 10px;
+      color: #c0392b !important;
+      font-weight: 900;
+      font-size: 13px;
+      font-family: sans-serif;
+    }
+    .pr-score-pill {
+      background: #c9a84c !important;
+      color: #040d18 !important;
+      border-radius: 20px;
+      padding: 3px 14px;
+      font-size: 13px;
+      font-weight: 900;
+      font-family: sans-serif;
+    }
+    .pr-question-text {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #1a1a2e !important;
+    }
+
+    /* CUBE SVG wrapper */
+    .pr-cube-section { margin: 0 28px 20px; }
+    .pr-cube-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-family: sans-serif;
+      font-size: 12px;
+      color: #444 !important;
+    }
+
+    /* Paper card (student response) */
+    .pr-paper {
+      margin: 0 28px 20px;
+      background: #fffef5 !important;
+      border-radius: 12px;
+      border: 1px solid #d0c8a8;
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pr-paper-lines::before {
+      content: '';
+      position: absolute;
+      left: 36px;
+      top: 0;
+      bottom: 0;
+      width: 1.5px;
+      background: rgba(255,100,100,0.25);
+    }
+    .pr-response-text {
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      line-height: 1.9;
+      color: #1a1a2e !important;
+      position: relative;
+    }
+    .pr-connective { color: #7b1fa2 !important; font-weight: 900; font-family: sans-serif; }
+    .pr-noun-group { color: #1565c0 !important; font-style: italic; text-decoration: underline; text-decoration-style: dotted; }
+    .pr-illegible  { background: #ff6d00 !important; color: white !important; border-radius: 3px; padding: 0 5px; font-size: 11px; font-family: sans-serif; font-weight: 900; }
+
+    /* Literacy table */
+    .pr-literacy-section { margin: 0 28px 20px; }
+    .pr-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
+    .pr-table th { background: #f0e6c8 !important; color: #040d18 !important; padding: 10px 12px; text-align: left; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid #c9a84c; }
+    .pr-table th.center { text-align: center; }
+    .pr-table td { padding: 10px 12px; border-bottom: 1px solid #e8e0c8; vertical-align: top; color: #1a1a2e !important; }
+    .pr-table td.center { text-align: center; }
+    .pr-score-circle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 50%;
+      font-weight: 900; font-size: 14px; color: white !important;
+      font-family: sans-serif;
+    }
+    .pr-na { color: #999 !important; font-style: italic; font-size: 12px; }
+
+    /* Score summary */
+    .pr-score-summary {
+      margin: 0 28px 20px;
+      background: #f0e6c8 !important;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pr-score-total-label { font-size: 13px; color: #666 !important; }
+    .pr-score-total-val   { font-size: 28px; font-weight: 900; color: #040d18 !important; }
+
+    /* Medals + Mission */
+    .pr-medals-section { margin: 0 28px 20px; }
+    .pr-medal-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .pr-medal-gold   { background: #fffbe6 !important; border: 1.5px solid #f0c040; }
+    .pr-medal-silver { background: #f8f8f8 !important; border: 1.5px solid #bbb; }
+    .pr-mission-box  { background: #fff3f3 !important; border: 1.5px solid #e57373; border-radius: 10px; padding: 14px 16px; }
+    .pr-medal-emoji  { font-size: 24px; flex-shrink: 0; }
+    .pr-medal-cat    { font-weight: 800; font-size: 14px; font-family: sans-serif; }
+    .pr-medal-gold   .pr-medal-cat { color: #b8860b !important; }
+    .pr-medal-silver .pr-medal-cat { color: #555 !important; }
+    .pr-medal-quote  { font-style: italic; font-size: 13px; color: #333 !important; line-height: 1.5; margin-top: 4px; }
+    .pr-mission-label  { font-weight: 800; font-size: 14px; color: #c62828 !important; font-family: sans-serif; margin-bottom: 6px; }
+    .pr-mission-text   { font-size: 13px; color: #444 !important; line-height: 1.5; margin-bottom: 10px; }
+    .pr-change-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pr-change-bad  { background: #fde8e8 !important; border: 1px solid #e57373; border-radius: 8px; padding: 8px 10px; }
+    .pr-change-good { background: #e8f5e9 !important; border: 1px solid #81c784; border-radius: 8px; padding: 8px 10px; }
+    .pr-change-label { font-size: 9px; font-weight: 800; letter-spacing: 1px; font-family: sans-serif; margin-bottom: 4px; }
+    .pr-change-bad  .pr-change-label { color: #c62828 !important; }
+    .pr-change-good .pr-change-label { color: #2e7d32 !important; }
+    .pr-change-phrase { font-size: 12px; font-style: italic; color: #333 !important; }
+
+    /* Footer */
+    .pr-footer {
+      margin: 24px 28px 0;
+      padding-top: 12px;
+      border-top: 1px solid #ddd;
+      font-family: sans-serif;
+      font-size: 10px;
+      color: #999 !important;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 </style>
 </head>
 <body>
   <div id="root"></div>
+  <div id="print-report"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -669,6 +880,251 @@ function RubricRow({label, data, applicable=true, dimMax=5}) {
   </tr>;
 }
 
+// ─── PRINT REPORT ─────────────────────────────────────────────────────────────
+// Renders into a hidden #print-report div. @media print hides everything else.
+// Called via window.print() triggered by the Download Report button.
+
+function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
+                       dirs, kwds, c, a, score, maxScore, dimMaxR,
+                       causalApplicable, modalityApplicable,
+                       stage2Results, connectives }) {
+  if (!a) return null;
+
+  const gold = "#c9a84c";
+  const marksKnown = c.marks !== null && c.marks !== undefined;
+  const band = marksKnown ? null : getBand(score, maxScore);
+  const displayedMark = marksKnown
+    ? `${Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)} / ${c.marks} marks`
+    : band ? `Indicative ${band}` : "";
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-AU", {day:"2-digit",month:"short",year:"numeric"});
+  const timeStr = now.toLocaleTimeString("en-AU", {hour:"2-digit",minute:"2-digit"});
+
+  // ── Literacy rows helper ──
+  const litRows = [
+    { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
+    { label:"Complex Noun Groups",   data:a.rubric?.complexNounGroups, applicable:true              },
+    { label:"Modality",              data:a.rubric?.modality,          applicable:modalityApplicable },
+    { label:"Logical Flow & Cohesion", data:a.rubric?.logicalFlow,     applicable:true              },
+  ];
+
+  // ── Response text renderer (print-safe — no React spans with dark bg) ──
+  function PrintResponse({ text }) {
+    if (!text) return null;
+    const cleaned = normaliseIllegible(text);
+    const parts = [];
+    const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
+    let last = 0, m;
+    while ((m = regex.exec(cleaned)) !== null) {
+      if (m.index > last) parts.push(<span key={last}>{cleaned.slice(last, m.index)}</span>);
+      if (m[0] === '[?]') {
+        parts.push(<span key={m.index} className="pr-illegible">?</span>);
+      } else if (m[1]) {
+        parts.push(<strong key={m.index} className="pr-connective">{m[1]}</strong>);
+      } else {
+        parts.push(<em key={m.index} className="pr-noun-group">{m[2]}</em>);
+      }
+      last = m.index + m[0].length;
+    }
+    if (last < cleaned.length) parts.push(<span key="end">{cleaned.slice(last)}</span>);
+    return <>{parts}</>;
+  }
+
+  // ── Score circle colour ──
+  const scoreCol = (s, max) => {
+    const p = max > 0 ? s/max : 0;
+    return p >= 0.8 ? "#4caf50" : p >= 0.5 ? "#ff9800" : "#f44336";
+  };
+
+  // ── Formatted response for print ──
+  const responseText = enrichFormattedResponse(
+    a.formattedResponse, a.studentResponseText, a.detectedNounGroups, connectives
+  );
+
+  return (
+    <div>
+      {/* ── HEADER ── */}
+      <div className="pr-header">
+        <div className="pr-header-left">
+          <div className="pr-cube-badge">CUBE</div>
+          <div>
+            <div className="pr-header-title">CUBE Marking Coach — Student Report</div>
+            <div className="pr-header-sub">{subjectName}</div>
+          </div>
+        </div>
+        <div className="pr-header-meta">
+          <div style={{fontWeight:700,fontSize:"13px",marginBottom:"3px"}}>{studentName}</div>
+          {questionNumber && <div>Question {questionNumber}</div>}
+          <div>{dateStr} {timeStr}</div>
+        </div>
+      </div>
+
+      {/* ── SECTION 1: QUESTION + SCORE ── */}
+      <div className="pr-question-block pr-no-break">
+        <div className="pr-section-label">1 — Question &amp; Result</div>
+        <div className="pr-question-meta">
+          {dirs.map((dv,i) => (
+            <span key={i} className="pr-directive-pill">{dv.word}</span>
+          ))}
+          {questionNumber && <span style={{fontFamily:"sans-serif",fontSize:"12px",background:"#eee",borderRadius:"20px",padding:"2px 10px",fontWeight:700}}>Q{questionNumber}</span>}
+          {displayedMark && <span className="pr-score-pill">{displayedMark}</span>}
+        </div>
+        {c.questionText && <div className="pr-question-text">{c.questionText}</div>}
+        {kwds[0] && <div style={{marginTop:"8px",fontFamily:"sans-serif",fontSize:"11px",color:"#666"}}>
+          Module {kwds[0].module} — {kwds[0].topicTitle}
+        </div>}
+      </div>
+
+      {/* ── SECTION 2: ANNOTATED CUBE ── */}
+      <div className="pr-cube-section pr-no-break">
+        <div className="pr-section-label">2 — Annotated CUBE</div>
+        <SVGAnnotatedPaper
+          text={c.questionText}
+          directives={dirs}
+          syllabusKeywords={kwds}
+          constraints={c.constraints}
+          mode="cube"
+        />
+        <div className="pr-cube-legend">
+          <span><strong style={{color:"#c0392b"}}>C</strong> = Directive verb(s) — circled</span>
+          <span><strong style={{color:"#1a6db5"}}>U</strong> = Syllabus keyword(s) — underlined</span>
+          <strong style={{color:"#2e7d32"}}>B</strong> = Constraints — boxed
+        </div>
+      </div>
+
+      {/* ── SECTION 3: STUDENT RESPONSE ── */}
+      <div className="pr-no-break" style={{margin:"0 28px 20px"}}>
+        <div className="pr-section-label">3 — Your Written Response</div>
+        <div style={{fontSize:"11px",fontFamily:"sans-serif",color:"#666",marginBottom:"8px"}}>
+          <strong style={{color:"#7b1fa2"}}>Bold purple</strong> = causal connective &nbsp;|&nbsp;
+          <em style={{color:"#1565c0",textDecoration:"underline dotted"}}>italic underline</em> = complex noun group &nbsp;|&nbsp;
+          <span style={{background:"#ff6d00",color:"white",borderRadius:"3px",padding:"0 4px",fontSize:"10px",fontWeight:900}}>?</span> = illegible word
+        </div>
+        <div className="pr-paper pr-paper-lines">
+          <div className="pr-response-text">
+            <PrintResponse text={responseText}/>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SECTION 4: LITERACY SCORES ── */}
+      <div className="pr-literacy-section pr-page-break pr-no-break">
+        <div className="pr-section-label">4 — Literacy Marks</div>
+        <table className="pr-table">
+          <thead>
+            <tr>
+              <th>Criterion</th>
+              <th className="center">Score</th>
+              <th style={{textAlign:"left",width:"55%"}}>Evidence &amp; Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {litRows.map((row, i) => {
+              const rawScore = row.data?.score || 0;
+              const sc = Math.min(rawScore, dimMaxR);
+              if (!row.applicable) return (
+                <tr key={i}>
+                  <td style={{color:"#444",fontWeight:600}}>{row.label}</td>
+                  <td className="center"><span className="pr-na">N/A</span></td>
+                  <td style={{color:"#999",fontStyle:"italic"}}>Not applicable for this directive verb</td>
+                </tr>
+              );
+              const col = scoreCol(sc, dimMaxR);
+              return (
+                <tr key={i}>
+                  <td style={{fontWeight:600,color:"#1a1a2e"}}>{row.label}</td>
+                  <td className="center">
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"2px"}}>
+                      <span className="pr-score-circle" style={{background:col}}>{sc}</span>
+                      <span style={{fontSize:"10px",fontFamily:"sans-serif",color:"#666"}}>/ {dimMaxR}</span>
+                    </div>
+                  </td>
+                  <td>
+                    {row.data?.evidence && <div style={{fontStyle:"italic",color:"#444",marginBottom:"4px",fontSize:"12px"}}>"{row.data.evidence}"</div>}
+                    <div style={{color:"#222",fontSize:"12px",lineHeight:"1.5"}}>{row.data?.comment}</div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* Writing score summary */}
+        <div className="pr-score-summary" style={{marginTop:"12px",marginLeft:0,marginRight:0}}>
+          <div>
+            <div className="pr-score-total-label">Writing score</div>
+            <div style={{fontSize:"11px",fontFamily:"sans-serif",color:"#888",marginTop:"2px"}}>
+              {marksKnown ? `${c.marks}-mark question` : ""}
+              {displayedMark && ` · ${displayedMark}`}
+            </div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <span className="pr-score-total-val">{Math.min(score,maxScore)}</span>
+            <span style={{fontFamily:"sans-serif",fontSize:"14px",color:"#444",marginLeft:"4px"}}>/ {maxScore} XP</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SECTION 5: MEDALS + MISSION ── */}
+      {(a.medals?.medal1 || a.medals?.medal2 || a.mission) && (
+        <div className="pr-medals-section pr-no-break">
+          <div className="pr-section-label">5 — Medals &amp; Mission</div>
+
+          {a.medals?.medal1 && (
+            <div className="pr-medal-row pr-medal-gold">
+              <span className="pr-medal-emoji">🥇</span>
+              <div>
+                <div className="pr-medal-cat">You did well at {a.medals.medal1.category}</div>
+                <div className="pr-medal-quote">"{a.medals.medal1.quote}"</div>
+              </div>
+            </div>
+          )}
+
+          {a.medals?.medal2 && (
+            <div className="pr-medal-row pr-medal-silver">
+              <span className="pr-medal-emoji">🥈</span>
+              <div>
+                <div className="pr-medal-cat">You did well at {a.medals.medal2.category}</div>
+                <div className="pr-medal-quote">"{a.medals.medal2.quote}"</div>
+              </div>
+            </div>
+          )}
+
+          {a.mission && (
+            <div className="pr-mission-box">
+              <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
+                <span className="pr-medal-emoji">🎯</span>
+                <div style={{flex:1}}>
+                  <div className="pr-mission-label">Your Mission</div>
+                  <div className="pr-mission-text">
+                    To improve: {(a.mission.weakness||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")}
+                  </div>
+                  <div className="pr-change-grid">
+                    <div className="pr-change-bad">
+                      <div className="pr-change-label">CHANGE THIS</div>
+                      <div className="pr-change-phrase">"{a.mission.originalPhrase}"</div>
+                    </div>
+                    <div className="pr-change-good">
+                      <div className="pr-change-label">TO THIS</div>
+                      <div className="pr-change-phrase">"{a.mission.improvedVersion}"</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── FOOTER ── */}
+      <div className="pr-footer">
+        <span>CUBE HSC Marking Coach · {subjectCode} · AI-assisted feedback — not official NESA marking</span>
+        <span>{dateStr}</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 function App() {
   const [studentName, setStudentName] = useState(() => {
@@ -938,6 +1394,8 @@ Return ONLY the model response text, no heading, no preamble.`
   };
 
   const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+
+  const triggerPrint = () => { window.print(); };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   // Sync streak from server when student name is entered
@@ -1242,6 +1700,9 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
               <span style={{fontSize:"17px"}}>↩</span> New Question
             </button>}
+            {phase===2&&stage2Results&&<button onClick={triggerPrint} style={{padding:"6px 14px",background:"rgba(108,99,255,0.2)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"8px",color:"#a89fff",fontSize:"13px",fontWeight:800,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"6px",whiteSpace:"nowrap"}}>
+              <span style={{fontSize:"15px"}}>⬇</span><span className="hide-mobile">Download</span> Report
+            </button>}
           </div>
         </div>
       </div>
@@ -1290,47 +1751,7 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>{nameValid?"Tap to upload or take a photo":"Enter your name above first"}</div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}</div>
-                {nameValid&&<div style={{marginTop:"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
-                  <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
-                  <div style={{display:"flex",justifyContent:"center",gap:"24px",alignItems:"flex-start"}}>
-                    {/* CORRECT — vertical */}
-                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"8px"}}>
-                      <div style={{position:"relative",display:"inline-block"}}>
-                        <svg width="72" height="96" viewBox="0 0 72 96" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="4" y="4" width="64" height="88" rx="6" fill="rgba(46,125,50,0.15)" stroke="#2e7d32" strokeWidth="2.5"/>
-                          <line x1="14" y1="22" x2="58" y2="22" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="14" y1="32" x2="58" y2="32" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="14" y1="42" x2="52" y2="42" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="14" y1="52" x2="58" y2="52" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="14" y1="62" x2="46" y2="62" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round"/>
-                          <circle cx="56" cy="78" r="14" fill="#2e7d32"/>
-                          <polyline points="49,78 54,84 64,71" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                        </svg>
-                      </div>
-                      <div style={{fontSize:"12px",color:"#4caf50",fontFamily:"sans-serif",fontWeight:700}}>✔ Correct</div>
-                      <div style={{fontSize:"11px",color:"#9aabb8",fontFamily:"sans-serif",textAlign:"center",maxWidth:"80px",lineHeight:"1.4"}}>Text reads normally</div>
-                    </div>
-                    {/* INCORRECT — rotated 90° */}
-                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"8px"}}>
-                      <div style={{position:"relative",display:"inline-block"}}>
-                        <svg width="96" height="72" viewBox="0 0 96 72" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="4" y="4" width="88" height="64" rx="6" fill="rgba(183,28,28,0.12)" stroke="#b71c1c" strokeWidth="2.5"/>
-                          <line x1="16" y1="16" x2="16" y2="56" stroke="#ef5350" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="26" y1="16" x2="26" y2="56" stroke="#ef5350" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="36" y1="20" x2="36" y2="56" stroke="#ef5350" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="46" y1="16" x2="46" y2="56" stroke="#ef5350" strokeWidth="2.5" strokeLinecap="round"/>
-                          <line x1="56" y1="22" x2="56" y2="56" stroke="#ef5350" strokeWidth="2.5" strokeLinecap="round"/>
-                          <circle cx="78" cy="54" r="14" fill="#b71c1c"/>
-                          <line x1="72" y1="48" x2="84" y2="60" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-                          <line x1="84" y1="48" x2="72" y2="60" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-                        </svg>
-                      </div>
-                      <div style={{fontSize:"12px",color:"#ef5350",fontFamily:"sans-serif",fontWeight:700}}>✘ Incorrect</div>
-                      <div style={{fontSize:"11px",color:"#9aabb8",fontFamily:"sans-serif",textAlign:"center",maxWidth:"90px",lineHeight:"1.4"}}>Rotated — will not mark accurately</div>
-                    </div>
-                  </div>
-                </div>}
-                {nameValid&&<div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
+                {nameValid&&<div style={{marginTop:"14px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
               </div>;
             })()}
             <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
@@ -2265,6 +2686,47 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
           </div>;
         })()}
       </div>
+
+      {/* ── PRINT REPORT PORTAL — hidden on screen, visible only when printing ── */}
+      {phase===2&&stage2Results&&results&&(()=>{
+        const { phase1_cube: cPr } = results;
+        const aPr = stage2Results;
+        const dirsPr = cPr.directives?.length ? cPr.directives : cPr.directive ? [cPr.directive] : [];
+        const kwdsPr = cPr.syllabusKeywords?.length ? cPr.syllabusKeywords : cPr.syllabusMatch ? [cPr.syllabusMatch] : [];
+        const primaryDirPr = dirsPr.find(d=>d.isPrimary)||dirsPr[0]||{};
+        const verbTypePr = primaryDirPr.verbType||"other";
+        const causalDirWordPr = dirsPr.length ? (dirsPr.find(d=>d.isPrimary)||dirsPr[0])?.word?.toLowerCase().trim()||"" : "";
+        const causalDirObjPr  = config.directiveTiers[causalDirWordPr]||config.directiveTiers[causalDirWordPr.replace("critically ","")];
+        const causalApplicablePr = causalDirObjPr ? (causalDirObjPr.tier===3||causalDirObjPr.tier===4) : (aPr?(aPr.rubric?.causalConnectives?.applicable!==false):true);
+        const dirWordPr = causalDirWordPr;
+        const dirObjPr  = config.directiveTiers[dirWordPr]||config.directiveTiers[dirWordPr.replace("critically ","")]||config.directiveTiers[verbTypePr]||config.directiveTiers[verbTypePr?.replace("critically ","")];
+        const modalityApplicablePr = dirObjPr ? (dirObjPr.modality==="required"||dirObjPr.modality==="optional") : ["assess","evaluate","critically evaluate"].includes(verbTypePr)?true:(aPr?aPr.rubric?.modality?.applicable===true:false);
+        const dimMaxPr = (cPr.marks!=null&&cPr.marks!=="") ? (cPr.marks<=2?2:cPr.marks<=4?3:cPr.marks<=6?4:5) : 3;
+        const scorePr = totalScore(aPr, causalApplicablePr, modalityApplicablePr, dimMaxPr);
+        const maxScorePr = (dimMaxPr*2)+(causalApplicablePr?dimMaxPr:0)+(modalityApplicablePr?dimMaxPr:0);
+        const prContainer = document.getElementById("print-report");
+        if (!prContainer) return null;
+        return ReactDOM.createPortal(
+          <PrintReport
+            studentName={studentName.trim()||"Student"}
+            questionNumber={questionNumber}
+            subjectName={config.subjectName}
+            subjectCode={config.subjectCode}
+            dirs={dirsPr}
+            kwds={kwdsPr}
+            c={cPr}
+            a={aPr}
+            score={scorePr}
+            maxScore={maxScorePr}
+            dimMaxR={dimMaxPr}
+            causalApplicable={causalApplicablePr}
+            modalityApplicable={modalityApplicablePr}
+            stage2Results={stage2Results}
+            connectives={config.connectives}
+          />,
+          prContainer
+        );
+      })()}
     </div>
   );
 }
