@@ -1303,9 +1303,12 @@ function App() {
   const fileRef = useRef();
   const abortRef = useRef(null);
 
-  const handleImg = async (e) => {
-    const f = e.target.files[0]; if (!f) return;
-    e.target.value = "";
+  // ── Shared file processor — used by file input, paste, and drag-drop ──
+  const handleFileFromSource = async (f) => {
+    if (!f || !f.type.startsWith("image/")) { setError("Please provide an image file (JPG, PNG, etc)."); return; }
+    const p = studentName.trim().split(/\s+/).filter(Boolean);
+    const nameValid = p.length >= 2 && p[p.length-1].length === 1;
+    if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
     const url = URL.createObjectURL(f);
     const b64 = await toB64(f);
     setPageImg(url);
@@ -1313,7 +1316,6 @@ function App() {
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
-    // Quick pre-scan to detect how many questions are on the page
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1338,6 +1340,29 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setQuestionsOnPage(["1","2","3","4","5","6"]);
     }
   };
+
+  const handleImg = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    e.target.value = "";
+    await handleFileFromSource(f);
+  };
+
+  // ── Paste anywhere on the page to upload a screenshot ──
+  React.useEffect(() => {
+    const onPaste = (e) => {
+      if (phase !== 0 || pageImg) return; // only on upload screen, no image yet
+      const items = Array.from(e.clipboardData?.items || []);
+      const imgItem = items.find(it => it.type.startsWith("image/"));
+      if (!imgItem) return;
+      e.preventDefault();
+      handleFileFromSource(imgItem.getAsFile());
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [phase, pageImg, studentName]); // re-bind when name/phase changes
+
+  // ── Drag-and-drop state ──
+  const [dragOver, setDragOver] = React.useState(false);
 
   // Cancel any in-flight request and return to a clean upload state
   const cancelAndReset = () => {
@@ -1826,10 +1851,26 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
                 if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
                 setError(null); fileRef.current.click();
               };
-              return !pageImg&&<div onClick={handleUploadClick} style={{border:`2px dashed ${nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"40px 24px",textAlign:"center",cursor:"pointer",background:nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}} onMouseOver={e=>e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.08)":"rgba(229,115,115,0.08)"} onMouseOut={e=>e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)"}>
-                <div style={{fontSize:"52px",marginBottom:"12px"}}>{nameValid?"📄":"🔒"}</div>
-                <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>{nameValid?"Tap to upload or take a photo":"Enter your name above first"}</div>
-                <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}</div>
+              return !pageImg&&<div
+                onClick={handleUploadClick}
+                onDragOver={e=>{e.preventDefault();e.stopPropagation();setDragOver(true);}}
+                onDragLeave={e=>{e.preventDefault();setDragOver(false);}}
+                onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);const f=e.dataTransfer.files[0];if(f)handleFileFromSource(f);}}
+                style={{border:`2px dashed ${dragOver?"#c9a84c":nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"40px 24px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}}
+                onMouseOver={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.08)":"rgba(229,115,115,0.08)";}}
+                onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
+                <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
+                <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
+                  {dragOver?"Drop to upload!":nameValid?"Tap to upload or take a photo":"Enter your name above first"}
+                </div>
+                <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
+                  {nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}
+                </div>
+                {nameValid&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
+                  <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
+                  <span style={{color:"rgba(255,255,255,0.2)"}}>|</span>
+                  <span>🖱️ Drag &amp; drop an image file</span>
+                </div>}
                 {nameValid&&<div style={{marginTop:"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
                   <div style={{display:"flex",justifyContent:"center",gap:"24px",alignItems:"flex-start"}}>
