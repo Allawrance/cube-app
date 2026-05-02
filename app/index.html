@@ -986,30 +986,52 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           {displayedMark && <span className="pr-score-pill">{displayedMark}</span>}
         </div>
         {c.questionText && <div className="pr-question-text">{c.questionText}</div>}
-        {kwds.length > 0 && (
-          <div style={{marginTop:"12px"}}>
-            <div style={{fontFamily:"sans-serif",fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#1a6db5",marginBottom:"6px",textTransform:"uppercase"}}>Where these underlined words appear in the syllabus</div>
-            <table style={{width:"100%",borderCollapse:"collapse",fontFamily:"sans-serif",fontSize:"11px"}}>
-              <thead>
-                <tr>
-                  <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"30%"}}>Syllabus Term</th>
-                  <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5"}}>Module / Topic</th>
-                </tr>
-              </thead>
-              <tbody>
-                {kwds.map((kw,i)=>(
-                  <tr key={i} style={{borderBottom:"1px solid #d0d8e8"}}>
-                    <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5",fontStyle:"italic"}}>{kw.word||kw.topicTitle}</td>
-                    <td style={{padding:"6px 10px",color:"#333"}}>
-                      {kw.module ? `Module ${kw.module}` : ""}{kw.module && kw.topicTitle ? " — " : ""}{kw.topicTitle||""}
-                      {kw.nesa_descriptor && <div style={{fontSize:"10px",color:"#666",marginTop:"2px",fontStyle:"italic"}}>"{kw.nesa_descriptor}"</div>}
-                    </td>
+        {kwds.length > 0 && (()=>{
+          // Render nesa_descriptor with the matched word underlined inline
+          function DescriptorWithUnderline({ descriptor, matchWord }) {
+            if (!descriptor) return null;
+            if (!matchWord) return <span>{descriptor}</span>;
+            const lc = descriptor.toLowerCase();
+            const mw = matchWord.toLowerCase();
+            const idx = lc.indexOf(mw);
+            if (idx === -1) return <span>{descriptor}</span>;
+            return <span>
+              {descriptor.slice(0, idx)}
+              <u style={{textDecorationColor:"#1a6db5",fontWeight:700,color:"#1a6db5"}}>{descriptor.slice(idx, idx + matchWord.length)}</u>
+              {descriptor.slice(idx + matchWord.length)}
+            </span>;
+          }
+          return (
+            <div style={{marginTop:"12px"}}>
+              <div style={{fontFamily:"sans-serif",fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#1a6db5",marginBottom:"6px",textTransform:"uppercase"}}>Where these underlined words appear in the syllabus</div>
+              <table style={{width:"100%",borderCollapse:"collapse",fontFamily:"sans-serif",fontSize:"11px"}}>
+                <thead>
+                  <tr>
+                    <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"22%"}}>Syllabus Term</th>
+                    <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"14%"}}>Module</th>
+                    <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5"}}>Syllabus dot point</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {kwds.map((kw,i)=>(
+                    <tr key={i} style={{borderBottom:"1px solid #d0d8e8"}}>
+                      <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5"}}>{kw.word||kw.topicTitle}</td>
+                      <td style={{padding:"6px 10px",color:"#666"}}>
+                        {kw.module ? `Module ${kw.module}` : "—"}
+                      </td>
+                      <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.5"}}>
+                        {kw.nesa_descriptor
+                          ? <DescriptorWithUnderline descriptor={kw.nesa_descriptor} matchWord={kw.word||kw.topicTitle} />
+                          : <span style={{color:"#999",fontStyle:"italic"}}>{kw.topicTitle||"—"}</span>
+                        }
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })()}
       </div>
 
       {/* ── SECTION 2: ANNOTATED CUBE with planning arrows ── */}
