@@ -902,7 +902,8 @@ function RubricRow({label, data, applicable=true, dimMax=5}) {
 function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
                        dirs, kwds, c, a, score, maxScore, dimMaxR,
                        causalApplicable, modalityApplicable,
-                       stage2Results, connectives }) {
+                       stage2Results, connectives,
+                       cubeXP, annoXP, writeXP }) {
   if (!a) return null;
 
   const gold = "#c9a84c";
@@ -972,6 +973,77 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           <div>{dateStr} {timeStr}</div>
         </div>
       </div>
+
+      {/* ── RESULTS BANNER ── */}
+      {(()=>{
+        const awardedMark = marksKnown
+          ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)
+          : null;
+        const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
+        const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
+        return (
+          <div style={{
+            margin:"0 0 18px 0",
+            background:"#f0f4ff",
+            border:"2px solid #1a6db5",
+            borderRadius:"10px",
+            padding:"14px 20px",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"space-between",
+            gap:"16px",
+            flexWrap:"wrap",
+            fontFamily:"sans-serif",
+          }}>
+            {/* Left: Question + mark + directive */}
+            <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
+              {questionNumber && (
+                <div style={{textAlign:"center"}}>
+                  <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>Question</div>
+                  <div style={{fontSize:"28px",fontWeight:900,color:"#1a1a2e",lineHeight:1}}>{questionNumber}</div>
+                </div>
+              )}
+              {marksKnown && awardedMark !== null && (
+                <div style={{textAlign:"center"}}>
+                  <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>Mark awarded</div>
+                  <div style={{fontSize:"28px",fontWeight:900,lineHeight:1,color: pct>=80?"#2e7d32":pct>=50?"#e65100":"#c62828"}}>
+                    {awardedMark}<span style={{fontSize:"16px",color:"#666"}}> / {c.marks}</span>
+                  </div>
+                </div>
+              )}
+              {!marksKnown && band && (
+                <div style={{textAlign:"center"}}>
+                  <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>Indicative band</div>
+                  <div style={{fontSize:"22px",fontWeight:900,color:"#1a6db5",lineHeight:1}}>{band}</div>
+                </div>
+              )}
+              {dirs[0] && (
+                <div style={{textAlign:"center"}}>
+                  <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>Directive</div>
+                  <div style={{fontSize:"16px",fontWeight:800,color:"#c0392b",lineHeight:1,textTransform:"capitalize"}}>{dirs[0].word}</div>
+                </div>
+              )}
+            </div>
+            {/* Right: XP breakdown */}
+            <div style={{display:"flex",gap:"12px",alignItems:"center",flexWrap:"wrap"}}>
+              {[
+                {label:"CUBE XP",  val:cubeXP,  color:"#1a6db5"},
+                {label:"Plan XP",  val:annoXP,  color:"#6a1b9a"},
+                {label:"Write XP", val:writeXP, color:"#2e7d32"},
+              ].map(({label,val,color}) => val !== null && val !== undefined ? (
+                <div key={label} style={{textAlign:"center",minWidth:"52px"}}>
+                  <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>{label}</div>
+                  <div style={{fontSize:"20px",fontWeight:900,color,lineHeight:1}}>+{val}</div>
+                </div>
+              ) : null)}
+              <div style={{textAlign:"center",background:"#1a6db5",color:"white",borderRadius:"8px",padding:"6px 14px",minWidth:"64px"}}>
+                <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",marginBottom:"2px",opacity:0.8}}>Total XP</div>
+                <div style={{fontSize:"22px",fontWeight:900,lineHeight:1}}>⚡{totalXP}</div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── THE QUESTION ── */}
       <div className="pr-question-block pr-no-break">
@@ -2955,6 +3027,9 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             modalityApplicable={modalityApplicablePr}
             stage2Results={stage2Results}
             connectives={config.connectives}
+            cubeXP={cubeXP}
+            annoXP={annoXP}
+            writeXP={writeXP}
           />,
           prContainer
         );
