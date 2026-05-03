@@ -2133,14 +2133,13 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
             {/* ── ORDER: 1) Question bar  2) Steps nav  3) Tab content — DO NOT REORDER ── */}
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
+              {/* Metadata row */}
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
                 {dirs.map((dv,i)=>(
                   <div key={i} style={{display:"inline-block",border:"2.5px solid #c0392b",borderRadius:"50%",padding:"2px 10px",color:"#c0392b",fontWeight:900,fontSize:"13px"}}>{dv.word}</div>
                 ))}
                 <div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",whiteSpace:"nowrap"}}>Mod {primaryKwd.module}</div>
                 {questionNumber&&<div style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>Q{questionNumber}</div>}
-                {stage2Results&&marksKnown&&<div style={{background:"rgba(201,168,76,0.15)",border:"1px solid rgba(201,168,76,0.4)",borderRadius:"20px",padding:"3px 12px",color:gold,fontSize:"12px",fontWeight:700,fontFamily:"sans-serif"}}>{Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)}/{c.marks}</div>}
-                {stage2Results&&!marksKnown&&band&&<div style={{background:"rgba(76,175,80,0.15)",border:"1px solid rgba(76,175,80,0.4)",borderRadius:"20px",padding:"3px 12px",color:"#81c784",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif"}}>Indicative {band}</div>}
                 {studentName.trim()&&<div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"20px",padding:"3px 12px",color:"#c8d8e8",fontSize:"12px",fontWeight:700,fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"5px"}}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4"/><path d="M12 13c-5 0-8 2.5-8 4v1h16v-1c0-1.5-3-4-8-4z"/></svg>
                   {studentName.trim()}
@@ -2148,6 +2147,65 @@ Transcribe and mark ONLY the handwritten response to this question. Return JSON 
               </div>
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
+
+            {/* ── Results strip — only shown after Stage 2 marking ── */}
+            {stage2Results&&(()=>{
+              const awardedMark = marksKnown
+                ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)
+                : null;
+              const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
+              const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
+              const markColour = pct>=80 ? "#4caf50" : pct>=50 ? "#ff9800" : "#f44336";
+              return (
+                <div style={{
+                  display:"flex",alignItems:"center",justifyContent:"space-between",
+                  flexWrap:"wrap",gap:"12px",
+                  background:"linear-gradient(135deg,rgba(26,109,181,0.18),rgba(10,30,60,0.4))",
+                  border:"1.5px solid rgba(26,109,181,0.5)",
+                  borderRadius:"12px",padding:"12px 20px",marginBottom:"20px",
+                  fontFamily:"sans-serif",
+                }}>
+                  {/* Left: mark + band + directive */}
+                  <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
+                    {marksKnown && awardedMark !== null && (
+                      <div style={{textAlign:"center"}}>
+                        <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1.5px",color:"#8899bb",textTransform:"uppercase",marginBottom:"1px"}}>Mark</div>
+                        <div style={{fontSize:"32px",fontWeight:900,lineHeight:1,color:markColour}}>
+                          {awardedMark}<span style={{fontSize:"17px",color:"#667799",fontWeight:600}}> / {c.marks}</span>
+                        </div>
+                      </div>
+                    )}
+                    {!marksKnown && band && (
+                      <div style={{textAlign:"center"}}>
+                        <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1.5px",color:"#8899bb",textTransform:"uppercase",marginBottom:"1px"}}>Band</div>
+                        <div style={{fontSize:"26px",fontWeight:900,color:"#64b5f6",lineHeight:1}}>{band}</div>
+                      </div>
+                    )}
+                    <div style={{width:"1px",height:"36px",background:"rgba(255,255,255,0.1)"}}/>
+                    {/* XP breakdown */}
+                    {[
+                      {label:"CUBE XP", val:cubeXP,  color:"#64b5f6"},
+                      {label:"Plan XP", val:annoXP,  color:"#ce93d8"},
+                      {label:"Write XP",val:writeXP, color:"#81c784"},
+                    ].map(({label,val,color}) => val !== null && val !== undefined ? (
+                      <div key={label} style={{textAlign:"center"}}>
+                        <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#8899bb",textTransform:"uppercase",marginBottom:"1px"}}>{label}</div>
+                        <div style={{fontSize:"20px",fontWeight:900,color,lineHeight:1}}>+{val}</div>
+                      </div>
+                    ) : null)}
+                  </div>
+                  {/* Right: Total XP */}
+                  <div style={{
+                    background:"linear-gradient(135deg,#1a4a8a,#0d2d5a)",
+                    border:"1.5px solid rgba(100,181,246,0.4)",
+                    borderRadius:"10px",padding:"8px 18px",textAlign:"center",minWidth:"80px",
+                  }}>
+                    <div style={{fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"rgba(255,255,255,0.6)",textTransform:"uppercase",marginBottom:"2px"}}>Total XP</div>
+                    <div style={{fontSize:"26px",fontWeight:900,color:"#c9a84c",lineHeight:1}}>⚡{totalXP}</div>
+                  </div>
+                </div>
+              );
+            })()}
 
             <Steps current={4} activeTab={activeTab} onTabChange={(tab)=>{
                 setActiveTab(tab);
