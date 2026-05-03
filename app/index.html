@@ -159,8 +159,8 @@
     }
     .pr-response-text {
       font-family: 'Georgia', serif;
-      font-size: 15px;
-      line-height: 1.9;
+      font-size: 12.5px;
+      line-height: 1.65;
       color: #1a1a2e !important;
       position: relative;
     }
@@ -995,7 +995,6 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
             flexWrap:"wrap",
             fontFamily:"sans-serif",
           }}>
-            {/* Left: Question + mark + directive */}
             <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
               {questionNumber && (
                 <div style={{textAlign:"center"}}>
@@ -1006,7 +1005,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
               {marksKnown && awardedMark !== null && (
                 <div style={{textAlign:"center"}}>
                   <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#888",textTransform:"uppercase",marginBottom:"2px"}}>Mark awarded</div>
-                  <div style={{fontSize:"28px",fontWeight:900,lineHeight:1,color: pct>=80?"#2e7d32":pct>=50?"#e65100":"#c62828"}}>
+                  <div style={{fontSize:"28px",fontWeight:900,lineHeight:1,color:pct>=80?"#2e7d32":pct>=50?"#e65100":"#c62828"}}>
                     {awardedMark}<span style={{fontSize:"16px",color:"#666"}}> / {c.marks}</span>
                   </div>
                 </div>
@@ -1024,7 +1023,6 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
                 </div>
               )}
             </div>
-            {/* Right: XP breakdown */}
             <div style={{display:"flex",gap:"12px",alignItems:"center",flexWrap:"wrap"}}>
               {[
                 {label:"CUBE XP",  val:cubeXP,  color:"#1a6db5"},
@@ -1058,7 +1056,6 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           CUBE the question — the syllabus points underlined below show exactly where this question comes from in the syllabus, so you know where to focus next time.
         </div>
         {kwds.length > 0 && (()=>{
-          // Underline keyword stem inside dot point text — mirrors on-screen rendering
           function DotPointWithUnderline({ sylText, kwWord }) {
             if (!sylText) return null;
             if (!kwWord) return <span>{sylText}</span>;
@@ -1280,57 +1277,65 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           </tbody>
         </table>
 
-        {/* Writing score summary */}
-        <div className="pr-score-summary" style={{marginTop:"12px",marginLeft:0,marginRight:0}}>
-          <div>
-            <div className="pr-score-total-label">Writing score</div>
-            <div style={{fontSize:"11px",fontFamily:"sans-serif",color:"#888",marginTop:"2px"}}>
-              {marksKnown ? `${c.marks}-mark question` : ""}
-              {displayedMark && ` · ${displayedMark}`}
-            </div>
-          </div>
-          <div style={{textAlign:"right"}}>
-            <span className="pr-score-total-val">{Math.min(score,maxScore)}</span>
-            <span style={{fontFamily:"sans-serif",fontSize:"14px",color:"#444",marginLeft:"4px"}}>/ {maxScore} XP</span>
-          </div>
-        </div>
       </div>
 
       {/* ── SECTION 5: MEDALS + MISSION ── */}
       {(a.medals?.medal1 || a.medals?.medal2 || a.mission) && (
         <div className="pr-medals-section pr-no-break">
-          <div className="pr-section-label">Strengths &amp; Next Steps</div>
+          <div className="pr-section-label">Feedback</div>
 
-          {a.medals?.medal1 && (
-            <div style={{marginBottom:"12px"}}>
-              <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#b8860b",marginBottom:"4px"}}>🥇 Strength — {a.medals.medal1.category}</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:"13px",color:"#333",lineHeight:"1.6",paddingLeft:"28px"}}>
-                You demonstrated this well with: <em>"{a.medals.medal1.quote}"</em>
+          {/* ── What You Did Well ── */}
+          {(a.medals?.medal1 || a.medals?.medal2) && (
+            <div style={{marginBottom:"16px"}}>
+              <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#b8860b",textTransform:"uppercase",marginBottom:"10px",borderBottom:"1.5px solid #f0c040",paddingBottom:"4px"}}>
+                ✅ What You Did Well
               </div>
+
+              {a.medals?.medal1 && (
+                <div style={{marginBottom:"10px",paddingLeft:"4px"}}>
+                  <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#b8860b",marginBottom:"3px"}}>🥇 {a.medals.medal1.category}</div>
+                  <div style={{fontFamily:"Georgia,serif",fontSize:"12.5px",color:"#333",lineHeight:"1.6",paddingLeft:"24px"}}>
+                    <em>"{a.medals.medal1.quote}"</em>
+                  </div>
+                </div>
+              )}
+
+              {a.medals?.medal2 && (
+                <div style={{paddingLeft:"4px"}}>
+                  <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#666",marginBottom:"3px"}}>🥈 {a.medals.medal2.category}</div>
+                  <div style={{fontFamily:"Georgia,serif",fontSize:"12.5px",color:"#333",lineHeight:"1.6",paddingLeft:"24px"}}>
+                    <em>"{a.medals.medal2.quote}"</em>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {a.medals?.medal2 && (
-            <div style={{marginBottom:"12px"}}>
-              <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#555",marginBottom:"4px"}}>🥈 Also well done — {a.medals.medal2.category}</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:"13px",color:"#333",lineHeight:"1.6",paddingLeft:"28px"}}>
-                A good example from your response: <em>"{a.medals.medal2.quote}"</em>
-              </div>
-            </div>
-          )}
-
+          {/* ── Your Next Step ── */}
           {a.mission && (
-            <div style={{marginBottom:"8px"}}>
-              <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#c62828",marginBottom:"4px"}}>🎯 Suggestion for Improvement</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:"13px",color:"#444",lineHeight:"1.6",paddingLeft:"28px",marginBottom:"8px"}}>
-                To improve: {(a.mission.weakness||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")}
+            <div style={{
+              background:"#fff8f0",
+              border:"2px solid #e65100",
+              borderLeft:"5px solid #e65100",
+              borderRadius:"8px",
+              padding:"14px 16px",
+            }}>
+              <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
+                🎯 Your Next Step
+              </div>
+              <div style={{fontFamily:"sans-serif",fontSize:"13px",color:"#444",lineHeight:"1.6",marginBottom:"12px"}}>
+                {(a.mission.weakness||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")}
               </div>
               {a.mission.originalPhrase && a.mission.improvedVersion && (
-                <div style={{paddingLeft:"28px"}}>
-                  <div style={{fontFamily:"sans-serif",fontSize:"11px",color:"#c62828",fontWeight:700,marginBottom:"2px"}}>Instead of writing:</div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#555",fontStyle:"italic",marginBottom:"8px"}}>"{a.mission.originalPhrase}"</div>
-                  <div style={{fontFamily:"sans-serif",fontSize:"11px",color:"#2e7d32",fontWeight:700,marginBottom:"2px"}}>Try this:</div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#2e7d32",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
+                  <div style={{background:"#fde8e8",border:"1px solid #e57373",borderRadius:"6px",padding:"10px 12px"}}>
+                    <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#c62828",marginBottom:"5px",textTransform:"uppercase"}}>Instead of writing</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#555",fontStyle:"italic",lineHeight:"1.5"}}>"{a.mission.originalPhrase}"</div>
+                  </div>
+                  <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:"6px",padding:"10px 12px"}}>
+                    <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#2e7d32",marginBottom:"5px",textTransform:"uppercase"}}>Try this instead</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#2e7d32",fontStyle:"italic",lineHeight:"1.5"}}>"{a.mission.improvedVersion}"</div>
+                  </div>
                 </div>
               )}
             </div>
