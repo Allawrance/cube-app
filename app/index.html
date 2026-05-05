@@ -1634,7 +1634,70 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
   const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
-  const _x1iblj = () => { window.print(); };
+  const _x1iblj = () => {
+    // window.print() is blocked inside Google Sites iframes.
+    // Instead, build a self-contained HTML file and download it as a Blob.
+    // The student opens it locally and prints from their browser (Ctrl+P / Cmd+P).
+    const container = document.getElementById('print-report');
+    if (!container) return;
+
+    // ── Extract the @media print CSS and convert to regular screen CSS ──
+    let printCSS = '';
+    try {
+      for (const sheet of document.styleSheets) {
+        try {
+          for (const rule of sheet.cssRules) {
+            if (rule instanceof CSSMediaRule && rule.conditionText === 'print') {
+              for (const inner of rule.cssRules) {
+                let text = inner.cssText;
+                if (/body\s*>\s*#root/.test(text)) continue;
+                text = text.replace(/#print-report\s*\{/, '#print-report {');
+                printCSS += text + '\n';
+              }
+            }
+          }
+        } catch(e) { /* cross-origin sheets — skip */ }
+      }
+    } catch(e) {}
+
+    const safeName = (studentName||'Student').trim().replace(/\s+/g,'_');
+    const safeQ    = (questionNumber||'Q').trim().replace(/\s+/g,'_');
+    const filename = `CUBE_Report_${safeName}_${safeQ}.html`;
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CUBE Report — ${(studentName||'Student').trim()} — Q${questionNumber||''}</title>
+<style>
+  body { margin: 0; padding: 0; background: white; }
+  #print-report { display: block; font-family: 'Georgia','Times New Roman',serif; color: #1a1a2e; background: white; }
+  #print-report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  ${printCSS}
+  @media print {
+    body { margin: 0; }
+    #print-report { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div id="print-report">${container.innerHTML}</div>
+<script>
+  window.addEventListener('load', () => { setTimeout(() => window.print(), 400); });
+<\/script>
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  };
 
   // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
   // Sync streak from server when student name is entered
