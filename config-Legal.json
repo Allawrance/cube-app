@@ -4,26 +4,44 @@
   "subjectShortName": "Legal",
   "dominantMode": "Argument + legal sources + effectiveness evaluation",
   "cleanRule": "Legal Studies = legal argument + named legal sources (legislation, cases, international instruments) + evaluation of effectiveness in achieving justice",
-  "leaderboardTip": "HSC Legal questions reward NAMED sources — cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
+  "leaderboardTip": "HSC Legal questions reward NAMED sources \u2014 cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
   "sheetTabCube": "LEG CUBE",
   "sheetTabFull": "LEG",
   "accentColor": "#ce93d8",
   "kla": "HSIE",
-  "classCodes": ["12LS-1", "12LS-2"],
-  "activeTopics": ["Crime", "Human Rights", "Family", "World Order"],
-
+  "classCodes": [
+    "12LS-1",
+    "12LS-2"
+  ],
+  "activeTopics": [
+    "Crime",
+    "Human Rights",
+    "Family",
+    "World Order"
+  ],
   "subjectContext": {
     "examStructure": {
-      "sectionI": "Core — Crime and Human Rights: 20 marks objective response (15 Crime, 5 Human Rights). May refer to stimulus.",
-      "sectionII_A": "Core — Human Rights: 15 marks short-answer questions (3–4 items). May refer to stimulus.",
-      "sectionII_B": "Core — Crime: 15 marks one extended response (~600 words / ~4 booklet pages).",
-      "sectionIII": "Options: 50 marks — two extended responses, each from a different Option (~1000 words / ~8 booklet pages each)."
+      "sectionI": "Core \u2014 Crime and Human Rights: 20 marks objective response (15 Crime, 5 Human Rights). May refer to stimulus.",
+      "sectionII_A": "Core \u2014 Human Rights: 15 marks short-answer questions (3\u20134 items). May refer to stimulus.",
+      "sectionII_B": "Core \u2014 Crime: 15 marks one extended response (~600 words / ~4 booklet pages).",
+      "sectionIII": "Options: 50 marks \u2014 two extended responses, each from a different Option (~1000 words / ~8 booklet pages each)."
     },
-    "coreTopics": ["Crime", "Human Rights"],
-    "optionTopics": ["Consumers", "Global Environmental Protection", "Family", "Indigenous Peoples", "Shelter", "Workplace", "World Order"],
+    "coreTopics": [
+      "Crime",
+      "Human Rights"
+    ],
+    "optionTopics": [
+      "Consumers",
+      "Global Environmental Protection",
+      "Family",
+      "Indigenous Peoples",
+      "Shelter",
+      "Workplace",
+      "World Order"
+    ],
     "legalSourceTypes": [
       "legislation (Acts of Parliament, statutes, delegated legislation)",
-      "cases (court decisions, precedents — must be named)",
+      "cases (court decisions, precedents \u2014 must be named)",
       "media (newspaper reports, investigative journalism)",
       "international instruments (declarations, treaties, conventions, covenants)",
       "international documents (UN resolutions, reports)"
@@ -39,7 +57,6 @@
       "has justice been achieved?"
     ]
   },
-
   "syllabus": {
     "core": {
       "title": "HSC Core",
@@ -95,14 +112,44 @@
             }
           ],
           "keywords": [
-            "actus reus", "mens rea", "strict liability", "causation", "indictable offence", "summary offence",
-            "accessory", "principal", "criminal investigation", "police powers", "bail", "remand",
-            "adversary system", "burden of proof", "standard of proof", "legal aid", "plea negotiation",
-            "self-defence", "provocation", "mental illness defence", "jury", "verdict",
-            "deterrence", "retribution", "rehabilitation", "incapacitation", "aggravating circumstances",
-            "mitigating circumstances", "restorative justice", "circle sentencing", "diversionary program",
-            "parole", "preventative detention", "Children's Court", "age of criminal responsibility",
-            "transnational crime", "crimes against humanity", "International Criminal Court"
+            "actus reus",
+            "mens rea",
+            "strict liability",
+            "causation",
+            "indictable offence",
+            "summary offence",
+            "accessory",
+            "principal",
+            "criminal investigation",
+            "police powers",
+            "bail",
+            "remand",
+            "adversary system",
+            "burden of proof",
+            "standard of proof",
+            "legal aid",
+            "plea negotiation",
+            "self-defence",
+            "provocation",
+            "mental illness defence",
+            "jury",
+            "verdict",
+            "deterrence",
+            "retribution",
+            "rehabilitation",
+            "incapacitation",
+            "aggravating circumstances",
+            "mitigating circumstances",
+            "restorative justice",
+            "circle sentencing",
+            "diversionary program",
+            "parole",
+            "preventative detention",
+            "Children's Court",
+            "age of criminal responsibility",
+            "transnational crime",
+            "crimes against humanity",
+            "International Criminal Court"
           ]
         },
         {
@@ -137,14 +184,31 @@
             }
           ],
           "keywords": [
-            "human rights", "Universal Declaration of Human Rights", "UDHR",
-            "International Covenant on Civil and Political Rights", "ICCPR",
-            "International Covenant on Economic, Social and Cultural Rights", "ICESCR",
-            "state sovereignty", "United Nations", "intergovernmental organisation",
-            "non-government organisation", "NGO", "domestic law", "international law",
-            "Charter of Rights", "law reform", "compliance", "non-compliance",
-            "refugees", "asylum seekers", "genocide", "torture", "arbitrary detention",
-            "discrimination", "human trafficking"
+            "human rights",
+            "Universal Declaration of Human Rights",
+            "UDHR",
+            "International Covenant on Civil and Political Rights",
+            "ICCPR",
+            "International Covenant on Economic, Social and Cultural Rights",
+            "ICESCR",
+            "state sovereignty",
+            "United Nations",
+            "intergovernmental organisation",
+            "non-government organisation",
+            "NGO",
+            "domestic law",
+            "international law",
+            "Charter of Rights",
+            "law reform",
+            "compliance",
+            "non-compliance",
+            "refugees",
+            "asylum seekers",
+            "genocide",
+            "torture",
+            "arbitrary detention",
+            "discrimination",
+            "human trafficking"
           ]
         }
       ]
@@ -174,9 +238,20 @@
             }
           ],
           "keywords": [
-            "consumer protection", "Australian Consumer Law", "contract", "exclusion clause",
-            "unjust contract", "negligence", "implied terms", "ACCC", "Fair Trading",
-            "tribunal", "product liability", "credit", "marketing", "occupational licensing"
+            "consumer protection",
+            "Australian Consumer Law",
+            "contract",
+            "exclusion clause",
+            "unjust contract",
+            "negligence",
+            "implied terms",
+            "ACCC",
+            "Fair Trading",
+            "tribunal",
+            "product liability",
+            "credit",
+            "marketing",
+            "occupational licensing"
           ]
         },
         {
@@ -201,10 +276,19 @@
             }
           ],
           "keywords": [
-            "ecologically sustainable development", "biodiversity", "intergenerational equity",
-            "precautionary principle", "Paris Agreement", "Kyoto Protocol", "UNFCCC",
-            "state sovereignty", "United Nations Environment Programme", "UNEP",
-            "environmental law", "climate change", "international instrument"
+            "ecologically sustainable development",
+            "biodiversity",
+            "intergenerational equity",
+            "precautionary principle",
+            "Paris Agreement",
+            "Kyoto Protocol",
+            "UNFCCC",
+            "state sovereignty",
+            "United Nations Environment Programme",
+            "UNEP",
+            "environmental law",
+            "climate change",
+            "international instrument"
           ]
         },
         {
@@ -229,10 +313,21 @@
             }
           ],
           "keywords": [
-            "Family Law Act", "marriage", "divorce", "property settlement", "parenting orders",
-            "Family Court", "Federal Circuit Court", "domestic violence", "AVO",
-            "surrogacy", "parental responsibility", "adoption", "Children's Court",
-            "mediation", "same-sex relationships"
+            "Family Law Act",
+            "marriage",
+            "divorce",
+            "property settlement",
+            "parenting orders",
+            "Family Court",
+            "Federal Circuit Court",
+            "domestic violence",
+            "AVO",
+            "surrogacy",
+            "parental responsibility",
+            "adoption",
+            "Children's Court",
+            "mediation",
+            "same-sex relationships"
           ]
         },
         {
@@ -257,10 +352,20 @@
             }
           ],
           "keywords": [
-            "native title", "Mabo v Queensland", "Wik decision", "Native Title Act",
-            "terra nullius", "self-determination", "UNDRIP", "UN Declaration on the Rights of Indigenous Peoples",
-            "land rights", "cultural rights", "intellectual property", "Aboriginal and Torres Strait Islander",
-            "customary law", "reconciliation"
+            "native title",
+            "Mabo v Queensland",
+            "Wik decision",
+            "Native Title Act",
+            "terra nullius",
+            "self-determination",
+            "UNDRIP",
+            "UN Declaration on the Rights of Indigenous Peoples",
+            "land rights",
+            "cultural rights",
+            "intellectual property",
+            "Aboriginal and Torres Strait Islander",
+            "customary law",
+            "reconciliation"
           ]
         },
         {
@@ -285,10 +390,22 @@
             }
           ],
           "keywords": [
-            "Residential Tenancies Act", "tenancy", "landlord", "tenant", "lease",
-            "conveyancing", "mortgage", "registration of title", "strata title",
-            "homelessness", "social housing", "public housing", "discrimination",
-            "Fair Trading", "NCAT", "Consumer Trader and Tenancy Tribunal"
+            "Residential Tenancies Act",
+            "tenancy",
+            "landlord",
+            "tenant",
+            "lease",
+            "conveyancing",
+            "mortgage",
+            "registration of title",
+            "strata title",
+            "homelessness",
+            "social housing",
+            "public housing",
+            "discrimination",
+            "Fair Trading",
+            "NCAT",
+            "Consumer Trader and Tenancy Tribunal"
           ]
         },
         {
@@ -304,7 +421,7 @@
             {
               "label": "O6-2",
               "title": "Regulation of the workplace",
-              "content": "Industrial relations — state and federal framework; negotiations; dispute resolution; courts, tribunals, government organisations, trade unions, employer associations, NGOs, media; remuneration"
+              "content": "Industrial relations \u2014 state and federal framework; negotiations; dispute resolution; courts, tribunals, government organisations, trade unions, employer associations, NGOs, media; remuneration"
             },
             {
               "label": "O6-3",
@@ -313,10 +430,22 @@
             }
           ],
           "keywords": [
-            "Fair Work Act", "Fair Work Commission", "enterprise agreement", "modern award",
-            "contract of employment", "unfair dismissal", "redundancy", "WorkCover",
-            "WHS Act", "work health and safety", "discrimination", "industrial action",
-            "trade union", "minimum wage", "parental leave", "annual leave"
+            "Fair Work Act",
+            "Fair Work Commission",
+            "enterprise agreement",
+            "modern award",
+            "contract of employment",
+            "unfair dismissal",
+            "redundancy",
+            "WorkCover",
+            "WHS Act",
+            "work health and safety",
+            "discrimination",
+            "industrial action",
+            "trade union",
+            "minimum wage",
+            "parental leave",
+            "annual leave"
           ]
         },
         {
@@ -341,23 +470,35 @@
             }
           ],
           "keywords": [
-            "world order", "state sovereignty", "United Nations", "UN Security Council",
-            "UN General Assembly", "International Court of Justice", "ICJ",
-            "International Criminal Court", "ICC", "responsibility to protect", "R2P",
-            "Geneva Conventions", "international humanitarian law", "peacekeeping",
-            "sanctions", "treaty", "multilateralism", "arms control"
+            "world order",
+            "state sovereignty",
+            "United Nations",
+            "UN Security Council",
+            "UN General Assembly",
+            "International Court of Justice",
+            "ICJ",
+            "International Criminal Court",
+            "ICC",
+            "responsibility to protect",
+            "R2P",
+            "Geneva Conventions",
+            "international humanitarian law",
+            "peacekeeping",
+            "sanctions",
+            "treaty",
+            "multilateralism",
+            "arms control"
           ]
         }
       ]
     }
   },
-
   "bandRules": {
     "Band6": {
       "descriptor": "Analyses, synthesises and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates extensive knowledge and understanding of the operation of the legal system and the processes involved in law reform. Synthesises and analyses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Communicates coherent arguments on contemporary issues from differing perspectives and interpretations. Communicates an argument using relevant legal concepts and terminology.",
       "scoreRange": "90-100",
       "keyFeatures": [
-        "Analyses, synthesises AND interprets — not just describes",
+        "Analyses, synthesises AND interprets \u2014 not just describes",
         "Evaluates effectiveness explicitly with supported judgement",
         "Extensive knowledge of legal system operation and law reform processes",
         "Synthesises sources: legislation + cases + media + international instruments together",
@@ -369,7 +510,7 @@
       "descriptor": "Analyses and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates detailed knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Presents clear arguments on contemporary issues from differing perspectives. Communicates using relevant legal concepts and terminology.",
       "scoreRange": "80-89",
       "keyFeatures": [
-        "Analyses and interprets — not just describes",
+        "Analyses and interprets \u2014 not just describes",
         "Evaluates effectiveness with clear judgement",
         "Detailed knowledge of legal system and law reform",
         "Uses multiple source types to support arguments",
@@ -381,7 +522,7 @@
       "descriptor": "Provides some analysis of information and issues related to the effectiveness of the domestic and international legal system. Demonstrates good knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses appropriate legal information from sources including legislation, cases, media, international instruments and documents. Uses appropriate legal concepts and terminology.",
       "scoreRange": "70-79",
       "keyFeatures": [
-        "Some analysis — moves beyond pure description",
+        "Some analysis \u2014 moves beyond pure description",
         "Good knowledge of legal system",
         "Uses appropriate legal sources",
         "Appropriate legal terminology"
@@ -408,11 +549,13 @@
     "Band1": {
       "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
       "scoreRange": "0-49",
-      "keyFeatures": ["Minimum standard not demonstrated"]
+      "keyFeatures": [
+        "Minimum standard not demonstrated"
+      ]
     },
     "subject_specific_guidance": {
       "dominant_question_types": [
-        "Evaluate the effectiveness of the law/legal system in achieving justice (most common — extended response)",
+        "Evaluate the effectiveness of the law/legal system in achieving justice (most common \u2014 extended response)",
         "Assess the role of legal and non-legal measures in addressing an issue",
         "Analyse the tension between community interests and individual rights",
         "Discuss the extent to which the law balances competing interests",
@@ -422,21 +565,21 @@
         "ALWAYS name specific legal sources: use full names of cases (e.g. Mabo v Queensland [No 2] (1992)), Acts (e.g. Crimes Act 1900 (NSW)), and international instruments (e.g. Universal Declaration of Human Rights 1948).",
         "For evaluate/assess questions: present BOTH the strengths AND limitations of the legal response, then make an explicit judgement about overall effectiveness.",
         "Reference the effectiveness criteria: accessibility, enforceability, responsiveness, protection of individual rights, meeting society's needs, rule of law, and whether justice was achieved.",
-        "Show understanding of the role of BOTH legal measures (courts, legislation, tribunals) AND non-legal measures (NGOs, media, political negotiation) — Band 5-6 integrates both.",
+        "Show understanding of the role of BOTH legal measures (courts, legislation, tribunals) AND non-legal measures (NGOs, media, political negotiation) \u2014 Band 5-6 integrates both.",
         "Themes and challenges must be woven throughout: compliance/non-compliance, law reform, the extent to which law reflects moral/ethical standards, balancing rights."
       ],
       "common_errors": [
         "Describing what the law says without evaluating how effective it is.",
         "Generic references to 'courts' or 'legislation' without naming specific cases or Acts.",
-        "Forgetting non-legal measures (NGOs, media, political pressure) — questions often require both.",
-        "One-sided arguments — Band 5-6 requires differing perspectives and a balanced evaluation.",
+        "Forgetting non-legal measures (NGOs, media, political pressure) \u2014 questions often require both.",
+        "One-sided arguments \u2014 Band 5-6 requires differing perspectives and a balanced evaluation.",
         "Failing to link back to the specific question (justice, effectiveness, balancing rights)."
       ]
     },
     "marking_guidance": {
       "evaluate_effectiveness_steps": [
         "Identify the legal/non-legal measure being evaluated.",
-        "Explain how the measure works (briefly — don't over-describe).",
+        "Explain how the measure works (briefly \u2014 don't over-describe).",
         "Present evidence/argument for its effectiveness (strength 1, strength 2).",
         "Present evidence/argument against its effectiveness (limitation 1, limitation 2).",
         "Name specific cases, legislation, or international instruments as evidence.",
@@ -455,7 +598,7 @@
           "Is legal terminology used precisely and consistently?"
         ],
         "band6_checklist": [
-          "Analyses, synthesises AND interprets — not just lists or describes.",
+          "Analyses, synthesises AND interprets \u2014 not just lists or describes.",
           "Evaluates effectiveness with an explicit, evidence-based judgement.",
           "Multiple named legal sources integrated analytically (not just listed).",
           "Coherent argument from differing perspectives.",
@@ -474,61 +617,165 @@
         },
         "forbidden_behaviours": [
           "Do not generate a response that only describes the law without evaluating its effectiveness.",
-          "Do not use generic references — always name specific cases, Acts, or instruments.",
-          "Do not present only one side — always include differing perspectives.",
+          "Do not use generic references \u2014 always name specific cases, Acts, or instruments.",
+          "Do not present only one side \u2014 always include differing perspectives.",
           "Do not ignore non-legal measures where relevant."
         ]
       }
     }
   },
-
   "directiveTiers": {
-    "define": { "tier": 1, "modality": "ignore" },
-    "identify": { "tier": 1, "modality": "ignore" },
-    "list": { "tier": 1, "modality": "ignore" },
-    "name": { "tier": 1, "modality": "ignore" },
-    "outline": { "tier": 1, "modality": "ignore" },
-    "recall": { "tier": 1, "modality": "ignore" },
-    "state": { "tier": 1, "modality": "ignore" },
-    "recognise": { "tier": 1, "modality": "ignore" },
-    "describe": { "tier": 2, "modality": "ignore" },
-    "distinguish": { "tier": 2, "modality": "ignore" },
-    "compare": { "tier": 2, "modality": "ignore" },
-    "contrast": { "tier": 2, "modality": "ignore" },
-    "explain": { "tier": 2, "modality": "ignore" },
-    "summarise": { "tier": 2, "modality": "ignore" },
-    "examine": { "tier": 3, "modality": "ignore" },
-    "analyse": { "tier": 3, "modality": "ignore" },
-    "discuss": { "tier": 3, "modality": "ignore" },
-    "investigate": { "tier": 3, "modality": "ignore" },
-    "interpret": { "tier": 3, "modality": "ignore" },
-    "apply": { "tier": 3, "modality": "ignore" },
-    "synthesise": { "tier": 3, "modality": "optional" },
-    "assess": { "tier": 4, "modality": "required" },
-    "evaluate": { "tier": 4, "modality": "required" },
-    "critically analyse": { "tier": 4, "modality": "required" },
-    "critically evaluate": { "tier": 4, "modality": "required" },
-    "justify": { "tier": 4, "modality": "ignore" },
-    "recommend": { "tier": 4, "modality": "ignore" },
-    "account for": { "tier": 3, "modality": "ignore" }
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recognise": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "investigate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "account for": {
+      "tier": 3,
+      "modality": "ignore"
+    }
   },
-
   "connectives": {
-    "preferred": ["so", "because", "but"],
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
     "accepted": [
-      "as a result", "therefore", "thus", "hence", "consequently",
-      "which means", "this leads to", "resulting in", "due to",
-      "since", "however", "although", "yet", "while", "whereas"
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this leads to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet",
+      "while",
+      "whereas"
     ],
     "contrast": [
-      "however", "although", "on the other hand", "despite",
-      "yet", "in contrast", "conversely", "nevertheless",
-      "while", "whereas", "notwithstanding"
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas",
+      "notwithstanding"
     ]
   },
-
-  "legalSourcesNote": "Legal Studies marking requires specific named sources. The CUBE Underline step should highlight not just syllabus keywords but also any named cases, Acts, or international instruments in the question — these are the evidence base for the argument.",
-
+  "legalSourcesNote": "Legal Studies marking requires specific named sources. The CUBE Underline step should highlight not just syllabus keywords but also any named cases, Acts, or international instruments in the question \u2014 these are the evidence base for the argument.",
   "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
 }
