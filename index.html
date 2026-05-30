@@ -335,10 +335,15 @@ footer {
         <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Select your subject</div>
         <div id="subjects" style="width:100%;">
           <div style="display:flex;gap:10px;margin-bottom:10px;">
-            <a id="link-ees" href="app/?subject=EES" target="_blank" class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:12px;flex:1;min-height:64px;">
-              <div style="font-size:9px;font-weight:700;color:#69f0ae;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Science</div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3;">🌏 Earth &amp; Environmental Sci.</div>
-            </a>
+            <div class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:12px;flex:1;min-height:64px;cursor:default;">
+              <div style="font-size:9px;font-weight:700;color:#69f0ae;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Science</div>
+              <a id="link-ees" href="app/?subject=EES" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(105,240,174,0.12)'" onmouseout="this.style.background='transparent'">🌏 Earth &amp; Environmental Sci.</a>
+              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
+              <div style="font-size:9px;font-weight:700;color:#a5d6a7;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Biology</div>
+              <a id="link-bio1" href="app/?subject=BIO&amp;class=12Bio-1" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-1</a>
+              <a id="link-bio2" href="app/?subject=BIO&amp;class=12Bio-2" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-2</a>
+              <a id="link-bio3" href="app/?subject=BIO&amp;class=12Bio-3" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-3</a>
+            </div>
             <a id="link-buss" href="app/?subject=BusS" target="_blank" class="subj-card bus" style="border-color:rgba(21,101,192,0.6);text-align:left;padding:12px;flex:1;min-height:64px;">
               <div style="font-size:9px;font-weight:700;color:#64b5f6;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">HSIE</div>
               <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3;">📊 Business Studies</div>
@@ -364,7 +369,7 @@ footer {
         <div class="hv-badge">CUBE</div>
         <div>
           <div class="hv-title">CUBE Marking Coach</div>
-          <div class="hv-sub">Earth &amp; Environmental Science</div>
+          <div class="hv-sub">Earth &amp; Environmental Science · Biology</div>
         </div>
       </div>
       <div class="steps-row">
