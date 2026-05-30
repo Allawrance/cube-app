@@ -1804,6 +1804,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             wordCount:        (parsed.studentResponseText||"").replace(/\[\?]/g,"").trim().split(/\s+/).filter(w=>w.length>0).length,
             markPct:          (c1.marks && awdMark !== "") ? Math.round((awdMark/c1.marks)*100)+"%" : "",
             studentClass:     config.studentClass || "",
+          })
         });
       } catch {}
     } catch(e) {
