@@ -340,7 +340,7 @@ const getExifOrientation = (buffer) => {
       } else if ((marker & 0xFF00) !== 0xFF00) break;
       else offset += view.getUint16(offset, false);
     }
-  } catch (e) {  }
+  } catch (e) { /* ignore parse errors — treat as normal orientation */ }
   return 1;
 };
 
@@ -422,6 +422,7 @@ const LH = 38;
 const PL = 44;
 const PT = 58;
 const CPL = 50;
+
 
 // ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
 function buildLines(text, cplOverride) {
@@ -695,7 +696,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
         : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;  // ↑ into text
       notes.push(
         <g key={`n${i}`}>
-          {}
+          {/* Diagonal line from pill centre to arrowhead */}
           <line x1={cx} y1={arrowUp ? lineY : lineY}
                 x2={p.tx} y2={arrowUp ? tipY-8 : tipY+8}
             stroke="#c9a84c" strokeWidth="1.5" strokeDasharray="4,3"/>
@@ -962,7 +963,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 
   return (
     <div>
-      {}
+      {/* ── HEADER ── */}
       <div className="pr-header">
         <div className="pr-header-left">
           <div className="pr-cube-badge">CUBE</div>
@@ -977,7 +978,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         </div>
       </div>
 
-      {}
+      {/* ── RESULTS BANNER ── */}
       {(()=>{
         const awardedMark = marksKnown
           ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)
@@ -1046,13 +1047,13 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         );
       })()}
 
-      {}
+      {/* ── THE QUESTION ── */}
       <div className="pr-question-block pr-no-break">
         <div className="pr-section-label">The Question</div>
         {c.questionText && <div className="pr-question-text" style={{marginTop:"6px"}}>{c.questionText}</div>}
       </div>
 
-      {}
+      {/* ── SECTION 1: CUBE THE QUESTION ── */}
       <div className="pr-question-block pr-no-break">
         <div className="pr-section-label">CUBE the Question</div>
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.5"}}>
@@ -1110,7 +1111,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           );
         })()}
 
-        {}
+        {/* ── Directive definition + framework pills ── */}
         {dirs.length > 0 && (
           <div style={{marginTop:"14px",borderTop:"1px solid #e8e0c8",paddingTop:"12px"}}>
             <div style={{fontFamily:"sans-serif",fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#c0392b",marginBottom:"8px",textTransform:"uppercase"}}>What does this directive mean?</div>
@@ -1133,7 +1134,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           </div>
         )}
 
-        {}
+        {/* ── Constraints ── */}
         {c.constraints?.length > 0 && (
           <div style={{marginTop:"12px",borderTop:"1px solid #e8e0c8",paddingTop:"12px"}}>
             <div style={{fontFamily:"sans-serif",fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#2e7d32",marginBottom:"8px",textTransform:"uppercase"}}>Constraints &amp; Scope Words</div>
@@ -1149,7 +1150,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         )}
       </div>
 
-      {}
+      {/* ── SECTION 2: ANNOTATED CUBE with planning arrows ── */}
       <div className="pr-cube-section pr-no-break">
         <div className="pr-section-label">Annotating the Question</div>
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.6"}}>
@@ -1165,7 +1166,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         />
       </div>
 
-      {}
+      {/* ── SECTION 2b: ANNOTATION IDEAS ── */}
       {(()=>{
         const annoItems = (stage2Results?.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         if (!annoItems.length) return null;
@@ -1222,7 +1223,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         );
       })()}
 
-      {}
+      {/* ── SECTION 3: STUDENT RESPONSE ── */}
       <div className="pr-no-break" style={{margin:"0 28px 20px"}}>
         <div className="pr-section-label">Your Written Response</div>
         <div style={{fontSize:"11px",fontFamily:"sans-serif",color:"#666",marginBottom:"8px",lineHeight:"1.6"}}>
@@ -1235,7 +1236,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         </div>
       </div>
 
-      {}
+      {/* ── SECTION 4: LITERACY SCORES ── */}
       <div className="pr-literacy-section pr-page-break pr-no-break">
         <div className="pr-section-label">Literacy Marks</div>
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.6"}}>
@@ -1282,12 +1283,12 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 
       </div>
 
-      {}
+      {/* ── SECTION 5: MEDALS + MISSION ── */}
       {(a.medals?.medal1 || a.medals?.medal2 || a.mission) && (
         <div className="pr-medals-section pr-no-break">
           <div className="pr-section-label">Feedback</div>
 
-          {}
+          {/* ── What You Did Well ── */}
           {(a.medals?.medal1 || a.medals?.medal2) && (
             <div style={{marginBottom:"16px"}}>
               <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#b8860b",textTransform:"uppercase",marginBottom:"10px",borderBottom:"1.5px solid #f0c040",paddingBottom:"4px"}}>
@@ -1314,7 +1315,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
             </div>
           )}
 
-          {}
+          {/* ── Your Next Step ── */}
           {a.mission && (
             <div style={{
               background:"#fff8f0",
@@ -1346,7 +1347,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         </div>
       )}
 
-      {}
+      {/* ── FOOTER ── */}
       <div className="pr-footer">
         <span>CUBE HSC Marking Coach · {subjectCode} · AI-assisted feedback — not official NESA marking</span>
         <span>St Ives High School · {dateStr}</span>
@@ -1663,7 +1664,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               }
             }
           }
-        } catch(e) {  }
+        } catch(e) { /* cross-origin sheets — skip */ }
       }
     } catch(e) {}
 
@@ -1950,7 +1951,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         }
       `}</style>
 
-      {}
+      {/* ── HEADER ── */}
       <div style={{background:"linear-gradient(90deg,#0a1e35,#071528)",borderBottom:`3px solid ${gold}`,padding:"12px 24px",position:"sticky",top:0,zIndex:100}}>
         <div style={{maxWidth:"860px",margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"16px"}}>
           <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
@@ -1978,15 +1979,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
       <div style={{maxWidth:"860px",margin:"0 auto",padding:"28px 18px"}}>
 
-        {}
+        {/* ── PHASE 0: UPLOAD ── */}
         {phase===0&&(
           <div>
-
+            
             <div style={{textAlign:"center",marginBottom:"24px"}}>
               <h1 style={{fontSize:"26px",margin:"0 0 8px",color:"#f0e6c8",fontWeight:700}}>Check Your Answer</h1>
             </div>
 
-            {}
+            {/* ── Student name field ── */}
             <div style={{marginBottom:"20px"}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
                 <div style={{fontSize:"14px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,letterSpacing:"0.5px"}}>{(()=>{const p=studentName.trim().split(/\s+/).filter(Boolean); return p.length>=2&&p[p.length-1].length===1 ? "Your name" : "Enter your FIRST name and 1st INITIAL of surname";})()}</div>
@@ -2008,7 +2009,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {(()=>{const p=studentName.trim().split(/\s+/).filter(Boolean); if(!studentName.trim()) return null; if(p.length<2) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Please enter your first name AND the first initial of your surname — e.g. Sue W</div>; if(p[p.length-1].length>1) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Only provide the first initial of your surname — e.g. Sue W, not Sue Wilson</div>; return null;})()}
             </div>
 
-            {}
+            {/* Single upload zone — hidden once photo selected */}
             {(()=>{
               const p = studentName.trim().split(/\s+/).filter(Boolean);
               const nameValid = p.length >= 2 && p[p.length-1].length === 1;
@@ -2039,7 +2040,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 {nameValid&&<div style={{marginTop:"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
                   <div style={{display:"flex",justifyContent:"center",gap:"24px",alignItems:"flex-start"}}>
-                    {}
+                    {/* CORRECT — vertical */}
                     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"8px"}}>
                       <div style={{position:"relative",display:"inline-block"}}>
                         <svg width="72" height="96" viewBox="0 0 72 96" xmlns="http://www.w3.org/2000/svg">
@@ -2056,7 +2057,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       <div style={{fontSize:"12px",color:"#4caf50",fontFamily:"sans-serif",fontWeight:700}}>✔ Correct</div>
                       <div style={{fontSize:"11px",color:"#9aabb8",fontFamily:"sans-serif",textAlign:"center",maxWidth:"80px",lineHeight:"1.4"}}>Text reads normally</div>
                     </div>
-                    {}
+                    {/* INCORRECT — rotated 90° */}
                     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"8px"}}>
                       <div style={{position:"relative",display:"inline-block"}}>
                         <svg width="96" height="72" viewBox="0 0 96 72" xmlns="http://www.w3.org/2000/svg">
@@ -2079,7 +2080,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 {nameValid&&<div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
               </div>;
             })()}
-            <input ref={fileRef} type="file" accept="image}
+            <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
+
+            {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
+
+            {/* Question number selector */}
             {pageImg&&<div style={{marginBottom:"16px"}}>
               <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed?</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
@@ -2112,7 +2117,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           </div>
         )}
 
-        {}
+        {/* ── PHASE 2: RESULTS ── */}
         {phase===2&&results&&(()=>{
           const { phase1_cube: c, phase2_plan: p, phase3_analysis: _a0 } = results;
           // Use Stage 2 results when available (separate call), fall back to combined call result
@@ -2142,10 +2147,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           const band = marksKnown ? null : getBand(score, maxScore);
 
           return <div>
-            {}
-            {}
+            {/* ── ORDER: 1) Question bar  2) Steps nav  3) Tab content — DO NOT REORDER ── */}
+            {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
-              {}
+              {/* Metadata row */}
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
                 {dirs.map((dv,i)=>(
                   <div key={i} style={{display:"inline-block",border:"2.5px solid #c0392b",borderRadius:"50%",padding:"2px 10px",color:"#c0392b",fontWeight:900,fontSize:"13px"}}>{dv.word}</div>
@@ -2160,7 +2165,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
 
-            {}
+            {/* ── Results strip — only shown after Stage 2 marking ── */}
             {stage2Results&&(()=>{
               const awardedMark = marksKnown
                 ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)
@@ -2177,7 +2182,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   borderRadius:"12px",padding:"12px 20px",marginBottom:"20px",
                   fontFamily:"sans-serif",
                 }}>
-                  {}
+                  {/* Left: mark + band + directive */}
                   <div style={{display:"flex",alignItems:"center",gap:"20px",flexWrap:"wrap"}}>
                     {marksKnown && awardedMark !== null && (
                       <div style={{textAlign:"center"}}>
@@ -2194,7 +2199,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       </div>
                     )}
                     <div style={{width:"1px",height:"36px",background:"rgba(255,255,255,0.1)"}}/>
-                    {}
+                    {/* XP breakdown */}
                     {[
                       {label:"CUBE XP", val:cubeXP,  color:"#64b5f6"},
                       {label:"Plan XP", val:annoXP,  color:"#ce93d8"},
@@ -2206,7 +2211,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       </div>
                     ) : null)}
                   </div>
-                  {}
+                  {/* Right: Total XP */}
                   <div style={{
                     background:"linear-gradient(135deg,#1a4a8a,#0d2d5a)",
                     border:"1.5px solid rgba(100,181,246,0.4)",
@@ -2224,7 +2229,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
               }}/>
 
-            {}
+            {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
               <SectionTitle>STEP 2 — CUBE ANALYSIS</SectionTitle>
 
@@ -2236,7 +2241,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 mode="cube"
               />
 
-              {}
+              {/* Legend */}
               <div style={{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px",padding:"10px 14px",background:"rgba(255,255,255,0.04)",borderRadius:"10px",border:"1px solid rgba(255,255,255,0.08)"}}>
                 {[
                   {color:"#c0392b", ch:"C", desc:"Directive verb(s)"},
@@ -2250,9 +2255,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 ))}
               </div>
 
-              {}
+              {/* ── CUBE XP card — shows model CUBE max XP for question (Stage 1 only) ── */}
               {results&&!stage1Done&&<div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:"1.5px solid #6c63ff88",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
-                {}
+                {/* Sample answer max XP — student sees what is possible; their own XP scored in Stage 2 */}
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div>
                     <div style={{fontSize:"12px",color:"#9aabb8",marginBottom:"2px"}}>Sample answer CUBE elements in question</div>
@@ -2265,7 +2270,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </div>
               </div>}
 
-              {}
+              {/* ── Upload + Ready buttons in CUBE tab ── */}
               {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
 
@@ -2282,9 +2287,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </button>
               </div>}
 
-              {}
+              {/* ── Combined C U B card ── */}
               {(dirs.length>0||kwds.length>0||c.constraints?.length>0)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)" style={{padding:"0",overflow:"hidden"}}>
-                {}
+                {/* C — Directive */}
                 {dirs.length>0&&<div style={{padding:"14px 16px",borderBottom:kwds.length>0||c.constraints?.length>0?"1px solid rgba(192,57,43,0.2)":"none",background:"rgba(192,57,43,0.06)"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#c0392b",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>C</div>
@@ -2307,7 +2312,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>
                   </div>
                 </div>}
-                {}
+                {/* U — Syllabus keywords */}
                 {kwds.length>0&&<div style={{padding:"14px 16px",borderBottom:c.constraints?.length>0?"1px solid rgba(21,101,192,0.2)":"none",background:"rgba(21,101,192,0.06)"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>U</div>
@@ -2344,7 +2349,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>
                   </div>
                 </div>}
-                {}
+                {/* B — Constraints */}
                 {c.constraints?.length>0&&<div style={{padding:"14px 16px",background:"rgba(46,125,50,0.06)"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#2e7d32",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>B</div>
@@ -2376,7 +2381,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>
                   </div>
                 </div>}
-                {}
+                {/* E — Evidence / Example inside combined card */}
                 {c.evidenceRequired&&(()=>{
                   const arrows = stage2Results?.phase2_plan?.planningArrows || [];
                   const evArrow = arrows.find(a =>
@@ -2408,7 +2413,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 })()}
               </Card>}
 
-              {}
+
+              {/* ── Now ready button at bottom of CUBE tab ── */}
               {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
                 <button onClick={()=>markFullAnswer()} style={{width:"100%",padding:"14px 18px",background:"linear-gradient(135deg,#6c63ff,#9c27b0)",color:"#fff",border:"none",borderRadius:"10px",fontSize:"16px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"block",textAlign:"center",boxShadow:"0 4px 14px rgba(108,99,255,0.4)",letterSpacing:"0.5px"}}>
                   {stage2Loading ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner"></span>Marking your answer...</span> : "✍️ Now ready to have full answer marked"}
@@ -2417,18 +2423,18 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </div>}
             </div>}
 
-            {}
+            {/* ═══ TAB: PLAN ═══ */}
             {activeTab==="plan"&&<div>
               <SectionTitle>STEP 3 — ANSWER PLANNING</SectionTitle>
 
-              {}
+              {/* ── Loading while Stage 2 running ── */}
               {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
                 <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"8px"}}>Marking your written response...</div>
                 <div style={{fontSize:"13px",color:"#9aabb8"}}>Reading your answer and checking your annotation ideas</div>
               </div>}
 
-              {}
+              {/* ── Locked banner when Stage 2 not yet run ── */}
               {!stage2Results&&!stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"18px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"8px"}}>🔒</div>
                 <div style={{fontSize:"16px",fontWeight:800,color:"#e8eaf0",marginBottom:"6px"}}>Get your CUBE right first</div>
@@ -2436,9 +2442,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
               </div>}
 
-              {}
+              {/* SVG + all plan content — only shown after Stage 2 has run */}
               {stage2Results&&<div>
-              {}
+              {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
               <SVGAnnotatedPaper
                 text={c.questionText}
                 directives={dirs}
@@ -2448,7 +2454,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 mode="plan"
               />
 
-              {}
+              {/* ── Annotation XP + Stage 1 total (combined) ── */}
               {(()=>{
                 const maxCubeXP = (()=>{
                   const dirs = results?.phase1_cube?.directives?.length ? results.phase1_cube.directives : [];
@@ -2463,7 +2469,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 const annoItems = (stage2Results?.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
                 const usedItems = annoItems.filter(a=>a.used);
                 return <div style={{background:"linear-gradient(135deg,#0e0e2a,#141428)",border:`1.5px solid ${needsWork?"#ef535055":"#6c63ff55"}`,borderRadius:"12px",padding:"14px 16px",marginBottom:"10px",fontFamily:"sans-serif"}}>
-                  {}
+                  {/* Section 0: CUBE score — scored by Sonnet in Stage 2 */}
                   {cubeXP!==null&&<>
                     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"4px"}}>
                       <div style={{fontSize:"13px",fontWeight:900,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px"}}>
@@ -2497,7 +2503,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
                   </>}
 
-                  {}
+                  {/* Section 1: Points for annotation presence — specific per idea */}
                   <div style={{marginBottom:"8px"}}>
                     <div style={{fontSize:"13px",fontWeight:800,color:"#c9a84c",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"6px"}}>⚡ Points for ideas/annotations of question</div>
                     {annoItems.length > 0
@@ -2510,7 +2516,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       : <div style={{fontSize:"11px",color:"#666",fontStyle:"italic"}}>No annotation ideas detected above/beside the question</div>
                     }
                   </div>
-                  {}
+                  {/* Section 2: Points for ideas used — specific per idea */}
                   <div style={{marginBottom:"8px"}}>
                     <div style={{fontSize:"13px",fontWeight:800,color:"#69f0ae",textTransform:"uppercase",letterSpacing:"1px",marginBottom:"6px"}}>⚡ Points where these ideas used in written response</div>
                     {annoItems.length > 0
@@ -2528,7 +2534,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       : <div style={{fontSize:"11px",color:"#666",fontStyle:"italic"}}>No ideas to check</div>
                     }
                   </div>
-                  {}
+                  {/* Section 3: WHERE YOUR ANNOTATIONS HAVE BEEN USED — evidence from written response */}
                   {stage2Results?.annotationCheck?.length>0&&(()=>{
                     const checkItems = stage2Results.annotationCheck.slice(0,6);
                     const usedCount = checkItems.filter(a=>a.used).length;
@@ -2550,9 +2556,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>;
                   })()}
 
-                  {}
+                  {/* Divider */}
                   <div style={{height:"1px",background:"rgba(108,99,255,0.2)",margin:"8px 0"}}/>
-                  {}
+                  {/* Fix 3: Remove TRY AGAIN — replace with constructive message */}
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                     <div style={{fontSize:"15px",color:needsWork?"#ef9a9a":"#e8eaf0",fontWeight:800}}>
                       {needsWork
@@ -2565,14 +2571,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </div>;
               })()}
 
-              {}
+              {/* Answer summary — from Stage 1 phase2_plan */}
               {stage2Results?.phase2_plan?.summary&&<Card bg="rgba(201,168,76,0.08)" border="rgba(201,168,76,0.3)">
                 <div style={{fontSize:"15px",color:"#f0e6c8",lineHeight:"1.6"}}>
                   <strong style={{color:gold}}>In short: </strong>{stage2Results.phase2_plan.summary}
                 </div>
               </Card>}
 
-              {}
+              {/* Writing scaffold — from Stage 1 phase2_plan */}
               {stage2Results?.phase2_plan?.writingScaffold&&<Card bg="rgba(33,150,243,0.06)" border="rgba(33,150,243,0.25)">
                 <SectionTitle color="#ffffff">WRITING SCAFFOLD</SectionTitle>
                 {["step1","step2","step3","step4"].filter(k=>stage2Results.phase2_plan.writingScaffold[k]).map((k,i)=>(
@@ -2583,11 +2589,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 ))}
               </Card>}
 
-              </div>}{}
+              </div>}{/* end stage2Results gate */}
 
             </div>}
 
-            {}
+            {/* ═══ TAB: SCRIPT ═══ */}
             {activeTab==="script"&&<div>
               {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
@@ -2613,7 +2619,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </div>
               </PaperCard>
 
-              {}
+              {/* Photo below the typed response — annotation detail moved to Plan tab */}
               {pageB64&&<div style={{marginTop:"12px"}}>
                 <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
                 <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
@@ -2621,7 +2627,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             </div>}
             </div>}
 
-            {}
+            {/* ═══ TAB: RUBRIC ═══ */}
             {activeTab==="rubric"&&<div>
               {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
@@ -2657,7 +2663,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </table>
               </Card>
 
-              {}
+              {/* ── XP summary strip ── */}
               <div style={{background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"6px"}}>
                   <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{Math.min(score,maxScore)}</span> / {maxScore} XP{c.marks&&c.marks<=4?<span style={{fontSize:"11px",color:"#9aabb8",marginLeft:"8px",fontWeight:400}}>({c.marks}-mark question)</span>:null}</div>
@@ -2668,7 +2674,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </div>
               </div>
 
-              {}
+              {/* Detected features */}
               <div style={{display:"grid",gridTemplateColumns:`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
                 {causalApplicable&&<Card bg="rgba(123,31,162,0.08)" border="rgba(123,31,162,0.3)">
                   <SectionTitle color="#ce93d8">CONNECTIVES FOUND</SectionTitle>
@@ -2697,10 +2703,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </Card>
               </div>
 
+
             </div>}
             </div>}
 
-            {}
+            {/* ═══ TAB: FEEDBACK ═══ */}
             {activeTab==="feedback"&&<div>
               {stage2Loading&&<div style={{background:"linear-gradient(135deg,#0e1824,#0a1420)",border:"1.5px solid #6c63ff44",borderRadius:"12px",padding:"32px 20px",textAlign:"center",fontFamily:"sans-serif",marginBottom:"16px"}}>
                 <div style={{fontSize:"32px",marginBottom:"12px"}}><span className="cube-spinner"></span></div>
@@ -2716,7 +2723,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {stage2Results&&<div>
               <SectionTitle>STEP 6 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
 
-              {}
+              {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
               {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
                 {a.medals?.medal1&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.medals?.medal2||a.mission?"12px":0}}>
                   <div style={{fontSize:"26px",flexShrink:0}}>🥇</div>
@@ -2753,10 +2760,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </div>}
               </Card>}
 
-              {}
+              {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
               {a.specialCheck?.modelSentenceStarter&&<Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
 
-                {}
+                {/* ── STEP 1: Structure Pattern ── */}
                 <SectionTitle color={gold}>💡 HOW TO STRUCTURE YOUR ANSWER</SectionTitle>
                 <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",lineHeight:"1.5"}}>
                   This shows the <strong style={{color:"#f0d080"}}>sentence pattern</strong> a top student would use — the key words in <span style={{background:"#7b1fa2",color:"white",borderRadius:"3px",padding:"0 5px",fontSize:"11px",fontWeight:900}}>PURPLE</span> are the connectives that link your ideas. Use this as a template — replace the content with your own knowledge.
@@ -2776,7 +2783,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
               </Card>}
 
-              {}
+
+              {/* ── 3. Special check (connectives / argument structure) ── */}
               {a.specialCheck?.type!=="none"&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
                 <SectionTitle color={isExplain?"#ce93d8":"#ffab91"}>{isExplain?"⚠️ EXPLAIN — CAUSAL CONNECTIVES":"⚠️ ASSESS/EVALUATE — ARGUMENT STRUCTURE"}</SectionTitle>
                 {isExplain&&a.specialCheck?.explainCheck&&(()=>{
@@ -2792,12 +2800,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     ...(ec.acceptedConnectivesFound||[])
                   ];
                   return <>
-                    {}
+                    {/* Cause-effect link check — always shown */}
                     <div style={{display:"flex",gap:"10px",alignItems:"center",marginBottom:"10px",fontSize:"13px",fontFamily:"sans-serif"}}>
                       <Tick ok={ec.causeEffectLinked}/><span style={{color:"#e8eaf0"}}>Cause linked to effect</span>
                     </div>
 
-                    {}
+                    {/* If any connectives found — show them positively */}
                     {hasAny && <div style={{background:"rgba(76,175,80,0.1)",border:"1px solid rgba(76,175,80,0.35)",borderRadius:"8px",padding:"10px 14px",marginBottom:"8px"}}>
                       <div style={{fontSize:"11px",color:"#81c784",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>✅ CAUSAL CONNECTIVES USED</div>
                       <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"8px"}}>
@@ -2811,19 +2819,19 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                           }}>{c}</span>;
                         })}
                       </div>
-                      {}
+                      {/* Tip: only show SO/BECAUSE/BUT nudge if they haven't already used them */}
                       {!hasPreferred && <div style={{fontSize:"12px",color:"#c9a84c",fontFamily:"sans-serif",fontStyle:"italic"}}>
                         Good use of causal connectives — also try SO / BECAUSE / BUT for maximum HSC impact.
                       </div>}
                     </div>}
 
-                    {}
+                    {/* If NO connectives at all */}
                     {!hasAny && <div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.3)",borderRadius:"8px",padding:"10px 14px",marginBottom:"8px"}}>
                       <div style={{fontSize:"13px",color:"#ff8a80",fontFamily:"sans-serif",fontWeight:600}}>❌ No causal connectives found</div>
                       <div style={{fontSize:"12px",color:"#e8eaf0",fontFamily:"sans-serif",marginTop:"4px"}}>Try using: <strong style={{color:"#ce93d8"}}>SO</strong>, <strong style={{color:"#ce93d8"}}>BECAUSE</strong>, <strong style={{color:"#ce93d8"}}>BUT</strong> — or alternatives like <em>therefore, thus, however, since, as a result</em></div>
                     </div>}
 
-                    {}
+                    {/* Key terms for explain questions too */}
                     {a.specialCheck?.keyTermDefinitions?.length>0&&<div style={{marginTop:"10px",background:"rgba(100,181,246,0.08)",border:"1px solid rgba(100,181,246,0.25)",borderRadius:"8px",padding:"10px 12px"}}>
                       <div style={{fontSize:"11px",color:"#64b5f6",fontWeight:800,letterSpacing:"1px",marginBottom:"6px",fontFamily:"sans-serif"}}>✅ DEFINE key terms in the question</div>
                       {a.specialCheck.keyTermDefinitions.map((t,i)=>(
@@ -2837,7 +2845,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </>;
                 })()}
                 {isAssessEval&&a.specialCheck?.assessEvalCheck&&<>
-                  {}
+                  {/* ── Define key terms — plain bullet row aligned with PRO/CON ── */}
                   <div style={{marginBottom:"8px"}}>
                     <div style={{display:"flex",gap:"10px",alignItems:"flex-start",fontSize:"13px",fontFamily:"sans-serif"}}>
                       <Tick ok={true}/>
@@ -2855,7 +2863,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       </div>
                     </div>
                   </div>
-                  {}
+                  {/* ── PRO / CON rows ── */}
                   {[
                     [a.specialCheck.assessEvalCheck.hasPRO,"PRO / BENEFIT",a.specialCheck.assessEvalCheck.proText],
                     [a.specialCheck.assessEvalCheck.hasCON,"CON / LIMITATION",a.specialCheck.assessEvalCheck.conText],
@@ -2863,7 +2871,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <div style={{display:"flex",gap:"10px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif"}}><Tick ok={ok}/><span style={{color:"#e8eaf0",fontWeight:600}}>{label}</span></div>
                     {quote&&<div style={{marginLeft:"26px",color:"#ffccbc",fontSize:"15px",fontStyle:"italic",fontFamily:"sans-serif"}}>"{quote}"</div>}
                   </div>)}
-                  {}
+                  {/* ── Combined judgement row: IS/IS NOT linked directly to arguments ── */}
                   <div style={{marginBottom:"8px"}}>
                     <div style={{display:"flex",gap:"10px",alignItems:"center",fontSize:"13px",fontFamily:"sans-serif",marginBottom:"4px"}}>
                       <Tick ok={a.specialCheck.assessEvalCheck.hasJudgement&&a.specialCheck.assessEvalCheck.judgementLinked}/>
@@ -2889,7 +2897,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   <div style={{marginTop:"8px",color:"#ffccbc",fontSize:"13px",fontFamily:"sans-serif",lineHeight:"1.6"}}>{a.specialCheck.assessEvalCheck.comment}</div>
                 </>}
               </Card>}
-              {}
+              {/* ── Band 6 example — at very bottom so student reviews their work first ── */}
               <div style={{marginTop:"8px",paddingTop:"16px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
                 {!modelAnswer&&<>
                   <div style={{fontSize:"12px",color:"#9aabb8",fontFamily:"sans-serif",lineHeight:"1.5",marginBottom:"10px",textAlign:"center"}}>
@@ -2910,14 +2918,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 </>}
               </div>
 
+
             </div>}
             </div>}
 
-            {}
+            {/* ═══ TAB: RANK (Step 7) ═══ */}
             {activeTab==="rank"&&<div>
               <SectionTitle>🏆 LEADERBOARD</SectionTitle>
 
-              {}
+              {/* Period + Directive filters */}
               <div style={{display:"flex",gap:"8px",marginBottom:"10px",flexWrap:"wrap"}}>
                 {["week","alltime","improved"].map(p=>(
                   <button key={p} onClick={()=>{ setLbPeriod(p); fetchLeaderboard(p, lbDirective); }}
@@ -2951,19 +2960,19 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 💡 <strong>{config.subjectCode} tip:</strong> {config.leaderboardTip}
               </div>}
 
-              {}
+              {/* Loading */}
               {lbLoading&&<div style={{textAlign:"center",padding:"32px",color:"#9aabb8",fontFamily:"sans-serif"}}>
                 <div className="cube-spinner" style={{marginBottom:"12px"}}></div>
                 <div>Loading leaderboard...</div>
               </div>}
 
-              {}
+              {/* Error */}
               {lbError&&!lbLoading&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px",marginBottom:"12px",fontFamily:"sans-serif"}}>
                 <div style={{color:"#ff8a80",fontSize:"13px",marginBottom:"8px"}}>{lbError}</div>
                 <button onClick={()=>fetchLeaderboard(lbPeriod,lbDirective)} style={{padding:"6px 16px",background:"rgba(244,67,54,0.2)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",color:"#ff8a80",fontSize:"12px",cursor:"pointer",fontFamily:"sans-serif"}}>Retry</button>
               </div>}
 
-              {}
+              {/* Leaderboard list */}
               {leaderboard&&!lbLoading&&(()=>{
                 const board = lbPeriod==="improved"
                   ? (leaderboard.leaderboard||[])
@@ -2971,7 +2980,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 const me = privacyName(studentName.trim()||"");
 
                 return <div>
-                  {}
+                  {/* Podium — top 3 */}
                   {board.length>=3&&<div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",gap:"10px",marginBottom:"18px",paddingBottom:"4px"}}>
                     {[board[1],board[0],board[2]].map((p,pi)=>{
                       const sizes   = [52,64,42];
@@ -2998,7 +3007,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     })}
                   </div>}
 
-                  {}
+                  {/* Full list */}
                   {board.map((p,i)=>{
                     const isMe = p.student===me;
                     const initials = (p.student||"?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
@@ -3036,7 +3045,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     No submissions yet for this filter. Be the first! 🚀
                   </div>}
 
-                  {}
+                  {/* Class stats */}
                   {leaderboard.classStats&&<div style={{marginTop:"14px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"12px",padding:"12px 14px"}}>
                     <div style={{fontSize:"10px",color:"#9aabb8",textTransform:"uppercase",letterSpacing:"1px",fontWeight:700,marginBottom:"10px",fontFamily:"sans-serif"}}>📊 Class {lbPeriod==="week"?"This Week":"Stats"}</div>
                     <div style={{display:"flex",gap:"8px"}}>
@@ -3062,7 +3071,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         })()}
       </div>
 
-      {}
+      {/* ── PRINT REPORT PORTAL — hidden on screen, visible only when printing ── */}
       {phase===2&&stage2Results&&results&&(()=>{
         const { phase1_cube: cPr } = results;
         const aPr = stage2Results;
@@ -3108,6 +3117,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     </div>
   );
 }
+
 
 // ─── APP SHELL — waits for config.json before rendering ──────────────────────
 function AppShell() {
