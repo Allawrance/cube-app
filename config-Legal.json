@@ -1,0 +1,534 @@
+{
+  "subjectCode": "LEG",
+  "subjectName": "Legal Studies",
+  "subjectShortName": "Legal",
+  "dominantMode": "Argument + legal sources + effectiveness evaluation",
+  "cleanRule": "Legal Studies = legal argument + named legal sources (legislation, cases, international instruments) + evaluation of effectiveness in achieving justice",
+  "leaderboardTip": "HSC Legal questions reward NAMED sources — cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
+  "sheetTabCube": "LEG CUBE",
+  "sheetTabFull": "LEG",
+  "accentColor": "#ce93d8",
+  "kla": "HSIE",
+  "classCodes": ["12LS-1", "12LS-2"],
+  "activeTopics": ["Crime", "Human Rights", "Family", "World Order"],
+
+  "subjectContext": {
+    "examStructure": {
+      "sectionI": "Core — Crime and Human Rights: 20 marks objective response (15 Crime, 5 Human Rights). May refer to stimulus.",
+      "sectionII_A": "Core — Human Rights: 15 marks short-answer questions (3–4 items). May refer to stimulus.",
+      "sectionII_B": "Core — Crime: 15 marks one extended response (~600 words / ~4 booklet pages).",
+      "sectionIII": "Options: 50 marks — two extended responses, each from a different Option (~1000 words / ~8 booklet pages each)."
+    },
+    "coreTopics": ["Crime", "Human Rights"],
+    "optionTopics": ["Consumers", "Global Environmental Protection", "Family", "Indigenous Peoples", "Shelter", "Workplace", "World Order"],
+    "legalSourceTypes": [
+      "legislation (Acts of Parliament, statutes, delegated legislation)",
+      "cases (court decisions, precedents — must be named)",
+      "media (newspaper reports, investigative journalism)",
+      "international instruments (declarations, treaties, conventions, covenants)",
+      "international documents (UN resolutions, reports)"
+    ],
+    "effectivenessCriteria": [
+      "resource efficiency",
+      "accessibility",
+      "enforceability",
+      "responsiveness",
+      "protection of individual rights",
+      "meeting society's needs",
+      "application of the rule of law",
+      "has justice been achieved?"
+    ]
+  },
+
+  "syllabus": {
+    "core": {
+      "title": "HSC Core",
+      "topics": [
+        {
+          "code": "C1",
+          "title": "Crime",
+          "principalFocus": "Students investigate criminal law, processes and institutions and the tension between community interests and individual rights and freedoms.",
+          "themesAndChallenges": [
+            "the role of discretion in the criminal justice system",
+            "issues of compliance and non-compliance in regard to criminal law",
+            "the extent to which law reflects moral and ethical standards",
+            "the role of law reform in the criminal justice system",
+            "the extent to which the law balances the rights of victims, offenders and society",
+            "the effectiveness of legal and non-legal measures in achieving justice"
+          ],
+          "dotPoints": [
+            {
+              "label": "C1-1",
+              "title": "The nature of crime",
+              "content": "Meaning of crime; elements of crime (actus reus, mens rea, strict liability, causation); categories of crime (offences against the person, economic offences, drug offences, driving offences, public order offences, preliminary crimes); summary and indictable offences; parties to a crime; factors affecting criminal behaviour; crime prevention (situational and social)",
+              "learnTo": "Describe the nature of crime; recognise categories; examine factors leading to criminal behaviour; investigate crime prevention techniques"
+            },
+            {
+              "label": "C1-2",
+              "title": "The criminal investigation process",
+              "content": "Police powers; reporting crime; investigating crime (gathering evidence, technology, search and seizure, warrants); arrest and charge, summons, warrants; bail or remand; detention and interrogation, rights of suspects",
+              "learnTo": "Discuss police powers; examine reporting and investigating crime; assess effectiveness of the criminal investigation process in achieving justice"
+            },
+            {
+              "label": "C1-3",
+              "title": "Criminal trial process",
+              "content": "Court jurisdiction; adversary system; legal personnel (magistrate, judge, DPP, Public Defenders); pleas and charge negotiation; legal representation and legal aid; burden and standard of proof; use of evidence; defences (complete and partial defences to murder); role of juries",
+              "learnTo": "Describe courts in criminal justice; discuss adversary system; examine legal representation; assess defences; evaluate jury system effectiveness"
+            },
+            {
+              "label": "C1-4",
+              "title": "Sentencing and punishment",
+              "content": "Statutory and judicial guidelines; purposes of punishment (deterrence, retribution, rehabilitation, incapacitation); aggravating and mitigating circumstances; role of the victim; appeals; types of penalties (fine, bond, community service, home detention, imprisonment, diversionary programs); alternative sentencing (circle sentencing, restorative justice); post-sentencing considerations (parole, preventative detention, sexual offenders' registration, deportation)",
+              "learnTo": "Discuss sentencing factors; evaluate types of penalties including diversionary programs; assess alternative sentencing methods; evaluate sentencing as means of achieving justice"
+            },
+            {
+              "label": "C1-5",
+              "title": "Young offenders",
+              "content": "Age of criminal responsibility; rights of children when questioned or arrested; Children's Court (procedures and operation); penalties for children; alternatives to court",
+              "learnTo": "Discuss age of criminal responsibility; explain why young offenders are treated differently; assess effectiveness of criminal justice system for young offenders"
+            },
+            {
+              "label": "C1-6",
+              "title": "International crime",
+              "content": "Categories of international crime (crimes against the international community, transnational crimes); dealing with international crime (domestic and international measures); limitations",
+              "learnTo": "Define international crime; describe measures used to deal with international crime; evaluate effectiveness of domestic and international legal systems in dealing with international crime"
+            }
+          ],
+          "keywords": [
+            "actus reus", "mens rea", "strict liability", "causation", "indictable offence", "summary offence",
+            "accessory", "principal", "criminal investigation", "police powers", "bail", "remand",
+            "adversary system", "burden of proof", "standard of proof", "legal aid", "plea negotiation",
+            "self-defence", "provocation", "mental illness defence", "jury", "verdict",
+            "deterrence", "retribution", "rehabilitation", "incapacitation", "aggravating circumstances",
+            "mitigating circumstances", "restorative justice", "circle sentencing", "diversionary program",
+            "parole", "preventative detention", "Children's Court", "age of criminal responsibility",
+            "transnational crime", "crimes against humanity", "International Criminal Court"
+          ]
+        },
+        {
+          "code": "C2",
+          "title": "Human Rights",
+          "principalFocus": "Students investigate the notion of human rights and assess the extent to which legal systems embody such human rights and promote them in practice.",
+          "themesAndChallenges": [
+            "the changing understanding of the relationship between state sovereignty and human rights",
+            "issues of compliance and non-compliance in relation to human rights",
+            "the development of human rights as a reflection of changing values and ethical standards",
+            "the role of law reform in protecting human rights",
+            "the effectiveness of legal and non-legal measures in protecting human rights"
+          ],
+          "dotPoints": [
+            {
+              "label": "C2-1",
+              "title": "The nature and development of human rights",
+              "content": "Definition of human rights; developing recognition (abolition of slavery, trade unionism, universal suffrage, universal education, self-determination, environmental rights, peace rights); formal statements of human rights (UDHR, ICCPR, ICESCR)",
+              "learnTo": "Define human rights; outline how human rights have changed over time; investigate evolving recognition; examine major human rights documents"
+            },
+            {
+              "label": "C2-2",
+              "title": "Promoting and enforcing human rights",
+              "content": "In the international community: state sovereignty; roles of UN, intergovernmental organisations, courts and tribunals, NGOs, media. In Australia: incorporation into domestic law; Constitution, statute law, common law, courts, NGOs, media; Charter of Rights (arguments for and against)",
+              "learnTo": "Assess role of state sovereignty; evaluate effectiveness of international responses; outline incorporation of human rights into Australian law; evaluate Australian responses; discuss Charter of Rights arguments"
+            },
+            {
+              "label": "C2-3",
+              "title": "Contemporary human rights issue",
+              "content": "One contemporary issue illustrating promotion and/or enforcement of human rights (e.g. genocide, treatment of refugees, asylum seekers, child soldiers, torture, capital punishment, arbitrary detention, discrimination against women, human trafficking)",
+              "learnTo": "Investigate a contemporary human rights issue; evaluate the effectiveness of legal and non-legal responses"
+            }
+          ],
+          "keywords": [
+            "human rights", "Universal Declaration of Human Rights", "UDHR",
+            "International Covenant on Civil and Political Rights", "ICCPR",
+            "International Covenant on Economic, Social and Cultural Rights", "ICESCR",
+            "state sovereignty", "United Nations", "intergovernmental organisation",
+            "non-government organisation", "NGO", "domestic law", "international law",
+            "Charter of Rights", "law reform", "compliance", "non-compliance",
+            "refugees", "asylum seekers", "genocide", "torture", "arbitrary detention",
+            "discrimination", "human trafficking"
+          ]
+        }
+      ]
+    },
+    "options": {
+      "title": "HSC Options (students study TWO)",
+      "topics": [
+        {
+          "code": "O1",
+          "title": "Consumers",
+          "principalFocus": "Students investigate the legal rights of consumers and the effectiveness of the law in achieving justice for consumers.",
+          "dotPoints": [
+            {
+              "label": "O1-1",
+              "title": "The nature of consumer law",
+              "content": "Developing need for consumer protection; definition of consumer; objectives of consumer laws; contracts (types, elements, terms, exclusion clauses); standards implied by statutes; unjust contracts; role of negligence; regulation of marketing and advertising; occupational licensing"
+            },
+            {
+              "label": "O1-2",
+              "title": "Consumer redress and remedies",
+              "content": "Awareness and self-help; state and federal government organisations; industry organisations; role of tribunals and courts; role of NGOs; role of media; consumer remedies (individual, society)"
+            },
+            {
+              "label": "O1-3",
+              "title": "Contemporary issues: credit, product certification, marketing innovations, technology",
+              "content": "Mandatory contemporary issues: credit, product certification, marketing innovations, technology"
+            }
+          ],
+          "keywords": [
+            "consumer protection", "Australian Consumer Law", "contract", "exclusion clause",
+            "unjust contract", "negligence", "implied terms", "ACCC", "Fair Trading",
+            "tribunal", "product liability", "credit", "marketing", "occupational licensing"
+          ]
+        },
+        {
+          "code": "O2",
+          "title": "Global Environmental Protection",
+          "principalFocus": "Students investigate the effectiveness of legal and non-legal processes in promoting and achieving environmental protection.",
+          "dotPoints": [
+            {
+              "label": "O2-1",
+              "title": "The nature of global environmental protection",
+              "content": "Definition; development of global environmental law; need for protection; ecologically sustainable development (biodiversity, intergenerational equity, intragenerational equity, precautionary principle)"
+            },
+            {
+              "label": "O2-2",
+              "title": "Responses to global environmental protection",
+              "content": "Nation state and sovereignty; United Nations; international instruments; courts and conferences; intergovernmental organisations; NGOs; media; Australia's federal structure"
+            },
+            {
+              "label": "O2-3",
+              "title": "Contemporary issues: global threats, resource conflict, Australia's response, barriers to international action",
+              "content": "Mandatory: role of law in global threats; conflict between resource demand and environmental protection; Australia's responses to international initiatives; barriers to international response"
+            }
+          ],
+          "keywords": [
+            "ecologically sustainable development", "biodiversity", "intergenerational equity",
+            "precautionary principle", "Paris Agreement", "Kyoto Protocol", "UNFCCC",
+            "state sovereignty", "United Nations Environment Programme", "UNEP",
+            "environmental law", "climate change", "international instrument"
+          ]
+        },
+        {
+          "code": "O3",
+          "title": "Family",
+          "principalFocus": "Students investigate the legal nature of family relationships and the effectiveness of the law in achieving justice.",
+          "dotPoints": [
+            {
+              "label": "O3-1",
+              "title": "The nature of family law",
+              "content": "Concept of family law; legal requirements of marriage; alternative family relationships; legal rights and obligations of parents and children; adoption"
+            },
+            {
+              "label": "O3-2",
+              "title": "Responses to problems in family relationships",
+              "content": "Divorce; legal consequences of separation; children; property; domestic violence; courts and dispute resolution; NGOs; media"
+            },
+            {
+              "label": "O3-3",
+              "title": "Contemporary issues: same-sex relationships, parental responsibility, surrogacy, care and protection of children",
+              "content": "Mandatory: recognition of same-sex relationships; changing nature of parental responsibility; surrogacy and birth technologies; care and protection of children"
+            }
+          ],
+          "keywords": [
+            "Family Law Act", "marriage", "divorce", "property settlement", "parenting orders",
+            "Family Court", "Federal Circuit Court", "domestic violence", "AVO",
+            "surrogacy", "parental responsibility", "adoption", "Children's Court",
+            "mediation", "same-sex relationships"
+          ]
+        },
+        {
+          "code": "O4",
+          "title": "Indigenous Peoples",
+          "principalFocus": "Students investigate the effectiveness of legal and non-legal processes in achieving justice for indigenous peoples globally.",
+          "dotPoints": [
+            {
+              "label": "O4-1",
+              "title": "Nature of the law and indigenous peoples",
+              "content": "Definition of indigenous peoples; loss of rights over time; legal recognition; right to self-determination"
+            },
+            {
+              "label": "O4-2",
+              "title": "Responses to indigenous peoples",
+              "content": "Nation state and sovereignty; UN; international instruments; courts; intergovernmental organisations; NGOs; media; Australia's federal structure"
+            },
+            {
+              "label": "O4-3",
+              "title": "Contemporary issues: cultural rights, land rights, natural resources, intellectual property",
+              "content": "Mandatory: loss of cultural rights including language; land rights; legal rights to natural resources; intellectual property rights"
+            }
+          ],
+          "keywords": [
+            "native title", "Mabo v Queensland", "Wik decision", "Native Title Act",
+            "terra nullius", "self-determination", "UNDRIP", "UN Declaration on the Rights of Indigenous Peoples",
+            "land rights", "cultural rights", "intellectual property", "Aboriginal and Torres Strait Islander",
+            "customary law", "reconciliation"
+          ]
+        },
+        {
+          "code": "O5",
+          "title": "Shelter",
+          "principalFocus": "Students investigate the legal means of securing shelter and the effectiveness of the law in achieving justice for people seeking and providing shelter.",
+          "dotPoints": [
+            {
+              "label": "O5-1",
+              "title": "The nature of shelter",
+              "content": "Definition; right to shelter; obligation to provide shelter; types of shelter"
+            },
+            {
+              "label": "O5-2",
+              "title": "Legal protection and remedies",
+              "content": "Purchasing (private treaty, auction, registration, finance, protection for buyers); leasing (rights of landlords and tenants); securing other types of shelter (aged care, residential parks, squats); dispute resolution"
+            },
+            {
+              "label": "O5-3",
+              "title": "Contemporary issues: affordability, discrimination, homelessness, social housing",
+              "content": "Mandatory: affordability; discrimination; homelessness; social housing including public housing, cooperative and community housing"
+            }
+          ],
+          "keywords": [
+            "Residential Tenancies Act", "tenancy", "landlord", "tenant", "lease",
+            "conveyancing", "mortgage", "registration of title", "strata title",
+            "homelessness", "social housing", "public housing", "discrimination",
+            "Fair Trading", "NCAT", "Consumer Trader and Tenancy Tribunal"
+          ]
+        },
+        {
+          "code": "O6",
+          "title": "Workplace",
+          "principalFocus": "Students investigate legal rights and responsibilities and the effectiveness of the law in achieving justice in the workplace.",
+          "dotPoints": [
+            {
+              "label": "O6-1",
+              "title": "The nature of workplace law",
+              "content": "Changing nature of workplace law; contracts of service and for services; express and implied terms; awards and agreements; statutory conditions"
+            },
+            {
+              "label": "O6-2",
+              "title": "Regulation of the workplace",
+              "content": "Industrial relations — state and federal framework; negotiations; dispute resolution; courts, tribunals, government organisations, trade unions, employer associations, NGOs, media; remuneration"
+            },
+            {
+              "label": "O6-3",
+              "title": "Contemporary issues: discrimination, safety, termination, leave",
+              "content": "Mandatory: discrimination; safety; termination of employment; leave"
+            }
+          ],
+          "keywords": [
+            "Fair Work Act", "Fair Work Commission", "enterprise agreement", "modern award",
+            "contract of employment", "unfair dismissal", "redundancy", "WorkCover",
+            "WHS Act", "work health and safety", "discrimination", "industrial action",
+            "trade union", "minimum wage", "parental leave", "annual leave"
+          ]
+        },
+        {
+          "code": "O7",
+          "title": "World Order",
+          "principalFocus": "Students investigate the effectiveness of legal and non-legal measures in promoting peace and resolving conflict between nation states.",
+          "dotPoints": [
+            {
+              "label": "O7-1",
+              "title": "The nature of world order",
+              "content": "Meaning of world order; need for world order; development over time; nature of conflict (inter-state and intra-state); access to resources as a source of conflict"
+            },
+            {
+              "label": "O7-2",
+              "title": "Responses to world order",
+              "content": "Nation state and sovereignty; UN; international instruments; courts and tribunals; intergovernmental organisations; NGOs; media; Australia's federal government; political negotiation, persuasion, use of force"
+            },
+            {
+              "label": "O7-3",
+              "title": "Contemporary issues: R2P, regional/global threats, global cooperation, rules of hostilities",
+              "content": "Mandatory: responsibility to protect (R2P); regional and global situations threatening peace and security; success of global cooperation; rules regarding conduct of hostilities"
+            }
+          ],
+          "keywords": [
+            "world order", "state sovereignty", "United Nations", "UN Security Council",
+            "UN General Assembly", "International Court of Justice", "ICJ",
+            "International Criminal Court", "ICC", "responsibility to protect", "R2P",
+            "Geneva Conventions", "international humanitarian law", "peacekeeping",
+            "sanctions", "treaty", "multilateralism", "arms control"
+          ]
+        }
+      ]
+    }
+  },
+
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Analyses, synthesises and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates extensive knowledge and understanding of the operation of the legal system and the processes involved in law reform. Synthesises and analyses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Communicates coherent arguments on contemporary issues from differing perspectives and interpretations. Communicates an argument using relevant legal concepts and terminology.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Analyses, synthesises AND interprets — not just describes",
+        "Evaluates effectiveness explicitly with supported judgement",
+        "Extensive knowledge of legal system operation and law reform processes",
+        "Synthesises sources: legislation + cases + media + international instruments together",
+        "Coherent arguments from DIFFERING perspectives and interpretations",
+        "Precise and consistent legal concepts and terminology throughout"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Analyses and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates detailed knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Presents clear arguments on contemporary issues from differing perspectives. Communicates using relevant legal concepts and terminology.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Analyses and interprets — not just describes",
+        "Evaluates effectiveness with clear judgement",
+        "Detailed knowledge of legal system and law reform",
+        "Uses multiple source types to support arguments",
+        "Clear arguments from differing perspectives",
+        "Relevant legal concepts and terminology"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Provides some analysis of information and issues related to the effectiveness of the domestic and international legal system. Demonstrates good knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses appropriate legal information from sources including legislation, cases, media, international instruments and documents. Uses appropriate legal concepts and terminology.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Some analysis — moves beyond pure description",
+        "Good knowledge of legal system",
+        "Uses appropriate legal sources",
+        "Appropriate legal terminology"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates some knowledge and understanding of the issues related to the domestic and/or international legal system. Demonstrates some understanding of the operation of the legal system. Makes reference to sources including legislation, cases, media, international instruments and documents. Uses some legal concepts and terminology.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Some knowledge of legal issues",
+        "References legal sources (but may not use them analytically)",
+        "Some legal terminology"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Recognises some issues in the legal system. Demonstrates a limited understanding of some aspects of the operations of the legal system. Uses some legal terminology.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Recognises some legal issues",
+        "Limited understanding of legal system operation",
+        "Some basic legal terminology"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": ["Minimum standard not demonstrated"]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Evaluate the effectiveness of the law/legal system in achieving justice (most common — extended response)",
+        "Assess the role of legal and non-legal measures in addressing an issue",
+        "Analyse the tension between community interests and individual rights",
+        "Discuss the extent to which the law balances competing interests",
+        "Examine the role of law reform in addressing an issue"
+      ],
+      "legal_specific_tips": [
+        "ALWAYS name specific legal sources: use full names of cases (e.g. Mabo v Queensland [No 2] (1992)), Acts (e.g. Crimes Act 1900 (NSW)), and international instruments (e.g. Universal Declaration of Human Rights 1948).",
+        "For evaluate/assess questions: present BOTH the strengths AND limitations of the legal response, then make an explicit judgement about overall effectiveness.",
+        "Reference the effectiveness criteria: accessibility, enforceability, responsiveness, protection of individual rights, meeting society's needs, rule of law, and whether justice was achieved.",
+        "Show understanding of the role of BOTH legal measures (courts, legislation, tribunals) AND non-legal measures (NGOs, media, political negotiation) — Band 5-6 integrates both.",
+        "Themes and challenges must be woven throughout: compliance/non-compliance, law reform, the extent to which law reflects moral/ethical standards, balancing rights."
+      ],
+      "common_errors": [
+        "Describing what the law says without evaluating how effective it is.",
+        "Generic references to 'courts' or 'legislation' without naming specific cases or Acts.",
+        "Forgetting non-legal measures (NGOs, media, political pressure) — questions often require both.",
+        "One-sided arguments — Band 5-6 requires differing perspectives and a balanced evaluation.",
+        "Failing to link back to the specific question (justice, effectiveness, balancing rights)."
+      ]
+    },
+    "marking_guidance": {
+      "evaluate_effectiveness_steps": [
+        "Identify the legal/non-legal measure being evaluated.",
+        "Explain how the measure works (briefly — don't over-describe).",
+        "Present evidence/argument for its effectiveness (strength 1, strength 2).",
+        "Present evidence/argument against its effectiveness (limitation 1, limitation 2).",
+        "Name specific cases, legislation, or international instruments as evidence.",
+        "Apply effectiveness criteria explicitly (e.g. 'While accessible to individuals, enforcement remains limited because...').",
+        "Make an explicit, justified judgement about overall effectiveness."
+      ],
+      "source_integration_rule": "Named cases, legislation and international instruments MUST appear. A response with no specific legal sources cannot exceed Band 3. One named source = Band 3-4 threshold; multiple integrated sources = Band 5-6.",
+      "quality_checks": {
+        "before_output": [
+          "Has the directive verb been answered correctly (evaluate vs describe vs discuss)?",
+          "Are specific cases, legislation, or international instruments named?",
+          "Are both legal AND non-legal measures considered where relevant?",
+          "Are differing perspectives or both sides of the argument presented?",
+          "Has an explicit effectiveness judgement been made where required?",
+          "Are themes and challenges (law reform, compliance, balancing rights) woven in?",
+          "Is legal terminology used precisely and consistently?"
+        ],
+        "band6_checklist": [
+          "Analyses, synthesises AND interprets — not just lists or describes.",
+          "Evaluates effectiveness with an explicit, evidence-based judgement.",
+          "Multiple named legal sources integrated analytically (not just listed).",
+          "Coherent argument from differing perspectives.",
+          "Themes and challenges woven throughout.",
+          "Precise legal terminology used consistently."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Synthesise multiple legal sources into a coherent, multi-perspective argument that explicitly evaluates effectiveness. Judgement must be evidence-based and precise. Legal terminology exact.",
+          "Band5": "Analyse and interpret using multiple named sources. Clear argument from differing perspectives. Evaluate effectiveness with a judgement, slightly less integrated than Band 6.",
+          "Band4": "Some analysis using appropriate legal sources. Clear structure. Uses legal terminology. Effectiveness discussed but judgement less developed.",
+          "Band3": "Some knowledge, references some sources by name, limited analysis, some terminology.",
+          "Band2": "Recognises issues, minimal source use, basic legal terms only.",
+          "Band1": "Do not generate unless explicitly requested as a wholly inadequate response."
+        },
+        "forbidden_behaviours": [
+          "Do not generate a response that only describes the law without evaluating its effectiveness.",
+          "Do not use generic references — always name specific cases, Acts, or instruments.",
+          "Do not present only one side — always include differing perspectives.",
+          "Do not ignore non-legal measures where relevant."
+        ]
+      }
+    }
+  },
+
+  "directiveTiers": {
+    "define": { "tier": 1, "modality": "ignore" },
+    "identify": { "tier": 1, "modality": "ignore" },
+    "list": { "tier": 1, "modality": "ignore" },
+    "name": { "tier": 1, "modality": "ignore" },
+    "outline": { "tier": 1, "modality": "ignore" },
+    "recall": { "tier": 1, "modality": "ignore" },
+    "state": { "tier": 1, "modality": "ignore" },
+    "recognise": { "tier": 1, "modality": "ignore" },
+    "describe": { "tier": 2, "modality": "ignore" },
+    "distinguish": { "tier": 2, "modality": "ignore" },
+    "compare": { "tier": 2, "modality": "ignore" },
+    "contrast": { "tier": 2, "modality": "ignore" },
+    "explain": { "tier": 2, "modality": "ignore" },
+    "summarise": { "tier": 2, "modality": "ignore" },
+    "examine": { "tier": 3, "modality": "ignore" },
+    "analyse": { "tier": 3, "modality": "ignore" },
+    "discuss": { "tier": 3, "modality": "ignore" },
+    "investigate": { "tier": 3, "modality": "ignore" },
+    "interpret": { "tier": 3, "modality": "ignore" },
+    "apply": { "tier": 3, "modality": "ignore" },
+    "synthesise": { "tier": 3, "modality": "optional" },
+    "assess": { "tier": 4, "modality": "required" },
+    "evaluate": { "tier": 4, "modality": "required" },
+    "critically analyse": { "tier": 4, "modality": "required" },
+    "critically evaluate": { "tier": 4, "modality": "required" },
+    "justify": { "tier": 4, "modality": "ignore" },
+    "recommend": { "tier": 4, "modality": "ignore" },
+    "account for": { "tier": 3, "modality": "ignore" }
+  },
+
+  "connectives": {
+    "preferred": ["so", "because", "but"],
+    "accepted": [
+      "as a result", "therefore", "thus", "hence", "consequently",
+      "which means", "this leads to", "resulting in", "due to",
+      "since", "however", "although", "yet", "while", "whereas"
+    ],
+    "contrast": [
+      "however", "although", "on the other hand", "despite",
+      "yet", "in contrast", "conversely", "nevertheless",
+      "while", "whereas", "notwithstanding"
+    ]
+  },
+
+  "legalSourcesNote": "Legal Studies marking requires specific named sources. The CUBE Underline step should highlight not just syllabus keywords but also any named cases, Acts, or international instruments in the question — these are the evidence base for the argument.",
+
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
