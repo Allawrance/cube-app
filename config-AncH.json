@@ -1,0 +1,426 @@
+{
+  "subjectCode": "ANCH",
+  "subjectName": "Ancient History",
+  "subjectShortName": "Anc Hist",
+  "dominantMode": "Historical argument + source analysis + historiographical interpretation",
+  "cleanRule": "Ancient History = construct an historical argument + analyse and interpret sources (archaeological and written) + evaluate differing historical interpretations + use historical concepts (causation, continuity and change, perspectives, significance, contestability)",
+  "leaderboardTip": "HSC Ancient History rewards specific historical evidence — named sources (Papyrus Lansing, Karnak reliefs, Amarna Letters), named historians (Shaw, Tyldesley, Redford), and named archaeological sites. Generic statements about 'ancient Egyptians' without specific source reference cannot reach Band 5. Always link evidence to the historical argument.",
+  "sheetTabCube": "ANCH CUBE",
+  "sheetTabFull": "ANCH",
+  "accentColor": "#ffcc80",
+  "kla": "HSIE",
+  "classCodes": ["12AHis"],
+
+  "subjectContext": {
+    "examStructure": {
+      "sectionI": "Source-based questions on the Core Study (Cities of Vesuvius — Pompeii and Herculaneum): analysis, interpretation and evaluation of sources",
+      "sectionII": "Short-answer and extended response on the Core Study",
+      "sectionIII": "Extended response on Ancient Societies topic (Option A: New Kingdom Egypt to death of Amenhotep III)",
+      "sectionIV": "Extended response on Personalities in their Times topic",
+      "sectionV": "Extended response on Historical Periods topic"
+    },
+    "coreStudy": "Cities of Vesuvius — Pompeii and Herculaneum (compulsory, all students)",
+    "ancientSocietiesOption": "Option A: New Kingdom Egypt society to the death of Amenhotep III",
+    "historicalConceptsAndSkills": {
+      "causation": "Identifying and analysing the varying causes and effects of events and developments",
+      "continuityAndChange": "Analysing the extent and nature of continuity and change over time",
+      "perspectives": "Analysing the different perspectives of individuals and groups in their historical context",
+      "significance": "Assessing the significance of historical features, people, places, events and developments",
+      "contestability": "Analysing and evaluating contested interpretations and representations of the past"
+    },
+    "sourceTypes": [
+      "Archaeological sources (tombs, temples, artefacts, human remains, sites)",
+      "Written sources (ancient texts, inscriptions, papyri, literary accounts)",
+      "Iconographic sources (wall paintings, reliefs, sculpture, jewellery)",
+      "Historiographical accounts (modern historians' interpretations)"
+    ]
+  },
+
+  "syllabus": {
+    "ancientSocieties_OptionA": {
+      "code": "AS-A",
+      "title": "Option A: New Kingdom Egypt society to the death of Amenhotep III",
+      "contentFocus": "Through an investigation of key features of New Kingdom Egypt society to the death of Amenhotep III, and their interrelated nature, students examine a range of archaeological and written sources and relevant historiographical issues.",
+      "survey": {
+        "title": "Survey",
+        "dotPoints": [
+          "Geographical setting, natural features and resources of New Kingdom Egypt and its neighbours",
+          "Significant sites: Thebes, Valley of the Kings, Malkata"
+        ],
+        "keywords": [
+          "New Kingdom Egypt", "Thebes", "Valley of the Kings", "Malkata", "Nile",
+          "Nubia", "Syria-Palestine", "Mitanni", "Hyksos", "Eighteenth Dynasty",
+          "geographical setting", "natural resources", "neighbours"
+        ]
+      },
+      "focusOfStudy": {
+        "socialStructureAndPoliticalOrganisation": {
+          "title": "Social Structure and Political Organisation",
+          "dotPoints": [
+            "Roles and images of the pharaoh, the concept of maat",
+            "Roles of the vizier and members of the religious, administrative and military elites",
+            "Nature and role of the army",
+            "Roles and status of women: royal and non-royal",
+            "Scribes, artisans and agricultural workers"
+          ],
+          "keywords": [
+            "pharaoh", "maat", "divine kingship", "vizier", "administration",
+            "military elite", "religious elite", "army", "royal women", "queen",
+            "royal wife", "scribe", "artisan", "agricultural worker", "social structure",
+            "political organisation", "bureaucracy", "Thutmose I", "Thutmose II",
+            "Thutmose III", "Hatshepsut", "Amenhotep I", "Amenhotep II",
+            "Amenhotep III", "Tiye", "Senenmut"
+          ]
+        },
+        "economy": {
+          "title": "The Economy",
+          "dotPoints": [
+            "Importance of the Nile: agriculture, animal husbandry, transport",
+            "Economic exchange: barter and taxation",
+            "Impact of empire: booty, tribute and trade",
+            "Occupations, crafts and industry: wood, stone and metal",
+            "Technology: tools, building materials, techniques and construction"
+          ],
+          "keywords": [
+            "Nile", "agriculture", "irrigation", "inundation", "barter", "taxation",
+            "tribute", "trade", "empire", "booty", "crafts", "industry",
+            "wood", "stone", "metal", "technology", "construction", "tools",
+            "economy", "Punt expedition", "Nubian gold", "Asiatic trade"
+          ]
+        },
+        "religionDeathAndBurial": {
+          "title": "Religion, Death and Burial",
+          "dotPoints": [
+            "Gods, goddesses, cults and priesthoods including Amun-Re, Osiris",
+            "Festivals: Opet, Beautiful Feast of the Valley, Heb-Sed Festival",
+            "Myths and legends: Creation myth, Osiris myth",
+            "Funerary customs, rituals and texts: afterlife concepts, mummification",
+            "The Book of the Dead and the Amduat (Book of What is in the Netherworld)",
+            "Temples — architecture and function: Karnak, Luxor, Deir el-Bahri",
+            "Tombs — architecture and decoration: Thebes"
+          ],
+          "keywords": [
+            "Amun-Re", "Osiris", "Ra", "Thoth", "Hathor", "Anubis", "Isis",
+            "cult", "priesthood", "Amun priesthood", "Opet Festival",
+            "Beautiful Feast of the Valley", "Heb-Sed Festival",
+            "Creation myth", "Osiris myth", "afterlife", "mummification",
+            "Book of the Dead", "Amduat", "funerary customs", "burial",
+            "Karnak", "Luxor", "Deir el-Bahri", "mortuary temple",
+            "Valley of the Kings", "tomb", "wall painting", "funerary text",
+            "shabtis", "canopic jars", "Opening of the Mouth ceremony"
+          ]
+        },
+        "culturalAndEverydayLife": {
+          "title": "Cultural and Everyday Life",
+          "dotPoints": [
+            "Art: sculpture, jewellery and wall paintings",
+            "Writing and literature — love poetry, Papyrus Lansing: Be a Scribe, Wisdom Literature: the Instruction of Ani",
+            "Leisure activities",
+            "Health of New Kingdom Egyptians in this period as revealed by human remains"
+          ],
+          "keywords": [
+            "sculpture", "jewellery", "wall painting", "relief", "hieroglyphs",
+            "hieratic", "papyrus", "Papyrus Lansing", "Be a Scribe",
+            "Instruction of Ani", "love poetry", "Wisdom Literature",
+            "literature", "leisure", "sport", "hunting", "music",
+            "health", "medicine", "human remains", "mummy",
+            "art", "everyday life", "cultural life"
+          ]
+        }
+      }
+    },
+    "coreStudy": {
+      "code": "CS",
+      "title": "Core Study: Cities of Vesuvius — Pompeii and Herculaneum",
+      "contentFocus": "Students investigate the range and nature of archaeological and written sources for the study of the cities of Pompeii and Herculaneum, and explore issues relating to reconstruction and conservation of the past.",
+      "survey": {
+        "dotPoints": [
+          "The geographical setting and natural features of Campania",
+          "The eruption of AD 79 and its impact on Pompeii and Herculaneum",
+          "Early discoveries and the changing nature of excavations in the 19th and 20th centuries",
+          "Representations of Pompeii and Herculaneum over time"
+        ]
+      },
+      "focusAreas": [
+        {
+          "label": "Economy",
+          "content": "Role of the forum, trade, commerce, industries, occupations"
+        },
+        {
+          "label": "Social structure",
+          "content": "Men, women, freedmen, slaves"
+        },
+        {
+          "label": "Local political life",
+          "content": "Decuriones, magistrates, comitium"
+        },
+        {
+          "label": "Everyday life",
+          "content": "Housing, leisure activities, food and dining, clothing, health, baths, water supply, sanitation"
+        },
+        {
+          "label": "Religion",
+          "content": "Household gods, temples, foreign cults and religions, tombs"
+        },
+        {
+          "label": "Influence of Greek and Egyptian cultures",
+          "content": "Art and architecture"
+        },
+        {
+          "label": "Reconstructing and conserving the past",
+          "content": "Changing interpretations; issues of conservation and reconstruction; ethical issues; value and impact of tourism"
+        }
+      ],
+      "keywords": [
+        "Pompeii", "Herculaneum", "Vesuvius", "eruption", "AD 79", "Campania",
+        "forum", "basilica", "amphitheatre", "thermopolium", "villa",
+        "fresco", "mosaic", "inscription", "graffiti", "Latin",
+        "conservation", "reconstruction", "excavation", "Fiorelli",
+        "UNESCO", "World Heritage", "ethical issues", "human remains",
+        "plaster casts", "carbonised remains", "skeletal remains",
+        "Pliny the Elder", "Pliny the Younger", "ancient writers"
+      ]
+    }
+  },
+
+  "historicalConcepts": {
+    "sourceAnalysis": {
+      "description": "Explaining the meaning and value of sources for historical inquiry; analysing sources for different perspectives; analysing and synthesising evidence from different source types; identifying problems relating to sources",
+      "keyQuestions": [
+        "What type of source is it (archaeological, written, iconographic)?",
+        "Who created it, when, and for what purpose?",
+        "What does it reveal about the topic?",
+        "What are its limitations and biases?",
+        "How does it compare with other available sources?",
+        "What problems exist in using this source as historical evidence?"
+      ],
+      "keywords": [
+        "source", "archaeological source", "written source", "iconographic source",
+        "primary source", "secondary source", "value", "limitation", "bias",
+        "reliability", "authenticity", "provenance", "perspective",
+        "corroboration", "cross-reference", "evidence", "interpretation"
+      ]
+    },
+    "historiography": {
+      "description": "Analysing and evaluating differing interpretations and representations of the past made by historians and others",
+      "keyHistorians": [
+        "Ian Shaw — Oxford History of Ancient Egypt",
+        "Joyce Tyldesley — specialist in Egyptian queens and personalities",
+        "Donald Redford — Akhenaten and New Kingdom Egypt",
+        "Alan Gardiner — Egyptian grammar and sources",
+        "Cyril Aldred — New Kingdom Egypt and Akhenaten",
+        "Betsy Bryan — Amenhotep III",
+        "Arielle Kozloff — Amenhotep III"
+      ],
+      "keywords": [
+        "historian", "historiography", "interpretation", "representation",
+        "historical debate", "scholarly opinion", "ancient sources",
+        "modern historians", "revisionist", "contested", "differing interpretations"
+      ]
+    }
+  },
+
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Demonstrates extensive knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates comprehensive understanding of continuity and change over time. Demonstrates comprehensive understanding of different perspectives of individuals and groups in the past. Analyses and interprets sources for evidence and synthesises evidence. Evaluates differing interpretations and representations of the past. Demonstrates sophisticated understanding and use of historical concepts and terms. Communicates a high level and sustained argument through well-structured and comprehensive texts.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Extensive knowledge across historical features, people, places, events and developments",
+        "Comprehensive understanding of continuity and change",
+        "Comprehensive understanding of different perspectives",
+        "Analyses AND interprets sources for evidence — AND synthesises evidence across sources",
+        "EVALUATES differing interpretations and representations",
+        "Sophisticated understanding and use of historical concepts and terms",
+        "High level, SUSTAINED argument through well-structured and COMPREHENSIVE texts"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Demonstrates thorough knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates a well-developed understanding of continuity and change over time. Demonstrates a well-developed understanding of different perspectives of individuals and groups in the past. Analyses and interprets sources for evidence. Analyses differing interpretations and representations of the past. Demonstrates thorough understanding and use of historical concepts and terms. Communicates a coherent and sustained argument through well-structured and comprehensive texts.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Thorough knowledge of historical features, people, places, events and developments",
+        "Well-developed understanding of continuity and change",
+        "Well-developed understanding of different perspectives",
+        "Analyses and interprets sources for evidence (synthesises at Band 6 — analyses at Band 5)",
+        "ANALYSES differing interpretations (evaluates at Band 6)",
+        "Thorough understanding and use of historical concepts and terms",
+        "Coherent and sustained argument through well-structured and comprehensive texts"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Demonstrates sound knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates sound understanding of continuity and change over time. Demonstrates sound understanding of different perspectives of individuals and groups in the past. Uses sources for evidence. Discusses interpretations and representations of the past. Demonstrates understanding of historical concepts and terms. Communicates a general argument through well-structured texts.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Sound knowledge of historical features, people, places, events and developments",
+        "Sound understanding of continuity and change",
+        "Sound understanding of different perspectives",
+        "USES sources for evidence (analyses at Band 5)",
+        "DISCUSSES interpretations and representations",
+        "Understanding of historical concepts and terms",
+        "General argument through well-structured texts"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates basic understanding of historical features, people, places, events, and their significance. Identifies features of continuity and change over time. Demonstrates basic understanding of different perspectives of individuals and groups in the past. Makes reference to sources. Identifies interpretations and representations of the past. Uses basic historical concepts and terms. Communicates basic information through descriptive texts.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Basic understanding of historical features",
+        "Identifies continuity and change",
+        "Basic understanding of perspectives",
+        "Makes reference to sources (uses at Band 4)",
+        "Identifies interpretations",
+        "Basic historical concepts and terms",
+        "Basic information through descriptive texts"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Describes historical features, people, places and events. Recognises aspects of continuity and/or change. Demonstrates limited understanding of different perspectives of individuals and groups in the past. Makes reference to sources. Uses limited historical concepts and terms. Provides limited information in narrative style.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Describes historical features",
+        "Recognises continuity or change",
+        "Limited understanding of perspectives",
+        "Makes reference to sources",
+        "Limited historical terms",
+        "Narrative style without argument"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": ["Minimum standard not demonstrated"]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Assess/evaluate the significance of a feature of New Kingdom Egypt society (e.g. role of the pharaoh, importance of the Nile)",
+        "Analyse the nature and role of a specific aspect of society (e.g. women, the army, religion)",
+        "To what extent does evidence suggest... (continuity and change, significance)",
+        "Evaluate the usefulness and/or limitations of a source or type of source for the study of New Kingdom Egypt",
+        "Assess differing historical interpretations of a feature of New Kingdom Egypt society",
+        "How adequately do the sources reveal... (everyday life, religion, social structure)"
+      ],
+      "ancient_history_specific_tips": [
+        "ALWAYS name specific sources — archaeological (Karnak reliefs, Deir el-Bahri mortuary temple, Malkata palace), written (Papyrus Lansing, Instruction of Ani, Annals of Thutmose III) and iconographic (wall paintings, sculpture). Generic references to 'sources' or 'evidence' earn Band 3 at best.",
+        "ALWAYS evaluate sources — comment on their value (what they reveal) AND their limitations (bias, purpose, incompleteness). For Band 5-6, analysis of source reliability is essential.",
+        "Include historiography — name historians (Shaw, Tyldesley, Redford, Aldred, Bryan) and their interpretations, especially where they differ. Evaluating competing interpretations distinguishes Band 5 from Band 6.",
+        "Use historical concepts explicitly — label your arguments using causation, continuity and change, perspectives, significance and contestability. Don't just describe events.",
+        "Link evidence to argument — every named source should support a specific historical claim. Do not list sources without connecting them to the argument.",
+        "For continuity and change questions: identify what stayed the same as well as what changed, and assess the pace and extent of change."
+      ],
+      "common_errors": [
+        "Describing historical events without constructing an argument ('The pharaoh was important because...' without evaluating significance or causation).",
+        "Naming sources without evaluating them — 'wall paintings show...' without commenting on value or limitation.",
+        "Ignoring historiography — not naming any modern historians or their interpretations.",
+        "Describing both sides of a debate without making a judgement — Band 5-6 requires evaluation, not just discussion.",
+        "Confusing continuity and change — not distinguishing what persisted from what transformed.",
+        "Using general terms ('ancient Egyptians', 'the sources') without specific names."
+      ]
+    },
+    "marking_guidance": {
+      "argument_construction_steps": [
+        "State a clear historical thesis or argument in response to the question.",
+        "Identify the historical period, context, and relevant aspects of New Kingdom Egypt.",
+        "Present evidence from named archaeological and/or written sources to support the argument.",
+        "Evaluate the sources — what do they reveal, and what are their limitations?",
+        "Integrate at least one historical interpretation (named historian) and assess it.",
+        "Apply historical concepts: causation, continuity and change, significance, perspectives, contestability.",
+        "Conclude with a judgement that directly answers the question."
+      ],
+      "source_analysis_steps": [
+        "Identify the source type (archaeological, written, iconographic).",
+        "State what the source reveals about the topic (its historical value).",
+        "Identify the source's perspective, purpose, and likely audience.",
+        "Comment on what the source does NOT reveal or may misrepresent (limitations).",
+        "Cross-reference with other source types where possible.",
+        "Link the source analysis to the historical argument."
+      ],
+      "quality_checks": {
+        "before_output": [
+          "Is a clear historical argument stated and sustained?",
+          "Are specific named sources cited (archaeological, written, iconographic)?",
+          "Are sources evaluated (value AND limitations)?",
+          "Is historiography included (named historian and their view)?",
+          "Are historical concepts used explicitly (causation, significance, continuity/change)?",
+          "Does the response address perspectives (individual, group, gender, class)?",
+          "Is the response specific to New Kingdom Egypt to the death of Amenhotep III?",
+          "Does the conclusion directly address the question with a judgement?"
+        ],
+        "band6_checklist": [
+          "Extensive, specific historical knowledge across multiple aspects of the topic.",
+          "Comprehensive understanding of continuity and change — both identified and assessed.",
+          "Sources analysed, interpreted AND synthesised across source types.",
+          "Differing historical interpretations EVALUATED — not just described.",
+          "Sophisticated use of historical concepts and terminology throughout.",
+          "High-level sustained argument — not a narrative or list of facts.",
+          "Comprehensive texts — detailed, well-structured, covering the breadth of the question."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Extensive knowledge, comprehensive continuity/change analysis, synthesis of multiple source types, evaluation of differing historiographical interpretations, sophisticated historical concepts, sustained high-level argument.",
+          "Band5": "Thorough knowledge, well-developed continuity/change, analysis and interpretation of sources, analysis of interpretations (not full evaluation), thorough historical concepts, coherent sustained argument.",
+          "Band4": "Sound knowledge, sound continuity/change, uses sources for evidence (references without deep analysis), discusses interpretations, understands historical concepts, general argument.",
+          "Band3": "Basic knowledge, identifies continuity/change, makes reference to sources, identifies interpretations, basic terms, descriptive text.",
+          "Band2": "Describes events, recognises change, limited terms, narrative style.",
+          "Band1": "Do not generate unless explicitly requested."
+        },
+        "forbidden_behaviours": [
+          "Do not construct a response that only narrates events without building an historical argument.",
+          "Do not use generic source references — always name specific sources.",
+          "Do not ignore historiography — always include at least one named historian.",
+          "Do not describe interpretations without evaluating them at Band 5-6.",
+          "Do not confuse the topic period — all evidence must be specific to New Kingdom Egypt to the death of Amenhotep III."
+        ]
+      }
+    }
+  },
+
+  "directiveTiers": {
+    "define": { "tier": 1, "modality": "ignore" },
+    "identify": { "tier": 1, "modality": "ignore" },
+    "list": { "tier": 1, "modality": "ignore" },
+    "name": { "tier": 1, "modality": "ignore" },
+    "outline": { "tier": 1, "modality": "ignore" },
+    "state": { "tier": 1, "modality": "ignore" },
+    "describe": { "tier": 2, "modality": "ignore" },
+    "explain": { "tier": 2, "modality": "ignore" },
+    "compare": { "tier": 2, "modality": "ignore" },
+    "contrast": { "tier": 2, "modality": "ignore" },
+    "distinguish": { "tier": 2, "modality": "ignore" },
+    "account for": { "tier": 3, "modality": "ignore" },
+    "analyse": { "tier": 3, "modality": "ignore" },
+    "discuss": { "tier": 3, "modality": "ignore" },
+    "examine": { "tier": 3, "modality": "ignore" },
+    "investigate": { "tier": 3, "modality": "ignore" },
+    "interpret": { "tier": 3, "modality": "ignore" },
+    "to what extent": { "tier": 3, "modality": "required" },
+    "how adequately": { "tier": 3, "modality": "required" },
+    "how far": { "tier": 3, "modality": "required" },
+    "synthesise": { "tier": 3, "modality": "optional" },
+    "assess": { "tier": 4, "modality": "required" },
+    "evaluate": { "tier": 4, "modality": "required" },
+    "critically analyse": { "tier": 4, "modality": "required" },
+    "critically evaluate": { "tier": 4, "modality": "required" },
+    "justify": { "tier": 4, "modality": "ignore" }
+  },
+
+  "connectives": {
+    "preferred": ["so", "because", "but"],
+    "accepted": [
+      "as a result", "therefore", "thus", "hence", "consequently",
+      "which suggests", "this indicates", "this reveals", "leading to",
+      "due to", "since", "however", "although", "yet", "while", "whereas",
+      "in contrast", "despite", "nevertheless"
+    ],
+    "contrast": [
+      "however", "although", "on the other hand", "despite",
+      "yet", "in contrast", "conversely", "nevertheless",
+      "while", "whereas", "notwithstanding", "rather than"
+    ]
+  },
+
+  "ancientHistoryNote": "Ancient History CUBE marking has important differences from Science and HSIE subjects. The Underline step should identify: named historical figures, named sites (Karnak, Malkata, Thebes), named source types (wall paintings, papyri, reliefs), named historical concepts (maat, continuity, significance), and any directive verbs that trigger source evaluation or historiographical judgement. Planning arrows should show: thesis → evidence (named sources) → source analysis (value/limitation) → historiography (named historian) → judgement.",
+
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
