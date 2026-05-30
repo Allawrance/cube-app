@@ -1,0 +1,623 @@
+{
+  "subjectCode": "BIO",
+  "subjectName": "Biology",
+  "subjectShortName": "Bio",
+  "dominantMode": "Mechanism + evidence + evaluation",
+  "cleanRule": "Biology = explain the biological mechanism + link to evidence or data where provided + judge effectiveness/significance where directed",
+  "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type — show the biological mechanism (HOW and WHY), not just the outcome.",
+  "sheetTabCube": "BIO CUBE",
+  "sheetTabFull": "BIO",
+  "classCodes": ["12Bio-1", "12Bio-2", "12Bio-3"],
+  "accentColor": "#a5d6a7",
+  "syllabus": {
+    "5": {
+      "title": "Continuity of Species",
+      "topics": [
+        {
+          "code": "5-1",
+          "title": "Reproduction",
+          "inquiry": "How does reproduction ensure the continuity of a species?",
+          "dotPoints": [
+            {
+              "label": "5-1a",
+              "text": "Explain the mechanisms of reproduction that ensure the continuity of a species, by analysing sexual and asexual methods in a variety of organisms including animals (external/internal fertilisation), plants, fungi (budding, spores), bacteria (binary fission), protists (binary fission, budding)"
+            },
+            {
+              "label": "5-1b",
+              "text": "Analyse the features of fertilisation, implantation and hormonal control of pregnancy and birth in mammals"
+            },
+            {
+              "label": "5-1c",
+              "text": "Evaluate the impact of scientific knowledge on the manipulation of plant and animal reproduction in agriculture"
+            }
+          ],
+          "keywords": [
+            "sexual reproduction", "asexual reproduction", "external fertilisation", "internal fertilisation",
+            "binary fission", "budding", "spores", "fertilisation", "implantation",
+            "hormonal control", "pregnancy", "birth", "mammals", "continuity of species"
+          ]
+        },
+        {
+          "code": "5-2",
+          "title": "Cell Replication",
+          "inquiry": "How important is it for genetic material to be replicated exactly?",
+          "dotPoints": [
+            {
+              "label": "5-2a",
+              "text": "Model the processes involved in cell replication, including mitosis and meiosis, and DNA replication using the Watson and Crick DNA model including nucleotide composition, pairing and bonding"
+            },
+            {
+              "label": "5-2b",
+              "text": "Assess the effect of the cell replication processes on the continuity of species"
+            }
+          ],
+          "keywords": [
+            "mitosis", "meiosis", "DNA replication", "Watson and Crick", "nucleotide",
+            "base pairing", "hydrogen bonding", "cell replication", "continuity of species",
+            "chromosomes", "cell division", "genetic material"
+          ]
+        },
+        {
+          "code": "5-3",
+          "title": "DNA and Polypeptide Synthesis",
+          "inquiry": "Why is polypeptide synthesis important?",
+          "dotPoints": [
+            {
+              "label": "5-3a",
+              "text": "Construct appropriate representations to model and compare the forms in which DNA exists in eukaryotes and prokaryotes"
+            },
+            {
+              "label": "5-3b",
+              "text": "Model the process of polypeptide synthesis including transcription and translation, assessing the importance of mRNA and tRNA, analysing the function and importance of polypeptide synthesis, and assessing how genes and environment affect phenotypic expression"
+            },
+            {
+              "label": "5-3c",
+              "text": "Investigate the structure and function of proteins in living things"
+            }
+          ],
+          "keywords": [
+            "DNA", "eukaryote", "prokaryote", "polypeptide synthesis", "transcription", "translation",
+            "mRNA", "tRNA", "codon", "ribosome", "amino acid", "protein synthesis",
+            "phenotypic expression", "gene expression", "enzyme", "protein structure"
+          ]
+        },
+        {
+          "code": "5-4",
+          "title": "Genetic Variation",
+          "inquiry": "How can the genetic similarities and differences within and between species be compared?",
+          "dotPoints": [
+            {
+              "label": "5-4a",
+              "text": "Conduct practical investigations to predict variations in the genotype of offspring by modelling meiosis, including crossing over of homologous chromosomes, fertilisation and mutations"
+            },
+            {
+              "label": "5-4b",
+              "text": "Model the formation of new combinations of genotypes produced during meiosis, including autosomal, sex-linkage, co-dominance, incomplete dominance and multiple alleles; construct and interpret pedigrees and Punnett squares"
+            },
+            {
+              "label": "5-4c",
+              "text": "Collect, record and present data to represent frequencies of characteristics in a population, including examining frequency data and analysing single nucleotide polymorphism (SNP)"
+            }
+          ],
+          "keywords": [
+            "genotype", "phenotype", "allele", "dominant", "recessive", "co-dominance",
+            "incomplete dominance", "sex-linkage", "autosomal", "multiple alleles",
+            "Punnett square", "pedigree", "crossing over", "homologous chromosomes",
+            "genetic variation", "SNP", "single nucleotide polymorphism", "mutation"
+          ]
+        },
+        {
+          "code": "5-5",
+          "title": "Inheritance Patterns in a Population",
+          "inquiry": "Can population genetic patterns be predicted with any accuracy?",
+          "dotPoints": [
+            {
+              "label": "5-5a",
+              "text": "Investigate the use of technologies to determine inheritance patterns in a population, including DNA sequencing and profiling"
+            },
+            {
+              "label": "5-5b",
+              "text": "Investigate the use of data analysis from large-scale collaborative projects to identify trends, patterns and relationships, for example population genetics in conservation management, determining inheritance of disease/disorder, and human evolution"
+            }
+          ],
+          "keywords": [
+            "DNA sequencing", "DNA profiling", "population genetics", "inheritance patterns",
+            "conservation management", "gene pool", "allele frequency", "human evolution",
+            "population data", "trends", "patterns", "relationships"
+          ]
+        }
+      ]
+    },
+    "6": {
+      "title": "Genetic Change",
+      "topics": [
+        {
+          "code": "6-1",
+          "title": "Mutation",
+          "inquiry": "How does mutation introduce new alleles into a population?",
+          "dotPoints": [
+            {
+              "label": "6-1a",
+              "text": "Explain how a range of mutagens operate including electromagnetic radiation sources, chemicals and naturally occurring mutagens"
+            },
+            {
+              "label": "6-1b",
+              "text": "Compare the causes, processes and effects of different types of mutation including point mutation and chromosomal mutation"
+            },
+            {
+              "label": "6-1c",
+              "text": "Distinguish between somatic mutations and germ-line mutations and their effect on an organism"
+            },
+            {
+              "label": "6-1d",
+              "text": "Assess the significance of coding and non-coding DNA segments in the process of mutation"
+            },
+            {
+              "label": "6-1e",
+              "text": "Evaluate the effect of mutation, gene flow and genetic drift on the gene pool of populations"
+            }
+          ],
+          "keywords": [
+            "mutation", "mutagen", "electromagnetic radiation", "point mutation", "chromosomal mutation",
+            "somatic mutation", "germ-line mutation", "coding DNA", "non-coding DNA",
+            "gene flow", "genetic drift", "gene pool", "allele frequency", "new alleles"
+          ]
+        },
+        {
+          "code": "6-2",
+          "title": "Biotechnology",
+          "inquiry": "How do genetic techniques affect Earth's biodiversity?",
+          "dotPoints": [
+            {
+              "label": "6-2a",
+              "text": "Investigate the uses and applications of biotechnology (past, present and future), including analysing social implications and ethical uses, researching future directions, evaluating potential benefits for society, and evaluating changes to Earth's biodiversity"
+            }
+          ],
+          "keywords": [
+            "biotechnology", "biodiversity", "genetic technology", "social implications",
+            "ethical considerations", "future directions", "benefits", "risks"
+          ]
+        },
+        {
+          "code": "6-3",
+          "title": "Genetic Technologies",
+          "inquiry": "Does artificial manipulation of DNA have the potential to change populations forever?",
+          "dotPoints": [
+            {
+              "label": "6-3a",
+              "text": "Investigate the uses and advantages of current genetic technologies that induce genetic change"
+            },
+            {
+              "label": "6-3b",
+              "text": "Compare the processes and outcomes of reproductive technologies including artificial insemination and artificial pollination"
+            },
+            {
+              "label": "6-3c",
+              "text": "Investigate and assess the effectiveness of cloning including whole organism cloning and gene cloning"
+            },
+            {
+              "label": "6-3d",
+              "text": "Describe techniques and applications used in recombinant DNA technology, for example the development of transgenic organisms in agricultural and medical applications"
+            },
+            {
+              "label": "6-3e",
+              "text": "Evaluate the benefits of using genetic technologies in agricultural, medical and industrial applications, and the effect on biodiversity of using biotechnology in agriculture"
+            }
+          ],
+          "keywords": [
+            "genetic technology", "artificial insemination", "artificial pollination",
+            "cloning", "whole organism cloning", "gene cloning", "recombinant DNA",
+            "transgenic organism", "GMO", "CRISPR", "gene editing", "agricultural application",
+            "medical application", "biodiversity", "selective breeding"
+          ]
+        }
+      ]
+    },
+    "7": {
+      "title": "Infectious Disease",
+      "topics": [
+        {
+          "code": "7-1",
+          "title": "Causes of Infectious Disease",
+          "inquiry": "How are diseases transmitted?",
+          "dotPoints": [
+            {
+              "label": "7-1a",
+              "text": "Describe a variety of infectious diseases caused by pathogens including microorganisms, macroorganisms and non-cellular pathogens; investigate transmission including direct contact, indirect contact and vector transmission"
+            },
+            {
+              "label": "7-1b",
+              "text": "Investigate the work of Robert Koch and Louis Pasteur to explain the causes and transmission of infectious diseases, including Koch's postulates and Pasteur's experiments on microbial contamination"
+            },
+            {
+              "label": "7-1c",
+              "text": "Assess the causes and effects of diseases on agricultural production including plant and animal diseases"
+            },
+            {
+              "label": "7-1d",
+              "text": "Compare the adaptations of different pathogens that facilitate their entry into and transmission between hosts"
+            }
+          ],
+          "keywords": [
+            "infectious disease", "pathogen", "microorganism", "macroorganism", "virus", "bacteria",
+            "fungi", "prion", "direct contact", "indirect contact", "vector transmission",
+            "Koch's postulates", "Pasteur", "germ theory", "disease transmission",
+            "host", "parasite", "agricultural disease"
+          ]
+        },
+        {
+          "code": "7-2",
+          "title": "Responses to Pathogens",
+          "inquiry": "How does a plant or animal respond to infection?",
+          "dotPoints": [
+            {
+              "label": "7-2a",
+              "text": "Investigate the response of a named Australian plant to a named pathogen through practical and/or secondary-sourced investigation"
+            },
+            {
+              "label": "7-2b",
+              "text": "Analyse responses to the presence of pathogens by assessing the physical and chemical changes that occur in the host animal's cells and tissues"
+            }
+          ],
+          "keywords": [
+            "plant defence", "physical barrier", "chemical response", "inflammation",
+            "non-specific response", "cellular response", "tissue response", "host response",
+            "physical change", "chemical change", "infection response"
+          ]
+        },
+        {
+          "code": "7-3",
+          "title": "Immunity",
+          "inquiry": "How does the human immune system respond to exposure to a pathogen?",
+          "dotPoints": [
+            {
+              "label": "7-3a",
+              "text": "Investigate and model the innate and adaptive immune systems in the human body"
+            },
+            {
+              "label": "7-3b",
+              "text": "Explain how the immune system responds after primary exposure to a pathogen, including innate and acquired immunity"
+            }
+          ],
+          "keywords": [
+            "innate immunity", "adaptive immunity", "acquired immunity", "antigen", "antibody",
+            "B lymphocyte", "T lymphocyte", "memory cell", "phagocyte", "neutrophil",
+            "macrophage", "complement system", "inflammatory response", "primary exposure",
+            "secondary response", "immunological memory", "humoral immunity", "cell-mediated immunity"
+          ]
+        },
+        {
+          "code": "7-4",
+          "title": "Prevention, Treatment and Control",
+          "inquiry": "How can the spread of infectious diseases be controlled?",
+          "dotPoints": [
+            {
+              "label": "7-4a",
+              "text": "Investigate and analyse the wide range of interrelated factors involved in limiting local, regional and global spread of a named infectious disease; investigate hygiene practices, quarantine, vaccination (passive and active immunity), public health campaigns, use of pesticides, genetic engineering"
+            },
+            {
+              "label": "7-4b",
+              "text": "Investigate and assess the effectiveness of pharmaceuticals as treatment strategies for the control of infectious disease, including antivirals and antibiotics"
+            },
+            {
+              "label": "7-4c",
+              "text": "Investigate and evaluate environmental management and quarantine methods used to control an epidemic or pandemic"
+            },
+            {
+              "label": "7-4d",
+              "text": "Interpret data relating to the incidence and prevalence of infectious disease in populations; evaluate historical, culturally diverse and current strategies to predict and control the spread of disease"
+            }
+          ],
+          "keywords": [
+            "vaccination", "active immunity", "passive immunity", "herd immunity",
+            "quarantine", "hygiene", "antibiotic", "antiviral", "epidemic", "pandemic",
+            "incidence", "prevalence", "public health", "disease control", "vector control",
+            "pesticide", "genetic engineering", "Indigenous medicine", "bush medicine"
+          ]
+        }
+      ]
+    },
+    "8": {
+      "title": "Non-Infectious Disease and Disorders",
+      "topics": [
+        {
+          "code": "8-1",
+          "title": "Homeostasis",
+          "inquiry": "How is an organism's internal environment maintained in response to a changing external environment?",
+          "dotPoints": [
+            {
+              "label": "8-1a",
+              "text": "Construct and interpret negative feedback loops that show homeostasis using a range of sources, including temperature and glucose regulation"
+            },
+            {
+              "label": "8-1b",
+              "text": "Investigate mechanisms used by organisms to maintain their internal environment within tolerance limits, including behavioural, structural and physiological adaptations in endotherms, hormones and neural pathways, and mechanisms in plants that allow water balance to be maintained"
+            }
+          ],
+          "keywords": [
+            "homeostasis", "negative feedback", "thermoregulation", "blood glucose regulation",
+            "insulin", "glucagon", "endotherm", "ectotherm", "tolerance limits",
+            "hormone", "neural pathway", "osmosis", "stomata", "transpiration",
+            "internal environment", "external environment", "set point"
+          ]
+        },
+        {
+          "code": "8-2",
+          "title": "Causes and Effects of Non-Infectious Disease",
+          "inquiry": "Do non-infectious diseases cause more deaths than infectious diseases?",
+          "dotPoints": [
+            {
+              "label": "8-2a",
+              "text": "Investigate the causes and effects of non-infectious diseases in humans, including genetic diseases, diseases caused by environmental exposure, nutritional diseases and cancer"
+            },
+            {
+              "label": "8-2b",
+              "text": "Collect and represent data to show the incidence, prevalence and mortality rates of non-infectious diseases, for example nutritional diseases and diseases caused by environmental exposure"
+            }
+          ],
+          "keywords": [
+            "non-infectious disease", "genetic disease", "environmental disease", "nutritional disease",
+            "cancer", "carcinogen", "tumour", "incidence", "prevalence", "mortality rate",
+            "risk factor", "lifestyle disease", "autoimmune disease"
+          ]
+        },
+        {
+          "code": "8-3",
+          "title": "Epidemiology",
+          "inquiry": "Why are epidemiological studies used?",
+          "dotPoints": [
+            {
+              "label": "8-3a",
+              "text": "Analyse patterns of non-infectious diseases in populations including their incidence and prevalence"
+            },
+            {
+              "label": "8-3b",
+              "text": "Investigate the treatment/management and possible future directions for further research of a non-infectious disease"
+            },
+            {
+              "label": "8-3c",
+              "text": "Evaluate the method used in an example of an epidemiological study and evaluate the benefits of engaging in an epidemiological study"
+            }
+          ],
+          "keywords": [
+            "epidemiology", "epidemiological study", "incidence", "prevalence", "cohort study",
+            "case-control study", "risk factor", "correlation", "causation", "population data",
+            "statistical analysis", "sample size", "validity", "reliability"
+          ]
+        },
+        {
+          "code": "8-4",
+          "title": "Prevention of Non-Infectious Disease",
+          "inquiry": "How can non-infectious diseases be prevented?",
+          "dotPoints": [
+            {
+              "label": "8-4a",
+              "text": "Use secondary sources to evaluate the effectiveness of current disease-prevention methods and develop strategies for prevention of a non-infectious disease, including educational programs and campaigns, and genetic engineering"
+            }
+          ],
+          "keywords": [
+            "disease prevention", "educational program", "public health campaign",
+            "genetic engineering", "screening", "early detection", "lifestyle modification",
+            "prevention strategy", "effectiveness"
+          ]
+        },
+        {
+          "code": "8-5",
+          "title": "Technologies and Disorders",
+          "inquiry": "How can technologies be used to assist people who experience disorders?",
+          "dotPoints": [
+            {
+              "label": "8-5a",
+              "text": "Explain a range of causes of disorders by investigating the structures and functions of the relevant organs, for example hearing loss, visual disorders and loss of kidney function"
+            },
+            {
+              "label": "8-5b",
+              "text": "Investigate technologies that are used to assist with the effects of a disorder, including cochlear implants, bone conduction implants, hearing aids, spectacles, laser surgery and dialysis"
+            },
+            {
+              "label": "8-5c",
+              "text": "Evaluate the effectiveness of a technology used to manage and assist with the effects of a disorder"
+            }
+          ],
+          "keywords": [
+            "cochlear implant", "bone conduction implant", "hearing aid", "hearing loss",
+            "visual disorder", "spectacles", "laser surgery", "kidney function", "dialysis",
+            "assistive technology", "organ function", "disorder management"
+          ]
+        }
+      ]
+    }
+  },
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Demonstrates extensive knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding succinctly and consistently using correct and precise scientific terms in a variety of formats and contexts. Designs investigations to obtain accurate, reliable and valid data, evaluating and mitigating risks and making modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships, explain phenomena and make predictions. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose comprehensive solutions or explanations for scientific issues or scenarios.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Extensive knowledge including complex and abstract biological concepts",
+        "Precise and consistent scientific terminology throughout",
+        "Accurate, reliable and valid investigation design with risk evaluation",
+        "Data used to derive trends, patterns, relationships, explain phenomena and make predictions",
+        "Solutions designed using primary and secondary evidence",
+        "Comprehensive solutions applied to unfamiliar situations"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Demonstrates thorough knowledge and understanding of scientific concepts, including complex and abstract ideas. Communicates scientific understanding logically and effectively using correct scientific terms in a variety of formats and contexts. Designs investigations to obtain reliable and valid data, evaluating and mitigating risks and making some modifications in response to evidence. Selects, processes, interprets and represents qualitative and quantitative data to derive trends, show patterns and relationships. Designs solutions to scientific problems or hypotheses using primary and secondary data and scientific evidence. Applies knowledge and information to unfamiliar situations to propose explanations for scientific issues or scenarios.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Thorough knowledge including complex and abstract biological concepts",
+        "Logical and effective use of correct scientific terms",
+        "Reliable and valid investigation design with some modifications",
+        "Data used to derive trends, patterns and relationships",
+        "Solutions proposed for unfamiliar situations with explanation"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Demonstrates sound knowledge and understanding of scientific concepts. Communicates scientific understanding effectively using scientific terms. Designs and plans investigations to obtain data, and evaluates risks. Processes, interprets and represents data using a range of scientific formats. Identifies scientific problems, questions or hypotheses and applies processes to primary or secondary data. Applies knowledge and information relevant to scientific issues or scenarios.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Sound knowledge of biological concepts",
+        "Effective use of scientific terms",
+        "Investigation planning with risk evaluation",
+        "Data processed and represented in scientific formats",
+        "Knowledge applied to relevant scenarios"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates basic knowledge and understanding of scientific concepts. Communicates scientific understanding using basic scientific terms. Implements scientific processes to obtain data, and identifies risks. Processes primary or secondary data, and represents it using scientific formats. Responds to scientific problems, questions, or hypotheses. Recalls scientific knowledge and information.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Basic knowledge of biological concepts",
+        "Basic scientific terms used",
+        "Simple data processing and representation",
+        "Responds to problems with recall of knowledge"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Demonstrates limited knowledge and understanding of scientific concepts. Communicates scientific understanding using limited scientific terms. Partially outlines investigations to obtain data and information. Provides simple descriptions of scientific phenomena. Recalls basic scientific knowledge and information.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Limited biological knowledge",
+        "Limited scientific terminology",
+        "Simple descriptions only",
+        "Basic recall"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": ["Minimum standard not demonstrated"]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Explain the mechanism of a biological process (e.g. explain how meiosis produces genetic variation)",
+        "Analyse data from investigations (e.g. analyse the results of a drug trial)",
+        "Evaluate the effectiveness of a technology or strategy (e.g. evaluate the effectiveness of vaccination programs)",
+        "Assess the significance of a discovery or process (e.g. assess the impact of recombinant DNA technology)"
+      ],
+      "biology_specific_tips": [
+        "Always name the specific biological molecule, cell type, or structure involved — not just 'the cell' or 'the system'.",
+        "Show the mechanism: state WHAT happens → explain HOW/WHY it happens → link to the biological outcome.",
+        "For evaluate/assess questions: weigh evidence on both sides, use quantitative data where available, then make a justified judgement.",
+        "Distinguish between correlation and causation when interpreting epidemiological data.",
+        "Use correct biological terminology consistently: mitosis vs meiosis, innate vs adaptive, pathogen vs disease."
+      ],
+      "common_errors": [
+        "Confusing mitosis and meiosis — always specify which process and why it applies.",
+        "Describing immune responses without naming specific cell types (B cells, T cells, phagocytes).",
+        "Using 'it' or 'this' without a clear biological referent — always name the molecule, cell or structure.",
+        "Writing 'vaccines cause the body to fight disease' without explaining the mechanism (antigen → antibody → memory cell formation).",
+        "Forgetting to link homeostatic mechanisms back to maintaining the internal environment within tolerance limits."
+      ]
+    },
+    "marking_guidance": {
+      "explain_steps": [
+        "Identify the biological process, structure or concept named in the question.",
+        "State the initial condition or stimulus.",
+        "Describe the mechanism step-by-step using correct biological terminology.",
+        "Link the mechanism to the biological outcome relevant to the question.",
+        "Use causal connectives (because, therefore, which causes, resulting in) to show reasoning."
+      ],
+      "evaluate_steps": [
+        "Identify the subject of evaluation (technology, strategy, process).",
+        "Present evidence or reasoning supporting its effectiveness.",
+        "Present evidence or reasoning against or limiting its effectiveness.",
+        "Weigh the evidence using quantitative data or specific examples where possible.",
+        "Make an explicit, justified judgement."
+      ],
+      "quality_checks": {
+        "before_output": [
+          "Has the directive verb been answered correctly?",
+          "Has every part of the question been addressed?",
+          "Is the biological content syllabus-aligned (Modules 5-8)?",
+          "Is the terminology specific (named cell types, molecules, structures)?",
+          "Are the causal links or mechanisms clearly explained?",
+          "Has stimulus data been used where provided?",
+          "Has a judgement been made when required (evaluate/assess)?",
+          "Has irrelevant information been removed?"
+        ],
+        "band6_checklist": [
+          "Precise biological terminology used consistently.",
+          "Mechanism explained step-by-step with correct sequencing.",
+          "Named molecules, cell types and structures throughout.",
+          "Evidence, data or examples integrated into the response.",
+          "Response is coherent and logically sequenced.",
+          "Judgement is explicit and justified if required by the question."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Generate with extensive precision, named biological structures/molecules/cell types, step-by-step mechanism, integrated evidence and strong justified judgement. Succinct and consistently precise.",
+          "Band5": "Generate with thorough, logically sound biological explanation and clear terminology. Slightly less integrated or precise than Band 6; applies to unfamiliar situations but with less comprehensiveness.",
+          "Band4": "Generate with sound core biological content, effective use of scientific terms, and clear structure. Interprets data and applies knowledge to relevant scenarios, but with reduced mechanistic depth.",
+          "Band3": "Generate basic, mostly descriptive responses using simple scientific terms. Recall facts and respond simply. Limited explanation and basic data processing only.",
+          "Band2": "Generate very simple, partial and underdeveloped responses using minimal scientific language. Simple descriptions and basic recall only.",
+          "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
+        },
+        "forbidden_behaviours": [
+          "Do not generate Band 6 responses by merely increasing word count.",
+          "Do not use vague biological references — always name the specific structure or molecule.",
+          "Do not ignore the syllabus or stimulus.",
+          "Do not use vague judgements such as 'it is effective' without criteria or evidence."
+        ]
+      }
+    }
+  },
+  "directiveTiers": {
+    "account for": { "tier": 1, "modality": "ignore" },
+    "classify": { "tier": 1, "modality": "ignore" },
+    "define": { "tier": 1, "modality": "ignore" },
+    "extract": { "tier": 1, "modality": "ignore" },
+    "identify": { "tier": 1, "modality": "ignore" },
+    "list": { "tier": 1, "modality": "ignore" },
+    "name": { "tier": 1, "modality": "ignore" },
+    "recall": { "tier": 1, "modality": "ignore" },
+    "state": { "tier": 1, "modality": "ignore" },
+    "clarify": { "tier": 2, "modality": "ignore" },
+    "compare": { "tier": 2, "modality": "ignore" },
+    "contrast": { "tier": 2, "modality": "ignore" },
+    "demonstrate": { "tier": 2, "modality": "ignore" },
+    "describe": { "tier": 2, "modality": "ignore" },
+    "distinguish": { "tier": 2, "modality": "ignore" },
+    "give an account of": { "tier": 2, "modality": "ignore" },
+    "outline": { "tier": 2, "modality": "ignore" },
+    "recount": { "tier": 2, "modality": "ignore" },
+    "summarise": { "tier": 2, "modality": "ignore" },
+    "calculate": { "tier": "procedural", "modality": "ignore" },
+    "construct": { "tier": "procedural", "modality": "ignore" },
+    "analyse": { "tier": 3, "modality": "ignore" },
+    "apply": { "tier": 3, "modality": "ignore" },
+    "deduce": { "tier": 3, "modality": "ignore" },
+    "discuss": { "tier": 3, "modality": "ignore" },
+    "examine": { "tier": 3, "modality": "ignore" },
+    "explain": { "tier": 3, "modality": "ignore" },
+    "extrapolate": { "tier": 3, "modality": "ignore" },
+    "interpret": { "tier": 3, "modality": "ignore" },
+    "predict": { "tier": 3, "modality": "ignore" },
+    "propose": { "tier": 3, "modality": "ignore" },
+    "suggest": { "tier": 3, "modality": "ignore" },
+    "synthesise": { "tier": 3, "modality": "optional" },
+    "appreciate": { "tier": 4, "modality": "optional" },
+    "assess": { "tier": 4, "modality": "required" },
+    "critically analyse": { "tier": 4, "modality": "required" },
+    "critically evaluate": { "tier": 4, "modality": "required" },
+    "evaluate": { "tier": 4, "modality": "required" },
+    "investigate": { "tier": 4, "modality": "required" },
+    "justify": { "tier": 4, "modality": "ignore" },
+    "recommend": { "tier": 4, "modality": "ignore" }
+  },
+  "connectives": {
+    "preferred": ["so", "because", "but"],
+    "accepted": [
+      "as a result", "therefore", "thus", "hence", "consequently",
+      "which means", "this causes", "leading to", "resulting in",
+      "due to", "since", "however", "although", "yet"
+    ],
+    "contrast": [
+      "however", "although", "on the other hand", "despite",
+      "yet", "in contrast", "conversely", "nevertheless", "while", "whereas"
+    ]
+  },
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
