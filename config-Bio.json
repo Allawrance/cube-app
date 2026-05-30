@@ -4,10 +4,14 @@
   "subjectShortName": "Bio",
   "dominantMode": "Mechanism + evidence + evaluation",
   "cleanRule": "Biology = explain the biological mechanism + link to evidence or data where provided + judge effectiveness/significance where directed",
-  "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type — show the biological mechanism (HOW and WHY), not just the outcome.",
+  "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type \u2014 show the biological mechanism (HOW and WHY), not just the outcome.",
   "sheetTabCube": "BIO CUBE",
   "sheetTabFull": "BIO",
-  "classCodes": ["12Bio-1", "12Bio-2", "12Bio-3"],
+  "classCodes": [
+    "12Bio-1",
+    "12Bio-2",
+    "12Bio-3"
+  ],
   "accentColor": "#a5d6a7",
   "syllabus": {
     "5": {
@@ -32,9 +36,20 @@
             }
           ],
           "keywords": [
-            "sexual reproduction", "asexual reproduction", "external fertilisation", "internal fertilisation",
-            "binary fission", "budding", "spores", "fertilisation", "implantation",
-            "hormonal control", "pregnancy", "birth", "mammals", "continuity of species"
+            "sexual reproduction",
+            "asexual reproduction",
+            "external fertilisation",
+            "internal fertilisation",
+            "binary fission",
+            "budding",
+            "spores",
+            "fertilisation",
+            "implantation",
+            "hormonal control",
+            "pregnancy",
+            "birth",
+            "mammals",
+            "continuity of species"
           ]
         },
         {
@@ -52,9 +67,18 @@
             }
           ],
           "keywords": [
-            "mitosis", "meiosis", "DNA replication", "Watson and Crick", "nucleotide",
-            "base pairing", "hydrogen bonding", "cell replication", "continuity of species",
-            "chromosomes", "cell division", "genetic material"
+            "mitosis",
+            "meiosis",
+            "DNA replication",
+            "Watson and Crick",
+            "nucleotide",
+            "base pairing",
+            "hydrogen bonding",
+            "cell replication",
+            "continuity of species",
+            "chromosomes",
+            "cell division",
+            "genetic material"
           ]
         },
         {
@@ -76,9 +100,22 @@
             }
           ],
           "keywords": [
-            "DNA", "eukaryote", "prokaryote", "polypeptide synthesis", "transcription", "translation",
-            "mRNA", "tRNA", "codon", "ribosome", "amino acid", "protein synthesis",
-            "phenotypic expression", "gene expression", "enzyme", "protein structure"
+            "DNA",
+            "eukaryote",
+            "prokaryote",
+            "polypeptide synthesis",
+            "transcription",
+            "translation",
+            "mRNA",
+            "tRNA",
+            "codon",
+            "ribosome",
+            "amino acid",
+            "protein synthesis",
+            "phenotypic expression",
+            "gene expression",
+            "enzyme",
+            "protein structure"
           ]
         },
         {
@@ -100,10 +137,24 @@
             }
           ],
           "keywords": [
-            "genotype", "phenotype", "allele", "dominant", "recessive", "co-dominance",
-            "incomplete dominance", "sex-linkage", "autosomal", "multiple alleles",
-            "Punnett square", "pedigree", "crossing over", "homologous chromosomes",
-            "genetic variation", "SNP", "single nucleotide polymorphism", "mutation"
+            "genotype",
+            "phenotype",
+            "allele",
+            "dominant",
+            "recessive",
+            "co-dominance",
+            "incomplete dominance",
+            "sex-linkage",
+            "autosomal",
+            "multiple alleles",
+            "Punnett square",
+            "pedigree",
+            "crossing over",
+            "homologous chromosomes",
+            "genetic variation",
+            "SNP",
+            "single nucleotide polymorphism",
+            "mutation"
           ]
         },
         {
@@ -121,9 +172,18 @@
             }
           ],
           "keywords": [
-            "DNA sequencing", "DNA profiling", "population genetics", "inheritance patterns",
-            "conservation management", "gene pool", "allele frequency", "human evolution",
-            "population data", "trends", "patterns", "relationships"
+            "DNA sequencing",
+            "DNA profiling",
+            "population genetics",
+            "inheritance patterns",
+            "conservation management",
+            "gene pool",
+            "allele frequency",
+            "human evolution",
+            "population data",
+            "trends",
+            "patterns",
+            "relationships"
           ]
         }
       ]
@@ -158,9 +218,20 @@
             }
           ],
           "keywords": [
-            "mutation", "mutagen", "electromagnetic radiation", "point mutation", "chromosomal mutation",
-            "somatic mutation", "germ-line mutation", "coding DNA", "non-coding DNA",
-            "gene flow", "genetic drift", "gene pool", "allele frequency", "new alleles"
+            "mutation",
+            "mutagen",
+            "electromagnetic radiation",
+            "point mutation",
+            "chromosomal mutation",
+            "somatic mutation",
+            "germ-line mutation",
+            "coding DNA",
+            "non-coding DNA",
+            "gene flow",
+            "genetic drift",
+            "gene pool",
+            "allele frequency",
+            "new alleles"
           ]
         },
         {
@@ -174,8 +245,14 @@
             }
           ],
           "keywords": [
-            "biotechnology", "biodiversity", "genetic technology", "social implications",
-            "ethical considerations", "future directions", "benefits", "risks"
+            "biotechnology",
+            "biodiversity",
+            "genetic technology",
+            "social implications",
+            "ethical considerations",
+            "future directions",
+            "benefits",
+            "risks"
           ]
         },
         {
@@ -205,10 +282,21 @@
             }
           ],
           "keywords": [
-            "genetic technology", "artificial insemination", "artificial pollination",
-            "cloning", "whole organism cloning", "gene cloning", "recombinant DNA",
-            "transgenic organism", "GMO", "CRISPR", "gene editing", "agricultural application",
-            "medical application", "biodiversity", "selective breeding"
+            "genetic technology",
+            "artificial insemination",
+            "artificial pollination",
+            "cloning",
+            "whole organism cloning",
+            "gene cloning",
+            "recombinant DNA",
+            "transgenic organism",
+            "GMO",
+            "CRISPR",
+            "gene editing",
+            "agricultural application",
+            "medical application",
+            "biodiversity",
+            "selective breeding"
           ]
         }
       ]
@@ -239,10 +327,24 @@
             }
           ],
           "keywords": [
-            "infectious disease", "pathogen", "microorganism", "macroorganism", "virus", "bacteria",
-            "fungi", "prion", "direct contact", "indirect contact", "vector transmission",
-            "Koch's postulates", "Pasteur", "germ theory", "disease transmission",
-            "host", "parasite", "agricultural disease"
+            "infectious disease",
+            "pathogen",
+            "microorganism",
+            "macroorganism",
+            "virus",
+            "bacteria",
+            "fungi",
+            "prion",
+            "direct contact",
+            "indirect contact",
+            "vector transmission",
+            "Koch's postulates",
+            "Pasteur",
+            "germ theory",
+            "disease transmission",
+            "host",
+            "parasite",
+            "agricultural disease"
           ]
         },
         {
@@ -260,9 +362,17 @@
             }
           ],
           "keywords": [
-            "plant defence", "physical barrier", "chemical response", "inflammation",
-            "non-specific response", "cellular response", "tissue response", "host response",
-            "physical change", "chemical change", "infection response"
+            "plant defence",
+            "physical barrier",
+            "chemical response",
+            "inflammation",
+            "non-specific response",
+            "cellular response",
+            "tissue response",
+            "host response",
+            "physical change",
+            "chemical change",
+            "infection response"
           ]
         },
         {
@@ -280,10 +390,24 @@
             }
           ],
           "keywords": [
-            "innate immunity", "adaptive immunity", "acquired immunity", "antigen", "antibody",
-            "B lymphocyte", "T lymphocyte", "memory cell", "phagocyte", "neutrophil",
-            "macrophage", "complement system", "inflammatory response", "primary exposure",
-            "secondary response", "immunological memory", "humoral immunity", "cell-mediated immunity"
+            "innate immunity",
+            "adaptive immunity",
+            "acquired immunity",
+            "antigen",
+            "antibody",
+            "B lymphocyte",
+            "T lymphocyte",
+            "memory cell",
+            "phagocyte",
+            "neutrophil",
+            "macrophage",
+            "complement system",
+            "inflammatory response",
+            "primary exposure",
+            "secondary response",
+            "immunological memory",
+            "humoral immunity",
+            "cell-mediated immunity"
           ]
         },
         {
@@ -309,10 +433,25 @@
             }
           ],
           "keywords": [
-            "vaccination", "active immunity", "passive immunity", "herd immunity",
-            "quarantine", "hygiene", "antibiotic", "antiviral", "epidemic", "pandemic",
-            "incidence", "prevalence", "public health", "disease control", "vector control",
-            "pesticide", "genetic engineering", "Indigenous medicine", "bush medicine"
+            "vaccination",
+            "active immunity",
+            "passive immunity",
+            "herd immunity",
+            "quarantine",
+            "hygiene",
+            "antibiotic",
+            "antiviral",
+            "epidemic",
+            "pandemic",
+            "incidence",
+            "prevalence",
+            "public health",
+            "disease control",
+            "vector control",
+            "pesticide",
+            "genetic engineering",
+            "Indigenous medicine",
+            "bush medicine"
           ]
         }
       ]
@@ -335,10 +474,23 @@
             }
           ],
           "keywords": [
-            "homeostasis", "negative feedback", "thermoregulation", "blood glucose regulation",
-            "insulin", "glucagon", "endotherm", "ectotherm", "tolerance limits",
-            "hormone", "neural pathway", "osmosis", "stomata", "transpiration",
-            "internal environment", "external environment", "set point"
+            "homeostasis",
+            "negative feedback",
+            "thermoregulation",
+            "blood glucose regulation",
+            "insulin",
+            "glucagon",
+            "endotherm",
+            "ectotherm",
+            "tolerance limits",
+            "hormone",
+            "neural pathway",
+            "osmosis",
+            "stomata",
+            "transpiration",
+            "internal environment",
+            "external environment",
+            "set point"
           ]
         },
         {
@@ -356,9 +508,19 @@
             }
           ],
           "keywords": [
-            "non-infectious disease", "genetic disease", "environmental disease", "nutritional disease",
-            "cancer", "carcinogen", "tumour", "incidence", "prevalence", "mortality rate",
-            "risk factor", "lifestyle disease", "autoimmune disease"
+            "non-infectious disease",
+            "genetic disease",
+            "environmental disease",
+            "nutritional disease",
+            "cancer",
+            "carcinogen",
+            "tumour",
+            "incidence",
+            "prevalence",
+            "mortality rate",
+            "risk factor",
+            "lifestyle disease",
+            "autoimmune disease"
           ]
         },
         {
@@ -380,9 +542,20 @@
             }
           ],
           "keywords": [
-            "epidemiology", "epidemiological study", "incidence", "prevalence", "cohort study",
-            "case-control study", "risk factor", "correlation", "causation", "population data",
-            "statistical analysis", "sample size", "validity", "reliability"
+            "epidemiology",
+            "epidemiological study",
+            "incidence",
+            "prevalence",
+            "cohort study",
+            "case-control study",
+            "risk factor",
+            "correlation",
+            "causation",
+            "population data",
+            "statistical analysis",
+            "sample size",
+            "validity",
+            "reliability"
           ]
         },
         {
@@ -396,9 +569,15 @@
             }
           ],
           "keywords": [
-            "disease prevention", "educational program", "public health campaign",
-            "genetic engineering", "screening", "early detection", "lifestyle modification",
-            "prevention strategy", "effectiveness"
+            "disease prevention",
+            "educational program",
+            "public health campaign",
+            "genetic engineering",
+            "screening",
+            "early detection",
+            "lifestyle modification",
+            "prevention strategy",
+            "effectiveness"
           ]
         },
         {
@@ -420,9 +599,18 @@
             }
           ],
           "keywords": [
-            "cochlear implant", "bone conduction implant", "hearing aid", "hearing loss",
-            "visual disorder", "spectacles", "laser surgery", "kidney function", "dialysis",
-            "assistive technology", "organ function", "disorder management"
+            "cochlear implant",
+            "bone conduction implant",
+            "hearing aid",
+            "hearing loss",
+            "visual disorder",
+            "spectacles",
+            "laser surgery",
+            "kidney function",
+            "dialysis",
+            "assistive technology",
+            "organ function",
+            "disorder management"
           ]
         }
       ]
@@ -486,7 +674,9 @@
     "Band1": {
       "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
       "scoreRange": "0-49",
-      "keyFeatures": ["Minimum standard not demonstrated"]
+      "keyFeatures": [
+        "Minimum standard not demonstrated"
+      ]
     },
     "subject_specific_guidance": {
       "dominant_question_types": [
@@ -496,17 +686,17 @@
         "Assess the significance of a discovery or process (e.g. assess the impact of recombinant DNA technology)"
       ],
       "biology_specific_tips": [
-        "Always name the specific biological molecule, cell type, or structure involved — not just 'the cell' or 'the system'.",
-        "Show the mechanism: state WHAT happens → explain HOW/WHY it happens → link to the biological outcome.",
+        "Always name the specific biological molecule, cell type, or structure involved \u2014 not just 'the cell' or 'the system'.",
+        "Show the mechanism: state WHAT happens \u2192 explain HOW/WHY it happens \u2192 link to the biological outcome.",
         "For evaluate/assess questions: weigh evidence on both sides, use quantitative data where available, then make a justified judgement.",
         "Distinguish between correlation and causation when interpreting epidemiological data.",
         "Use correct biological terminology consistently: mitosis vs meiosis, innate vs adaptive, pathogen vs disease."
       ],
       "common_errors": [
-        "Confusing mitosis and meiosis — always specify which process and why it applies.",
+        "Confusing mitosis and meiosis \u2014 always specify which process and why it applies.",
         "Describing immune responses without naming specific cell types (B cells, T cells, phagocytes).",
-        "Using 'it' or 'this' without a clear biological referent — always name the molecule, cell or structure.",
-        "Writing 'vaccines cause the body to fight disease' without explaining the mechanism (antigen → antibody → memory cell formation).",
+        "Using 'it' or 'this' without a clear biological referent \u2014 always name the molecule, cell or structure.",
+        "Writing 'vaccines cause the body to fight disease' without explaining the mechanism (antigen \u2192 antibody \u2192 memory cell formation).",
         "Forgetting to link homeostatic mechanisms back to maintaining the internal environment within tolerance limits."
       ]
     },
@@ -556,7 +746,7 @@
         },
         "forbidden_behaviours": [
           "Do not generate Band 6 responses by merely increasing word count.",
-          "Do not use vague biological references — always name the specific structure or molecule.",
+          "Do not use vague biological references \u2014 always name the specific structure or molecule.",
           "Do not ignore the syllabus or stimulus.",
           "Do not use vague judgements such as 'it is effective' without criteria or evidence."
         ]
@@ -564,58 +754,204 @@
     }
   },
   "directiveTiers": {
-    "account for": { "tier": 1, "modality": "ignore" },
-    "classify": { "tier": 1, "modality": "ignore" },
-    "define": { "tier": 1, "modality": "ignore" },
-    "extract": { "tier": 1, "modality": "ignore" },
-    "identify": { "tier": 1, "modality": "ignore" },
-    "list": { "tier": 1, "modality": "ignore" },
-    "name": { "tier": 1, "modality": "ignore" },
-    "recall": { "tier": 1, "modality": "ignore" },
-    "state": { "tier": 1, "modality": "ignore" },
-    "clarify": { "tier": 2, "modality": "ignore" },
-    "compare": { "tier": 2, "modality": "ignore" },
-    "contrast": { "tier": 2, "modality": "ignore" },
-    "demonstrate": { "tier": 2, "modality": "ignore" },
-    "describe": { "tier": 2, "modality": "ignore" },
-    "distinguish": { "tier": 2, "modality": "ignore" },
-    "give an account of": { "tier": 2, "modality": "ignore" },
-    "outline": { "tier": 2, "modality": "ignore" },
-    "recount": { "tier": 2, "modality": "ignore" },
-    "summarise": { "tier": 2, "modality": "ignore" },
-    "calculate": { "tier": "procedural", "modality": "ignore" },
-    "construct": { "tier": "procedural", "modality": "ignore" },
-    "analyse": { "tier": 3, "modality": "ignore" },
-    "apply": { "tier": 3, "modality": "ignore" },
-    "deduce": { "tier": 3, "modality": "ignore" },
-    "discuss": { "tier": 3, "modality": "ignore" },
-    "examine": { "tier": 3, "modality": "ignore" },
-    "explain": { "tier": 3, "modality": "ignore" },
-    "extrapolate": { "tier": 3, "modality": "ignore" },
-    "interpret": { "tier": 3, "modality": "ignore" },
-    "predict": { "tier": 3, "modality": "ignore" },
-    "propose": { "tier": 3, "modality": "ignore" },
-    "suggest": { "tier": 3, "modality": "ignore" },
-    "synthesise": { "tier": 3, "modality": "optional" },
-    "appreciate": { "tier": 4, "modality": "optional" },
-    "assess": { "tier": 4, "modality": "required" },
-    "critically analyse": { "tier": 4, "modality": "required" },
-    "critically evaluate": { "tier": 4, "modality": "required" },
-    "evaluate": { "tier": 4, "modality": "required" },
-    "investigate": { "tier": 4, "modality": "required" },
-    "justify": { "tier": 4, "modality": "ignore" },
-    "recommend": { "tier": 4, "modality": "ignore" }
+    "account for": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "classify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "extract": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "clarify": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "demonstrate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "give an account of": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "recount": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "calculate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "construct": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "deduce": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "extrapolate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "predict": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "suggest": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "appreciate": {
+      "tier": 4,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "investigate": {
+      "tier": 3,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "ignore"
+    }
   },
   "connectives": {
-    "preferred": ["so", "because", "but"],
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
     "accepted": [
-      "as a result", "therefore", "thus", "hence", "consequently",
-      "which means", "this causes", "leading to", "resulting in",
-      "due to", "since", "however", "although", "yet"
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this causes",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet"
     ],
     "contrast": [
-      "however", "although", "on the other hand", "despite",
-      "yet", "in contrast", "conversely", "nevertheless", "while", "whereas"
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas"
     ]
   },
   "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
