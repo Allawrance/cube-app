@@ -264,6 +264,11 @@
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
 
+// ─── CONFIG — loaded from config.json at startup ──────────────────────────────
+// config.json lives in the same directory as index.html (one per subject repo).
+// It contains: subjectCode, subjectName, syllabus, bandRules, leaderboardUrl,
+//              sheetTabFull, leaderboardTip, directiveTiers, connectives
+// This index.html is subject-agnostic — do not add subject-specific logic here.
 let config = {
   subjectCode: "EES",
   subjectName: "HSC Marking Coach",
@@ -278,12 +283,13 @@ let config = {
   connectives: { preferred:["so","because","but"], accepted:[], contrast:[] },
 };
 
+// Load config.json from same directory — runs once before React mounts
 async function loadConfig() {
   try {
-
+    // Read ?subject=EES (or BS/HM/ES) from the URL — default to EES
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
-
+    // Map short URL codes to config filenames
     const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
@@ -291,7 +297,7 @@ async function loadConfig() {
     if (!res.ok) throw new Error(configName + ".json not found (HTTP " + res.status + ")");
     const data = await res.json();
     config = { ...config, ...data };
-
+    // Read optional ?class= param (used by Biology for per-class sheet routing)
     const classParam = params.get("class") || "";
     if (classParam) config.studentClass = classParam;
     console.log("✅ Config loaded:", config.subjectCode, config.subjectName, classParam ? "class=" + classParam : "");
@@ -300,29 +306,33 @@ async function loadConfig() {
   }
 }
 
+// ─── CONSTANTS (subject-independent) ─────────────────────────────────────────
 const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"],[18,20,"Band 6"]];
 const getBand = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
 };
 
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+// Read EXIF orientation tag from raw JPEG buffer (handles all 8 values)
 const getExifOrientation = (buffer) => {
   try {
     const view = new DataView(buffer);
-    if (view.getUint16(0, false) !== 0xFFD8) return 1;
+    if (view.getUint16(0, false) !== 0xFFD8) return 1; // not a JPEG
     let offset = 2;
     while (offset < view.byteLength - 2) {
       const marker = view.getUint16(offset, false);
       offset += 2;
-      if (marker === 0xFFE1) {
+      if (marker === 0xFFE1) { // APP1 block — contains EXIF
         const exifStart = offset + 2;
-        if (view.getUint32(exifStart, false) !== 0x45786966) return 1;
+        if (view.getUint32(exifStart, false) !== 0x45786966) return 1; // no "Exif" header
         const little = view.getUint16(exifStart + 6, false) === 0x4949;
         const ifdOffset = view.getUint32(exifStart + 10, little) + exifStart + 6;
         const entries = view.getUint16(ifdOffset, little);
         for (let i = 0; i < entries; i++) {
           const tag = view.getUint16(ifdOffset + 2 + i * 12, little);
-          if (tag === 0x0112) {
+          if (tag === 0x0112) { // Orientation tag
             return view.getUint16(ifdOffset + 2 + i * 12 + 8, little);
           }
         }
@@ -334,26 +344,28 @@ const getExifOrientation = (buffer) => {
   return 1;
 };
 
+// Apply canvas transform for EXIF orientation before drawing image
+// Orientations 5-8 are rotated 90/270° so canvas width/height must be swapped
 const applyExifTransform = (canvas, ctx, orientation, w, h) => {
   switch (orientation) {
-    case 2: ctx.transform(-1, 0, 0,  1, w, 0); break;
-    case 3: ctx.transform(-1, 0, 0, -1, w, h); break;
-    case 4: ctx.transform( 1, 0, 0, -1, 0, h); break;
-    case 5: ctx.transform( 0, 1, 1,  0, 0, 0); break;
-    case 6: ctx.transform( 0, 1,-1,  0, h, 0); break;
-    case 7: ctx.transform( 0,-1,-1,  0, h, w); break;
-    case 8: ctx.transform( 0,-1, 1,  0, 0, w); break;
-    default: break;
+    case 2: ctx.transform(-1, 0, 0,  1, w, 0); break;           // flip horizontal
+    case 3: ctx.transform(-1, 0, 0, -1, w, h); break;           // 180°
+    case 4: ctx.transform( 1, 0, 0, -1, 0, h); break;           // flip vertical
+    case 5: ctx.transform( 0, 1, 1,  0, 0, 0); break;           // transpose
+    case 6: ctx.transform( 0, 1,-1,  0, h, 0); break;           // 90° clockwise
+    case 7: ctx.transform( 0,-1,-1,  0, h, w); break;           // transverse
+    case 8: ctx.transform( 0,-1, 1,  0, 0, w); break;           // 90° counter-clockwise
+    default: break;                                               // 1 = normal, no transform
   }
 };
 
 const toB64 = f => new Promise((res, rej) => {
-
+  // Read file as ArrayBuffer first to extract EXIF orientation, then as image for drawing
   const reader = new FileReader();
   reader.onload = (e) => {
     const buffer = e.target.result;
     const orientation = getExifOrientation(buffer);
-    const rotated = orientation >= 5;
+    const rotated = orientation >= 5; // orientations 5-8 swap width/height
 
     const blob = new Blob([buffer], { type: f.type });
     const objectUrl = URL.createObjectURL(blob);
@@ -361,10 +373,10 @@ const toB64 = f => new Promise((res, rej) => {
     img.onload = () => {
       URL.revokeObjectURL(objectUrl);
       const MAX_W = 1600;
-
+      // Raw pixel dimensions (before any rotation correction)
       const rawW = img.width;
       const rawH = img.height;
-
+      // After correction, the "display" dimensions may be swapped
       const dispW = rotated ? rawH : rawW;
       const dispH = rotated ? rawW : rawH;
       const scale = dispW > MAX_W ? MAX_W / dispW : 1;
@@ -377,7 +389,7 @@ const toB64 = f => new Promise((res, rej) => {
       const ctx = canvas.getContext("2d");
       ctx.save();
       applyExifTransform(canvas, ctx, orientation, outW, outH);
-
+      // Draw scaled to output size (ctx transform handles rotation)
       if (rotated) {
         ctx.drawImage(img, 0, 0, rawW * scale, rawH * scale);
       } else {
@@ -403,6 +415,7 @@ const privacyName = (fullName) => {
   return parts[0] + " " + parts[parts.length - 1][0].toUpperCase();
 };
 
+// ─── SVG CONSTANTS ────────────────────────────────────────────────────────────
 const FONT_SIZE = 17;
 const CW = 10.2;
 const LH = 38;
@@ -410,20 +423,21 @@ const PL = 44;
 const PT = 58;
 const CPL = 50;
 
+// ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
 function buildLines(text, cplOverride) {
   const CPL_USE = cplOverride || CPL;
   if (!text) return [];
   const lines = [];
-  const words = text.split(/(\s+)/);
+  const words = text.split(/(\s+)/); // alternating words and spaces
   let lineText = "";
   let lineStart = 0;
   let charPos = 0;
   words.forEach(token => {
     if (!token) { charPos += token.length; return; }
     if (/^\s+$/.test(token)) {
-
+      // space token
       if (lineText.length + token.length > CPL) {
-
+        // flush line, skip the whitespace
         if (lineText) lines.push({ text: lineText, start: lineStart });
         lineStart = charPos + token.length;
         lineText = "";
@@ -431,7 +445,7 @@ function buildLines(text, cplOverride) {
         lineText += token;
       }
     } else {
-
+      // word token
       if (lineText.length + token.length > CPL_USE && lineText.trim()) {
         lines.push({ text: lineText, start: lineStart });
         lineStart = charPos;
@@ -453,7 +467,7 @@ function getXY(idx, lines, yOff = 0) {
     const end = lines[i].start + lines[i].text.length;
     if (idx < end || i === lines.length - 1) {
       const col = Math.max(0, idx - lines[i].start);
-
+      // Round to nearest 0.5px to prevent sub-pixel drift on long lines
       return { x: PL + Math.round(col * CW * 2) / 2, y: PT + yOff + i * LH, li: i };
     }
   }
@@ -461,54 +475,63 @@ function getXY(idx, lines, yOff = 0) {
 }
 
 function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
-
+                              // legacy fallback props
                               directive, syllabusMatch }) {
   if (!text) return null;
 
+  // ── normalise to new schema, fall back to old single-object props ──
   const dirs = directives?.length ? directives
     : directive ? [directive] : [];
   const kwds = syllabusKeywords?.length ? syllabusKeywords
     : syllabusMatch ? [{ ...syllabusMatch, word: syllabusMatch.topicTitle }] : [];
 
+  // Responsive CPL — fewer chars per line on narrow mobile screens
   const isMobile = typeof window !== "undefined" && window.innerWidth < 500;
   const effectiveCPL = isMobile ? 28 : CPL;
   const lines = buildLines(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
-
+  // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
   const PLAN_EXTRA = mode === "plan" ? 280 : 0;
   const H = PT + PLAN_EXTRA + nLines * LH + 30;
 
   const shapes = [];
 
+  // ── helper: find exact char position of a word near a given index ──────────
+  // Searches ±25 chars around hintIdx to find where `word` actually appears.
+  // Prefer forward (AI often points just before the word); fall back to backward.
   const findExact = (word, hintIdx) => {
     if (!word || hintIdx == null) return hintIdx;
     const wl = word.toLowerCase();
     const ql = text.toLowerCase();
-
+    // Forward pass first (most common: AI points to word before)
     for (let d = 0; d <= 40; d++) {
       const i = hintIdx + d;
       if (ql.slice(i, i + wl.length) === wl) return i;
     }
-
+    // Backward pass (less common: AI overshoots)
     for (let d = 1; d <= 20; d++) {
       const i = hintIdx - d;
       if (i >= 0 && ql.slice(i, i + wl.length) === wl) return i;
     }
-
+    // Full scan fallback — if hint is badly wrong, find first occurrence
     const fullIdx = ql.indexOf(wl);
     if (fullIdx >= 0) return fullIdx;
-    return hintIdx;
+    return hintIdx; // fallback: trust AI
   };
 
+  // ── C: red ovals — one per directive verb ────────────────────────────────
+  // s.y from getXY = SVG text baseline (y attr of <text> element)
+  // Cap-height midpoint ≈ baseline - FONT_SIZE*0.36 ≈ baseline - 6px
+  // ry should span from descender to ascender: ~FONT_SIZE*0.75
   dirs.forEach((dv, di) => {
     if (dv.startIndex == null || !dv.word) return;
     const exactStart = findExact(dv.word, dv.startIndex);
     const s = getXY(exactStart, lines, PLAN_EXTRA);
     const wPx = dv.word.length * CW;
     const rx = wPx/2 + 10;
-    const ry = FONT_SIZE * 0.80;
-    const cy = s.y - FONT_SIZE * 0.36;
+    const ry = FONT_SIZE * 0.80;   // compact — spans the letter body
+    const cy = s.y - FONT_SIZE * 0.36;  // centred on cap-height midpoint
     const cx = Math.max(s.x + wPx/2, PL - 8 + rx);
     shapes.push(
       <ellipse key={`circle${di}`}
@@ -517,52 +540,59 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     );
   });
 
+  // ── U: blue underlines — one per syllabus keyword ────────────────────────
+  // s.y = baseline; underline sits just below baseline (+3px)
   kwds.forEach((kw, ki) => {
     if (kw.startIndex == null) return;
     const wordStr = kw.word || kw.topicTitle || "";
     const exactStart = findExact(wordStr, kw.startIndex);
     const exactEnd = exactStart + wordStr.length;
     const s = getXY(exactStart, lines, PLAN_EXTRA);
-
+    // Use exactEnd-1 so the end coord always resolves to the last char's line,
+    // not the start of the next line (which caused a phantom empty segment).
     const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
     for (let l = s.li; l <= e.li && l < lines.length; l++) {
       const x1 = l === s.li ? s.x : PL;
       const rawX2 = l === e.li ? e.x : PL + lines[l].text.trimEnd().length * CW;
-      const x2 = rawX2 - 4;
-      const yBase = PT + PLAN_EXTRA + l * LH;
-      const y = yBase + 4;
+      const x2 = rawX2 - 4;  // slight trim to avoid bleeding into next word
+      const yBase = PT + PLAN_EXTRA + l * LH;  // baseline for this line
+      const y = yBase + 4;   // just below baseline
       shapes.push(<line key={`u${ki}_${l}`} x1={x1} y1={y} x2={x2} y2={y} stroke="#1a6db5" strokeWidth="3" strokeLinecap="round"/>);
     }
   });
 
+  // ── B: green boxes — constraints ─────────────────────────────────────────
+  // s.y = baseline; box spans from ascender top to descender bottom
   const SKIP_WORDS = new Set(["to","on","the","a","an","of","in","at","by","for","it","is"]);
-
+  // Build set of keyword text (lowercase) so we never box words already underlined
   const kwdTexts = new Set((syllabusKeywords||[]).map(k=>(k.word||"").trim().toLowerCase()));
   const dirTexts = new Set((directives||[]).map(d=>(d.word||"").trim().toLowerCase()));
   (constraints || []).forEach((ct, ci) => {
     if (ct.startIndex == null) return;
     const trimmed = (ct.text||"").trim();
     const tl = trimmed.toLowerCase();
-
+    // Skip if this word is already a directive (circled) or syllabus keyword (underlined)
     if (SKIP_WORDS.has(tl) || kwdTexts.has(tl) || dirTexts.has(tl)) return;
     const exactStart = findExact(trimmed, ct.startIndex);
     const exactEnd   = exactStart + trimmed.length;
     const s = getXY(exactStart, lines, PLAN_EXTRA);
-
+    // Use exactEnd-1 so the end coord always resolves to the last char's line,
+    // not the start of the next line (which caused a phantom empty box).
     const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
-    const drawEnd = e.li;
+    const drawEnd = e.li;  // use actual end line — allows multi-word constraints to span lines
     for (let l = s.li; l <= drawEnd && l < lines.length; l++) {
       const x1 = (l === s.li ? s.x : PL) - 6;
       const x2 = (l === drawEnd ? e.x : PL + lines[l].text.trimEnd().length * CW) + 6;
       const yBase = PT + PLAN_EXTRA + l * LH;
-      const boxTop = yBase - FONT_SIZE * 0.85;
-      const boxH   = FONT_SIZE * 1.15;
+      const boxTop = yBase - FONT_SIZE * 0.85;  // top of ascenders
+      const boxH   = FONT_SIZE * 1.15;           // ascender to descender, stops above underline
       shapes.push(<rect key={`b${ci}_${l}`} x={x1} y={boxTop} width={Math.max(x2-x1, 12)} height={boxH} rx="4" fill="rgba(46,125,50,0.07)" stroke="#2e7d32" strokeWidth="2"/>);
     }
   });
 
+  // ── E: Planning notes (plan mode only) ──────────────────────────────────────
   const notes = [];
   let allPills = [];
 
@@ -582,6 +612,10 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       return [label.slice(0,split).trim(), label.slice(split).trim()].filter(Boolean);
     };
 
+    // Split pills into above (even-index) and below (odd-index) groups
+    // ALL above pills float above line 0; ALL below pills float below the last line
+    // Each pill is centred horizontally on its target word with a straight vertical arrow
+
     const rawPills = planningArrows
       .filter(a => a.targetStartIndex != null && a.label)
       .map((a, gi) => {
@@ -590,7 +624,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
         const ls  = splitLabel(a.label);
         const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 52);
         const bh  = ls.length * LH_N + PAD_Y * 2;
-
+        // Arrow tip: centre of the target word
         const tx  = pos.x + (a.targetWord ? a.targetWord.length * CW / 2 : 6);
         const goBelow = gi % 2 === 1;
         return { ls, bw, bh, tx, bx: tx - bw/2, by:0, row:0, tLine:pos.li, goBelow, stemFromY:0, stemToY:0 };
@@ -599,23 +633,29 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     const abovePills = rawPills.filter(p => !p.goBelow).sort((a,b) => a.tx - b.tx);
     const belowPills = rawPills.filter(p =>  p.goBelow).sort((a,b) => a.tx - b.tx);
 
+    // Resolve horizontal overlaps within each group by nudging right
     const resolveOverlaps = (pills) => {
       for (let i = 1; i < pills.length; i++) {
         const prev = pills[i-1], cur = pills[i];
         const minX = prev.bx + prev.bw + BOX_GAP;
         if (cur.bx < minX) cur.bx = Math.min(minX, W - cur.bw - 2);
       }
-
+      // Clamp left edge
       pills.forEach(p => { p.bx = Math.max(PL, Math.min(p.bx, W - p.bw - 2)); });
     };
     resolveOverlaps(abovePills);
     resolveOverlaps(belowPills);
 
+    // Y positions
+    // Above: two tiers — row 0 closest to text, row 1 further up
+    // Assign tiers by detecting horizontal overlap between sorted pills
     const ROW_H    = Math.max(...rawPills.map(p=>p.bh), 26) + ROW_GAP + 4;
     const textTopY = PT + PLAN_EXTRA - FONT_SIZE * 0.9 - 6;
     const textBotY = PT + PLAN_EXTRA + nLines * LH + 4;
     const STEM_GAP = 10;
 
+    // Assign above pills to row 0 or row 1 to avoid overlap
+    // Sort by x, greedily assign to row 0; if it overlaps last row-0 pill, put in row 1
     const row0Right = { 0: PL - BOX_GAP, 1: PL - BOX_GAP };
     abovePills.forEach(p => {
       if (p.bx >= row0Right[0] + BOX_GAP) {
@@ -623,12 +663,13 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       } else if (p.bx >= row0Right[1] + BOX_GAP) {
         p.row = 1; row0Right[1] = p.bx + p.bw;
       } else {
-
+        // both rows occupied at this x — pick whichever has more space
         p.row = row0Right[0] <= row0Right[1] ? 0 : 1;
         row0Right[p.row] = p.bx + p.bw;
       }
     });
 
+    // row 0 = closest to text (lower y), row 1 = further up (higher y)
     abovePills.forEach(p => {
       p.by        = textTopY - STEM_GAP - p.bh - p.row * ROW_H;
       p.stemFromY = p.by + p.bh;
@@ -637,20 +678,21 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
 
     belowPills.forEach(p => {
       p.by        = textBotY + STEM_GAP;
-      p.stemFromY = p.by;
-      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH + LH * 0.2;
+      p.stemFromY = p.by;                 // top of pill
+      p.stemToY   = PT + PLAN_EXTRA + p.tLine * LH + LH * 0.2; // bottom of target word line
     });
 
     allPills = [...abovePills, ...belowPills];
 
+    // Render
     allPills.forEach((p, i) => {
-      const cx   = p.bx + p.bw / 2;
-      const arrowUp = !p.goBelow;
+      const cx   = p.bx + p.bw / 2;  // centre of pill (may differ from tx after nudging)
+      const arrowUp = !p.goBelow;     // arrow points toward text
       const tipY  = p.stemToY;
       const lineY = p.stemFromY;
       const polyPts = arrowUp
-        ? `${p.tx-5},${tipY-8} ${p.tx+5},${tipY-8} ${p.tx},${tipY}`
-        : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;
+        ? `${p.tx-5},${tipY-8} ${p.tx+5},${tipY-8} ${p.tx},${tipY}`   // ↓ into text
+        : `${p.tx-5},${tipY+8} ${p.tx+5},${tipY+8} ${p.tx},${tipY}`;  // ↑ into text
       notes.push(
         <g key={`n${i}`}>
           {}
@@ -668,6 +710,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     });
   }
 
+  // ViewBox: above pills sit above line 0, below pills sit below last line
   const _textTop = PT + PLAN_EXTRA - FONT_SIZE;
   const _minY    = allPills.length ? Math.min(_textTop, ...allPills.map(p=>p.by)) : _textTop;
   const _maxY    = allPills.length
@@ -696,33 +739,39 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   );
 }
 
+// ─── FORMATTED RESPONSE with bold connectives + italic noun groups ────────────
+// Also detects runs of 3+ spaces left by AI for illegible words → converts to [?]
 function normaliseIllegible(text) {
   if (!text) return text;
-
+  // Replace 3+ consecutive spaces with [?] — AI commonly leaves gaps for illegible words
   return text.replace(/ {3,}/g, ' [?] ');
 }
 
+// Post-process formattedResponse: if AI forgot _italic_ markers for noun groups,
+// wrap them based on detectedNounGroups list. Also ensure [?] from studentText carries through.
 function enrichFormattedResponse(formatted, studentText, nounGroups, connectives) {
-
+  // Pick best source
   const hasMarkup = t => t && (t.includes('**') || t.includes('_') || t.includes('[?]'));
   let text = hasMarkup(formatted) ? formatted
            : hasMarkup(studentText) ? studentText
            : formatted || studentText || '';
-
+  // Normalise illegible gaps — 3+ spaces → [?]
   text = normaliseIllegible(text);
 
+  // Always inject bold connectives client-side if not already present
   const allConnectives = [
     ...(connectives?.preferred || ["so","because","but"]),
     ...(connectives?.accepted  || ["therefore","thus","hence","however","although","consequently","as a result","which means","resulting in","leading to","due to","since","yet"])
   ];
   allConnectives.forEach(conn => {
     const escaped = conn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
+    // Only wrap if not already bolded
     text = text.replace(new RegExp(`(?<!\\*)(\\b${escaped}\\b)(?!\\*)`, 'gi'), '**$1**');
   });
 
+  // Inject italic noun groups if missing
   if (nounGroups && nounGroups.length > 0 && !text.includes('_')) {
-
+    // Sort longest first to avoid partial matches
     const sorted = [...nounGroups].sort((a,b) => b.length - a.length);
     sorted.forEach(ng => {
       if (!ng || ng.length < 2) return;
@@ -743,10 +792,10 @@ function FormattedResponse({ text }) {
     if (m[0] === '[?]') {
       parts.push(<span key={m.index} style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontFamily:"sans-serif",fontSize:"11px",margin:"0 2px",verticalAlign:"middle"}}>?</span>);
     } else if (m[1]) {
-
+      // Bold connective — purple highlight, visible on cream paper
       parts.push(<strong key={m.index} style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 3px",borderRadius:"3px",fontFamily:"sans-serif"}}>{m[1]}</strong>);
     } else {
-
+      // Italic noun group — dark teal, dotted underline, clearly visible on cream
       parts.push(<em key={m.index} style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted",textDecorationColor:"#64b5f6",fontStyle:"italic"}}>{m[2]}</em>);
     }
     last = m.index + m[0].length;
@@ -755,6 +804,8 @@ function FormattedResponse({ text }) {
   return <>{parts}</>;
 }
 
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────────────────
+// ─── SUB-COMPONENTS ──────────────────────────────────────────────────────────
 const Badge = ({children,bg,color}) => <span style={{background:bg,color:color||"white",borderRadius:"6px",padding:"2px 10px",fontSize:"12px",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>{children}</span>;
 const Card = ({children,bg,border,style={}}) => <div style={{background:bg||"rgba(255,255,255,0.04)",border:`1px solid ${border||"rgba(255,255,255,0.1)"}`,borderRadius:"14px",padding:"18px 20px",marginBottom:"14px",...style}}>{children}</div>;
 const SectionTitle = ({children,color}) => <div style={{fontSize:"11px",color:color||"#c9a84c",letterSpacing:"1.5px",fontWeight:800,marginBottom:"10px",fontFamily:"sans-serif"}}>{children}</div>;
@@ -770,6 +821,7 @@ const ScoreDot = ({score,max=5}) => {
 
 const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 
+// ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 function Steps({current, activeTab, onTabChange}) {
   const steps = ["Upload","CUBE","Plan","Script","Rubric","Feedback","🏆"];
   const tabToStep = {cube:1, plan:2, script:3, rubric:4, feedback:5, rank:6};
@@ -808,6 +860,7 @@ function Steps({current, activeTab, onTabChange}) {
   </div>;
 }
 
+// ─── PAPER CARD ──────────────────────────────────────────────────────────────
 function PaperCard({children, subtitle}) {
   return <div style={{background:"#fffef5",borderRadius:"16px",padding:"20px 24px",boxShadow:"0 4px 24px rgba(0,0,0,0.4)",border:"1px solid #e8e0c8",position:"relative",overflow:"hidden",marginBottom:"16px"}}>
     <div style={{position:"absolute",inset:0,pointerEvents:"none"}}>
@@ -819,8 +872,9 @@ function PaperCard({children, subtitle}) {
   </div>;
 }
 
+// ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
 function RubricRow({label, data, applicable=true, dimMax=5}) {
-
+  // Cap raw Sonnet score at dimMax (scales with question marks value)
   const rawScore = data?.score||0;
   const score    = Math.min(rawScore, dimMax);
   const xpEarned = !applicable ? null : score;
@@ -844,6 +898,10 @@ function RubricRow({label, data, applicable=true, dimMax=5}) {
   </tr>;
 }
 
+// ─── PRINT REPORT ─────────────────────────────────────────────────────────────
+// Renders into a hidden #print-report div. @media print hides everything else.
+// Downloaded as a self-contained HTML file via triggerPrint (works inside Google Sites iframes).
+
 function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
                        dirs, kwds, c, a, score, maxScore, dimMaxR,
                        causalApplicable, modalityApplicable,
@@ -861,6 +919,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   const dateStr = now.toLocaleDateString("en-AU", {day:"2-digit",month:"short",year:"numeric"});
   const timeStr = now.toLocaleTimeString("en-AU", {hour:"2-digit",minute:"2-digit"});
 
+  // ── Literacy rows helper ──
   const litRows = [
     { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
     { label:"Complex Noun Groups",   data:a.rubric?.complexNounGroups, applicable:true              },
@@ -868,6 +927,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
     { label:"Logical Flow & Cohesion", data:a.rubric?.logicalFlow,     applicable:true              },
   ];
 
+  // ── Response text renderer (print-safe — no React spans with dark bg) ──
   function PrintResponse({ text }) {
     if (!text) return null;
     const cleaned = normaliseIllegible(text);
@@ -889,11 +949,13 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
     return <>{parts}</>;
   }
 
+  // ── Score circle colour ──
   const scoreCol = (s, max) => {
     const p = max > 0 ? s/max : 0;
     return p >= 0.8 ? "#4caf50" : p >= 0.5 ? "#ff9800" : "#f44336";
   };
 
+  // ── Formatted response for print ──
   const responseText = enrichFormattedResponse(
     a.formattedResponse, a.studentResponseText, a.detectedNounGroups, connectives
   );
@@ -1293,18 +1355,20 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   );
 }
 
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 function App() {
   const [studentName, setStudentName] = useState(() => {
     try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
   });
 
+  // Save name to localStorage whenever it changes
   useEffect(() => {
     try {
       if (studentName.trim()) localStorage.setItem("cube_student_name", studentName.trim());
     } catch {}
   }, [studentName]);
-  const [phase, setPhase] = useState(0);
-
+  const [phase, setPhase] = useState(0); // 0=upload, 2=results
+  // ── GAMIFICATION STATE ──
   const [streak, setStreak] = useState(() => {
     try {
       const d = JSON.parse(localStorage.getItem("cube_streak") || "{}");
@@ -1313,7 +1377,7 @@ function App() {
       if (last === today) return d.count || 0;
       if (!last) return 0;
       const daysSince = Math.floor((new Date(today) - new Date(last)) / 86400000);
-
+      // Decay: 1 day missed = half, 2 days = quarter, 3+ = zero
       const raw = d.count || 0;
       if (daysSince === 1) return Math.floor(raw / 2);
       if (daysSince === 2) return Math.floor(raw / 4);
@@ -1321,22 +1385,23 @@ function App() {
     } catch { return 0; }
   });
   const [sessionXP, setSessionXP] = useState(0);
-  const [cubeXP,    setCubeXP]    = useState(null);
+  const [cubeXP,    setCubeXP]    = useState(null);  // null = not yet assessed
   const [annoXP,    setAnnoXP]    = useState(null);
   const [writeXP,   setWriteXP]   = useState(null);
   const [stage1Done, setStage1Done] = useState(false);
   const [stage2Loading, setStage2Loading] = useState(false);
   const [stage2Error,   setStage2Error]   = useState(null);
-  const [stage2Results, setStage2Results] = useState(null);
-  const [leaderboard, setLeaderboard]   = useState(null);
+  const [stage2Results, setStage2Results] = useState(null); // phase3_analysis from Call 2
+  const [leaderboard, setLeaderboard]   = useState(null);  // fetched from LeaderboardWebhook
   const [lbLoading,   setLbLoading]     = useState(false);
   const [lbError,     setLbError]       = useState(null);
   const [lbPeriod,    setLbPeriod]      = useState("week");
   const [lbDirective, setLbDirective]   = useState("all");
-  const [annotationIdeas, setAnnotationIdeas] = useState([]);
-  const [iterCount,  setIterCount]  = useState(1);
-  const [sessionId,  setSessionId]  = useState("");
+  const [annotationIdeas, setAnnotationIdeas] = useState([]); // from stage 1 planningArrows labels
+  const [iterCount,  setIterCount]  = useState(1);    // Stage 1 attempt number
+  const [sessionId,  setSessionId]  = useState("");    // shared by Stage1+Stage2 for same attempt
 
+  // persist streak on submit
   const bumpStreak = () => {
     try {
       const today = new Date().toDateString();
@@ -1344,28 +1409,30 @@ function App() {
       const last = d.lastDate;
       let count;
       if (last === today) {
-        count = d.count || 0;
+        count = d.count || 0; // already counted today
       } else if (!last) {
         count = 1;
       } else {
         const daysSince = Math.floor((new Date(today) - new Date(last)) / 86400000);
         const prev = d.count || 0;
-        if (daysSince === 1) count = prev + 1;
-        else if (daysSince === 2) count = Math.max(1, Math.floor(prev / 2) + 1);
-        else if (daysSince === 3) count = Math.max(1, Math.floor(prev / 4) + 1);
-        else count = 1;
+        if (daysSince === 1) count = prev + 1;          // consecutive
+        else if (daysSince === 2) count = Math.max(1, Math.floor(prev / 2) + 1); // half + 1
+        else if (daysSince === 3) count = Math.max(1, Math.floor(prev / 4) + 1); // quarter + 1
+        else count = 1;                                  // fully reset
       }
       localStorage.setItem("cube_streak", JSON.stringify({count, lastDate: today}));
       setStreak(count);
     } catch {}
   };
 
+  // Compute CUBE XP: student's score from their actual markings (from studentCube.score)
+  // maxCubeXP is computed separately from the question elements
   const computeCubeXP = (parsed) => {
-
+    // Student's actual earned XP = what they correctly circled/underlined/boxed
     return parsed?.studentCube?.score ?? 0;
   };
   const computeMaxCubeXP = (parsed) => {
-
+    // Maximum possible XP = number of CUBE elements in the question
     const c = parsed?.phase1_cube;
     if (!c) return 0;
     const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
@@ -1375,7 +1442,7 @@ function App() {
   const [pageImg, setPageImg] = useState(null);
   const [pageB64, setPageB64] = useState(null);
   const [questionNumber, setQuestionNumber] = useState("");
-  const [questionsOnPage, setQuestionsOnPage] = useState(null);
+  const [questionsOnPage, setQuestionsOnPage] = useState(null); // null=not scanned yet
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState("");
@@ -1387,6 +1454,7 @@ function App() {
   const fileRef = useRef();
   const abortRef = useRef(null);
 
+  // ── Shared file processor — used by file input, paste, and drag-drop ──
   const handleFileFromSource = async (f) => {
     if (!f || !f.type.startsWith("image/")) { setError("Please provide an image file (JPG, PNG, etc)."); return; }
     const p = studentName.trim().split(/\s+/).filter(Boolean);
@@ -1430,9 +1498,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     await handleFileFromSource(f);
   };
 
+  // ── Paste anywhere on the page to upload a screenshot ──
   React.useEffect(() => {
     const onPaste = (e) => {
-      if (phase !== 0 || pageImg) return;
+      if (phase !== 0 || pageImg) return; // only on upload screen, no image yet
       const items = Array.from(e.clipboardData?.items || []);
       const imgItem = items.find(it => it.type.startsWith("image/"));
       if (!imgItem) return;
@@ -1441,10 +1510,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, [phase, pageImg, studentName]);
+  }, [phase, pageImg, studentName]); // re-bind when name/phase changes
 
+  // ── Drag-and-drop state ──
   const [dragOver, setDragOver] = React.useState(false);
 
+  // Cancel any in-flight request and return to a clean upload state
   const cancelAndReset = () => {
     if (abortRef.current) { abortRef.current.abort(); abortRef.current = null; }
     setLoading(false);
@@ -1452,7 +1523,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setPageImg(null);
     setPageB64(null);
     setError(null);
-
+    // Re-open file picker immediately so student can choose a new photo
     setTimeout(() => fileRef.current?.click(), 50);
   };
 
@@ -1465,7 +1536,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
-
+    // Generate session ID shared between Stage 1 + Stage 2 for this attempt
     const sid = privacyName(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
     setSessionId(sid);
     try {
@@ -1490,13 +1561,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       } catch(parseErr) {
         throw new Error(`Response was not JSON (HTTP ${res.status}) — proxy or network issue`);
       }
-
+      // ── Guard: API-level error (rate limit, content filter, overload) ──
       if (!res.ok || data.error) {
         const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
         throw new Error(`API error: ${msg}`);
       }
       const raw = (data.content||[]).map(b=>b.text||"").join("");
-
+      // ── Robust JSON extraction: find first { to last } even if Haiku adds prose ──
       const firstBrace = raw.indexOf("{");
       const lastBrace  = raw.lastIndexOf("}");
       if (firstBrace === -1 || lastBrace === -1) {
@@ -1511,7 +1582,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         console.error("Stage 1 JSON parse failed:", jsonErr.message, "\nRaw:", clean.slice(0,500));
         throw new Error("Could not read AI response — please try again.");
       }
-
+      // ── Validate minimal expected structure ──
       if (!parsed.phase1_cube || !parsed.phase1_cube.questionText) {
         console.error("Stage 1 missing phase1_cube:", JSON.stringify(parsed).slice(0,300));
         throw new Error("AI returned incomplete CUBE analysis — please try again.");
@@ -1519,12 +1590,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setResults(parsed);
       setPhase(2);
       setActiveTab("cube");
-
+      // ── Stage 1: no CUBE XP awarded — student sees model CUBE only; XP scored in Stage 2 ──
       setCubeXP(null);
       setAnnoXP(null); setWriteXP(null); setStage1Done(false);
       bumpStreak();
       setSessionXP(0);
-
+      // Stage 1 no longer logged separately — Stage 2 captures full session
     } catch(e) {
       if (e.name !== "AbortError") {
         console.error("Stage 1 analysis error:", e.message, e);
@@ -1567,23 +1638,26 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
   const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   const triggerPrint = () => {
-
+    // window.print() is blocked inside Google Sites iframes.
+    // Instead, build a self-contained HTML file and download it as a Blob.
+    // The student opens it locally and prints from their browser (Ctrl+P / Cmd+P).
     const container = document.getElementById('print-report');
     if (!container) return;
 
+    // ── Extract the @media print CSS and convert to regular screen CSS ──
     let printCSS = '';
     try {
       for (const sheet of document.styleSheets) {
         try {
           for (const rule of sheet.cssRules) {
             if (rule instanceof CSSMediaRule && rule.conditionText === 'print') {
-
+              // Unwrap each rule inside @media print
               for (const inner of rule.cssRules) {
-
+                // Re-scope: make #print-report visible and body hidden rules safe
                 let text = inner.cssText;
-
+                // Replace "body > #root { display: none }" — not needed in standalone
                 if (/body\s*>\s*#root/.test(text)) continue;
-
+                // Make #print-report always visible (not just on print)
                 text = text.replace(/#print-report\s*\{/, '#print-report {');
                 printCSS += text + '\n';
               }
@@ -1616,7 +1690,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 <body>
 <div id="print-report">${container.innerHTML}</div>
 <script>
-
+  // Auto-open print dialog after a short delay so styles render first
   window.addEventListener('load', () => { setTimeout(() => window.print(), 400); });
 <\/script>
 </body>
@@ -1633,12 +1707,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
 
+  // ── STAGE 2: Mark the written response (separate call, fires only on button click) ──
+  // Sync streak from server when student name is entered
   useEffect(()=>{
     const parts = (studentName||"").trim().split(/\s+/);
     if (parts.length>=2 && parts[0] && !leaderboard && !lbLoading) {
       fetchLeaderboard("week","all");
     }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[studentName]);
 
   const fetchLeaderboard = async (period, directive) => {
@@ -1654,12 +1730,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setLeaderboard(data);
-
+      // Sync streak from server for current student (cross-device consistency)
       try {
         const me = privacyName(studentName.trim()||"anonymous");
         const myRow = (data.leaderboard||[]).find(p=>p.student===me);
         if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
-
+          // Server streak is source of truth for the COUNT — but preserve the
+          // real lastDate so bumpStreak() can still correctly calculate days
+          // elapsed and increment. Setting lastDate:today here would cause
+          // bumpStreak() to think it already ran today and skip incrementing.
           const existing = JSON.parse(localStorage.getItem("cube_streak") || "{}");
           setStreak(myRow.streak);
           localStorage.setItem("cube_streak", JSON.stringify({
@@ -1681,7 +1760,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
     const kwds = c1.syllabusKeywords?.length ? c1.syllabusKeywords : [];
     const primaryDir = dirs.find(d=>d.isPrimary) || dirs[0] || {};
-
+    // Option B: Stage 2 reads student's actual handwritten annotations from the image itself
+    // No longer passing AI-generated planningArrows — Sonnet reads what the student wrote
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1724,33 +1804,36 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setStage2Results(parsed);
       setStage1Done(true);
       setActiveTab("plan");
-
-      const annoItems = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
-
-      const annoPresenceXP = Math.min(annoItems.length, 6);
-      const annoUsedXP = annoItems.filter(a=>a.used).length;
+      // Update session XP with annotation ideas used
+      const annoItems = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6); // cap at 6, filter empty
+      // Two-tier annotation XP:
+      // +1 XP per idea present (student wrote it) — up to 6 XP
+      // +1 XP per idea used in response — up to 6 XP
+      // Max total annotation XP = 12
+      const annoPresenceXP = Math.min(annoItems.length, 6); // +1 per annotation written
+      const annoUsedXP = annoItems.filter(a=>a.used).length; // +1 per used in response
       const annoXpVal = annoPresenceXP + annoUsedXP;
       setAnnoXP(annoXpVal);
-
+      // ── Score student CUBE attempt using Sonnet Stage 2 result ──
       const cxpStage2 = parsed?.studentCube?.score ?? 0;
       setCubeXP(cxpStage2);
-
+      // Also store breakdown for display
       setAnnotationIdeas({presence: annoPresenceXP, used: annoUsedXP, items: annoItems});
-
+      // Log to webhook
       try {
-
+        // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
         const causalDirWord = (primaryDir.word||"").toLowerCase().trim();
         const causalDirObj  = config.directiveTiers[causalDirWord] || config.directiveTiers[causalDirWord.replace("critically ","")];
         const causalApp     = causalDirObj ? (causalDirObj.tier === 3 || causalDirObj.tier === 4) : parsed.rubric?.causalConnectives?.applicable !== false;
-
+        // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
-
+        // Calculate dimMax FIRST so totalScore can cap per-dimension — prevents AI over-scoring exceeding maxScore
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
         const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
         const mx  = (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
-
+        // Update session XP using correctly capped score and max
         setWriteXP(Math.min(sc, mx));
         setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
         const band = getBand(sc, mx);
@@ -1758,7 +1841,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         const annoPresXP = Math.min(annoItems.length, 6);
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
         const annoTotal  = annoPresXP + annoUsdXP;
-        const scCapped  = Math.min(sc, mx);
+        const scCapped  = Math.min(sc, mx);  // cap raw score at scaled max
         const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((scCapped/mx)*c1.marks), c1.marks) : "";
         const indBand    = (c1.marks == null || c1.marks === "") ? band.replace("Band ","") : "";
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
@@ -1811,17 +1894,17 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setStage2Error("Marking failed: " + e.message + ". Please try again.");
     }
     setStage2Loading(false);
-
+    // Refresh leaderboard after a short delay to include this submission in the totals
     setTimeout(() => fetchLeaderboard(lbPeriod, lbDirective), 3000);
   };
 
   const totalScore = (r, causalOverride, modalOverride, dimMax=5) => {
     if (!r) return 0;
     const { rubric } = r;
-
+    // Use client-side derived applicable values if provided, else fall back to AI value
     const causalAppl  = causalOverride !== undefined ? causalOverride : (rubric.causalConnectives?.applicable !== false);
     const modalAppl   = modalOverride  !== undefined ? modalOverride  : (rubric.modality?.applicable === true);
-
+    // Cap each dimension at dimMax before summing — prevents AI over-scoring from exceeding maxScore
     const causal   = causalAppl ? Math.min(rubric.causalConnectives?.score||0, dimMax) : 0;
     const noun     = Math.min(rubric.complexNounGroups?.score||0, dimMax);
     const modality = modalAppl  ? Math.min(rubric.modality?.score||0, dimMax) : 0;
@@ -1829,6 +1912,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     return causal + noun + modality + flow;
   };
 
+  // ── STYLES ──
   const bg = "linear-gradient(160deg,#040d18 0%,#081525 40%,#0a1e35 100%)";
   const gold = "#c9a84c";
   const tabStyle = (id) => ({
@@ -2031,9 +2115,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         {}
         {phase===2&&results&&(()=>{
           const { phase1_cube: c, phase2_plan: p, phase3_analysis: _a0 } = results;
-
+          // Use Stage 2 results when available (separate call), fall back to combined call result
+          // a is undefined until Stage 2 runs — all a-references must be guarded
           const a = stage2Results || _a0 || null;
-
+          // ── normalise: support both new array schema and old single-object schema ──
           const dirs = c.directives?.length ? c.directives : c.directive ? [c.directive] : [];
           const kwds = c.syllabusKeywords?.length ? c.syllabusKeywords : c.syllabusMatch ? [c.syllabusMatch] : [];
           const primaryDir = dirs.find(d=>d.isPrimary) || dirs[0] || {};
@@ -2042,15 +2127,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
           const marksKnown = c.marks !== null && c.marks !== undefined;
-
+          // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
           const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const causalDirObjR  = config.directiveTiers[causalDirWordR] || config.directiveTiers[causalDirWordR.replace("critically ","")];
           const causalApplicable = causalDirObjR ? (causalDirObjR.tier === 3 || causalDirObjR.tier === 4) : (a ? (a.rubric?.causalConnectives?.applicable !== false) : true);
-
+          // Derive modality applicable from directive — do not trust Sonnet's value
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
-
+          // Calculate dimMaxR BEFORE score so totalScore can apply per-dimension caps — prevents score > maxScore
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
           const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
           const maxScore = (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
@@ -2185,7 +2270,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <div style={{fontSize:"10px",color:"#666",marginBottom:"8px",fontStyle:"italic",textAlign:"center"}}>Attempt {iterCount} of Stage 1</div>
 
                 <button onClick={()=>{
-
+                  // Same as New Question — full reset then open file picker
                   setStage2Results(null); setStage1Done(false); setStage2Error(null);
                   setAnnoXP(null); setWriteXP(null); setCubeXP(null); setResults(null);
                   setIterCount(n=>n+1); setPhase(0); setPageImg(null); setPageB64(null);
@@ -2238,7 +2323,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                               const sylText = kw.syllabusText || "";
                               const kwWord  = (kw.word||kw.topicTitle||"").toLowerCase().replace(/[^a-z0-9]/g," ").trim();
                               if (!kwWord || !sylText) return sylText;
-
+                              // Build regex: match keyword stem (first 5+ chars) case-insensitively
                               const stem = kwWord.split(" ")[0].slice(0,Math.max(5,kwWord.split(" ")[0].length-2));
                               try {
                                 const re = new RegExp(`(${stem}\\S*)`, "gi");
@@ -2272,7 +2357,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                         </div>)}
                       </div>
                       {c.evidenceRequired&&(()=>{
-
+                        // Find the planning arrow whose targetWord matches evidence type
+                        // to show a content-rich hint rather than the raw type string
                         const arrows = results?.phase1_cube?.evidenceArrows ||
                                        stage2Results?.phase2_plan?.planningArrows || [];
                         const evArrow = arrows.find(a =>
@@ -2285,7 +2371,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                         const evTypeLabel = (c.evidenceType||"")
                           .replace(/_/g," ")
                           .replace(/\w/g, l=>l.toUpperCase());
-                        return null;
+                        return null; // E card rendered separately below
                       })()}
                     </div>
                   </div>
@@ -2698,7 +2784,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   const hasPreferred = ec.hasSO || ec.hasBECAUSE || ec.hasBUT;
                   const hasAccepted  = ec.acceptedConnectivesFound?.length > 0;
                   const hasAny = hasPreferred || hasAccepted;
-
+                  // Collect all connectives found (preferred + accepted) for display
                   const allFound = [
                     ...(ec.hasSO?["so"]:[]),
                     ...(ec.hasBECAUSE?["because"]:[]),
@@ -3023,6 +3109,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
   );
 }
 
+// ─── APP SHELL — waits for config.json before rendering ──────────────────────
 function AppShell() {
   const [configReady, setConfigReady] = useState(false);
   const [configError, setConfigError] = useState(null);
@@ -3035,7 +3122,7 @@ function AppShell() {
       setConfigReady(true);
     }).catch(e => {
       setConfigError("Could not load config: " + e.message);
-      setConfigReady(true);
+      setConfigReady(true); // still render with defaults
     });
   }, []);
 
