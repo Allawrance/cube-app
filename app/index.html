@@ -297,7 +297,7 @@ async function loadConfig() {
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
     // Map short URL codes to config filenames
-    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal" };
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal", VISART:"config-VisArt", VA:"config-VisArt" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
     const res = await fetch(configFile);
