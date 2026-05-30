@@ -1,0 +1,385 @@
+{
+  "subjectCode": "VISART",
+  "subjectName": "Visual Arts",
+  "subjectShortName": "Vis Art",
+  "dominantMode": "Art criticism + interpretive frameworks + informed point of view",
+  "cleanRule": "Visual Arts = adopt a frame (subjective/cultural/structural/postmodern) + apply the conceptual framework (artist/artwork/world/audience) + develop a sustained, evidence-based interpretive point of view about practice, representation and meaning",
+  "leaderboardTip": "HSC Visual Arts written responses reward an INFORMED POINT OF VIEW — you must name a frame (e.g. cultural frame), use it to interpret relationships in the conceptual framework, and support your interpretation with specific named artworks and artists. Generic descriptions of art without a frame or framework earn Band 3 at best.",
+  "sheetTabCube": "VISART CUBE",
+  "sheetTabFull": "VISART",
+  "accentColor": "#f48fb1",
+  "kla": "CAPA",
+
+  "subjectContext": {
+    "examStructure": {
+      "writtenPaper": "50% of HSC mark — art criticism and art history written responses using practice, conceptual framework, and frames",
+      "bodyOfWork": "50% of HSC mark — externally examined practical submission (not assessed by this tool)",
+      "caseStudies": "Minimum 5 case studies in HSC course inform written responses",
+      "processD iary": "Required — documents artmaking development"
+    },
+    "coreOrganisers": {
+      "practice": "The agency of artists, art critics and art historians and the work they produce; intentional, informed human activity in artmaking, art criticism and art history",
+      "conceptualFramework": "The four agencies of the artworld: Artist, Artwork, World, Audience — and the intentional relationships between them",
+      "frames": {
+        "subjective": "Personal and psychological experience — felt, sensory, emotional states; imagination, intuition, the unconscious; intersubjective meaning between artist and audience",
+        "cultural": "Cultural and social meaning — collective interests, ideology, class, politics, gender, economic conditions, spiritual and secular beliefs; art as cultural production",
+        "structural": "Communication and systems of signs — visual language as symbolic system; codes, signs, conventions; meaning through formal relationships of symbols",
+        "postmodern": "Challenge to conventions, canons, values and histories — intertextuality, irony, parody, appropriation, ambiguity; questioning what art is and who has power"
+      },
+      "representation": "How artists represent interpretations of the world through subject matter and form; how meaning is layered through content/subject matter and the formal qualities of works"
+    },
+    "expressiveForms": [
+      "Documented Forms", "Collection of Works", "Drawing", "Painting",
+      "Photomedia", "Printmaking", "Textiles and Fibre", "Graphic Design",
+      "Designed Objects", "Sculpture", "Ceramics", "Time-based forms"
+    ]
+  },
+
+  "syllabus": {
+    "practice": {
+      "code": "P",
+      "title": "Practice",
+      "description": "The agency of artists, art critics and art historians and the work they produce. Practice involves intentional, informed human activity; beliefs, actions, motives and ideas over time; recognition that the field is continuously transformed by innovations, new knowledge, technologies and agents.",
+      "artmaking": {
+        "title": "Practice in Artmaking",
+        "dotPoints": [
+          "Understanding how a network of procedures can be used to make art",
+          "Critical judgement as central to making informed decisions and developing autonomous knowledge",
+          "Representation: complex responses to the world through subject matter and form",
+          "Conceptual strength, meaning and resolution — representing artistic intentions and holding an interpretive position",
+          "Resolution of material, physical and virtual properties of the expressive forms"
+        ],
+        "keywords": [
+          "practice", "artmaking", "expressive form", "body of work", "process diary",
+          "conceptual strength", "resolution", "coherence", "artistic intention",
+          "subject matter", "form", "representation", "material", "technique",
+          "visual arts process diary", "conventions", "judgement"
+        ]
+      },
+      "artCriticismHistory": {
+        "title": "Practice in Art Criticism and Art History",
+        "dotPoints": [
+          "Networks of procedures to speculate about meanings of artworks and locate them in critical narratives and significant histories",
+          "Art criticism: arguing a case about the qualities of an artwork or issue of significance",
+          "Art history: assembling a case using judgement about value positions and how information is interpreted",
+          "Knowledge of frames assists students to build descriptions, narrative accounts, interpretations, comparisons and judgements",
+          "Case studies: minimum 5 in HSC course — focused investigations of critical and historical cases relating practice, conceptual framework and frames"
+        ],
+        "keywords": [
+          "art criticism", "art history", "case study", "critical narrative", "art historical account",
+          "point of view", "interpretive framework", "judgement", "evaluation",
+          "significance", "value", "art critic", "art historian", "meaning",
+          "informed point of view", "well-reasoned account"
+        ]
+      }
+    },
+    "conceptualFramework": {
+      "code": "CF",
+      "title": "The Conceptual Framework — Agencies in the Artworld",
+      "description": "A theoretical model for understanding the agencies in the artworld and the intentional relationships and functions they perform relative to each other.",
+      "agencies": [
+        {
+          "label": "Artist",
+          "description": "A person or group making artworks. The function of the artist is not fixed — it is a role assigned or assumed within the field at different times and places relative to different value systems. Includes artists, craftspeople, designers, architects, filmmakers, performance artists, digital practitioners.",
+          "keywords": ["artist", "artistic intention", "practice", "maker", "craftsperson", "designer", "architect", "filmmaker", "collaborative practice", "artistic role"]
+        },
+        {
+          "label": "Artwork",
+          "description": "Intentionally conceived and made objects with material, virtual, physical and symbolic properties. Artworks are representations of ideas — personal responses, cultural views, symbolic interpretations. They exist as 2D, 3D, 4D and time-based works.",
+          "keywords": ["artwork", "body of work", "expressive form", "2D", "3D", "4D", "time-based", "material", "symbolic", "representation", "form", "subject matter"]
+        },
+        {
+          "label": "World",
+          "description": "The source of interests, ideas, conditions and events represented by artists in artworks. Designates systematic ideas of the time, existing theoretical commitments, representations of experience, class, ideology, age and events of significance.",
+          "keywords": ["world", "social context", "cultural context", "historical context", "ideology", "contemporary", "events", "experience", "conditions", "influences"]
+        },
+        {
+          "label": "Audience",
+          "description": "Active interpreters who ascribe meanings to artworks and art practices. Includes art critics, art historians, teachers, students, curators, dealers, members of the public. Audiences change over time and bring different intentions, beliefs and values to artworks.",
+          "keywords": ["audience", "viewer", "interpretation", "response", "meaning", "art critic", "art historian", "curator", "reception", "consumption"]
+        }
+      ]
+    },
+    "frames": {
+      "code": "F",
+      "title": "The Frames",
+      "description": "The subjective, cultural, structural and postmodern frames provide different philosophical/theoretical and interpretive frameworks for understanding the layering of meaning, significance, value and belief in and about the visual arts.",
+      "topics": [
+        {
+          "label": "Subjective Frame",
+          "code": "F-SUB",
+          "description": "Personal and psychological experience. Art represents deeply felt and sensory experiences and perceptions of the world. Concerned with individual feeling, emotion, imagination and personal experience. The unconscious, intuition and imagination as sources of ideas. Meaning understood in relation to the intersubjective experiences of artist and audience.",
+          "artmakingApplications": [
+            "Explore deeply felt experiences and perceptions of the world",
+            "Investigate feelings and responses — autobiographical and personal concerns",
+            "Explore the role of intuition, spontaneity or chance in artmaking"
+          ],
+          "criticismApplications": [
+            "Explore artworks as expressive and unique objects",
+            "Explore explanations based on the personal psychology of the artist",
+            "Investigate themes of human emotion and psychology in artworks",
+            "Develop personal interpretive responses to significant artists and artworks"
+          ],
+          "keywords": ["subjective", "personal", "emotion", "psychological", "intuition", "imagination", "unconscious", "felt experience", "intersubjective", "expressive", "autobiographical", "perception"]
+        },
+        {
+          "label": "Cultural Frame",
+          "code": "F-CUL",
+          "description": "Cultural and social meaning. Art represents conditions and understandings of shared social life. The value of art lies in its social meaning — collective interests, ideology, class, politics, gender, economic conditions, spiritual and secular beliefs. Artists are influenced by, reproduce, participate in, reflect, contribute to or challenge structures of social identity.",
+          "artmakingApplications": [
+            "Explore cultural values and social meanings",
+            "Explore ideas of significance to society or particular cultural groups",
+            "Explore the cultural meanings of the expressive forms"
+          ],
+          "criticismApplications": [
+            "Consider how cultural identity informs artistic practice",
+            "Study differing cultural attitudes, effects of science, technology, politics and economics",
+            "Study social and cultural identity concepts (gender, Indigenous, regional, national, globalised)",
+            "Investigate how art historians have constructed social histories of art"
+          ],
+          "keywords": ["cultural", "social", "ideology", "gender", "class", "politics", "economics", "identity", "community", "Indigenous", "collective", "social history", "cultural production", "power"]
+        },
+        {
+          "label": "Structural Frame",
+          "code": "F-STR",
+          "description": "Communication and systems of signs. Art represents a visual language as a symbolic system. Ideas about the world are represented as a system of coded relationships between signs and symbols. Meaning is understood through relationships of symbols that refer to the world.",
+          "artmakingApplications": [
+            "Explore communicative value through use of conventions and selection of codes and symbols",
+            "Investigate signs, codes and symbols as a system of visual language",
+            "Investigate how expressive forms convey certain meanings through material and conceptual organisation"
+          ],
+          "criticismApplications": [
+            "Read artworks as symbolic systems referring to the world within conventions of representation",
+            "Study how visual information is organised and transmitted within artistic practice and genres",
+            "Investigate art critical and art historical practices that categorise artworks through formal language",
+            "Study how formal and organisational relationships mean certain things"
+          ],
+          "keywords": ["structural", "sign", "symbol", "code", "visual language", "convention", "formal", "representation", "symbolic system", "composition", "elements", "principles", "communication"]
+        },
+        {
+          "label": "Postmodern Frame",
+          "code": "F-PM",
+          "description": "Challenge to traditional conventions, canons, values and histories of art. Brings doubt, suspicion and scepticism to the assumptions of other frames. Art as 'texts' that reconfigure, replicate and question previous texts and current narratives. Intertextuality, ambiguity, indeterminacy, contradiction. Artists and audiences create meaning through critique that exposes patterns of authority.",
+          "artmakingApplications": [
+            "Adopt positions related to understanding of contemporary artistic practice and theories",
+            "Recontextualise artworks and critique definitions of what art is",
+            "Modify, reinterpret or appropriate images from popular culture and media",
+            "Investigate newer technologies that challenge the unique, singular, precious object as art"
+          ],
+          "criticismApplications": [
+            "Question practice in art and assumptions about what art is",
+            "Investigate contemporary critical theory and particular theorists",
+            "View revisionist histories and critique traditional explanations of meaning",
+            "Re-evaluate notions of artistic genius and the masterpiece",
+            "Re-examine practices marginalised by conventional narratives of value"
+          ],
+          "keywords": ["postmodern", "intertextuality", "appropriation", "parody", "irony", "satire", "challenge", "deconstruction", "quotation", "recontextualisation", "ambiguity", "canon", "revisionist", "power relations", "contemporary"]
+        }
+      ]
+    },
+    "representation": {
+      "code": "R",
+      "title": "Representation",
+      "description": "How ideas and interests may be represented involving a synthesis of the interpretation of content/subject matter and the form of the work. Representation is concerned with how meaning is sustained at a number of levels through engagement with practice, artworld agencies and interpretive frameworks.",
+      "dotPoints": [
+        "Subject matter and forms as representations — how artists interpret ideas, issues, events and art",
+        "Content/subject matter: what is depicted, the ideas and interests represented",
+        "Form: the material, technical, aesthetic and structural qualities through which meaning is expressed",
+        "Synthesis: how the interpretation of content/subject matter and form together create meaning",
+        "Layers of meaning: how meaning is sustained at different levels — personal, cultural, symbolic, historical"
+      ],
+      "keywords": [
+        "representation", "subject matter", "content", "form", "meaning", "synthesis",
+        "layers of meaning", "interpretation", "signification", "aesthetic",
+        "conceptual strength", "coherence", "informed point of view"
+      ]
+    }
+  },
+
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Demonstrates a highly developed understanding of practice and a sustained reflective engagement informed by a knowledge of possibilities, conventions, processes and ways to proceed both practically and conceptually. Demonstrates an authoritative understanding of the artworld acknowledging the complex and subtle relations among the artist, artwork, world and audience. Demonstrates a sophisticated understanding of how different interpretive frameworks can be employed to represent a point of view. Demonstrates a sophisticated understanding of how ideas and interests may be represented involving a synthesis of the interpretation of content/subject matter and the form of the work. Demonstrates a highly developed understanding of how meaning is sustained at a number of levels through engagement with practice, artworld agencies and interpretive frameworks. Demonstrates resolution, coherence, completeness which is outstanding, innovative and cutting edge.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Highly developed understanding of practice — sustained, reflective, informed by knowledge of possibilities and conventions",
+        "Authoritative understanding of the artworld — complex and SUBTLE relations among all four agencies",
+        "Sophisticated understanding of how DIFFERENT interpretive frameworks (frames) represent a point of view",
+        "Sophisticated synthesis of content/subject matter AND form in understanding representation",
+        "Highly developed understanding of how meaning is sustained at MULTIPLE LEVELS through practice, artworld agencies and frames",
+        "Outstanding, innovative and cutting-edge resolution, coherence and completeness"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Demonstrates a well-developed understanding of practice and a sustained engagement involving a knowledge of possibilities, conventions, processes and ways to proceed both practically and conceptually. Demonstrates an accomplished understanding of the artworld involving relations among the artist, artwork, world, and audience. Demonstrates an accomplished understanding of how different interpretive frameworks can be employed to represent a point of view. Demonstrates a well-developed understanding of how ideas and interests may be represented involving a synthesis of the interpretation of content/subject matter and the form of work. Demonstrates an accomplished understanding of how meaning is sustained at a number of levels that involve practice, artwork agencies and interpretive frameworks. Demonstrates resolution, coherence, completeness which is accomplished.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Well-developed understanding of practice with knowledge of conventions and processes",
+        "Accomplished understanding of the artworld — relations among all four agencies",
+        "Accomplished understanding of how different frames represent a point of view",
+        "Well-developed synthesis of content/subject matter and form in representation",
+        "Accomplished understanding of meaning at multiple levels",
+        "Accomplished resolution, coherence and completeness"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Demonstrates a sound understanding of conventions, processes and possibilities of practice. Demonstrates a sound understanding of the artworld and relations among the artist, artwork, world and audience. Demonstrates a good understanding that interpretive frameworks inform a point of view. Demonstrates a sound understanding of representation by attempting some synthesis and interpretation of the content/subject matter and the form of the work. Demonstrates a good understanding that meaning can be sustained at a number of levels by makers, audiences and artworks. Demonstrates consideration of the need to adapt, refine and select ideas and approaches employed to achieve resolution. Demonstrates resolution, cohesion, completeness which is sound.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Sound understanding of conventions, processes and possibilities of practice",
+        "Sound understanding of the artworld and four agency relations",
+        "Good understanding that interpretive frameworks (frames) inform a point of view",
+        "Attempting some synthesis of subject matter and form in representation",
+        "Good understanding that meaning operates at multiple levels",
+        "Sound resolution and coherence"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates some understanding of conventions, processes and possibilities available to them yet demonstrates a limited engagement. Demonstrates a basic knowledge of the artworld understood and described as artist, artwork, world and audience. Demonstrates a foundational understanding of how different points of view may be possible but has difficulty presenting their own point of view. Demonstrates a basic understanding of representational issues by attempting to select and organise the subject matter/content and form of the work. Demonstrates some basic awareness that different meanings are possible in the visual arts. Demonstrates a foundational understanding of ideas and approaches to achieve resolution.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Some understanding of conventions and possibilities with limited engagement",
+        "Basic knowledge of the artworld — can describe the four agencies",
+        "Foundational understanding that different points of view are possible but difficulty expressing own",
+        "Attempts to select and organise subject matter and form but limited synthesis",
+        "Basic awareness that different meanings are possible"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Demonstrates some understanding of conventions, processes and possibilities of practice. Demonstrates a simple understanding of the artworld involving some knowledge of a few artists and artworks. Demonstrates some understanding that points of view are possible and may differ from their own. Demonstrates a limited understanding of how ideas and subject matter and materials can be represented. Demonstrates a belief that meaning is self-evident or apparent in their own and others' work. Demonstrates a limited selection of ideas and approaches to achieve resolution.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Some understanding of conventions",
+        "Simple understanding of artworld — knows some artists and artworks",
+        "Some understanding that other points of view exist",
+        "Limited understanding of representation",
+        "Treats meaning as self-evident rather than constructed"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": ["Minimum standard not demonstrated"]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Use a frame (or frames) to discuss/analyse/evaluate an artwork or artistic practice",
+        "Discuss how the conceptual framework (artist, artwork, world, audience) operates in artworks or practices",
+        "Explain how representation functions in a named artwork or body of practice",
+        "Evaluate how meaning is sustained through practice in artmaking and/or art criticism and history",
+        "Compare how different frames provide different interpretations of the same artwork or practice",
+        "Analyse how case studies illustrate relationships between practice, conceptual framework and frames"
+      ],
+      "visual_arts_specific_tips": [
+        "ALWAYS name a frame explicitly — say 'from the cultural frame' or 'applying the structural frame'. Never just say 'point of view' without identifying which frame generates it.",
+        "ALWAYS name specific artists and artworks as evidence — not 'an artist might...' but 'Frida Kahlo in The Two Fridas (1939) uses...'.",
+        "Use the conceptual framework relationally — show how ARTIST relates to ARTWORK relates to WORLD relates to AUDIENCE. Don't describe each agency separately.",
+        "Represent an INFORMED POINT OF VIEW — your response must take a position and sustain it, not just describe what others have said.",
+        "Show synthesis of content/subject matter AND form — meaning in Visual Arts is never just about what is depicted OR how it looks, but how both work together.",
+        "Meaning is constructed, not self-evident — always explain HOW and WHY an artwork means what you claim it means, using the frame and conceptual framework as your interpretive tools."
+      ],
+      "common_errors": [
+        "Describing an artwork without applying a frame — 'the painting shows...' with no interpretive framework earns Band 2-3.",
+        "Listing the four agencies without showing their relationships — Band 5-6 requires relational understanding, not a checklist.",
+        "Using the frames as labels rather than interpretive tools — 'this is postmodern' without explaining what the postmodern frame reveals about meaning.",
+        "Treating meaning as obvious ('the artwork means hope') rather than constructed through the frame and conceptual framework.",
+        "Not naming specific artworks and artists — generic examples cannot demonstrate case study knowledge.",
+        "Describing only the artmaking process without connecting to art criticism, art history, conceptual framework or frames."
+      ]
+    },
+    "marking_guidance": {
+      "frame_application_steps": [
+        "Identify and name the frame being applied (subjective / cultural / structural / postmodern).",
+        "Explain what this frame foregrounds — what relationships does it bring into focus?",
+        "Apply the frame to the specific relationships in the conceptual framework (artist → artwork → world → audience).",
+        "Name specific artworks and artists as evidence of the frame in operation.",
+        "Explain how subject matter AND form work together to create meaning from this frame's perspective.",
+        "Show how meaning is sustained at multiple levels — not just one reading."
+      ],
+      "quality_checks": {
+        "before_output": [
+          "Is a frame (or frames) explicitly named and applied — not just mentioned?",
+          "Are the relationships between agencies in the conceptual framework explored relationally?",
+          "Are specific named artworks and artists used as evidence?",
+          "Is an informed, sustained point of view being argued (not just described)?",
+          "Is there synthesis of content/subject matter AND form in the interpretation?",
+          "Is meaning shown as constructed through the frame — not self-evident?",
+          "Has the directive verb been answered (discuss vs analyse vs evaluate vs explain)?"
+        ],
+        "band6_checklist": [
+          "Highly developed understanding of practice — sophisticated, reflective, informed.",
+          "Authoritative understanding of the artworld — complex and SUBTLE relational understanding.",
+          "Multiple frames employed and compared — not just one frame applied mechanically.",
+          "Outstanding synthesis of subject matter and form in interpreting representation.",
+          "Meaning sustained at multiple levels — not a single reading.",
+          "Named artworks and artists integrated analytically, not listed.",
+          "Point of view is original, sustained and persuasive."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Authoritative, sophisticated, multi-layered interpretation using frames relationally. Subtle analysis of all four agency relationships. Outstanding synthesis of content/subject matter and form. Named works integrated as evidence. Cutting-edge, innovative point of view.",
+          "Band5": "Accomplished, well-developed interpretation applying frames clearly. Clear relational understanding of agencies. Good synthesis of subject matter and form. Named works as evidence. Sustained point of view.",
+          "Band4": "Sound interpretation with a frame identified and applied. Four agencies described with some relational understanding. Attempts synthesis of subject matter and form. Named examples present. Point of view emerging.",
+          "Band3": "Some understanding of conventions. Frames mentioned but used as labels. Agencies described separately. Limited synthesis. Basic awareness of constructed meaning.",
+          "Band2": "Describes artworks simply. Frames not applied. Little relational understanding. Treats meaning as self-evident.",
+          "Band1": "Do not generate unless explicitly requested as a wholly inadequate response."
+        },
+        "forbidden_behaviours": [
+          "Do not describe artworks without applying an interpretive framework.",
+          "Do not list the four agencies without showing their relational network.",
+          "Do not use frames as labels — they must generate interpretive insight.",
+          "Do not treat meaning as obvious or self-evident.",
+          "Do not use generic examples — always name specific artists and artworks."
+        ]
+      }
+    }
+  },
+
+  "directiveTiers": {
+    "define": { "tier": 1, "modality": "ignore" },
+    "identify": { "tier": 1, "modality": "ignore" },
+    "list": { "tier": 1, "modality": "ignore" },
+    "name": { "tier": 1, "modality": "ignore" },
+    "outline": { "tier": 1, "modality": "ignore" },
+    "state": { "tier": 1, "modality": "ignore" },
+    "describe": { "tier": 2, "modality": "ignore" },
+    "distinguish": { "tier": 2, "modality": "ignore" },
+    "compare": { "tier": 2, "modality": "ignore" },
+    "contrast": { "tier": 2, "modality": "ignore" },
+    "explain": { "tier": 2, "modality": "ignore" },
+    "examine": { "tier": 3, "modality": "ignore" },
+    "analyse": { "tier": 3, "modality": "ignore" },
+    "discuss": { "tier": 3, "modality": "optional" },
+    "investigate": { "tier": 3, "modality": "ignore" },
+    "interpret": { "tier": 3, "modality": "optional" },
+    "apply": { "tier": 3, "modality": "ignore" },
+    "consider": { "tier": 3, "modality": "ignore" },
+    "explore": { "tier": 3, "modality": "ignore" },
+    "synthesise": { "tier": 3, "modality": "optional" },
+    "assess": { "tier": 4, "modality": "required" },
+    "evaluate": { "tier": 4, "modality": "required" },
+    "critically analyse": { "tier": 4, "modality": "required" },
+    "justify": { "tier": 4, "modality": "ignore" },
+    "argue": { "tier": 4, "modality": "required" }
+  },
+
+  "connectives": {
+    "preferred": ["so", "because", "but"],
+    "accepted": [
+      "as a result", "therefore", "thus", "hence", "consequently",
+      "which means", "this enables", "leading to", "resulting in",
+      "due to", "since", "however", "although", "yet", "while", "whereas",
+      "through which", "by which", "in doing so"
+    ],
+    "contrast": [
+      "however", "although", "on the other hand", "despite",
+      "yet", "in contrast", "conversely", "nevertheless", "while",
+      "whereas", "rather than", "unlike"
+    ]
+  },
+
+  "visualArtsNote": "Visual Arts written responses are assessed on the quality of the interpretive point of view — how well the student applies the frames and conceptual framework to construct meaning about artworks and practice. CUBE in Visual Arts should identify: the directive verb (Circle), the frame(s) named in the question and key conceptual terms like agency names (Underline), and any constraints such as named artists, specific artworks, or time periods (Box). Planning arrows should suggest which frame to apply, which agency relationships to explore, and which named artworks to use as evidence.",
+
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
