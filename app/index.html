@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- CUBE Marking Coach — DEPLOY BUILD. Do not copy or redistribute. -->
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" sizes="32x32" href="/cube-app/favicon-Marking-32.png">
@@ -261,6 +260,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Configure pdf.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
 
@@ -1456,8 +1463,35 @@ function App() {
   const abortRef = useRef(null);
 
   // ── Shared file processor — used by file input, paste, and drag-drop ──
+  // ── PDF → JPEG conversion (page 1 only) ─────────────────────────────────
+  const pdfToImageFile = async (f) => {
+    setError(null);
+    if (typeof pdfjsLib === "undefined") throw new Error("PDF viewer not loaded — please refresh and try again.");
+    const arrayBuf = await f.arrayBuffer();
+    const pdf      = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+    const page     = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 2.0 }); // 2× for resolution
+    const canvas   = document.createElement("canvas");
+    canvas.width   = viewport.width;
+    canvas.height  = viewport.height;
+    await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        if (!blob) { reject(new Error("PDF render failed")); return; }
+        resolve(new File([blob], f.name.replace(/\.pdf$/i, ".jpg"), { type: "image/jpeg" }));
+      }, "image/jpeg", 0.90);
+    });
+  };
+
   const handleFileFromSource = async (f) => {
-    if (!f || !f.type.startsWith("image/")) { setError("Please provide an image file (JPG, PNG, etc)."); return; }
+    if (!f) return;
+    // Convert PDF to image first
+    if (f.type === "application/pdf" || f.name?.toLowerCase().endsWith(".pdf")) {
+      setError("Converting PDF page 1...");
+      try { f = await pdfToImageFile(f); }
+      catch(err) { setError("Could not read PDF: " + err.message); return; }
+    }
+    if (!f.type.startsWith("image/")) { setError("Please provide an image or PDF file."); return; }
     const p = studentName.trim().split(/\s+/).filter(Boolean);
     const nameValid = p.length >= 2 && p[p.length-1].length === 1;
     if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
@@ -1504,7 +1538,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     const onPaste = (e) => {
       if (phase !== 0 || pageImg) return; // only on upload screen, no image yet
       const items = Array.from(e.clipboardData?.items || []);
-      const imgItem = items.find(it => it.type.startsWith("image/"));
+      const imgItem = items.find(it => it.type.startsWith("image/") || it.type === "application/pdf");
       if (!imgItem) return;
       e.preventDefault();
       handleFileFromSource(imgItem.getAsFile());
@@ -2027,7 +2061,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
-                  {dragOver?"Drop to upload!":nameValid?"Tap to upload or take a photo":"Enter your name above first"}
+                  {dragOver?"Drop to upload!":nameValid?"Tap to upload a photo or PDF":"Enter your name above first"}
                 </div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
                   {nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}
@@ -2035,7 +2069,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 {nameValid&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
                   <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
                   <span style={{color:"rgba(255,255,255,0.2)"}}>|</span>
-                  <span>🖱️ Drag &amp; drop an image file</span>
+                  <span>🖱️ Drag &amp; drop an image or PDF (page 1 only)</span>
                 </div>}
                 {nameValid&&<div style={{marginTop:"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
@@ -2078,9 +2112,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </div>
                 </div>}
                 {nameValid&&<div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
+                {nameValid&&<div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div>}
               </div>;
             })()}
-            <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImg}/>
+            <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{display:"none"}} onChange={handleImg}/>
 
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
