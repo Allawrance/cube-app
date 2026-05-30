@@ -297,14 +297,14 @@ async function loadConfig() {
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
     // Map short URL codes to config filenames
-    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio" };
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
     const res = await fetch(configFile);
     if (!res.ok) throw new Error(configName + ".json not found (HTTP " + res.status + ")");
     const data = await res.json();
     config = { ...config, ...data };
-    // Read optional ?class= param (used by Biology for per-class sheet routing)
+    // Read optional ?class= param (used by Biology and Legal Studies for per-class sheet routing)
     const classParam = params.get("class") || "";
     if (classParam) config.studentClass = classParam;
     console.log("✅ Config loaded:", config.subjectCode, config.subjectName, classParam ? "class=" + classParam : "");
