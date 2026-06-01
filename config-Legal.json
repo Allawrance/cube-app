@@ -4,7 +4,7 @@
   "subjectShortName": "Legal",
   "dominantMode": "Argument + legal sources + effectiveness evaluation",
   "cleanRule": "Legal Studies = legal argument + named legal sources (legislation, cases, international instruments) + evaluation of effectiveness in achieving justice",
-  "leaderboardTip": "HSC Legal questions reward NAMED sources \u2014 cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
+  "leaderboardTip": "HSC Legal questions reward NAMED sources — cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
   "sheetTabCube": "LEG CUBE",
   "sheetTabFull": "LEG",
   "accentColor": "#ce93d8",
@@ -21,10 +21,10 @@
   ],
   "subjectContext": {
     "examStructure": {
-      "sectionI": "Core \u2014 Crime and Human Rights: 20 marks objective response (15 Crime, 5 Human Rights). May refer to stimulus.",
-      "sectionII_A": "Core \u2014 Human Rights: 15 marks short-answer questions (3\u20134 items). May refer to stimulus.",
-      "sectionII_B": "Core \u2014 Crime: 15 marks one extended response (~600 words / ~4 booklet pages).",
-      "sectionIII": "Options: 50 marks \u2014 two extended responses, each from a different Option (~1000 words / ~8 booklet pages each)."
+      "sectionI": "Core — Crime and Human Rights: 20 marks objective response (15 Crime, 5 Human Rights). May refer to stimulus.",
+      "sectionII_A": "Core — Human Rights: 15 marks short-answer questions (3–4 items). May refer to stimulus.",
+      "sectionII_B": "Core — Crime: 15 marks one extended response (~600 words / ~4 booklet pages).",
+      "sectionIII": "Options: 50 marks — two extended responses, each from a different Option (~1000 words / ~8 booklet pages each)."
     },
     "coreTopics": [
       "Crime",
@@ -41,21 +41,23 @@
     ],
     "legalSourceTypes": [
       "legislation (Acts of Parliament, statutes, delegated legislation)",
-      "cases (court decisions, precedents \u2014 must be named)",
+      "cases (court decisions, precedents — must be named)",
       "media (newspaper reports, investigative journalism)",
       "international instruments (declarations, treaties, conventions, covenants)",
       "international documents (UN resolutions, reports)"
     ],
     "effectivenessCriteria": [
-      "resource efficiency",
-      "accessibility",
-      "enforceability",
-      "responsiveness",
-      "protection of individual rights",
-      "meeting society's needs",
-      "application of the rule of law",
-      "has justice been achieved?"
-    ]
+      "Protection of Individual Rights",
+      "Enforceability of the Law",
+      "Accessibility of the Law",
+      "Responsiveness of the Law",
+      "Resource Efficiency",
+      "Is Justice Being Achieved?",
+      "Application of the Rule of Law",
+      "Meeting Society's Expectations"
+    ],
+    "effectivenessCriteriaInstruction": "For 'evaluate' (and 'assess' / 'critically evaluate') questions in Legal Studies, students MUST explicitly refer to 1–3 of the effectiveness criteria by name within their response. A response that does not name at least one criterion cannot demonstrate effectiveness evaluation at Band 5–6 level. Students should select the criteria most relevant to the specific question (e.g. a question about the criminal investigation process would most likely draw on Enforceability of the Law, Accessibility of the Law, and Protection of Individual Rights).",
+    "evidenceRequirementInstruction": "For ALL extended response questions in Legal Studies (evaluate, assess, discuss, analyse, examine), students MUST support their argument with named evidence drawn from at least one of the following source types: legislation (e.g. Crimes Act 1900 (NSW), Family Law Act 1975 (Cth)), case law (e.g. Mabo v Queensland [No 2] (1992), R v Dietrich (1992)), media articles (e.g. named newspaper reports or investigative journalism), government/international documents (e.g. UN reports, ALRC reports), or international law instruments (e.g. UDHR 1948, ICCPR, Rome Statute). Generic references to 'the law', 'courts', or 'legislation' without naming specific sources cannot exceed Band 3. Band 5–6 requires multiple named sources integrated analytically — not listed, but woven into the argument as evidence."
   },
   "syllabus": {
     "core": {
@@ -421,7 +423,7 @@
             {
               "label": "O6-2",
               "title": "Regulation of the workplace",
-              "content": "Industrial relations \u2014 state and federal framework; negotiations; dispute resolution; courts, tribunals, government organisations, trade unions, employer associations, NGOs, media; remuneration"
+              "content": "Industrial relations — state and federal framework; negotiations; dispute resolution; courts, tribunals, government organisations, trade unions, employer associations, NGOs, media; remuneration"
             },
             {
               "label": "O6-3",
@@ -498,7 +500,7 @@
       "descriptor": "Analyses, synthesises and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates extensive knowledge and understanding of the operation of the legal system and the processes involved in law reform. Synthesises and analyses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Communicates coherent arguments on contemporary issues from differing perspectives and interpretations. Communicates an argument using relevant legal concepts and terminology.",
       "scoreRange": "90-100",
       "keyFeatures": [
-        "Analyses, synthesises AND interprets \u2014 not just describes",
+        "Analyses, synthesises AND interprets — not just describes",
         "Evaluates effectiveness explicitly with supported judgement",
         "Extensive knowledge of legal system operation and law reform processes",
         "Synthesises sources: legislation + cases + media + international instruments together",
@@ -510,7 +512,7 @@
       "descriptor": "Analyses and interprets information to evaluate the effectiveness of the domestic and international legal system in addressing issues. Demonstrates detailed knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses legal information from a variety of sources including relevant legislation, cases, media, international instruments and documents to support arguments in a domestic and international context. Presents clear arguments on contemporary issues from differing perspectives. Communicates using relevant legal concepts and terminology.",
       "scoreRange": "80-89",
       "keyFeatures": [
-        "Analyses and interprets \u2014 not just describes",
+        "Analyses and interprets — not just describes",
         "Evaluates effectiveness with clear judgement",
         "Detailed knowledge of legal system and law reform",
         "Uses multiple source types to support arguments",
@@ -522,7 +524,7 @@
       "descriptor": "Provides some analysis of information and issues related to the effectiveness of the domestic and international legal system. Demonstrates good knowledge and understanding of the operation of the legal system and the processes involved in law reform. Uses appropriate legal information from sources including legislation, cases, media, international instruments and documents. Uses appropriate legal concepts and terminology.",
       "scoreRange": "70-79",
       "keyFeatures": [
-        "Some analysis \u2014 moves beyond pure description",
+        "Some analysis — moves beyond pure description",
         "Good knowledge of legal system",
         "Uses appropriate legal sources",
         "Appropriate legal terminology"
@@ -555,41 +557,43 @@
     },
     "subject_specific_guidance": {
       "dominant_question_types": [
-        "Evaluate the effectiveness of the law/legal system in achieving justice (most common \u2014 extended response)",
+        "Evaluate the effectiveness of the law/legal system in achieving justice (most common — extended response)",
         "Assess the role of legal and non-legal measures in addressing an issue",
         "Analyse the tension between community interests and individual rights",
         "Discuss the extent to which the law balances competing interests",
         "Examine the role of law reform in addressing an issue"
       ],
       "legal_specific_tips": [
-        "ALWAYS name specific legal sources: use full names of cases (e.g. Mabo v Queensland [No 2] (1992)), Acts (e.g. Crimes Act 1900 (NSW)), and international instruments (e.g. Universal Declaration of Human Rights 1948).",
+        "MANDATORY — EVIDENCE for ALL extended responses: support every argument with named sources. Accepted source types: legislation (e.g. Crimes Act 1900 (NSW)), case law (e.g. Mabo v Queensland [No 2] (1992)), media articles (name the outlet), international instruments (e.g. Universal Declaration of Human Rights 1948), government/international documents (e.g. ALRC reports, UN resolutions). Generic references to 'the law' or 'courts' cannot exceed Band 3.",
         "For evaluate/assess questions: present BOTH the strengths AND limitations of the legal response, then make an explicit judgement about overall effectiveness.",
-        "Reference the effectiveness criteria: accessibility, enforceability, responsiveness, protection of individual rights, meeting society's needs, rule of law, and whether justice was achieved.",
-        "Show understanding of the role of BOTH legal measures (courts, legislation, tribunals) AND non-legal measures (NGOs, media, political negotiation) \u2014 Band 5-6 integrates both.",
+        "CRITICAL for evaluate/assess: Explicitly name 1–3 of the eight effectiveness criteria within the response. Use the exact criterion name (e.g. 'In terms of Accessibility of the Law...', 'This demonstrates limited Enforceability of the Law because...'). A response that does not name at least one criterion cannot reach Band 5–6. The eight criteria are: Protection of Individual Rights | Enforceability of the Law | Accessibility of the Law | Responsiveness of the Law | Resource Efficiency | Is Justice Being Achieved? | Application of the Rule of Law | Meeting Society's Expectations.",
+        "Show understanding of the role of BOTH legal measures (courts, legislation, tribunals) AND non-legal measures (NGOs, media, political negotiation) — Band 5-6 integrates both.",
         "Themes and challenges must be woven throughout: compliance/non-compliance, law reform, the extent to which law reflects moral/ethical standards, balancing rights."
       ],
       "common_errors": [
         "Describing what the law says without evaluating how effective it is.",
         "Generic references to 'courts' or 'legislation' without naming specific cases or Acts.",
-        "Forgetting non-legal measures (NGOs, media, political pressure) \u2014 questions often require both.",
-        "One-sided arguments \u2014 Band 5-6 requires differing perspectives and a balanced evaluation.",
+        "Forgetting non-legal measures (NGOs, media, political pressure) — questions often require both.",
+        "One-sided arguments — Band 5-6 requires differing perspectives and a balanced evaluation.",
         "Failing to link back to the specific question (justice, effectiveness, balancing rights)."
       ]
     },
     "marking_guidance": {
       "evaluate_effectiveness_steps": [
         "Identify the legal/non-legal measure being evaluated.",
-        "Explain how the measure works (briefly \u2014 don't over-describe).",
-        "Present evidence/argument for its effectiveness (strength 1, strength 2).",
-        "Present evidence/argument against its effectiveness (limitation 1, limitation 2).",
-        "Name specific cases, legislation, or international instruments as evidence.",
-        "Apply effectiveness criteria explicitly (e.g. 'While accessible to individuals, enforcement remains limited because...').",
-        "Make an explicit, justified judgement about overall effectiveness."
+        "Explain how the measure works (briefly — don't over-describe).",
+        "Select 1–3 of the eight effectiveness criteria most relevant to this question and explicitly name them in the response (e.g. 'In terms of Accessibility of the Law...', 'Regarding Enforceability of the Law...').",
+        "MANDATORY — EVIDENCE: Support each point with at least one named source. Sources must be specific: legislation (name the Act and jurisdiction), case law (name the case and year), media (name the outlet/report), international instruments (name the document and year), or government/international documents (name the body and report). Generic references score no higher than Band 3.",
+        "Present evidence/argument for effectiveness (strength 1, strength 2) — each strength linked to a named criterion AND a named source.",
+        "Present evidence/argument against effectiveness (limitation 1, limitation 2) — each limitation linked to a named criterion AND a named source.",
+        "Make an explicit, justified judgement about overall effectiveness — reference your criteria and sources in the conclusion."
       ],
-      "source_integration_rule": "Named cases, legislation and international instruments MUST appear. A response with no specific legal sources cannot exceed Band 3. One named source = Band 3-4 threshold; multiple integrated sources = Band 5-6.",
+      "source_integration_rule": "Named evidence MUST appear in all extended responses. Accepted source types: legislation (Act name + jurisdiction), case law (case name + year), media articles (outlet name), international instruments (document name + year), government/international documents (body + document name). A response with no specific named sources cannot exceed Band 3. One named source = Band 3–4 threshold; multiple named sources integrated analytically = Band 5–6.",
       "quality_checks": {
         "before_output": [
           "Has the directive verb been answered correctly (evaluate vs describe vs discuss)?",
+          "For evaluate/assess questions: are 1–3 of the eight effectiveness criteria explicitly named in the response?",
+          "For ALL extended responses: is at least one specific named source included? (legislation, case law, media, international instruments, or government/international documents) A response with only generic references cannot exceed Band 3.",
           "Are specific cases, legislation, or international instruments named?",
           "Are both legal AND non-legal measures considered where relevant?",
           "Are differing perspectives or both sides of the argument presented?",
@@ -598,9 +602,10 @@
           "Is legal terminology used precisely and consistently?"
         ],
         "band6_checklist": [
-          "Analyses, synthesises AND interprets \u2014 not just lists or describes.",
+          "Analyses, synthesises AND interprets — not just lists or describes.",
           "Evaluates effectiveness with an explicit, evidence-based judgement.",
-          "Multiple named legal sources integrated analytically (not just listed).",
+          "Explicitly names 1–3 effectiveness criteria by exact name and applies them as an analytical framework (not just mentions them in passing).",
+          "Multiple named sources integrated analytically — legislation (Act + jurisdiction), case law (case name + year), media, international instruments, or government documents — woven into the argument, not listed. Generic references anywhere = automatic Band 4 ceiling.",
           "Coherent argument from differing perspectives.",
           "Themes and challenges woven throughout.",
           "Precise legal terminology used consistently."
@@ -617,8 +622,8 @@
         },
         "forbidden_behaviours": [
           "Do not generate a response that only describes the law without evaluating its effectiveness.",
-          "Do not use generic references \u2014 always name specific cases, Acts, or instruments.",
-          "Do not present only one side \u2014 always include differing perspectives.",
+          "Do not use generic references — always name specific cases, Acts, or instruments.",
+          "Do not present only one side — always include differing perspectives.",
           "Do not ignore non-legal measures where relevant."
         ]
       }
@@ -775,7 +780,7 @@
       "notwithstanding"
     ]
   },
-  "legalSourcesNote": "Legal Studies marking requires specific named sources. The CUBE Underline step should highlight not just syllabus keywords but also any named cases, Acts, or international instruments in the question \u2014 these are the evidence base for the argument.",
+  "legalSourcesNote": "Legal Studies marking requires specific named sources. The CUBE Underline step should highlight not just syllabus keywords but also any named cases, Acts, or international instruments in the question — these are the evidence base for the argument.",
   "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
 }
