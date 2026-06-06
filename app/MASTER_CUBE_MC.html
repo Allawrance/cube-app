@@ -2018,10 +2018,6 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         {phase===0&&(
           <div>
             
-            <div style={{textAlign:"center",marginBottom:"24px"}}>
-              <h1 style={{fontSize:"26px",margin:"0 0 8px",color:"#f0e6c8",fontWeight:700}}>Check Your Answer</h1>
-            </div>
-
             {/* ── Student name field ── */}
             <div style={{marginBottom:"20px"}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"8px"}}>
@@ -2057,10 +2053,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onDragOver={e=>{e.preventDefault();e.stopPropagation();setDragOver(true);}}
                 onDragLeave={e=>{e.preventDefault();setDragOver(false);}}
                 onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);const f=e.dataTransfer.files[0];if(f)handleFileFromSource(f);}}
-                style={{border:`2px dashed ${dragOver?"#c9a84c":nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"40px 24px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}}
+                style={{border:`2px dashed ${dragOver?"#c9a84c":nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"20px 24px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}}
                 onMouseOver={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.08)":"rgba(229,115,115,0.08)";}}
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
-                <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
                   {dragOver?"Drop to upload!":nameValid?"Tap to upload a photo or PDF":"Enter your name above first"}
                 </div>
@@ -2112,7 +2107,6 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>
                   </div>
                 </div>}
-                {nameValid&&<div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
                 {nameValid&&<div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div>}
               </div>;
             })()}
