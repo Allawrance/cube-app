@@ -235,6 +235,20 @@ body {
 .chip-xp     { color: var(--purple); background: rgba(168,159,255,0.12); border: 1px solid rgba(168,159,255,0.3); }
 .chip-module { color: var(--accent2); background: rgba(78,205,196,0.1); border: 1px solid rgba(78,205,196,0.3); font-family: 'DM Mono', monospace; font-size: 11px; }
 
+.btn-exit {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-exit:hover { border-color: var(--wrong); color: var(--wrong); }
+
 /* ─────────────────────────────── MAIN LAYOUT ────────────────────────────── */
 .main-layout {
   display: grid;
@@ -605,6 +619,7 @@ body {
       <span class="chip chip-module" id="chipModule">All Modules</span>
       <span class="chip chip-streak" id="chipStreak">🔥 0</span>
       <span class="chip chip-xp"     id="chipXP">⚡ 0 XP</span>
+      <button class="btn-exit" onclick="exitSession()">✕ Exit</button>
     </div>
   </div>
 
@@ -886,7 +901,7 @@ function renderQuestion() {
 
   // Determine image URL if question has image
   const imgUrl = q.image
-    ? `https://allawrance.github.io/${state.subject}/questions/images/${q.image}`
+    ? `https://allawrance.github.io/cube-app/${state.subject}/questions/images/${q.year}/${q.image}`
     : null;
 
   // Build stimulus HTML
@@ -1050,6 +1065,17 @@ function showFeedback(q, chosenLetter, correct, reflectionType) {
   }
 
   document.getElementById("btnNext").style.display = "inline-block";
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXIT SESSION
+// ═══════════════════════════════════════════════════════════════════════════════
+function exitSession() {
+  if (!confirm("Exit this session? Your progress will not be saved.")) return;
+  document.getElementById("sessionScreen").style.display = "none";
+  document.getElementById("modeScreen").style.display    = "flex";
+  document.getElementById("loadingMsg").textContent = "";
+  document.getElementById("btnStart").disabled = false;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
