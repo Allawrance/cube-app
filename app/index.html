@@ -291,7 +291,7 @@ let config = {
 };
 
 // Load config.json from same directory — runs once before React mounts
-async function loadConfig() {
+async function _f674dd() {
   try {
     // Read ?subject=EES (or BS/HM/ES) from the URL — default to EES
     const params  = new URLSearchParams(window.location.search);
@@ -315,7 +315,7 @@ async function loadConfig() {
 
 // ─── CONSTANTS (subject-independent) ─────────────────────────────────────────
 const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"],[18,20,"Band 6"]];
-const getBand = (score, maxScore=20) => {
+const _2c7e13 = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
 };
@@ -323,7 +323,7 @@ const getBand = (score, maxScore=20) => {
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 // Read EXIF orientation tag from raw JPEG buffer (handles all 8 values)
-const getExifOrientation = (buffer) => {
+const _8ea27a = (buffer) => {
   try {
     const view = new DataView(buffer);
     if (view.getUint16(0, false) !== 0xFFD8) return 1; // not a JPEG
@@ -353,7 +353,7 @@ const getExifOrientation = (buffer) => {
 
 // Apply canvas transform for EXIF orientation before drawing image
 // Orientations 5-8 are rotated 90/270° so canvas width/height must be swapped
-const applyExifTransform = (canvas, ctx, orientation, w, h) => {
+const _5ab340 = (canvas, ctx, orientation, w, h) => {
   switch (orientation) {
     case 2: ctx.transform(-1, 0, 0,  1, w, 0); break;           // flip horizontal
     case 3: ctx.transform(-1, 0, 0, -1, w, h); break;           // 180°
@@ -371,7 +371,7 @@ const toB64 = f => new Promise((res, rej) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     const buffer = e.target.result;
-    const orientation = getExifOrientation(buffer);
+    const orientation = _8ea27a(buffer);
     const rotated = orientation >= 5; // orientations 5-8 swap width/height
 
     const blob = new Blob([buffer], { type: f.type });
@@ -395,7 +395,7 @@ const toB64 = f => new Promise((res, rej) => {
       canvas.height = outH;
       const ctx = canvas.getContext("2d");
       ctx.save();
-      applyExifTransform(canvas, ctx, orientation, outW, outH);
+      _5ab340(canvas, ctx, orientation, outW, outH);
       // Draw scaled to output size (ctx transform handles rotation)
       if (rotated) {
         ctx.drawImage(img, 0, 0, rawW * scale, rawH * scale);
@@ -413,9 +413,9 @@ const toB64 = f => new Promise((res, rej) => {
   reader.readAsArrayBuffer(f);
 });
 
-const sanitiseInput = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
+const _d0c6fa = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
 
-const privacyName = (fullName) => {
+const _612d25 = (fullName) => {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "anonymous";
   if (parts.length === 1) return parts[0];
@@ -432,7 +432,7 @@ const CPL = 50;
 
 
 // ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
-function buildLines(text, cplOverride) {
+function _eeaee5(text, cplOverride) {
   const CPL_USE = cplOverride || CPL;
   if (!text) return [];
   const lines = [];
@@ -469,7 +469,7 @@ function buildLines(text, cplOverride) {
   return lines;
 }
 
-function getXY(idx, lines, yOff = 0) {
+function _85c320(idx, lines, yOff = 0) {
   if (!lines.length) return { x: PL, y: PT + yOff, li: 0 };
   for (let i = 0; i < lines.length; i++) {
     const end = lines[i].start + lines[i].text.length;
@@ -482,7 +482,7 @@ function getXY(idx, lines, yOff = 0) {
   return { x: PL, y: PT + yOff, li: 0 };
 }
 
-function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
+function _e701da({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
                               // legacy fallback props
                               directive, syllabusMatch }) {
   if (!text) return null;
@@ -496,7 +496,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   // Responsive CPL — fewer chars per line on narrow mobile screens
   const isMobile = typeof window !== "undefined" && window.innerWidth < 500;
   const effectiveCPL = isMobile ? 28 : CPL;
-  const lines = buildLines(text, effectiveCPL);
+  const lines = _eeaee5(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
   // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
@@ -529,13 +529,13 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   };
 
   // ── C: red ovals — one per directive verb ────────────────────────────────
-  // s.y from getXY = SVG text baseline (y attr of <text> element)
+  // s.y from _85c320 = SVG text baseline (y attr of <text> element)
   // Cap-height midpoint ≈ baseline - FONT_SIZE*0.36 ≈ baseline - 6px
   // ry should span from descender to ascender: ~FONT_SIZE*0.75
   dirs.forEach((dv, di) => {
     if (dv.startIndex == null || !dv.word) return;
     const exactStart = findExact(dv.word, dv.startIndex);
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     const wPx = dv.word.length * CW;
     const rx = wPx/2 + 10;
     const ry = FONT_SIZE * 0.80;   // compact — spans the letter body
@@ -555,10 +555,10 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     const wordStr = kw.word || kw.topicTitle || "";
     const exactStart = findExact(wordStr, kw.startIndex);
     const exactEnd = exactStart + wordStr.length;
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty segment).
-    const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
+    const eRaw = _85c320(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
     for (let l = s.li; l <= e.li && l < lines.length; l++) {
       const x1 = l === s.li ? s.x : PL;
@@ -584,10 +584,10 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     if (SKIP_WORDS.has(tl) || kwdTexts.has(tl) || dirTexts.has(tl)) return;
     const exactStart = findExact(trimmed, ct.startIndex);
     const exactEnd   = exactStart + trimmed.length;
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty box).
-    const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
+    const eRaw = _85c320(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
     const drawEnd = e.li;  // use actual end line — allows multi-word constraints to span lines
     for (let l = s.li; l <= drawEnd && l < lines.length; l++) {
@@ -628,7 +628,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       .filter(a => a.targetStartIndex != null && a.label)
       .map((a, gi) => {
         const idx = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
-        const pos = getXY(idx, lines, PLAN_EXTRA);
+        const pos = _85c320(idx, lines, PLAN_EXTRA);
         const ls  = splitLabel(a.label);
         const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 52);
         const bh  = ls.length * LH_N + PAD_Y * 2;
@@ -749,7 +749,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
 
 // ─── FORMATTED RESPONSE with bold connectives + italic noun groups ────────────
 // Also detects runs of 3+ spaces left by AI for illegible words → converts to [?]
-function normaliseIllegible(text) {
+function _6ec938(text) {
   if (!text) return text;
   // Replace 3+ consecutive spaces with [?] — AI commonly leaves gaps for illegible words
   return text.replace(/ {3,}/g, ' [?] ');
@@ -757,14 +757,14 @@ function normaliseIllegible(text) {
 
 // Post-process formattedResponse: if AI forgot _italic_ markers for noun groups,
 // wrap them based on detectedNounGroups list. Also ensure [?] from studentText carries through.
-function enrichFormattedResponse(formatted, studentText, nounGroups, connectives) {
+function _9eca9d(formatted, studentText, nounGroups, connectives) {
   // Pick best source
   const hasMarkup = t => t && (t.includes('**') || t.includes('_') || t.includes('[?]'));
   let text = hasMarkup(formatted) ? formatted
            : hasMarkup(studentText) ? studentText
            : formatted || studentText || '';
   // Normalise illegible gaps — 3+ spaces → [?]
-  text = normaliseIllegible(text);
+  text = _6ec938(text);
 
   // Always inject bold connectives client-side if not already present
   const allConnectives = [
@@ -789,9 +789,9 @@ function enrichFormattedResponse(formatted, studentText, nounGroups, connectives
   }
   return text;
 }
-function FormattedResponse({ text }) {
+function _35d126({ text }) {
   if (!text) return null;
-  const cleaned = normaliseIllegible(text);
+  const cleaned = _6ec938(text);
   const parts = [];
   const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
   let last = 0, m;
@@ -830,7 +830,7 @@ const ScoreDot = ({score,max=5}) => {
 const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
-function Steps({current, activeTab, onTabChange}) {
+function _f3a294({current, activeTab, onTabChange}) {
   const steps = ["Upload","CUBE","Plan","Script","Rubric","Feedback","🏆"];
   const tabToStep = {cube:1, plan:2, script:3, rubric:4, feedback:5, rank:6};
   const stepToTab = {1:"cube", 2:"plan", 3:"script", 4:"rubric", 5:"feedback", 6:"rank"};
@@ -869,7 +869,7 @@ function Steps({current, activeTab, onTabChange}) {
 }
 
 // ─── PAPER CARD ──────────────────────────────────────────────────────────────
-function PaperCard({children, subtitle}) {
+function _e3ea66({children, subtitle}) {
   return <div style={{background:"#fffef5",borderRadius:"16px",padding:"20px 24px",boxShadow:"0 4px 24px rgba(0,0,0,0.4)",border:"1px solid #e8e0c8",position:"relative",overflow:"hidden",marginBottom:"16px"}}>
     <div style={{position:"absolute",inset:0,pointerEvents:"none"}}>
       {[...Array(8)].map((_,i)=><div key={i} style={{position:"absolute",left:0,right:0,top:`${48+i*32}px`,height:"1px",background:"rgba(160,180,220,0.3)"}}/>)}
@@ -881,7 +881,7 @@ function PaperCard({children, subtitle}) {
 }
 
 // ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
-function RubricRow({label, data, applicable=true, dimMax=5}) {
+function _b6a519({label, data, applicable=true, dimMax=5}) {
   // Cap raw Sonnet score at dimMax (scales with question marks value)
   const rawScore = data?.score||0;
   const score    = Math.min(rawScore, dimMax);
@@ -910,7 +910,7 @@ function RubricRow({label, data, applicable=true, dimMax=5}) {
 // Renders into a hidden #print-report div. @media print hides everything else.
 // Downloaded as a self-contained HTML file via triggerPrint (works inside Google Sites iframes).
 
-function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
+function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
                        dirs, kwds, c, a, score, maxScore, dimMaxR,
                        causalApplicable, modalityApplicable,
                        stage2Results, connectives,
@@ -919,7 +919,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 
   const gold = "#c9a84c";
   const marksKnown = c.marks !== null && c.marks !== undefined;
-  const band = marksKnown ? null : getBand(score, maxScore);
+  const band = marksKnown ? null : _2c7e13(score, maxScore);
   const displayedMark = marksKnown
     ? `${Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)} / ${c.marks} marks`
     : band ? `Indicative ${band}` : "";
@@ -936,9 +936,9 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   ];
 
   // ── Response text renderer (print-safe — no React spans with dark bg) ──
-  function PrintResponse({ text }) {
+  function _c99bf3({ text }) {
     if (!text) return null;
-    const cleaned = normaliseIllegible(text);
+    const cleaned = _6ec938(text);
     const parts = [];
     const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
     let last = 0, m;
@@ -964,7 +964,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   };
 
   // ── Formatted response for print ──
-  const responseText = enrichFormattedResponse(
+  const responseText = _9eca9d(
     a.formattedResponse, a.studentResponseText, a.detectedNounGroups, connectives
   );
 
@@ -1067,7 +1067,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
           CUBE the question — the syllabus points underlined below show exactly where this question comes from in the syllabus, so you know where to focus next time.
         </div>
         {kwds.length > 0 && (()=>{
-          function DotPointWithUnderline({ sylText, kwWord }) {
+          function _37af55({ sylText, kwWord }) {
             if (!sylText) return null;
             if (!kwWord) return <span>{sylText}</span>;
             const stem = kwWord.toLowerCase().split(" ")[0].slice(0, Math.max(5, kwWord.split(" ")[0].length - 2));
@@ -1105,7 +1105,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
                         <td style={{padding:"6px 10px",color:"#666",whiteSpace:"nowrap"}}>{moduleRef||"—"}</td>
                         <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.6"}}>
                           {sylText
-                            ? <DotPointWithUnderline sylText={sylText} kwWord={kwWord} />
+                            ? <_37af55 sylText={sylText} kwWord={kwWord} />
                             : <span style={{color:"#999",fontStyle:"italic"}}>{kw.topicTitle||"—"}</span>
                           }
                         </td>
@@ -1163,7 +1163,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.6"}}>
           The next step is to annotate the question to provide you with a plan. This will ensure your answer is concise and flows logically. Below is an example of how the question could be annotated.
         </div>
-        <SVGAnnotatedPaper
+        <_e701da
           text={c.questionText}
           directives={dirs}
           syllabusKeywords={kwds}
@@ -1238,7 +1238,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         </div>
         <div className="pr-paper pr-paper-lines">
           <div className="pr-response-text">
-            <PrintResponse text={responseText}/>
+            <_c99bf3 text={responseText}/>
           </div>
         </div>
       </div>
@@ -1364,7 +1364,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function App() {
+function _ac863f() {
   const [studentName, setStudentName] = useState(() => {
     try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
   });
@@ -1505,7 +1505,7 @@ function App() {
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
+        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
         body: JSON.stringify({
           model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
@@ -1572,11 +1572,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
     // Generate session ID shared between Stage 1 + Stage 2 for this attempt
-    const sid = privacyName(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
+    const sid = _612d25(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
     setSessionId(sid);
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
+        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
         signal: abortRef.current.signal,
         body: JSON.stringify({
           stage: "stage1",
@@ -1584,9 +1584,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           syllabus: config.syllabus,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${sanitiseInput(questionNumber)} in this image, apply CUBE to the printed question text only. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
+            { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${_d0c6fa(questionNumber)} in this image, apply CUBE to the printed question text only. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${sanitiseInput(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
+            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${_d0c6fa(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
         })
       });
@@ -1651,13 +1651,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     const pk = kwds2[0] || {};
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous"))},
+        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous"))},
         body: JSON.stringify({
           stage:       "modelAnswer",
           subject:     config.subjectCode,
           subjectName: config.subjectName,
           bandRules:   config.bandRules,
-          questionText: sanitiseInput(questionText),
+          questionText: _d0c6fa(questionText),
           dirs:        dirs2,
           kwds:        kwds2,
           primaryKwd:  pk,
@@ -1767,7 +1767,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       setLeaderboard(data);
       // Sync streak from server for current student (cross-device consistency)
       try {
-        const me = privacyName(studentName.trim()||"anonymous");
+        const me = _612d25(studentName.trim()||"anonymous");
         const myRow = (data.leaderboard||[]).find(p=>p.student===me);
         if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
           // Server streak is source of truth for the COUNT — but preserve the
@@ -1800,13 +1800,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(sanitiseInput(questionNumber))},
+        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))},
         body: JSON.stringify({
           stage:           "stage2",
           subject:         config.subjectCode,
           imageData:       pageB64,
-          questionText:    sanitiseInput(c1.questionText),
-          questionNumber:  sanitiseInput(questionNumber),
+          questionText:    _d0c6fa(c1.questionText),
+          questionNumber:  _d0c6fa(questionNumber),
           primaryDir:      primaryDir,
           dirs:            dirs,
           kwds:            kwds,
@@ -1871,7 +1871,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         // Update session XP using correctly capped score and max
         setWriteXP(Math.min(sc, mx));
         setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
-        const band = getBand(sc, mx);
+        const band = _2c7e13(sc, mx);
         const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
@@ -1884,7 +1884,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             type:             "FULL_ROW",
             webhookUrl:       config.logUrl,
             subject:          config.subjectName,
-            student:          privacyName(studentName.trim()||"anonymous"),
+            student:          _612d25(studentName.trim()||"anonymous"),
             sessionId:        sessionId,
             attempt:          iterCount,
             streak:           streak,
@@ -1999,6 +1999,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+            {/* ── MC Coach button — always visible ── */}
+            <a href="../mc-sa-coach.html" target="_blank" rel="noopener noreferrer"
+              title="Multiple Choice Coach"
+              style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
+              onMouseOver={e=>{e.currentTarget.style.borderColor="rgba(201,168,76,0.6)";e.currentTarget.style.color="#c9a84c";}}
+              onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.15)";e.currentTarget.style.color="#c8d8e8";}}>
+              <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="MC" style={{width:"22px",height:"22px",borderRadius:"4px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
+              <span className="hide-mobile">MC Coach</span>
+            </a>
             {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:"14px"}}>day{streak!==1?"s":""}</span></div>}
             {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
             {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
@@ -2179,10 +2188,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
           const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
           const maxScore = (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
-          const band = marksKnown ? null : getBand(score, maxScore);
+          const band = marksKnown ? null : _2c7e13(score, maxScore);
 
           return <div>
-            {/* ── ORDER: 1) Question bar  2) Steps nav  3) Tab content — DO NOT REORDER ── */}
+            {/* ── ORDER: 1) Question bar  2) _f3a294 nav  3) Tab content — DO NOT REORDER ── */}
             {/* ── Question summary bar ── */}
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               {/* Metadata row */}
@@ -2259,7 +2268,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               );
             })()}
 
-            <Steps current={4} activeTab={activeTab} onTabChange={(tab)=>{
+            <_f3a294 current={4} activeTab={activeTab} onTabChange={(tab)=>{
                 setActiveTab(tab);
                 if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
               }}/>
@@ -2268,7 +2277,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             {activeTab==="cube"&&<div>
               <SectionTitle>STEP 2 — CUBE ANALYSIS</SectionTitle>
 
-              <SVGAnnotatedPaper
+              <_e701da
                 text={c.questionText}
                 directives={dirs}
                 syllabusKeywords={kwds}
@@ -2480,7 +2489,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {/* SVG + all plan content — only shown after Stage 2 has run */}
               {stage2Results&&<div>
               {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
-              <SVGAnnotatedPaper
+              <_e701da
                 text={c.questionText}
                 directives={dirs}
                 syllabusKeywords={kwds}
@@ -2648,11 +2657,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
                 <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
               </div>
-              <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
+              <_e3ea66 subtitle="STUDENT RESPONSE — VERBATIM">
                 <div style={{fontSize:"16px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>
-                  <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
+                  <_35d126 text={_9eca9d(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
                 </div>
-              </PaperCard>
+              </_e3ea66>
 
               {/* Photo below the typed response — annotation detail moved to Plan tab */}
               {pageB64&&<div style={{marginTop:"12px"}}>
@@ -2689,10 +2698,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </tr>
                   </thead>
                   <tbody>
-                    <RubricRow label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
-                    <RubricRow label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
-                    <RubricRow label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
-                    <RubricRow label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
+                    <_b6a519 label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
+                    <_b6a519 label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
+                    <_b6a519 label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
+                    <_b6a519 label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
 
                   </tbody>
                 </table>
@@ -2946,9 +2955,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
                     ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
                   </div>
-                  <PaperCard subtitle="">
+                  <_e3ea66 subtitle="">
                     <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
-                  </PaperCard>
+                  </_e3ea66>
                   <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
                 </>}
               </div>
@@ -3012,7 +3021,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 const board = lbPeriod==="improved"
                   ? (leaderboard.leaderboard||[])
                   : (leaderboard.leaderboard||[]);
-                const me = privacyName(studentName.trim()||"");
+                const me = _612d25(studentName.trim()||"");
 
                 return <div>
                   {/* Podium — top 3 */}
@@ -3126,7 +3135,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         const prContainer = document.getElementById("print-report");
         if (!prContainer) return null;
         return ReactDOM.createPortal(
-          <PrintReport
+          <_e1663c
             studentName={studentName.trim()||"Student"}
             questionNumber={questionNumber}
             subjectName={config.subjectName}
@@ -3155,12 +3164,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
 
 // ─── APP SHELL — waits for config.json before rendering ──────────────────────
-function AppShell() {
+function _eed5f4() {
   const [configReady, setConfigReady] = useState(false);
   const [configError, setConfigError] = useState(null);
 
   useEffect(() => {
-    loadConfig().then(() => {
+    _f674dd().then(() => {
       if (!config.subjectCode) {
         setConfigError("Config file loaded but missing subjectCode — check your config JSON.");
       }
@@ -3192,10 +3201,10 @@ function AppShell() {
     );
   }
 
-  return <App />;
+  return <_ac863f />;
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(AppShell));
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(_eed5f4));
   </script>
 </body>
 </html>
