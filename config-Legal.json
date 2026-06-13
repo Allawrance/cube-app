@@ -5,6 +5,7 @@
   "dominantMode": "Argument + legal sources + effectiveness evaluation",
   "cleanRule": "Legal Studies = legal argument + named legal sources (legislation, cases, international instruments) + evaluation of effectiveness in achieving justice",
   "leaderboardTip": "HSC Legal questions reward NAMED sources — cases (Mabo, Dietrich), legislation (Crimes Act, Family Law Act), and international instruments (UDHR, ICCPR). Generic references to 'courts' or 'the law' cannot reach Band 5. Always evaluate effectiveness and link to whether justice was achieved.",
+   "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=LEG",
   "sheetTabCube": "LEG CUBE",
   "sheetTabFull": "LEG",
   "accentColor": "#ce93d8",
