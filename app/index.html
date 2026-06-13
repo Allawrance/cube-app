@@ -2002,11 +2002,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             {/* ── MC Coach button — always visible ── */}
             <a href="https://allawrance.github.io/cube-app/app/mc-sa-coach.html" target="_blank" rel="noopener noreferrer"
               title="Multiple Choice Coach"
-              style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
-              onMouseOver={e=>{e.currentTarget.style.borderColor="rgba(201,168,76,0.6)";e.currentTarget.style.color="#c9a84c";}}
-              onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.15)";e.currentTarget.style.color="#c8d8e8";}}>
-              <span style={{fontSize:"18px",lineHeight:1}}>📋</span>
-              <span className="hide-mobile">MC Coach</span>
+              style={{display:"flex",alignItems:"center",padding:"4px",background:"transparent",border:"none",borderRadius:"10px",cursor:"pointer",transition:"all 0.15s",flexShrink:0,opacity:0.9}}
+              onMouseOver={e=>{e.currentTarget.style.opacity="1";e.currentTarget.style.transform="scale(1.05)";}}
+              onMouseOut={e=>{e.currentTarget.style.opacity="0.9";e.currentTarget.style.transform="scale(1)";}}>
+              <img src="mc-icon.png" alt="MC Coach" style={{width:"40px",height:"40px",borderRadius:"8px",objectFit:"cover"}}/>
             </a>
             {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:"14px"}}>day{streak!==1?"s":""}</span></div>}
             {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
