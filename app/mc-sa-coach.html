@@ -303,6 +303,7 @@ body {
   margin-bottom: 16px;
   font-size: 13px;
   line-height: 1.6;
+  text-align: center;
 }
 .stimulus-label {
   font-size: 10px;
@@ -311,6 +312,18 @@ body {
   color: var(--accent2);
   text-transform: uppercase;
   margin-bottom: 8px;
+  text-align: left;
+}
+.stimulus-img {
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 8px auto 0;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  object-fit: contain;
 }
 .stimulus-img {
   max-width: 100%;
@@ -1011,7 +1024,8 @@ function renderQuestion() {
     stimulusHTML = `
       <div class="stimulus-box">
         <div class="stimulus-label">🖼 Stimulus Image</div>
-        <img class="stimulus-img" src="${imgUrl}" alt="Question stimulus" loading="lazy">
+        <img class="stimulus-img" src="${imgUrl}" alt="Question stimulus" loading="lazy"
+          style="max-width:100%;max-height:300px;height:auto;width:auto;display:block;margin:8px auto 0;border-radius:6px;border:1px solid rgba(255,255,255,0.08);object-fit:contain;">
       </div>`;
   }
 
