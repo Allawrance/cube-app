@@ -568,6 +568,16 @@ body {
   <div class="mode-title">CUBE MARKING COACH</div>
   <div class="mode-headline">MC &amp; SHORT <span>ANSWER COACH</span></div>
 
+  <!-- Student name -->
+  <div style="width:100%;max-width:580px;margin-bottom:20px;">
+    <div class="selector-label">Your Name</div>
+    <input type="text" id="studentNameInput" placeholder="First name + initial  e.g. Sue W"
+      value=""
+      oninput="state.studentName=this.value.trim();localStorage.setItem('cube_student_name',this.value.trim())"
+      style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;padding:11px 14px;outline:none;"/>
+    <div style="font-size:11px;color:var(--muted);margin-top:5px;">Used for the class leaderboard — first name + surname initial only</div>
+  </div>
+
   <div class="selectors-row">
     <div class="selector-group">
       <div class="selector-label">Select Your Subject</div>
@@ -667,6 +677,8 @@ body {
 // CONFIGURATION
 // ═══════════════════════════════════════════════════════════════════════════════
 const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
+// MC logging webhook — same spreadsheet as short answer, routed via Worker
+const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzYOUR_LOG_WEBHOOK_ID/exec";
 
 // Subject configs: module labels, display name
 const SUBJECT_CONFIG = {
@@ -707,6 +719,7 @@ let state = {
   module:         "ALL",
   year:           "all",
   source:         "all",
+  studentName:    localStorage.getItem("cube_student_name") || "",
   questions:      [],
   queue:          [],
   currentIdx:     0,
@@ -824,6 +837,44 @@ function updateCountHint(count) {
       ? `${count} question${count===1?"":"s"} available — ${filterStr}`
       : `No questions yet for ${filterStr} — check back soon`;
   document.getElementById("btnStart").disabled = count === 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MC LOGGING
+// ═══════════════════════════════════════════════════════════════════════════════
+function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
+  // Don't log if no student name
+  if (!state.studentName.trim()) return;
+  try {
+    fetch(`${WORKER_URL}/log`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type:           "MC_ROW",
+        webhookUrl:     MC_LOG_WEBHOOK_URL,
+        student:        state.studentName.trim(),
+        subject:        state.subject,
+        module:         q.module  || state.module,
+        year:           String(q.year || state.year),
+        source:         q.source  || "HSC",
+        questionId:     q.id      || "—",
+        questionText:   q.questionText || "",
+        correctAnswer:  q.correctAnswer || "—",
+        studentAnswer:  studentAnswer   || "—",
+        isCorrect:      isCorrect,
+        attemptType:    attemptType,
+        reflectionType: reflectionType || "—",
+        xpEarned:       isCorrect
+                          ? (attemptType === "first" ? FIRST_ATTEMPT_XP : REPEAT_ATTEMPT_XP)
+                          : WRONG_REFLECTION_XP,
+        sessionXP:      state.sessionXP,
+        studentClass:   state.studentClass || "",
+      })
+    });
+  } catch(e) {
+    // Fire-and-forget — never block the UI on logging failure
+    console.warn("MC log failed:", e.message);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1005,12 +1056,16 @@ function selectAnswer(letter) {
     const bonusXP = (state.streak % STREAK_BONUS_AT === 0 && state.streak > 0) ? STREAK_BONUS_XP : 0;
     state.sessionXP += xpGain + bonusXP;
 
+    // Log correct answer
+    logMCAnswer(q, letter, true, seen ? "repeat" : "first", null);
+
     showXPPop("+" + (xpGain + bonusXP) + " XP", correct);
     showFeedback(q, letter, correct, null);
 
   } else {
     // Wrong path — always show reflection first
     state.streak = 0;
+    state.lastWrongAnswer = letter;  // store for logging after reflection
     document.getElementById("reflectionWrap").style.display = "block";
   }
 
@@ -1023,6 +1078,9 @@ function logReflection(type) {
   state.sessionXP += WRONG_REFLECTION_XP;
   document.getElementById("reflectionWrap").style.display = "none";
   const q = state.queue[state.currentIdx];
+  // Log wrong answer now that we have the reflection type
+  const seen = localStorage.getItem("mc_seen_" + q.id);
+  logMCAnswer(q, state.lastWrongAnswer || "—", false, seen ? "repeat" : "first", type);
   showFeedback(q, null, false, type);
   updateHUD();
   updateErrorPanel();
@@ -1218,6 +1276,11 @@ function showComplete() {
   }
   renderModulePills();
   renderYearPills();
+  // Pre-fill student name from localStorage
+  const savedName = localStorage.getItem("cube_student_name") || "";
+  state.studentName = savedName;
+  const nameInput = document.getElementById("studentNameInput");
+  if (nameInput && savedName) nameInput.value = savedName;
   prefetchAndCount();
 })();
 </script>
