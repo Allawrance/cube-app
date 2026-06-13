@@ -5,6 +5,7 @@
   "dominantMode": "Mechanism + evidence + evaluation",
   "cleanRule": "Biology = explain the biological mechanism + link to evidence or data where provided + judge effectiveness/significance where directed",
   "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type \u2014 show the biological mechanism (HOW and WHY), not just the outcome.",
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=BIO",
   "sheetTabCube": "BIO CUBE",
   "sheetTabFull": "BIO",
   "classCodes": [
