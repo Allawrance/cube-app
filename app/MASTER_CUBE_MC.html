@@ -719,9 +719,11 @@ let state = {
   errorCounts:    { guessed:0, misread:0, noknowledge:0 },
 };
 
-const FIRST_ATTEMPT_XP  = 15;
-const REPEAT_ATTEMPT_XP = 10;
-const STREAK_BONUS_AT   = 3;   // every 3-in-a-row
+const FIRST_ATTEMPT_XP  = 5;
+const REPEAT_ATTEMPT_XP = 2;
+const WRONG_REFLECTION_XP = 1;
+const STREAK_BONUS_AT   = 5;   // every 5-in-a-row
+const STREAK_BONUS_XP   = 3;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // SETUP — SUBJECT / MODULE / YEAR SELECTORS
@@ -1000,7 +1002,7 @@ function selectAnswer(letter) {
     if (!seen) localStorage.setItem(lsKey, "1");
 
     // Streak bonus
-    const bonusXP = (state.streak % STREAK_BONUS_AT === 0 && state.streak > 0) ? 5 : 0;
+    const bonusXP = (state.streak % STREAK_BONUS_AT === 0 && state.streak > 0) ? STREAK_BONUS_XP : 0;
     state.sessionXP += xpGain + bonusXP;
 
     showXPPop("+" + (xpGain + bonusXP) + " XP", correct);
@@ -1017,9 +1019,12 @@ function selectAnswer(letter) {
 
 function logReflection(type) {
   state.errorCounts[type] = (state.errorCounts[type] || 0) + 1;
+  // Award small XP for completing reflection
+  state.sessionXP += WRONG_REFLECTION_XP;
   document.getElementById("reflectionWrap").style.display = "none";
   const q = state.queue[state.currentIdx];
   showFeedback(q, null, false, type);
+  updateHUD();
   updateErrorPanel();
 }
 
