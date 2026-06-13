@@ -737,6 +737,7 @@ const REPEAT_ATTEMPT_XP = 2;
 const WRONG_REFLECTION_XP = 1;
 const STREAK_BONUS_AT   = 5;   // every 5-in-a-row
 const STREAK_BONUS_XP   = 3;
+const SESSION_LIMIT     = 5;   // max questions per session
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // SETUP — SUBJECT / MODULE / YEAR SELECTORS
@@ -904,9 +905,9 @@ async function startSession() {
     return;
   }
 
-  // Shuffle
+  // Shuffle and cap to session limit
   state.questions   = shuffle([...questions]);
-  state.queue       = [...state.questions];
+  state.queue       = state.questions.slice(0, SESSION_LIMIT);
   state.currentIdx  = 0;
   state.answered    = false;
   state.streak      = 0;
@@ -1254,13 +1255,36 @@ function showComplete() {
           Most common error: ${errors[0].icon} <em>${errors[0].label}</em>
           ${errors.length > 1 ? ` &middot; ${errors[1].icon} <em>${errors[1].label}</em>` : ""}
         </div>` : ""}
-      <button class="btn-start" onclick="location.reload()">Play Again</button>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">
+        Session saved ✓ &mdash; start another session to keep practising
+      </div>
+      <button class="btn-start" onclick="returnToSelection()">New Session →</button>
     </div>
   `;
 
   document.getElementById("progressLabel").textContent = "Session complete!";
   document.getElementById("progressPct").textContent   = "100%";
   document.getElementById("progressFill").style.width  = "100%";
+}
+
+function returnToSelection() {
+  // Return to selection screen keeping subject/module/year — no full reload
+  document.getElementById("sessionScreen").style.display = "none";
+  document.getElementById("modeScreen").style.display    = "flex";
+  document.getElementById("loadingMsg").textContent = "";
+  // Reset session state but keep filters
+  state.questions  = [];
+  state.queue      = [];
+  state.currentIdx = 0;
+  state.answered   = false;
+  state.streak     = 0;
+  state.bestStreak = 0;
+  state.sessionXP  = 0;
+  state.totalCorrect   = 0;
+  state.totalAttempted = 0;
+  state.errorCounts = { guessed:0, misread:0, noknowledge:0 };
+  // Re-run prefetch so count hint is fresh
+  prefetchAndCount();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
