@@ -1359,7 +1359,20 @@ function returnToSelection() {
 // Read ?subject= URL param on load
 (function init() {
   const params = new URLSearchParams(window.location.search);
-  const subj   = params.get("subject") ? params.get("subject").toUpperCase() : null;
+  const raw    = params.get("subject") || null;
+
+  // Normalise incoming code (e.g. "HlthM", "BusS", "EngS") → SUBJECT_CONFIG key
+  const SUBJ_NORMALISE = {
+    EES:"EES", BIO:"BIO", BIOLOGY:"BIO",
+    BS:"BS", BUSS:"BS",
+    HM:"HM", HLTHM:"HM",
+    ES:"ES", ENGS:"ES",
+    CF:"CF", COMFAM:"CF",
+    LEG:"LEG", LEGAL:"LEG",
+    VISART:"VISART", VA:"VISART",
+    ANCH:"ANCH", ANCHIST:"ANCH"
+  };
+  const subj = raw ? (SUBJ_NORMALISE[raw.toUpperCase()] || raw.toUpperCase()) : null;
 
   if (subj && SUBJECT_CONFIG[subj]) {
     // Arrived from landing page — lock the subject, hide the dropdown
