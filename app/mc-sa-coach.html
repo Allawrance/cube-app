@@ -744,6 +744,19 @@ const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
 // MC logging webhook — same spreadsheet as short answer, routed via Worker
 const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
 
+// MC sheet tab names — must match exactly the tab names in the Google Sheet
+const MC_SHEET_TAB = {
+  EES:    "EES_MC",
+  BIO:    "BIO_MC",
+  BS:     "BusS_MC",
+  HM:     "HlthM_MC",
+  ES:     "EngS_MC",
+  CF:     "ComFam_MC",
+  LEG:    "LEG_MC",
+  VISART: "VISART_MC",
+  ANCH:   "12AHis_MC",
+};
+
 // Subject configs: module labels, display name
 const SUBJECT_CONFIG = {
   EES:    { name:"Earth & Environmental Science", modules:["M5","M6","M7","M8"],
@@ -935,6 +948,7 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
                           : WRONG_REFLECTION_XP,
         sessionXP:      state.sessionXP,
         studentClass:   state.studentClass || "",
+        sheetTab:       MC_SHEET_TAB[state.subject] || (state.subject + "_MC"),
       })
     });
   } catch(e) {
