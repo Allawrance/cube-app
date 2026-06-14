@@ -1358,8 +1358,10 @@ function returnToSelection() {
 // ═══════════════════════════════════════════════════════════════════════════════
 // Read ?subject= URL param on load
 (function init() {
-  const params = new URLSearchParams(window.location.search);
-  const raw    = params.get("subject") || null;
+const params      = new URLSearchParams(window.location.search);
+const raw         = params.get("subject") || null;
+const classParam  = params.get("class")   || "";
+state.studentClass = classParam;
 
   // Normalise incoming code (e.g. "HlthM", "BusS", "EngS") → SUBJECT_CONFIG key
   const SUBJ_NORMALISE = {
