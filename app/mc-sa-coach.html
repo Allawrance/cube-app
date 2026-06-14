@@ -1144,12 +1144,10 @@ function selectAnswer(letter) {
 
 function logReflection(type) {
   state.errorCounts[type] = (state.errorCounts[type] || 0) + 1;
-  // XP already awarded when answer was selected; just hide reflection and show feedback
+  // Error count tracked here; log was already sent in selectAnswer
   document.getElementById("reflectionWrap").style.display = "none";
   const q = state.queue[state.currentIdx];
-  // Log again with reflection type filled in (second row captures the why)
-  const seen = localStorage.getItem("mc_seen_" + q.id);
-  logMCAnswer(q, state.lastWrongAnswer || "—", false, seen ? "repeat" : "first", type);
+  // XP and log already fired in selectAnswer — do NOT log again here (causes duplicate rows)
   showFeedback(q, null, false, type);
   updateHUD();
   updateErrorPanel();
