@@ -742,48 +742,35 @@ body {
 // ═══════════════════════════════════════════════════════════════════════════════
 const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
 // MC logging webhook — same spreadsheet as short answer, routed via Worker
-const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
-
-// MC sheet tab names — must match exactly the tab names in the Google Sheet
-const MC_SHEET_TAB = {
-  EES:    "EES_MC",
-  BIO:    "BIO_MC",
-  BS:     "BusS_MC",
-  HM:     "HlthM_MC",
-  ES:     "EngS_MC",
-  CF:     "ComFam_MC",
-  LEG:    "LEG_MC",
-  VISART: "VISART_MC",
-  ANCH:   "12AHis_MC",
-};
+const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec";
 
 // Subject configs: module labels, display name
 const SUBJECT_CONFIG = {
-  EES:    { name:"Earth & Environmental Science", modules:["M5","M6","M7","M8"],
+  EES:    { name:"Earth & Environmental Science", logCode:"EES",    modules:["M5","M6","M7","M8"],
             moduleLabels:{ ALL:"All Modules", M5:"M5 — Earth's Processes", M6:"M6 — Hazards",
                            M7:"M7 — Climate Science", M8:"M8 — Resource Management" } },
-  BIO:    { name:"Biology", modules:["M5","M6","M7","M8"],
+  BIO:    { name:"Biology",                       logCode:"BIO",    modules:["M5","M6","M7","M8"],
             moduleLabels:{ ALL:"All Modules", M5:"M5 — Heredity", M6:"M6 — Genetic Change",
                            M7:"M7 — Infectious Disease", M8:"M8 — Non-infectious Disease" } },
-  BS:     { name:"Business Studies", modules:["T1","T2","T3","T4"],
+  BS:     { name:"Business Studies",              logCode:"BusS",   modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Nature of Business", T2:"T2 — Business Management",
                            T3:"T3 — Business Planning", T4:"T4 — Finance" } },
-  HM:     { name:"Health & Movement Science", modules:["T1","T2","T3","T4"],
+  HM:     { name:"Health & Movement Science",     logCode:"HlthM",  modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Health", T2:"T2 — Movement Science",
                            T3:"T3 — Sport & Exercise", T4:"T4 — Performance" } },
-  ES:     { name:"Engineering Studies", modules:["T1","T2","T3","T4"],
+  ES:     { name:"Engineering Studies",           logCode:"EngS",   modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Engineering Fundamentals",
                            T2:"T2 — Project Management", T3:"T3 — Design", T4:"T4 — Production" } },
-  CF:     { name:"Community & Family Studies", modules:["T1","T2","T3","T4"],
+  CF:     { name:"Community & Family Studies",    logCode:"ComFam", modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Individuals & Groups",
                            T2:"T2 — Resource Management", T3:"T3 — Groups in Context", T4:"T4 — Research" } },
-  LEG:    { name:"Legal Studies", modules:["T1","T2","T3","T4"],
+  LEG:    { name:"Legal Studies",                 logCode:"LS",    modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — The Legal System",
                            T2:"T2 — The Individual & the Law", T3:"T3 — Human Rights", T4:"T4 — Options" } },
-  VISART: { name:"Visual Arts", modules:["T1","T2","T3","T4"],
+  VISART: { name:"Visual Arts",                   logCode:"VISART", modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Art Making", T2:"T2 — Art Criticism",
                            T3:"T3 — Art History", T4:"T4 — Frames" } },
-  ANCH:   { name:"Ancient History", modules:["T1","T2","T3","T4"],
+  ANCH:   { name:"Ancient History",               logCode:"AHis",   modules:["T1","T2","T3","T4"],
             moduleLabels:{ ALL:"All Topics", T1:"T1 — Personalities in Their Time",
                            T2:"T2 — Historical Periods", T3:"T3 — Cities of Vesuvius", T4:"T4 — Empires" } },
 };
@@ -932,7 +919,7 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
         type:           "MC_ROW",
         webhookUrl:     MC_LOG_WEBHOOK_URL,
         student:        state.studentName.trim(),
-        subject:        state.subject,
+        subject:        (SUBJECT_CONFIG[state.subject]?.logCode || state.subject),
         module:         q.module  || state.module,
         year:           String(q.year || state.year),
         source:         q.source  || "HSC",
@@ -948,7 +935,6 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
                           : WRONG_REFLECTION_XP,
         sessionXP:      state.sessionXP,
         studentClass:   state.studentClass || "",
-        sheetTab:       MC_SHEET_TAB[state.subject] || (state.subject + "_MC"),
       })
     });
   } catch(e) {
