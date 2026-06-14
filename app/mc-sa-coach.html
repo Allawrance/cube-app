@@ -632,20 +632,30 @@ body {
     <div style="font-size:11px;color:var(--muted);margin-top:5px;">Used for the class leaderboard — first name + surname initial only</div>
   </div>
 
-  <div class="selectors-row">
+  <div class="selectors-row" id="subjectRow">
     <div class="selector-group">
-      <div class="selector-label">Select Your Subject</div>
-      <select class="mode-select" id="subjectSelect" onchange="onSubjectChange()">
-        <option value="EES">Earth &amp; Environmental Science</option>
-        <option value="BIO">Biology</option>
-        <option value="BS">Business Studies</option>
-        <option value="HM">Health &amp; Movement Science</option>
-        <option value="ES">Engineering Studies</option>
-        <option value="CF">Community &amp; Family Studies</option>
-        <option value="LEG">Legal Studies</option>
-        <option value="VISART">Visual Arts</option>
-        <option value="ANCH">Ancient History</option>
-      </select>
+      <!-- Static label shown when ?subject= URL param is present (arrived from landing page) -->
+      <div id="subjectLocked" style="display:none;">
+        <div class="selector-label">Subject</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+                    color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
+                    padding:11px 16px;" id="subjectLockedLabel"></div>
+      </div>
+      <!-- Dropdown shown when arriving directly (no ?subject= param) -->
+      <div id="subjectDropdown">
+        <div class="selector-label">Select Your Subject</div>
+        <select class="mode-select" id="subjectSelect" onchange="onSubjectChange()">
+          <option value="EES">Earth &amp; Environmental Science</option>
+          <option value="BIO">Biology</option>
+          <option value="BS">Business Studies</option>
+          <option value="HM">Health &amp; Movement Science</option>
+          <option value="ES">Engineering Studies</option>
+          <option value="CF">Community &amp; Family Studies</option>
+          <option value="LEG">Legal Studies</option>
+          <option value="VISART">Visual Arts</option>
+          <option value="ANCH">Ancient History</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -1349,10 +1359,18 @@ function returnToSelection() {
 // Read ?subject= URL param on load
 (function init() {
   const params = new URLSearchParams(window.location.search);
-  const subj   = (params.get("subject") || "EES").toUpperCase();
-  if (SUBJECT_CONFIG[subj]) {
+  const subj   = params.get("subject") ? params.get("subject").toUpperCase() : null;
+
+  if (subj && SUBJECT_CONFIG[subj]) {
+    // Arrived from landing page — lock the subject, hide the dropdown
     state.subject = subj;
     document.getElementById("subjectSelect").value = subj;
+    document.getElementById("subjectLocked").style.display    = "block";
+    document.getElementById("subjectLockedLabel").textContent = SUBJECT_CONFIG[subj].name;
+    document.getElementById("subjectDropdown").style.display  = "none";
+  } else {
+    // Direct access — show the dropdown, default to EES
+    state.subject = document.getElementById("subjectSelect").value || "EES";
   }
   renderModulePills();
   renderYearPills();
