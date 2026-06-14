@@ -1107,15 +1107,16 @@ function selectAnswer(letter) {
     if (btn.dataset.letter === letter && !correct) btn.classList.add("wrong");
   });
 
+  // XP — first attempt bonus tracked via localStorage per question id
+  const lsKey = "mc_seen_" + q.id;
+  const seen  = localStorage.getItem(lsKey);
+
   if (correct) {
     // Correct path
     state.streak++;
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     state.totalCorrect++;
 
-    // XP — first attempt bonus tracked via localStorage per question id
-    const lsKey  = "mc_seen_" + q.id;
-    const seen   = localStorage.getItem(lsKey);
     const xpGain = seen ? REPEAT_ATTEMPT_XP : FIRST_ATTEMPT_XP;
     if (!seen) localStorage.setItem(lsKey, "1");
 
@@ -1130,9 +1131,11 @@ function selectAnswer(letter) {
     showFeedback(q, letter, correct, null);
 
   } else {
-    // Wrong path — always show reflection first
+    // Wrong path — log immediately so no attempt is missed if student skips reflection
     state.streak = 0;
-    state.lastWrongAnswer = letter;  // store for logging after reflection
+    state.sessionXP += WRONG_REFLECTION_XP;
+    state.lastWrongAnswer = letter;
+    logMCAnswer(q, letter, false, seen ? "repeat" : "first", null);
     document.getElementById("reflectionWrap").style.display = "block";
   }
 
@@ -1141,11 +1144,10 @@ function selectAnswer(letter) {
 
 function logReflection(type) {
   state.errorCounts[type] = (state.errorCounts[type] || 0) + 1;
-  // Award small XP for completing reflection
-  state.sessionXP += WRONG_REFLECTION_XP;
+  // XP already awarded when answer was selected; just hide reflection and show feedback
   document.getElementById("reflectionWrap").style.display = "none";
   const q = state.queue[state.currentIdx];
-  // Log wrong answer now that we have the reflection type
+  // Log again with reflection type filled in (second row captures the why)
   const seen = localStorage.getItem("mc_seen_" + q.id);
   logMCAnswer(q, state.lastWrongAnswer || "—", false, seen ? "repeat" : "first", type);
   showFeedback(q, null, false, type);
@@ -1358,10 +1360,10 @@ function returnToSelection() {
 // ═══════════════════════════════════════════════════════════════════════════════
 // Read ?subject= URL param on load
 (function init() {
-const params      = new URLSearchParams(window.location.search);
-const raw         = params.get("subject") || null;
-const classParam  = params.get("class")   || "";
-state.studentClass = classParam;
+  const params       = new URLSearchParams(window.location.search);
+  const raw          = params.get("subject") || null;
+  const classParam   = params.get("class")   || "";
+  state.studentClass = classParam;
 
   // Normalise incoming code (e.g. "HlthM", "BusS", "EngS") → SUBJECT_CONFIG key
   const SUBJ_NORMALISE = {
