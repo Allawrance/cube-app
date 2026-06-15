@@ -1258,8 +1258,8 @@ async function startSession() {
       // If history came back empty, warn the user — likely means Apps Script not redeployed
       if (historyMap.size === 0) {
         document.getElementById("loadingMsg").textContent =
-          "⚠ No history found for "" + state.studentName.trim() + "". " +
-          "Check: (1) your name matches exactly what you used before, " +
+          "⚠ No history found for '" + state.studentName.trim() + "'. " +
+          "Check: (1) name matches exactly what you used before, " +
           "(2) LogWebhook.gs v13.2 has been redeployed as a new version in Apps Script.";
         document.getElementById("btnStart").disabled = false;
         return;
@@ -1725,57 +1725,33 @@ function returnToSelection() {
 async function debugHistory() {
   const out = document.getElementById("debugOut");
   out.style.display = "block";
-  out.textContent = "Running…
-";
+  out.textContent   = "Running...\n";
 
   const name     = (state.studentName || "").trim() || "John S";
   const subjList = state.lockedSubject ? [state.subject] : state.subjects;
   const codes    = subjList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
 
-  out.textContent += `Name: "${name}"
-Subjects: ${subjList.join(",")}
-LogCodes: ${codes.join(",")}
-Worker: ${WORKER_URL}
-
-`;
+  out.textContent += "Name: " + name + "\nSubjects: " + subjList.join(",") + "\nLogCodes: " + codes.join(",") + "\nWorker: " + WORKER_URL + "\n\n";
 
   const params = new URLSearchParams({ student: name, subjects: codes.join(","), webhook: MC_LOG_WEBHOOK_URL });
   const url    = WORKER_URL + "/history?" + params.toString();
-  out.textContent += `Request URL:
-${url}
-
-Fetching…
-`;
+  out.textContent += "Request URL:\n" + url + "\n\nFetching...\n";
 
   try {
     const res  = await fetch(url, { method:"GET" });
-    out.textContent += `Worker HTTP status: ${res.status}
-
-`;
+    out.textContent += "Worker HTTP status: " + res.status + "\n\n";
     const text = await res.text();
-    out.textContent += `Raw response (first 600 chars):
-${text.slice(0, 600)}
-`;
+    out.textContent += "Raw response (first 600 chars):\n" + text.slice(0, 600) + "\n";
     try {
       const data = JSON.parse(text);
-      out.textContent += `
-Parsed JSON OK
-`;
-      if (data.error) out.textContent += `ERROR field: ${data.error}
-`;
-      out.textContent += `rows returned: ${(data.rows||[]).length}
-`;
-      if ((data.rows||[]).length > 0) {
-        out.textContent += `
-First 3 rows:
-${JSON.stringify(data.rows.slice(0,3), null, 2)}
-`;
+      out.textContent += "\nParsed JSON OK\n";
+      if (data.error) out.textContent += "ERROR field: " + data.error + "\n";
+      out.textContent += "rows returned: " + (data.rows || []).length + "\n";
+      if ((data.rows || []).length > 0) {
+        out.textContent += "\nFirst 3 rows:\n" + JSON.stringify(data.rows.slice(0,3), null, 2) + "\n";
       }
-    } catch(pe) { out.textContent += `
-JSON parse failed: ${pe.message}
-`; }
-  } catch(fe) { out.textContent += `Fetch error: ${fe.message}
-`; }
+    } catch(pe) { out.textContent += "\nJSON parse failed: " + pe.message + "\n"; }
+  } catch(fe) { out.textContent += "Fetch error: " + fe.message + "\n"; }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
