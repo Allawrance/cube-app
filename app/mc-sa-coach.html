@@ -894,6 +894,7 @@ let state = {
   totalCorrect:   0,
   totalAttempted: 0,
   errorCounts:    { guessed:0, misread:0, noknowledge:0 },
+  pendingWrong:   null,   // deferred wrong-answer log, flushed when reflection chosen
 };
 
 const FIRST_ATTEMPT_XP  = 5;
@@ -1310,6 +1311,7 @@ async function startSession() {
   state.totalCorrect    = 0;
   state.totalAttempted  = 0;
   state.errorCounts = { guessed:0, misread:0, noknowledge:0 };
+  state.pendingWrong    = null;
 
   // Switch screens
   document.getElementById("modeScreen").style.display    = "none";
@@ -1456,8 +1458,13 @@ function selectAnswer(letter) {
   } else {
     state.streak = 0;
     state.sessionXP += WRONG_REFLECTION_XP;
-    state.lastWrongAnswer = letter;
-    logMCAnswer(q, letter, false, seen ? "repeat" : "first", null);
+    // Store pending wrong-answer details — log is deferred until reflection is chosen
+    // so that reflectionType is captured in the same row (not sent as "—")
+    state.pendingWrong = {
+      q:           q,
+      letter:      letter,
+      attemptType: seen ? "repeat" : "first",
+    };
     document.getElementById("reflectionWrap").style.display = "block";
   }
 
@@ -1467,6 +1474,12 @@ function selectAnswer(letter) {
 function logReflection(type) {
   state.errorCounts[type] = (state.errorCounts[type] || 0) + 1;
   document.getElementById("reflectionWrap").style.display = "none";
+  // Now fire the deferred log — reflection type is known so it goes into the row
+  if (state.pendingWrong) {
+    const { q, letter, attemptType } = state.pendingWrong;
+    logMCAnswer(q, letter, false, attemptType, type);
+    state.pendingWrong = null;
+  }
   const q = state.queue[state.currentIdx];
   showFeedback(q, null, false, type);
   updateHUD();
@@ -1515,8 +1528,12 @@ function showFeedback(q, chosenLetter, correct, reflectionType) {
 // EXIT SESSION — no confirm dialog; results already saved via logMCAnswer
 // ═══════════════════════════════════════════════════════════════════════════════
 function exitSession() {
-  // Results have been saved question-by-question via logMCAnswer (fire-and-forget)
-  // No confirmation needed
+  // Flush any pending wrong-answer log that hasn't had a reflection chosen yet
+  if (state.pendingWrong) {
+    const { q, letter, attemptType } = state.pendingWrong;
+    logMCAnswer(q, letter, false, attemptType, "—");
+    state.pendingWrong = null;
+  }
   document.getElementById("sessionScreen").style.display = "none";
   document.getElementById("modeScreen").style.display    = "flex";
   document.getElementById("loadingMsg").textContent      = "";
@@ -1648,6 +1665,12 @@ function showComplete() {
 }
 
 function returnToSelection() {
+  // Flush any pending wrong-answer log before leaving
+  if (state.pendingWrong) {
+    const { q, letter, attemptType } = state.pendingWrong;
+    logMCAnswer(q, letter, false, attemptType, "—");
+    state.pendingWrong = null;
+  }
   document.getElementById("sessionScreen").style.display = "none";
   document.getElementById("modeScreen").style.display    = "flex";
   document.getElementById("loadingMsg").textContent = "";
