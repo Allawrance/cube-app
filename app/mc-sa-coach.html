@@ -773,6 +773,16 @@ body {
   <div class="count-hint" id="countHint">Loading…</div>
   <button class="btn-start" id="btnStart" onclick="startSession()" disabled>START SESSION</button>
   <div class="loading-msg" id="loadingMsg"></div>
+  <button id="btnDebugHistory" onclick="debugHistory()"
+    style="margin-top:12px;background:transparent;border:1px solid rgba(78,205,196,0.4);border-radius:20px;
+           color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+           padding:5px 14px;cursor:pointer;">
+    🔍 Debug: Test History Fetch
+  </button>
+  <pre id="debugOut" style="margin-top:10px;width:100%;max-width:580px;background:var(--surface2);
+       border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;
+       color:var(--accent2);white-space:pre-wrap;word-break:break-all;display:none;
+       font-family:'DM Mono',monospace;text-align:left;"></pre>
 </div>
 
 <!-- ══════════════════════════════ SESSION SCREEN ══════════════════════════ -->
@@ -1707,6 +1717,50 @@ function returnToSelection() {
   state.totalAttempted = 0;
   state.errorCounts = { guessed:0, misread:0, noknowledge:0 };
   prefetchAndCount();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DEBUG HELPER — visible on the selection screen, remove after confirming working
+// ═══════════════════════════════════════════════════════════════════════════════
+async function debugHistory() {
+  const out = document.getElementById("debugOut");
+  out.style.display = "block";
+  out.textContent = "Testing…";
+
+  const studentName = state.studentName.trim() || "John S";
+  const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
+  const logCodes    = subjectList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
+
+  out.textContent = `Student: "${studentName}"\nLogCodes: ${logCodes.join(",")}\nWorker: ${WORKER_URL}\nWebhook (first 60): ${MC_LOG_WEBHOOK_URL.slice(0,60)}\n\nFetching…`;
+
+  try {
+    const params = new URLSearchParams({
+      student:  studentName,
+      subjects: logCodes.join(","),
+      webhook:  MC_LOG_WEBHOOK_URL,
+    });
+    const url = `${WORKER_URL}/history?` + params.toString();
+    out.textContent += `\nURL: ${url.slice(0,120)}…\n`;
+
+    const res = await fetch(url, { method:"GET" });
+    out.textContent += `\nWorker status: ${res.status}`;
+
+    const text = await res.text();
+    out.textContent += `\nRaw response (first 500 chars):\n${text.slice(0,500)}`;
+
+    try {
+      const data = JSON.parse(text);
+      out.textContent += `\n\nParsed OK. rows: ${(data.rows||[]).length}`;
+      if (data.error) out.textContent += `\nERROR field: ${data.error}`;
+      if (data.rows && data.rows.length > 0) {
+        out.textContent += `\nFirst 3 rows:\n${JSON.stringify(data.rows.slice(0,3), null, 2)}`;
+      }
+    } catch(pe) {
+      out.textContent += `\n\nJSON parse failed: ${pe.message}`;
+    }
+  } catch(e) {
+    out.textContent += `\nFetch error: ${e.message}`;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
