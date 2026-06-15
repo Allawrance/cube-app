@@ -1185,14 +1185,14 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
 // Returns Map<questionId, lastResult>  where lastResult = "correct" | "wrong"
 // ═══════════════════════════════════════════════════════════════════════════════
 async function fetchStudentHistory(studentName, subjectLogCodes) {
-  // Calls the Apps Script GET endpoint which returns rows for this student
-  // Expected endpoint: MC_LOG_WEBHOOK_URL?action=getHistory&student=NAME&subjects=EES,BIO
+  // Routes through the Cloudflare Worker (/history) which proxies to Apps Script doGet.
+  // Direct fetch to Apps Script is blocked by CORS — the Worker handles that.
   const params = new URLSearchParams({
-    action:   "getHistory",
     student:  studentName,
     subjects: subjectLogCodes.join(","),
+    webhook:  MC_LOG_WEBHOOK_URL,
   });
-  const url = MC_LOG_WEBHOOK_URL + "?" + params.toString();
+  const url = `${WORKER_URL}/history?` + params.toString();
   const res = await fetch(url, { method:"GET" });
   if (!res.ok) throw new Error("History fetch failed: " + res.status);
   const data = await res.json();
