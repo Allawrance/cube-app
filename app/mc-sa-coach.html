@@ -712,18 +712,18 @@ body {
 
   <!-- Subject: locked label (from landing page) OR multi-select pills (direct access) -->
   <div style="width:100%;max-width:580px;margin-bottom:20px;">
-    <div id="subjectLocked" style="display:none;">
-      <div class="selector-label">Subject</div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;
-                  color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
-                  padding:11px 16px;" id="subjectLockedLabel"></div>
+    <div class="selector-label">Subject
+      <span id="subjectHint" style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);"> (select one or more)</span>
     </div>
-    <div id="subjectDropdown" class="subject-pills-wrap" style="margin-bottom:0;">
-      <div class="selector-label">Subject <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
+    <!-- Locked: single subject from URL param -->
+    <div id="subjectLocked" style="display:none;background:var(--surface2);border:1px solid var(--border);
+         border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;
+         font-weight:600;padding:11px 16px;"></div>
+    <!-- Free: multi-select pills -->
+    <div id="subjectDropdown">
       <div class="subject-pills" id="subjectPills">
         <!-- Populated by JS -->
       </div>
-      <!-- hidden select kept for legacy compat -->
       <select id="subjectSelect" style="display:none;" onchange="onSubjectChange()">
         <option value="EES">Earth &amp; Environmental Science</option>
       </select>
@@ -1720,47 +1720,62 @@ function returnToSelection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DEBUG HELPER — visible on the selection screen, remove after confirming working
+// DEBUG — remove once history confirmed working
 // ═══════════════════════════════════════════════════════════════════════════════
 async function debugHistory() {
   const out = document.getElementById("debugOut");
   out.style.display = "block";
-  out.textContent = "Testing…";
+  out.textContent = "Running…
+";
 
-  const studentName = state.studentName.trim() || "John S";
-  const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
-  const logCodes    = subjectList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
+  const name     = (state.studentName || "").trim() || "John S";
+  const subjList = state.lockedSubject ? [state.subject] : state.subjects;
+  const codes    = subjList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
 
-  out.textContent = `Student: "${studentName}"\nLogCodes: ${logCodes.join(",")}\nWorker: ${WORKER_URL}\nWebhook (first 60): ${MC_LOG_WEBHOOK_URL.slice(0,60)}\n\nFetching…`;
+  out.textContent += `Name: "${name}"
+Subjects: ${subjList.join(",")}
+LogCodes: ${codes.join(",")}
+Worker: ${WORKER_URL}
+
+`;
+
+  const params = new URLSearchParams({ student: name, subjects: codes.join(","), webhook: MC_LOG_WEBHOOK_URL });
+  const url    = WORKER_URL + "/history?" + params.toString();
+  out.textContent += `Request URL:
+${url}
+
+Fetching…
+`;
 
   try {
-    const params = new URLSearchParams({
-      student:  studentName,
-      subjects: logCodes.join(","),
-      webhook:  MC_LOG_WEBHOOK_URL,
-    });
-    const url = `${WORKER_URL}/history?` + params.toString();
-    out.textContent += `\nURL: ${url.slice(0,120)}…\n`;
+    const res  = await fetch(url, { method:"GET" });
+    out.textContent += `Worker HTTP status: ${res.status}
 
-    const res = await fetch(url, { method:"GET" });
-    out.textContent += `\nWorker status: ${res.status}`;
-
+`;
     const text = await res.text();
-    out.textContent += `\nRaw response (first 500 chars):\n${text.slice(0,500)}`;
-
+    out.textContent += `Raw response (first 600 chars):
+${text.slice(0, 600)}
+`;
     try {
       const data = JSON.parse(text);
-      out.textContent += `\n\nParsed OK. rows: ${(data.rows||[]).length}`;
-      if (data.error) out.textContent += `\nERROR field: ${data.error}`;
-      if (data.rows && data.rows.length > 0) {
-        out.textContent += `\nFirst 3 rows:\n${JSON.stringify(data.rows.slice(0,3), null, 2)}`;
+      out.textContent += `
+Parsed JSON OK
+`;
+      if (data.error) out.textContent += `ERROR field: ${data.error}
+`;
+      out.textContent += `rows returned: ${(data.rows||[]).length}
+`;
+      if ((data.rows||[]).length > 0) {
+        out.textContent += `
+First 3 rows:
+${JSON.stringify(data.rows.slice(0,3), null, 2)}
+`;
       }
-    } catch(pe) {
-      out.textContent += `\n\nJSON parse failed: ${pe.message}`;
-    }
-  } catch(e) {
-    out.textContent += `\nFetch error: ${e.message}`;
-  }
+    } catch(pe) { out.textContent += `
+JSON parse failed: ${pe.message}
+`; }
+  } catch(fe) { out.textContent += `Fetch error: ${fe.message}
+`; }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1789,9 +1804,11 @@ async function debugHistory() {
     state.subject       = subj;
     state.subjects      = [subj];
     state.lockedSubject = true;
-    document.getElementById("subjectLocked").style.display    = "block";
-    document.getElementById("subjectLockedLabel").textContent = SUBJECT_CONFIG[subj].name;
+    const lockedEl = document.getElementById("subjectLocked");
+    lockedEl.style.display    = "block";
+    lockedEl.textContent      = SUBJECT_CONFIG[subj].name;
     document.getElementById("subjectDropdown").style.display  = "none";
+    document.getElementById("subjectHint").style.display      = "none";
   } else {
     // Direct access — show subject pills, default to EES
     state.subject       = "EES";
