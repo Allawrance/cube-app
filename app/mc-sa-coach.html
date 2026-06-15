@@ -1197,11 +1197,25 @@ async function fetchStudentHistory(studentName, subjectLogCodes) {
   const res = await fetch(url, { method:"GET" });
   if (!res.ok) throw new Error("History fetch failed: " + res.status);
   const data = await res.json();
+
+  // Propagate any error from Apps Script or the Worker proxy
+  if (data.error) throw new Error("Apps Script error: " + data.error + (data.raw ? " | " + data.raw : ""));
+
   // data.rows = [{ questionId, isCorrect, timestamp }, ...]
+  const rows = data.rows || [];
+
+  // Diagnostic: warn if the Apps Script returned zero rows (likely not redeployed)
+  if (rows.length === 0) {
+    console.warn("[CUBE history] Zero rows returned for student:", studentName, "subjects:", subjectLogCodes);
+    console.warn("[CUBE history] Full response:", JSON.stringify(data));
+  } else {
+    console.log("[CUBE history] Loaded", rows.length, "rows for", studentName);
+  }
+
   // Build a map: questionId → last result (most recent row wins)
   const historyMap = new Map();
-  const rows = (data.rows || []).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-  for (const row of rows) {
+  const sorted = [...rows].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+  for (const row of sorted) {
     historyMap.set(row.questionId, row.isCorrect ? "correct" : "wrong");
   }
   return historyMap;
@@ -1231,10 +1245,18 @@ async function startSession() {
     try {
       const logCodes = subjectList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
       historyMap = await fetchStudentHistory(state.studentName.trim(), logCodes);
+      // If history came back empty, warn the user — likely means Apps Script not redeployed
+      if (historyMap.size === 0) {
+        document.getElementById("loadingMsg").textContent =
+          "⚠ No history found for "" + state.studentName.trim() + "". " +
+          "Check: (1) your name matches exactly what you used before, " +
+          "(2) LogWebhook.gs v13.2 has been redeployed as a new version in Apps Script.";
+        document.getElementById("btnStart").disabled = false;
+        return;
+      }
     } catch(e) {
       document.getElementById("loadingMsg").textContent =
-        "⚠ Could not load your history: " + e.message +
-        ". Check the Apps Script has a GET handler for action=getHistory.";
+        "⚠ Could not load history: " + e.message;
       document.getElementById("btnStart").disabled = false;
       return;
     }
