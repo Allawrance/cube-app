@@ -158,6 +158,84 @@ body {
   color: var(--accent2);
 }
 
+/* Subject pills (multi-select, shown when no ?subject= param) */
+.subject-pills-wrap {
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 20px;
+}
+.subject-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.subject-pill {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b8a4ff;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.subject-pill:hover { border-color: #b8a4ff; }
+.subject-pill.active {
+  background: rgba(184,164,255,0.12);
+  border-color: #b8a4ff;
+  color: #b8a4ff;
+}
+
+/* Filter mode cards */
+.filter-mode-wrap {
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 24px;
+}
+.filter-mode-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+.filter-mode-card {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.filter-mode-card:hover { border-color: var(--accent); }
+.filter-mode-card.active {
+  background: rgba(201,168,76,0.12);
+  border-color: var(--accent);
+}
+.filter-mode-icon { font-size: 20px; margin-bottom: 5px; }
+.filter-mode-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.filter-mode-desc {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.filter-mode-card.active .filter-mode-label { color: var(--accent); }
+.filter-mode-slow-notice {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 6px 10px;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 8px;
+  display: none;
+}
+.filter-mode-slow-notice.show { display: block; }
+
 /* Count hint */
 .count-hint {
   font-size: 13px;
@@ -632,44 +710,63 @@ body {
     <div style="font-size:11px;color:var(--muted);margin-top:5px;">Used for the class leaderboard — first name + surname initial only</div>
   </div>
 
-  <div class="selectors-row" id="subjectRow">
-    <div class="selector-group">
-      <!-- Static label shown when ?subject= URL param is present (arrived from landing page) -->
-      <div id="subjectLocked" style="display:none;">
-        <div class="selector-label">Subject</div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;
-                    color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
-                    padding:11px 16px;" id="subjectLockedLabel"></div>
+  <!-- Subject: locked label (from landing page) OR multi-select pills (direct access) -->
+  <div style="width:100%;max-width:580px;margin-bottom:20px;">
+    <div id="subjectLocked" style="display:none;">
+      <div class="selector-label">Subject</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+                  color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
+                  padding:11px 16px;" id="subjectLockedLabel"></div>
+    </div>
+    <div id="subjectDropdown" class="subject-pills-wrap" style="margin-bottom:0;">
+      <div class="selector-label">Subject <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
+      <div class="subject-pills" id="subjectPills">
+        <!-- Populated by JS -->
       </div>
-      <!-- Dropdown shown when arriving directly (no ?subject= param) -->
-      <div id="subjectDropdown">
-        <div class="selector-label">Select Your Subject</div>
-        <select class="mode-select" id="subjectSelect" onchange="onSubjectChange()">
-          <option value="EES">Earth &amp; Environmental Science</option>
-          <option value="BIO">Biology</option>
-          <option value="BS">Business Studies</option>
-          <option value="HM">Health &amp; Movement Science</option>
-          <option value="ES">Engineering Studies</option>
-          <option value="CF">Community &amp; Family Studies</option>
-          <option value="LEG">Legal Studies</option>
-          <option value="VISART">Visual Arts</option>
-          <option value="ANCH">Ancient History</option>
-        </select>
-      </div>
+      <!-- hidden select kept for legacy compat -->
+      <select id="subjectSelect" style="display:none;" onchange="onSubjectChange()">
+        <option value="EES">Earth &amp; Environmental Science</option>
+      </select>
     </div>
   </div>
 
   <div class="module-pills-wrap">
-    <div class="selector-label">Module / Topic</div>
+    <div class="selector-label">Module / Topic <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
     <div class="module-pills" id="modulePills">
       <!-- Populated by JS on subject change -->
     </div>
   </div>
 
   <div class="year-pills-wrap">
-    <div class="selector-label">Year</div>
+    <div class="selector-label">Year <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
     <div class="year-pills" id="yearPills">
       <!-- Populated by JS on subject change -->
+    </div>
+  </div>
+
+  <!-- Question filter mode -->
+  <div class="filter-mode-wrap">
+    <div class="selector-label">Question Selection Mode</div>
+    <div class="filter-mode-cards" id="filterModeCards">
+      <div class="filter-mode-card active" data-mode="random" onclick="selectFilterMode(this)">
+        <div class="filter-mode-icon">🎲</div>
+        <div class="filter-mode-label">Random</div>
+        <div class="filter-mode-desc">Shuffle from selected filters</div>
+      </div>
+      <div class="filter-mode-card" data-mode="wrong" onclick="selectFilterMode(this)">
+        <div class="filter-mode-icon">❌</div>
+        <div class="filter-mode-label">Got Wrong</div>
+        <div class="filter-mode-desc">Questions you previously got wrong (last attempt)</div>
+      </div>
+      <div class="filter-mode-card" data-mode="notattempted" onclick="selectFilterMode(this)">
+        <div class="filter-mode-icon">🆕</div>
+        <div class="filter-mode-label">Not Attempted</div>
+        <div class="filter-mode-desc">Questions you've never tried before</div>
+      </div>
+    </div>
+    <div class="filter-mode-slow-notice" id="filterModeSlowNotice">
+      ⏳ This mode checks your history in the spreadsheet — may take a few extra seconds to start.
+      Requires your name to be entered above.
     </div>
   </div>
 
@@ -741,7 +838,6 @@ body {
 // CONFIGURATION
 // ═══════════════════════════════════════════════════════════════════════════════
 const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
-// MC logging webhook — same spreadsheet as short answer, routed via Worker
 const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
 
 // Subject configs: module labels, display name
@@ -778,11 +874,16 @@ const SUBJECT_CONFIG = {
 // STATE
 // ═══════════════════════════════════════════════════════════════════════════════
 let state = {
-  subject:        "EES",
-  module:         "ALL",
-  year:           "all",
+  // Selection — now arrays for multi-select
+  subjects:       ["EES"],   // array of selected subject codes
+  subject:        "EES",     // kept for single-subject compat (locked mode)
+  lockedSubject:  false,     // true when ?subject= param present
+  modules:        ["ALL"],   // array of selected modules ("ALL" = every module)
+  years:          ["all"],   // array of selected years ("all" = every year)
+  filterMode:     "random",  // "random" | "wrong" | "notattempted"
   source:         "all",
   studentName:    localStorage.getItem("cube_student_name") || "",
+  studentClass:   "",
   questions:      [],
   queue:          [],
   currentIdx:     0,
@@ -798,41 +899,110 @@ let state = {
 const FIRST_ATTEMPT_XP  = 5;
 const REPEAT_ATTEMPT_XP = 2;
 const WRONG_REFLECTION_XP = 1;
-const STREAK_BONUS_AT   = 5;   // every 5-in-a-row
+const STREAK_BONUS_AT   = 5;
 const STREAK_BONUS_XP   = 3;
-const SESSION_LIMIT     = 5;   // max questions per session
+// No SESSION_LIMIT — students attempt all matched questions
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SETUP — SUBJECT / MODULE / YEAR SELECTORS
+// SUBJECT PILLS (multi-select)
 // ═══════════════════════════════════════════════════════════════════════════════
-function onSubjectChange() {
-  state.subject = document.getElementById("subjectSelect").value;
-  state.module  = "ALL";
-  state.year    = "all";
-  renderModulePills();
-  renderYearPills();
-  prefetchAndCount();
-}
-
-function renderModulePills() {
-  const cfg    = SUBJECT_CONFIG[state.subject];
-  const pills  = document.getElementById("modulePills");
-  const mods   = ["ALL", ...cfg.modules];
-  pills.innerHTML = mods.map(m => `
-    <div class="module-pill${m==="ALL"?" active":""}" data-module="${m}" onclick="selectModule(this)">
-      ${cfg.moduleLabels[m] || m}
+function renderSubjectPills() {
+  const wrap = document.getElementById("subjectPills");
+  if (!wrap) return;
+  wrap.innerHTML = Object.entries(SUBJECT_CONFIG).map(([code, cfg]) => `
+    <div class="subject-pill${state.subjects.includes(code)?" active":""}"
+         data-subject="${code}" onclick="toggleSubject(this)">
+      ${cfg.name}
     </div>
   `).join("");
 }
 
-function selectModule(el) {
-  document.querySelectorAll(".module-pill").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
-  state.module = el.dataset.module;
+function toggleSubject(el) {
+  const code = el.dataset.subject;
+  const idx  = state.subjects.indexOf(code);
+  if (idx >= 0) {
+    if (state.subjects.length === 1) return; // keep at least one
+    state.subjects.splice(idx, 1);
+    el.classList.remove("active");
+  } else {
+    state.subjects.push(code);
+    el.classList.add("active");
+  }
+  // Rebuild module pills — union of all selected subjects' modules
+  renderModulePills();
   prefetchAndCount();
 }
 
-// Year pills — built from known HSC years + "Other"
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODULE PILLS (multi-select — union across all selected subjects)
+// ═══════════════════════════════════════════════════════════════════════════════
+function getUnionModules() {
+  // Returns { moduleCode: label } for all modules across selected subjects
+  // "ALL" pill always present and means "every module"
+  if (state.lockedSubject) {
+    const cfg = SUBJECT_CONFIG[state.subject];
+    return { ALL: cfg.moduleLabels["ALL"], ...Object.fromEntries(cfg.modules.map(m => [m, cfg.moduleLabels[m] || m])) };
+  }
+  const result = { ALL: "All Modules / Topics" };
+  for (const code of state.subjects) {
+    const cfg = SUBJECT_CONFIG[code];
+    if (!cfg) continue;
+    for (const m of cfg.modules) {
+      if (!result[m]) result[m] = cfg.moduleLabels[m] || m;
+    }
+  }
+  return result;
+}
+
+function renderModulePills() {
+  const mods  = getUnionModules();
+  const pills = document.getElementById("modulePills");
+  // Filter out any previously selected modules no longer valid
+  const validKeys = Object.keys(mods);
+  state.modules = state.modules.filter(m => validKeys.includes(m));
+  if (state.modules.length === 0) state.modules = ["ALL"];
+
+  pills.innerHTML = Object.entries(mods).map(([code, label]) => `
+    <div class="module-pill${state.modules.includes(code)?" active":""}"
+         data-module="${code}" onclick="toggleModule(this)">
+      ${label}
+    </div>
+  `).join("");
+}
+
+function toggleModule(el) {
+  const code = el.dataset.module;
+  if (code === "ALL") {
+    // ALL selected → deselect everything else
+    state.modules = ["ALL"];
+    document.querySelectorAll(".module-pill").forEach(p => p.classList.remove("active"));
+    el.classList.add("active");
+  } else {
+    // Specific module toggled
+    const allPill = document.querySelector('.module-pill[data-module="ALL"]');
+    const idx = state.modules.indexOf(code);
+    if (idx >= 0) {
+      // Deselecting
+      state.modules.splice(idx, 1);
+      el.classList.remove("active");
+      if (state.modules.length === 0) {
+        state.modules = ["ALL"];
+        if (allPill) allPill.classList.add("active");
+      }
+    } else {
+      // Selecting — also deselect ALL
+      state.modules = state.modules.filter(m => m !== "ALL");
+      if (allPill) allPill.classList.remove("active");
+      state.modules.push(code);
+      el.classList.add("active");
+    }
+  }
+  prefetchAndCount();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// YEAR PILLS (multi-select)
+// ═══════════════════════════════════════════════════════════════════════════════
 const YEAR_OPTIONS = [
   { value:"all",   label:"All Years" },
   { value:"2025",  label:"2025 HSC" },
@@ -848,59 +1018,129 @@ const YEAR_OPTIONS = [
 function renderYearPills() {
   const pills = document.getElementById("yearPills");
   pills.innerHTML = YEAR_OPTIONS.map(y => `
-    <div class="year-pill${y.value==="all"?" active":""}" data-year="${y.value}" onclick="selectYear(this)">
+    <div class="year-pill${state.years.includes(y.value)?" active":""}"
+         data-year="${y.value}" onclick="toggleYear(this)">
       ${y.label}
     </div>
   `).join("");
 }
 
-function selectYear(el) {
-  document.querySelectorAll(".year-pill").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
-  state.year = el.dataset.year;
+function toggleYear(el) {
+  const val = el.dataset.year;
+  if (val === "all") {
+    state.years = ["all"];
+    document.querySelectorAll(".year-pill").forEach(p => p.classList.remove("active"));
+    el.classList.add("active");
+  } else {
+    const allPill = document.querySelector('.year-pill[data-year="all"]');
+    const idx = state.years.indexOf(val);
+    if (idx >= 0) {
+      state.years.splice(idx, 1);
+      el.classList.remove("active");
+      if (state.years.length === 0) {
+        state.years = ["all"];
+        if (allPill) allPill.classList.add("active");
+      }
+    } else {
+      state.years = state.years.filter(y => y !== "all");
+      if (allPill) allPill.classList.remove("active");
+      state.years.push(val);
+      el.classList.add("active");
+    }
+  }
   prefetchAndCount();
 }
 
-function selectMode(m) {
-  state.mode = m;
-  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
-  document.getElementById("card-" + m).classList.add("selected");
+// ═══════════════════════════════════════════════════════════════════════════════
+// FILTER MODE SELECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+function selectFilterMode(el) {
+  document.querySelectorAll(".filter-mode-card").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  state.filterMode = el.dataset.mode;
+  const notice = document.getElementById("filterModeSlowNotice");
+  if (state.filterMode === "wrong" || state.filterMode === "notattempted") {
+    notice.classList.add("show");
+  } else {
+    notice.classList.remove("show");
+  }
+  prefetchAndCount();
 }
 
-// Prefetch question list to get count (but don't store — full fetch happens on Start)
-let _prefetchCache = {};  // key: "SUBJECT:MODULE:YEAR:SOURCE" → count
+// Legacy compat — single subject change (locked mode only)
+function onSubjectChange() {
+  state.subject = document.getElementById("subjectSelect").value;
+  state.subjects = [state.subject];
+  state.modules  = ["ALL"];
+  state.years    = ["all"];
+  renderModulePills();
+  renderYearPills();
+  prefetchAndCount();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PREFETCH & COUNT
+// ═══════════════════════════════════════════════════════════════════════════════
+// Builds a canonical key from current multi-select state
+function buildFilterKey() {
+  const subjs = [...state.subjects].sort().join("+");
+  const mods  = [...state.modules].sort().join("+");
+  const yrs   = [...state.years].sort().join("+");
+  return `${subjs}:${mods}:${yrs}:${state.source}:${state.filterMode}`;
+}
+
+let _prefetchCache = {};
+
 async function prefetchAndCount() {
-  const key = `${state.subject}:${state.module}:${state.year}:${state.source}`;
+  const key = buildFilterKey();
   document.getElementById("countHint").textContent = "Checking question bank…";
   document.getElementById("btnStart").disabled = true;
 
-  if (_prefetchCache[key] !== undefined) {
+  // For smart modes, skip cache (always recompute since history changes)
+  if (state.filterMode === "random" && _prefetchCache[key] !== undefined) {
     updateCountHint(_prefetchCache[key]);
     return;
   }
 
   try {
-    const mod  = state.module === "ALL" ? "all" : state.module;
-    const url  = `${WORKER_URL}/questions?subject=${state.subject}&module=${mod}&year=${state.year}&source=${state.source}`;
-    const res  = await fetch(url, { method:"GET" });
-    if (!res.ok) throw new Error("Worker error " + res.status);
-    const data = await res.json();
-    _prefetchCache[key] = data.count;
-    updateCountHint(data.count);
+    let total = 0;
+    const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
+
+    // Fetch count across all selected subjects × modules × years
+    const fetchPromises = [];
+    for (const subj of subjectList) {
+      const modList  = state.modules.includes("ALL") ? ["all"] : state.modules;
+      const yearList = state.years.includes("all")   ? ["all"] : state.years;
+      for (const mod of modList) {
+        for (const yr of yearList) {
+          fetchPromises.push(
+            fetch(`${WORKER_URL}/questions?subject=${subj}&module=${mod}&year=${yr}&source=${state.source}&countOnly=1`)
+              .then(r => r.json()).then(d => d.count || 0).catch(() => 0)
+          );
+        }
+      }
+    }
+    const counts = await Promise.all(fetchPromises);
+    total = counts.reduce((a,b) => a+b, 0);
+
+    if (state.filterMode === "random") {
+      _prefetchCache[key] = total;
+    }
+    updateCountHint(total);
   } catch(e) {
-    document.getElementById("countHint").textContent = "⚠ Could not reach question bank — must be served via GitHub Pages, not opened as a local file";
+    document.getElementById("countHint").textContent =
+      "⚠ Could not reach question bank — must be served via GitHub Pages, not opened as a local file";
     document.getElementById("btnStart").disabled = true;
   }
 }
 
 function updateCountHint(count) {
-  const modLabel  = SUBJECT_CONFIG[state.subject].moduleLabels[state.module] || state.module;
-  const yearLabel = state.year === "all" ? "All Years" : (state.year === "other" ? "Other" : state.year + " HSC");
-  const filterStr = state.year === "all" ? modLabel : `${modLabel} · ${yearLabel}`;
+  const modeLabels = { random:"Random", wrong:"Got Wrong", notattempted:"Not Attempted" };
+  const modeStr = state.filterMode !== "random" ? ` · Mode: ${modeLabels[state.filterMode]}` : "";
   document.getElementById("countHint").textContent =
     count > 0
-      ? `${count} question${count===1?"":"s"} available — ${filterStr}`
-      : `No questions yet for ${filterStr} — check back soon`;
+      ? `Up to ${count} question${count===1?"":"s"} available${modeStr}`
+      : `No questions yet for this selection — check back soon`;
   document.getElementById("btnStart").disabled = count === 0;
 }
 
@@ -908,7 +1148,6 @@ function updateCountHint(count) {
 // MC LOGGING
 // ═══════════════════════════════════════════════════════════════════════════════
 function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
-  // Don't log if no student name
   if (!state.studentName.trim()) return;
   try {
     fetch(`${WORKER_URL}/log`, {
@@ -918,9 +1157,9 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
         type:           "MC_ROW",
         webhookUrl:     MC_LOG_WEBHOOK_URL,
         student:        state.studentName.trim(),
-        subject:        (SUBJECT_CONFIG[state.subject]?.logCode || state.subject),
-        module:         q.module  || state.module,
-        year:           String(q.year || state.year),
+        subject:        (SUBJECT_CONFIG[q._subjectCode || state.subject]?.logCode || state.subject),
+        module:         q.module  || "—",
+        year:           String(q.year || "—"),
         source:         q.source  || "HSC",
         questionId:     q.id      || "—",
         questionText:   q.questionText || "",
@@ -937,9 +1176,34 @@ function logMCAnswer(q, studentAnswer, isCorrect, attemptType, reflectionType) {
       })
     });
   } catch(e) {
-    // Fire-and-forget — never block the UI on logging failure
     console.warn("MC log failed:", e.message);
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FETCH STUDENT HISTORY (for "Got Wrong" and "Not Attempted" modes)
+// Returns Map<questionId, lastResult>  where lastResult = "correct" | "wrong"
+// ═══════════════════════════════════════════════════════════════════════════════
+async function fetchStudentHistory(studentName, subjectLogCodes) {
+  // Calls the Apps Script GET endpoint which returns rows for this student
+  // Expected endpoint: MC_LOG_WEBHOOK_URL?action=getHistory&student=NAME&subjects=EES,BIO
+  const params = new URLSearchParams({
+    action:   "getHistory",
+    student:  studentName,
+    subjects: subjectLogCodes.join(","),
+  });
+  const url = MC_LOG_WEBHOOK_URL + "?" + params.toString();
+  const res = await fetch(url, { method:"GET" });
+  if (!res.ok) throw new Error("History fetch failed: " + res.status);
+  const data = await res.json();
+  // data.rows = [{ questionId, isCorrect, timestamp }, ...]
+  // Build a map: questionId → last result (most recent row wins)
+  const historyMap = new Map();
+  const rows = (data.rows || []).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+  for (const row of rows) {
+    historyMap.set(row.questionId, row.isCorrect ? "correct" : "wrong");
+  }
+  return historyMap;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -949,29 +1213,95 @@ async function startSession() {
   document.getElementById("btnStart").disabled = true;
   document.getElementById("loadingMsg").textContent = "Loading questions…";
 
-  const mod = state.module === "ALL" ? "all" : state.module;
-  const url = `${WORKER_URL}/questions?subject=${state.subject}&module=${mod}&year=${state.year}&source=${state.source}`;
-  let questions;
+  const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
+  const modList     = state.modules.includes("ALL") ? ["all"] : state.modules;
+  const yearList    = state.years.includes("all")   ? ["all"] : state.years;
+
+  // Fetch history first if needed
+  let historyMap = null;
+  if (state.filterMode === "wrong" || state.filterMode === "notattempted") {
+    if (!state.studentName.trim()) {
+      document.getElementById("loadingMsg").textContent =
+        "⚠ Please enter your name above — required for Got Wrong / Not Attempted modes.";
+      document.getElementById("btnStart").disabled = false;
+      return;
+    }
+    document.getElementById("loadingMsg").textContent = "Fetching your history…";
+    try {
+      const logCodes = subjectList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
+      historyMap = await fetchStudentHistory(state.studentName.trim(), logCodes);
+    } catch(e) {
+      document.getElementById("loadingMsg").textContent =
+        "⚠ Could not load your history: " + e.message +
+        ". Check the Apps Script has a GET handler for action=getHistory.";
+      document.getElementById("btnStart").disabled = false;
+      return;
+    }
+    document.getElementById("loadingMsg").textContent = "Loading questions…";
+  }
+
+  // Fetch all questions matching current filters (union across subjects × modules × years)
+  let allQuestions = [];
   try {
-    const res  = await fetch(url, { method:"GET" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    questions  = data.questions;
+    const fetchPromises = [];
+    for (const subj of subjectList) {
+      for (const mod of modList) {
+        for (const yr of yearList) {
+          fetchPromises.push(
+            fetch(`${WORKER_URL}/questions?subject=${subj}&module=${mod}&year=${yr}&source=${state.source}`)
+              .then(r => r.ok ? r.json() : { questions:[] })
+              .then(d => (d.questions || []).map(q => ({ ...q, _subjectCode: subj })))
+              .catch(() => [])
+          );
+        }
+      }
+    }
+    const arrays = await Promise.all(fetchPromises);
+    allQuestions  = arrays.flat();
+    // Deduplicate by id
+    const seen = new Set();
+    allQuestions = allQuestions.filter(q => {
+      if (!q.id || seen.has(q.id)) return false;
+      seen.add(q.id);
+      return true;
+    });
   } catch(e) {
     document.getElementById("loadingMsg").textContent = "⚠ Failed to load questions: " + e.message;
     document.getElementById("btnStart").disabled = false;
     return;
   }
 
-  if (!questions || questions.length === 0) {
+  if (!allQuestions || allQuestions.length === 0) {
     document.getElementById("loadingMsg").textContent = "No questions found for this selection.";
     document.getElementById("btnStart").disabled = false;
     return;
   }
 
-  // Shuffle and cap to session limit
-  state.questions   = shuffle([...questions]);
-  state.queue       = state.questions.slice(0, SESSION_LIMIT);
+  // Apply history filter
+  if (historyMap !== null) {
+    if (state.filterMode === "wrong") {
+      // Keep questions where last attempt was wrong (or never attempted — include those too)
+      allQuestions = allQuestions.filter(q => {
+        const last = historyMap.get(q.id);
+        return last === "wrong"; // only previously wrong; not never attempted
+      });
+    } else if (state.filterMode === "notattempted") {
+      allQuestions = allQuestions.filter(q => !historyMap.has(q.id));
+    }
+
+    if (allQuestions.length === 0) {
+      const msg = state.filterMode === "wrong"
+        ? "🎉 No wrong answers to review — great work! Try Random mode or Not Attempted."
+        : "🎉 You've attempted all available questions! Try Random or Got Wrong mode.";
+      document.getElementById("loadingMsg").textContent = msg;
+      document.getElementById("btnStart").disabled = false;
+      return;
+    }
+  }
+
+  // Shuffle — no cap (students do all matched questions)
+  state.questions   = shuffle([...allQuestions]);
+  state.queue       = [...state.questions];
   state.currentIdx  = 0;
   state.answered    = false;
   state.streak      = 0;
@@ -986,12 +1316,16 @@ async function startSession() {
   document.getElementById("sessionScreen").style.display = "flex";
 
   // Topbar info
-  document.getElementById("topbarSubject").textContent =
-    SUBJECT_CONFIG[state.subject].name;
-  const modLabel  = SUBJECT_CONFIG[state.subject].moduleLabels[state.module] || state.module;
-  const yearLabel = state.year === "all" ? "" : ` · ${state.year === "other" ? "Other" : state.year + " HSC"}`;
-  document.getElementById("chipModule").textContent = "📌 " + modLabel + yearLabel;
+  const subjectDisplay = subjectList.length === 1
+    ? SUBJECT_CONFIG[subjectList[0]]?.name || subjectList[0]
+    : subjectList.length + " subjects";
+  document.getElementById("topbarSubject").textContent = subjectDisplay;
 
+  const modDisplay  = state.modules.includes("ALL") ? "All Modules" : state.modules.join(", ");
+  const yearDisplay = state.years.includes("all") ? "" : " · " + state.years.map(y => y==="other"?"Other":y+" HSC").join(", ");
+  document.getElementById("chipModule").textContent = "📌 " + modDisplay + yearDisplay;
+
+  document.getElementById("loadingMsg").textContent = "";
   renderQuestion();
 }
 
@@ -1011,18 +1345,16 @@ function renderQuestion() {
   const num = state.currentIdx + 1;
   const tot = state.queue.length;
 
-  // Progress
   const pct = Math.round((num / tot) * 100);
   document.getElementById("progressLabel").textContent = `Q ${num} of ${tot}`;
   document.getElementById("progressPct").textContent   = pct + "%";
   document.getElementById("progressFill").style.width  = pct + "%";
 
-  // Determine image URL if question has image
-  const imgUrl = q.image
-    ? `https://allawrance.github.io/cube-app/${state.subject}/questions/images/${q.year}/${q.image}`
+  const subjCode = q._subjectCode || state.subject;
+  const imgUrl   = q.image
+    ? `https://allawrance.github.io/cube-app/${subjCode}/questions/images/${q.year}/${q.image}`
     : null;
 
-  // Build stimulus HTML
   let stimulusHTML = "";
   if (q.stimulus) {
     stimulusHTML = `
@@ -1039,13 +1371,14 @@ function renderQuestion() {
       </div>`;
   }
 
-  // Build options
   const optHTML = Object.entries(q.options).map(([letter, text]) => `
     <button class="option-btn" data-letter="${letter}" onclick="selectAnswer('${letter}')">
       <span class="option-label">${letter}</span>
       <span class="option-text">${text}</span>
     </button>
   `).join("");
+
+  const subjLabel = SUBJECT_CONFIG[subjCode]?.name || subjCode;
 
   document.getElementById("questionCard").innerHTML = `
     <div class="q-header">
@@ -1054,14 +1387,13 @@ function renderQuestion() {
         <span class="q-chip q-chip-mod">${q.module}</span>
         ${q.topic ? `<span class="q-chip q-chip-topic">${q.topic}</span>` : ""}
       </div>
-      <div class="q-source">${q.year ? q.year + " " : ""}${q.source || ""}</div>
+      <div class="q-source">${q.year ? q.year + " " : ""}${q.source || ""} ${subjCode !== state.subject ? "· " + subjLabel : ""}</div>
     </div>
     <div class="q-body">
       ${stimulusHTML}
       <div class="q-stem">${q.questionText}</div>
       <div class="options" id="options">${optHTML}</div>
 
-      <!-- Reflection buttons (shown on every wrong answer) -->
       <div class="reflection-wrap" id="reflectionWrap">
         <div class="reflection-title">Why did you choose that option?</div>
         <div class="reflection-btns">
@@ -1071,7 +1403,6 @@ function renderQuestion() {
         </div>
       </div>
 
-      <!-- Feedback panel -->
       <div class="feedback-panel" id="feedbackPanel">
         <div class="feedback-result" id="feedbackResult"></div>
         <div class="feedback-section" id="feedbackExplanation"></div>
@@ -1099,19 +1430,16 @@ function selectAnswer(letter) {
   const q       = state.queue[state.currentIdx];
   const correct = (letter === q.correctAnswer);
 
-  // Visual feedback on buttons
   document.querySelectorAll(".option-btn").forEach(btn => {
     btn.disabled = true;
     if (btn.dataset.letter === q.correctAnswer) btn.classList.add("correct");
     if (btn.dataset.letter === letter && !correct) btn.classList.add("wrong");
   });
 
-  // XP — first attempt bonus tracked via localStorage per question id
   const lsKey = "mc_seen_" + q.id;
   const seen  = localStorage.getItem(lsKey);
 
   if (correct) {
-    // Correct path
     state.streak++;
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     state.totalCorrect++;
@@ -1119,18 +1447,13 @@ function selectAnswer(letter) {
     const xpGain = seen ? REPEAT_ATTEMPT_XP : FIRST_ATTEMPT_XP;
     if (!seen) localStorage.setItem(lsKey, "1");
 
-    // Streak bonus
     const bonusXP = (state.streak % STREAK_BONUS_AT === 0 && state.streak > 0) ? STREAK_BONUS_XP : 0;
     state.sessionXP += xpGain + bonusXP;
 
-    // Log correct answer
     logMCAnswer(q, letter, true, seen ? "repeat" : "first", null);
-
     showXPPop("+" + (xpGain + bonusXP) + " XP", correct);
     showFeedback(q, letter, correct, null);
-
   } else {
-    // Wrong path — log immediately so no attempt is missed if student skips reflection
     state.streak = 0;
     state.sessionXP += WRONG_REFLECTION_XP;
     state.lastWrongAnswer = letter;
@@ -1143,10 +1466,8 @@ function selectAnswer(letter) {
 
 function logReflection(type) {
   state.errorCounts[type] = (state.errorCounts[type] || 0) + 1;
-  // Error count tracked here; log was already sent in selectAnswer
   document.getElementById("reflectionWrap").style.display = "none";
   const q = state.queue[state.currentIdx];
-  // XP and log already fired in selectAnswer — do NOT log again here (causes duplicate rows)
   showFeedback(q, null, false, type);
   updateHUD();
   updateErrorPanel();
@@ -1170,11 +1491,7 @@ function showFeedback(q, chosenLetter, correct, reflectionType) {
   } else {
     result.className = "feedback-result wrong";
     result.textContent = "✗ Incorrect — correct answer: " + q.correctAnswer;
-
-    // Explanation of correct answer
     expl.innerHTML = `<div class="feedback-section-title">Why ${q.correctAnswer} is correct</div>${q.explanation}`;
-
-    // Why their choice was wrong (if we know which they chose)
     if (chosenLetter && q.distractors && q.distractors[chosenLetter]) {
       distr.innerHTML = `
         <div class="feedback-section-title" style="margin-top:10px;">Why you may have picked that</div>
@@ -1182,8 +1499,6 @@ function showFeedback(q, chosenLetter, correct, reflectionType) {
     } else {
       distr.innerHTML = "";
     }
-
-    // Coach tip
     if (q.coach) {
       coach.innerHTML = `
         <div style="margin-top:12px;padding:10px 12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;font-size:13px;">
@@ -1197,14 +1512,16 @@ function showFeedback(q, chosenLetter, correct, reflectionType) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// EXIT SESSION
+// EXIT SESSION — no confirm dialog; results already saved via logMCAnswer
 // ═══════════════════════════════════════════════════════════════════════════════
 function exitSession() {
-  if (!confirm("Exit this session? Your progress will not be saved.")) return;
+  // Results have been saved question-by-question via logMCAnswer (fire-and-forget)
+  // No confirmation needed
   document.getElementById("sessionScreen").style.display = "none";
   document.getElementById("modeScreen").style.display    = "flex";
-  document.getElementById("loadingMsg").textContent = "";
-  document.getElementById("btnStart").disabled = false;
+  document.getElementById("loadingMsg").textContent      = "";
+  document.getElementById("btnStart").disabled           = false;
+  prefetchAndCount();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1244,8 +1561,7 @@ function updateErrorPanel() {
     { key:"guessed",     icon:"🎲", label:"Guessing",      count:ec.guessed },
     { key:"misread",     icon:"👁", label:"Misread Q",     count:ec.misread },
     { key:"noknowledge", icon:"📚", label:"Gap in concept", count:ec.noknowledge },
-  ].filter(x => x.count > 0)
-   .sort((a,b) => b.count - a.count);
+  ].filter(x => x.count > 0).sort((a,b) => b.count - a.count);
 
   document.getElementById("errorPanel").innerHTML = items.map(x => `
     <div class="error-item">
@@ -1263,7 +1579,6 @@ function showXPPop(text, correct) {
   pop.textContent = text;
   pop.style.color = correct ? "var(--purple)" : "var(--muted)";
 
-  // Position near top-right chipXP
   const chip = document.getElementById("chipXP");
   const r    = chip.getBoundingClientRect();
   pop.style.position = "fixed";
@@ -1333,11 +1648,9 @@ function showComplete() {
 }
 
 function returnToSelection() {
-  // Return to selection screen keeping subject/module/year — no full reload
   document.getElementById("sessionScreen").style.display = "none";
   document.getElementById("modeScreen").style.display    = "flex";
   document.getElementById("loadingMsg").textContent = "";
-  // Reset session state but keep filters
   state.questions  = [];
   state.queue      = [];
   state.currentIdx = 0;
@@ -1348,21 +1661,18 @@ function returnToSelection() {
   state.totalCorrect   = 0;
   state.totalAttempted = 0;
   state.errorCounts = { guessed:0, misread:0, noknowledge:0 };
-  // Re-run prefetch so count hint is fresh
   prefetchAndCount();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════════
-// Read ?subject= URL param on load
 (function init() {
   const params       = new URLSearchParams(window.location.search);
   const raw          = params.get("subject") || null;
   const classParam   = params.get("class")   || "";
   state.studentClass = classParam;
 
-  // Normalise incoming code (e.g. "HlthM", "BusS", "EngS") → SUBJECT_CONFIG key
   const SUBJ_NORMALISE = {
     EES:"EES", BIO:"BIO", BIOLOGY:"BIO",
     BS:"BS", BUSS:"BS",
@@ -1376,23 +1686,29 @@ function returnToSelection() {
   const subj = raw ? (SUBJ_NORMALISE[raw.toUpperCase()] || raw.toUpperCase()) : null;
 
   if (subj && SUBJECT_CONFIG[subj]) {
-    // Arrived from landing page — lock the subject, hide the dropdown
-    state.subject = subj;
-    document.getElementById("subjectSelect").value = subj;
+    // Locked to one subject via URL param
+    state.subject       = subj;
+    state.subjects      = [subj];
+    state.lockedSubject = true;
     document.getElementById("subjectLocked").style.display    = "block";
     document.getElementById("subjectLockedLabel").textContent = SUBJECT_CONFIG[subj].name;
     document.getElementById("subjectDropdown").style.display  = "none";
   } else {
-    // Direct access — show the dropdown, default to EES
-    state.subject = document.getElementById("subjectSelect").value || "EES";
+    // Direct access — show subject pills, default to EES
+    state.subject       = "EES";
+    state.subjects      = ["EES"];
+    state.lockedSubject = false;
+    renderSubjectPills();
   }
+
   renderModulePills();
   renderYearPills();
-  // Pre-fill student name from localStorage
+
   const savedName = localStorage.getItem("cube_student_name") || "";
   state.studentName = savedName;
   const nameInput = document.getElementById("studentNameInput");
   if (nameInput && savedName) nameInput.value = savedName;
+
   prefetchAndCount();
 })();
 </script>
