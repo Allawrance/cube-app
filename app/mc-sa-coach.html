@@ -1774,8 +1774,15 @@ async function fetchCompleteLb() {
   if (!el) return;
 
   const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
-  const subj        = subjectList[0] || "EES";
   const me          = (state.studentName || "").trim().toLowerCase();
+
+  // Map internal subject code → LeaderboardWebhook LB_TAB_MAP key
+  // LeaderboardWebhook uses: EES, ENGS, BUSS, HLTHM, COMFAM, BIO, LEG, VISART, ANCH
+  const LB_SUBJ_MAP = {
+    EES:"EES", BIO:"BIO", BS:"BUSS", HM:"HLTHM",
+    ES:"ENGS", CF:"COMFAM", LEG:"LEG", VISART:"VISART", ANCH:"ANCH"
+  };
+  const subj = LB_SUBJ_MAP[subjectList[0]] || subjectList[0] || "EES";
 
   try {
     const url = `${WORKER_URL}/leaderboard?subject=${subj}&period=week&directive=all&lburl=${encodeURIComponent(LB_WEBHOOK_URL)}`;
