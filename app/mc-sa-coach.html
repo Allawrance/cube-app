@@ -1573,11 +1573,17 @@ function exitSession() {
     logMCAnswer(q, letter, false, attemptType, "—");
     state.pendingWrong = null;
   }
-  document.getElementById("sessionScreen").style.display = "none";
-  document.getElementById("modeScreen").style.display    = "flex";
-  document.getElementById("loadingMsg").textContent      = "";
-  document.getElementById("btnStart").disabled           = false;
-  prefetchAndCount();
+  // Show the celebration screen rather than silently returning to selection
+  // Only skip if no questions were attempted at all
+  if (state.totalAttempted > 0) {
+    showComplete(true);   // true = early exit
+  } else {
+    document.getElementById("sessionScreen").style.display = "none";
+    document.getElementById("modeScreen").style.display    = "flex";
+    document.getElementById("loadingMsg").textContent      = "";
+    document.getElementById("btnStart").disabled           = false;
+    prefetchAndCount();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1648,7 +1654,7 @@ function showXPPop(text, correct) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // SESSION COMPLETE
 // ═══════════════════════════════════════════════════════════════════════════════
-function showComplete() {
+function showComplete(earlyExit) {
   const ec = state.errorCounts;
   const errors = [
     { icon:"🎲", label:"Guessing",       count:ec.guessed },
@@ -1660,15 +1666,29 @@ function showComplete() {
     ? Math.round((state.totalCorrect / state.totalAttempted) * 100)
     : 0;
 
+  const totalQ   = state.queue.length;
+  const doneQ    = state.totalAttempted;
+  const remaining = totalQ - doneQ;
+
   // XP message — contextual encouragement
-  const xpMsg = state.sessionXP >= 20 ? "Outstanding session!" :
-                state.sessionXP >= 12 ? "Solid work — keep it up!" :
-                state.sessionXP >= 6  ? "Good effort — try again to improve!" :
-                                        "Every attempt counts — keep going!";
+  const xpMsg = earlyExit
+    ? (state.sessionXP >= 10 ? "Great effort — come back for the rest!" :
+       state.sessionXP >= 4  ? "Good start — finish the session next time!" :
+                               "Every question counts — keep coming back!")
+    : (state.sessionXP >= 20 ? "Outstanding session!" :
+       state.sessionXP >= 12 ? "Solid work — keep it up!" :
+       state.sessionXP >= 6  ? "Good effort — try again to improve!" :
+                               "Every attempt counts — keep going!");
+
+  const titleText = earlyExit ? "SESSION SAVED" : "SESSION COMPLETE";
+  const subtitleText = earlyExit && remaining > 0
+    ? `<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">${doneQ} of ${totalQ} questions attempted &mdash; ${remaining} remaining</div>`
+    : "";
 
   document.getElementById("questionCard").innerHTML = `
     <div class="complete-screen">
-      <div class="complete-title">SESSION COMPLETE</div>
+      <div class="complete-title">${titleText}</div>
+      ${subtitleText}
 
       <!-- XP HERO — big and motivating -->
       <div style="text-align:center;margin:20px 0 24px;">
@@ -1719,6 +1739,9 @@ function showComplete() {
 
       <!-- ACTIONS -->
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
+        ${earlyExit && remaining > 0 ? `
+          <button class="btn-start" style="margin:0;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);" onclick="continueSession()">Continue Session →</button>
+        ` : ""}
         <button class="btn-start" style="margin:0;" onclick="returnToSelection()">New Session →</button>
       </div>
       <div style="font-size:11px;color:var(--muted);margin-top:14px;">Session saved ✓</div>
@@ -1783,6 +1806,12 @@ async function fetchCompleteLb() {
   } catch(e) {
     el.textContent = "Could not load leaderboard.";
   }
+}
+
+function continueSession() {
+  // Resume from where the student left off
+  document.getElementById("questionCard").innerHTML = "";
+  renderQuestion();
 }
 
 function returnToSelection() {
