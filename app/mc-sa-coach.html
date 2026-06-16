@@ -651,6 +651,16 @@ body {
 }
 
 /* ─────────────────────────────── SESSION COMPLETE ───────────────────────── */
+/* When showing complete screen, collapse grid to centred single column */
+.session-screen.complete-mode .main-layout {
+  grid-template-columns: 1fr;
+  max-width: 620px;
+  margin: 0 auto;
+  width: 100%;
+}
+.session-screen.complete-mode .side-panel { display: none; }
+.session-screen.complete-mode .progress-wrap { display: none; }
+
 .complete-screen {
   text-align: center;
   padding: 60px 20px;
@@ -853,7 +863,7 @@ body {
 const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
 const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
 // Leaderboard webhook — LeaderboardWebhook.gs (same deployment, doGet handles leaderboard)
-const LB_WEBHOOK_URL    = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
+const LB_WEBHOOK_URL    = "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec";
 // Debug mode — add ?debug=1 to URL to show debug button (students never see it)
 const DEBUG_MODE        = new URLSearchParams(window.location.search).get("debug") === "1";
 
@@ -1752,6 +1762,9 @@ function showComplete(earlyExit) {
   document.getElementById("progressPct").textContent   = "100%";
   document.getElementById("progressFill").style.width  = "100%";
 
+  // Switch to complete layout mode (hides sidebar, centres content)
+  document.getElementById("sessionScreen").classList.add("complete-mode");
+
   // Fetch leaderboard after a short delay (give the XP log time to be written)
   setTimeout(() => fetchCompleteLb(), 2500);
 }
@@ -1810,6 +1823,7 @@ async function fetchCompleteLb() {
 
 function continueSession() {
   // Resume from where the student left off
+  document.getElementById("sessionScreen").classList.remove("complete-mode");
   document.getElementById("questionCard").innerHTML = "";
   renderQuestion();
 }
@@ -1821,6 +1835,7 @@ function returnToSelection() {
     logMCAnswer(q, letter, false, attemptType, "—");
     state.pendingWrong = null;
   }
+  document.getElementById("sessionScreen").classList.remove("complete-mode");
   document.getElementById("sessionScreen").style.display = "none";
   document.getElementById("modeScreen").style.display    = "flex";
   document.getElementById("loadingMsg").textContent = "";
