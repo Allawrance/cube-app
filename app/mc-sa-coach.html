@@ -1766,7 +1766,7 @@ function showComplete(earlyExit) {
   document.getElementById("sessionScreen").classList.add("complete-mode");
 
   // Fetch leaderboard after a short delay (give the XP log time to be written)
-  setTimeout(() => fetchCompleteLb(), 2500);
+  setTimeout(() => fetchCompleteLb(), 1500);
 }
 
 async function fetchCompleteLb() {
@@ -1791,7 +1791,12 @@ async function fetchCompleteLb() {
     const lb   = (data.leaderboard || []);
 
     if (lb.length === 0) {
-      el.textContent = "No leaderboard data yet this week.";
+      // Show diagnostic info to help debug
+      const diagUrl = `${WORKER_URL}/leaderboard?subject=${subj}&period=week&directive=all&lburl=${encodeURIComponent(LB_WEBHOOK_URL)}`;
+      el.innerHTML = `<div style="color:var(--muted);font-size:12px;">
+        No leaderboard data this week yet.<br>
+        <span style="font-size:10px;opacity:0.6;">Subject sent: ${subj} &mdash; check LeaderboardWebhook LB_TAB_MAP has this key</span>
+      </div>`;
       return;
     }
 
