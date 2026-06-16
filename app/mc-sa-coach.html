@@ -773,16 +773,19 @@ body {
   <div class="count-hint" id="countHint">Loading…</div>
   <button class="btn-start" id="btnStart" onclick="startSession()" disabled>START SESSION</button>
   <div class="loading-msg" id="loadingMsg"></div>
-  <button id="btnDebugHistory" onclick="debugHistory()"
-    style="margin-top:12px;background:transparent;border:1px solid rgba(78,205,196,0.4);border-radius:20px;
-           color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
-           padding:5px 14px;cursor:pointer;">
+  <!-- Debug button — only shown when ?debug=1 is in the URL -->
+  <button id="btnDebug" onclick="runDebug()"
+    style="display:none;margin-top:14px;background:transparent;border:1px solid rgba(78,205,196,0.35);
+           border-radius:20px;color:var(--accent2);font-family:'DM Sans',sans-serif;
+           font-size:11px;font-weight:600;padding:5px 16px;cursor:pointer;">
     🔍 Debug: Test History Fetch
   </button>
-  <pre id="debugOut" style="margin-top:10px;width:100%;max-width:580px;background:var(--surface2);
-       border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;
-       color:var(--accent2);white-space:pre-wrap;word-break:break-all;display:none;
-       font-family:'DM Mono',monospace;text-align:left;"></pre>
+  <pre id="debugOut"
+    style="display:none;margin-top:10px;width:100%;max-width:580px;
+           background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+           padding:12px;font-size:10px;color:var(--accent2);white-space:pre-wrap;
+           word-break:break-all;font-family:monospace;text-align:left;"></pre>
+
 </div>
 
 <!-- ══════════════════════════════ SESSION SCREEN ══════════════════════════ -->
@@ -849,6 +852,10 @@ body {
 // ═══════════════════════════════════════════════════════════════════════════════
 const WORKER_URL = "https://cube-proxy.alan-3e2.workers.dev";
 const MC_LOG_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
+// Leaderboard webhook — LeaderboardWebhook.gs (same deployment, doGet handles leaderboard)
+const LB_WEBHOOK_URL    = "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec";
+// Debug mode — add ?debug=1 to URL to show debug button (students never see it)
+const DEBUG_MODE        = new URLSearchParams(window.location.search).get("debug") === "1";
 
 // Subject configs: module labels, display name
 const SUBJECT_CONFIG = {
@@ -1644,26 +1651,36 @@ function showXPPop(text, correct) {
 function showComplete() {
   const ec = state.errorCounts;
   const errors = [
-    { icon:"🎲", label:"Guessing",      count:ec.guessed },
-    { icon:"👁", label:"Misread Q",     count:ec.misread },
-    { icon:"📚", label:"Gap in concept",count:ec.noknowledge },
-  ].filter(x => x.count > 0).sort((a,b) => b.count-a.count);
+    { icon:"🎲", label:"Guessing",       count:ec.guessed },
+    { icon:"👁",  label:"Misread Q",      count:ec.misread },
+    { icon:"📚", label:"Gap in concept", count:ec.noknowledge },
+  ].filter(x => x.count > 0).sort((a,b) => b.count - a.count);
 
   const acc = state.totalAttempted > 0
     ? Math.round((state.totalCorrect / state.totalAttempted) * 100)
     : 0;
 
+  // XP message — contextual encouragement
+  const xpMsg = state.sessionXP >= 20 ? "Outstanding session!" :
+                state.sessionXP >= 12 ? "Solid work — keep it up!" :
+                state.sessionXP >= 6  ? "Good effort — try again to improve!" :
+                                        "Every attempt counts — keep going!";
+
   document.getElementById("questionCard").innerHTML = `
     <div class="complete-screen">
       <div class="complete-title">SESSION COMPLETE</div>
-      <div class="complete-stats">
-        ${state.totalCorrect}/${state.totalAttempted} correct &middot;
-        ${acc}% accuracy &middot;
-        ${state.sessionXP} XP earned
+
+      <!-- XP HERO — big and motivating -->
+      <div style="text-align:center;margin:20px 0 24px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">XP EARNED THIS SESSION</div>
+        <div style="font-size:64px;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-2px;">+${state.sessionXP}</div>
+        <div style="font-size:14px;color:var(--purple);font-weight:600;margin-top:6px;">${xpMsg}</div>
       </div>
-      <div class="complete-grid">
+
+      <!-- STAT GRID -->
+      <div class="complete-grid" style="margin-bottom:20px;">
         <div class="complete-stat-card">
-          <div class="complete-stat-val">${state.totalCorrect}</div>
+          <div class="complete-stat-val">${state.totalCorrect}/${state.totalAttempted}</div>
           <div class="complete-stat-label">Correct</div>
         </div>
         <div class="complete-stat-card">
@@ -1674,26 +1691,98 @@ function showComplete() {
           <div class="complete-stat-val">${state.bestStreak}</div>
           <div class="complete-stat-label">Best Streak</div>
         </div>
-        <div class="complete-stat-card">
-          <div class="complete-stat-val">${state.sessionXP}</div>
+        <div class="complete-stat-card" style="border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.08);">
+          <div class="complete-stat-val" style="color:var(--accent);">${state.sessionXP}</div>
           <div class="complete-stat-label">XP Earned</div>
         </div>
       </div>
+
+      <!-- ERROR BREAKDOWN -->
       ${errors.length > 0 ? `
-        <div style="font-size:14px;color:var(--muted);margin-bottom:24px;">
-          Most common error: ${errors[0].icon} <em>${errors[0].label}</em>
-          ${errors.length > 1 ? ` &middot; ${errors[1].icon} <em>${errors[1].label}</em>` : ""}
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px;width:100%;max-width:460px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Error Pattern</div>
+          <div style="font-size:13px;color:var(--text);">
+            Most common: ${errors[0].icon} <strong>${errors[0].label}</strong> (${errors[0].count}x)
+            ${errors.length > 1 ? `<br><span style="color:var(--muted)">${errors[1].icon} ${errors[1].label}: ${errors[1].count}x</span>` : ""}
+          </div>
         </div>` : ""}
-      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">
-        Session saved ✓ &mdash; start another session to keep practising
+
+      <!-- LEADERBOARD PANEL -->
+      <div id="completeLbPanel" style="width:100%;max-width:460px;margin-bottom:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">
+          🏆 YOUR RANKING
+        </div>
+        <div id="completeLbContent" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--muted);">
+          Loading leaderboard...
+        </div>
       </div>
-      <button class="btn-start" onclick="returnToSelection()">New Session →</button>
+
+      <!-- ACTIONS -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;">
+        <button class="btn-start" style="margin:0;" onclick="returnToSelection()">New Session →</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:14px;">Session saved ✓</div>
     </div>
   `;
 
   document.getElementById("progressLabel").textContent = "Session complete!";
   document.getElementById("progressPct").textContent   = "100%";
   document.getElementById("progressFill").style.width  = "100%";
+
+  // Fetch leaderboard after a short delay (give the XP log time to be written)
+  setTimeout(() => fetchCompleteLb(), 2500);
+}
+
+async function fetchCompleteLb() {
+  const el = document.getElementById("completeLbContent");
+  if (!el) return;
+
+  const subjectList = state.lockedSubject ? [state.subject] : state.subjects;
+  const subj        = subjectList[0] || "EES";
+  const me          = (state.studentName || "").trim().toLowerCase();
+
+  try {
+    const url = `${WORKER_URL}/leaderboard?subject=${subj}&period=week&directive=all&lburl=${encodeURIComponent(LB_WEBHOOK_URL)}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const lb   = (data.leaderboard || []);
+
+    if (lb.length === 0) {
+      el.textContent = "No leaderboard data yet this week.";
+      return;
+    }
+
+    // Find my position
+    const myIdx = lb.findIndex(p => (p.student || "").toLowerCase() === me);
+    const myXP  = myIdx >= 0 ? Math.round(lb[myIdx].totalXP) : null;
+
+    // Show top 10, highlight the student
+    const top10 = lb.slice(0, 10);
+    // If student is outside top 10, append their row
+    if (myIdx >= 10) top10.push({ ...lb[myIdx], _outside: true });
+
+    el.innerHTML = top10.map((p, i) => {
+      const rank   = lb.indexOf(p) + 1;
+      const isMe   = (p.student || "").toLowerCase() === me;
+      const medal  = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}.`;
+      const bgStyle = isMe
+        ? "background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;"
+        : i % 2 === 0 ? "background:rgba(255,255,255,0.02);" : "";
+      return `
+        <div style="display:flex;align-items:center;padding:6px 8px;${bgStyle}${p._outside ? "margin-top:4px;border-top:1px solid var(--border);padding-top:8px;" : ""}">
+          <span style="width:28px;font-size:12px;font-weight:700;color:${isMe ? "var(--accent)" : "var(--muted)"};">${medal}</span>
+          <span style="flex:1;font-size:13px;font-weight:${isMe ? 700 : 400};color:${isMe ? "var(--accent)" : "var(--text)"};">${p.student}${isMe ? " ← you" : ""}</span>
+          <span style="font-size:12px;font-weight:700;color:var(--purple);">${Math.round(p.totalXP)} XP</span>
+        </div>`;
+    }).join("") + (myXP !== null ? `
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        This session you earned <strong style="color:var(--accent);">+${state.sessionXP} XP</strong>
+        ${myIdx >= 0 ? ` &mdash; you are ranked <strong style="color:var(--accent);">#${myIdx + 1}</strong> this week` : ""}
+      </div>` : "");
+
+  } catch(e) {
+    el.textContent = "Could not load leaderboard.";
+  }
 }
 
 function returnToSelection() {
@@ -1720,43 +1809,34 @@ function returnToSelection() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DEBUG — remove once history confirmed working
+// INIT
 // ═══════════════════════════════════════════════════════════════════════════════
-async function debugHistory() {
+async function runDebug() {
   const out = document.getElementById("debugOut");
   out.style.display = "block";
   out.textContent   = "Running...\n";
-
-  const name     = (state.studentName || "").trim() || "John S";
+  const name     = (state.studentName || "").trim() || "test";
   const subjList = state.lockedSubject ? [state.subject] : state.subjects;
   const codes    = subjList.map(s => SUBJECT_CONFIG[s]?.logCode || s);
-
-  out.textContent += "Name: " + name + "\nSubjects: " + subjList.join(",") + "\nLogCodes: " + codes.join(",") + "\nWorker: " + WORKER_URL + "\n\n";
-
+  out.textContent += "Name: " + name + "\nCodes: " + codes.join(",") + "\n\n";
   const params = new URLSearchParams({ student: name, subjects: codes.join(","), webhook: MC_LOG_WEBHOOK_URL });
   const url    = WORKER_URL + "/history?" + params.toString();
-  out.textContent += "Request URL:\n" + url + "\n\nFetching...\n";
-
+  out.textContent += "URL: " + url + "\n\nFetching...\n";
   try {
     const res  = await fetch(url, { method:"GET" });
-    out.textContent += "Worker HTTP status: " + res.status + "\n\n";
+    out.textContent += "Status: " + res.status + "\n";
     const text = await res.text();
-    out.textContent += "Raw response (first 600 chars):\n" + text.slice(0, 600) + "\n";
+    out.textContent += "Response (first 500):\n" + text.slice(0, 500) + "\n";
     try {
       const data = JSON.parse(text);
-      out.textContent += "\nParsed JSON OK\n";
-      if (data.error) out.textContent += "ERROR field: " + data.error + "\n";
-      out.textContent += "rows returned: " + (data.rows || []).length + "\n";
-      if ((data.rows || []).length > 0) {
-        out.textContent += "\nFirst 3 rows:\n" + JSON.stringify(data.rows.slice(0,3), null, 2) + "\n";
-      }
-    } catch(pe) { out.textContent += "\nJSON parse failed: " + pe.message + "\n"; }
+      out.textContent += "\nParsed OK. rows: " + (data.rows||[]).length + "\n";
+      if (data.error) out.textContent += "ERROR: " + data.error + "\n";
+      if ((data.rows||[]).length > 0)
+        out.textContent += "\nFirst 3:\n" + JSON.stringify(data.rows.slice(0,3), null, 2) + "\n";
+    } catch(pe) { out.textContent += "JSON parse failed: " + pe.message + "\n"; }
   } catch(fe) { out.textContent += "Fetch error: " + fe.message + "\n"; }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════════
 (function init() {
   const params       = new URLSearchParams(window.location.search);
   const raw          = params.get("subject") || null;
@@ -1800,6 +1880,12 @@ async function debugHistory() {
   state.studentName = savedName;
   const nameInput = document.getElementById("studentNameInput");
   if (nameInput && savedName) nameInput.value = savedName;
+
+  // Show debug button only in debug mode (?debug=1)
+  if (DEBUG_MODE) {
+    const dbtn = document.getElementById("btnDebug");
+    if (dbtn) dbtn.style.display = "inline-block";
+  }
 
   prefetchAndCount();
 })();
