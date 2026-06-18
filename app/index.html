@@ -1622,6 +1622,46 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         console.error("Stage 1 missing phase1_cube:", JSON.stringify(parsed).slice(0,300));
         throw new Error("AI returned incomplete CUBE analysis — please try again.");
       }
+      // ── Enrich syllabusKeywords from config — overwrite any AI-hallucinated syllabusText ──
+      if (parsed.phase1_cube?.syllabusKeywords?.length && config.syllabus) {
+        parsed.phase1_cube.syllabusKeywords = parsed.phase1_cube.syllabusKeywords.map(kw => {
+          const modNum  = String(kw.module || "").replace(/[^0-9]/g, "");
+          const topCode = (kw.topicCode || "").trim();
+          const modData = config.syllabus[modNum];
+          if (!modData) return kw;
+          const topic = modData.topics?.find(t => t.code === topCode);
+          if (!topic) {
+            const kwLower = (kw.word || "").toLowerCase();
+            const fallbackTopic = modData.topics?.find(t =>
+              t.keywords?.some(k => k.toLowerCase().includes(kwLower) || kwLower.includes(k.toLowerCase()))
+            );
+            if (!fallbackTopic) return kw;
+            const fallbackDp = fallbackTopic.dotPoints?.find(dp =>
+              dp.text.toLowerCase().includes(kwLower)
+            ) || fallbackTopic.dotPoints?.[0];
+            return {
+              ...kw,
+              topicCode:    fallbackTopic.code,
+              topicTitle:   fallbackTopic.title,
+              moduleTitle:  modData.title,
+              syllabusText: fallbackDp?.text  || kw.syllabusText || "",
+              syllabusLabel: fallbackDp?.label || kw.syllabusLabel || "",
+            };
+          }
+          const kwLower = (kw.word || "").toLowerCase();
+          const best = topic.dotPoints?.find(dp =>
+            dp.text.toLowerCase().includes(kwLower)
+          ) || topic.dotPoints?.[0];
+          return {
+            ...kw,
+            topicCode:    topic.code,
+            topicTitle:   topic.title,
+            moduleTitle:  modData.title,
+            syllabusText: best?.text   || kw.syllabusText || "",
+            syllabusLabel: best?.label || kw.syllabusLabel || "",
+          };
+        });
+      }
       setResults(parsed);
       setPhase(2);
       setActiveTab("cube");
