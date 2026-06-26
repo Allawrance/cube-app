@@ -2329,7 +2329,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 {responseImgs.length>0&&<>
                   <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
                     <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>PAGE 1 = FIRST PAGE</span>
-                    <span>Pages are marked in order, left \u2192 right. Use \u25c0 \u25b6 to reorder.</span>
+                    <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder.</span>
                   </div>
                   <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
                   {responseImgs.map((u,i)=>{
@@ -2339,12 +2339,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px"}}>
                       <div style={{position:"relative"}}>
                         <img src={u} alt={"Response page "+(i+1)} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:first?("3px solid "+gold):"2px solid rgba(201,168,76,0.4)"}}/>
-                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:first?gold:"rgba(0,0,0,0.78)",color:first?"#1a1a2e":"#f0e6c8",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{first?"\u2605 PAGE 1":"PAGE "+(i+1)}</div>
+                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:first?gold:"rgba(0,0,0,0.78)",color:first?"#1a1a2e":"#f0e6c8",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{first?"★ PAGE 1":"PAGE "+(i+1)}</div>
                         <button onClick={()=>removeResponsePage(i)} title="Remove this page" style={{position:"absolute",top:"-8px",right:"-8px",width:"22px",height:"22px",borderRadius:"50%",border:"none",background:"#c0392b",color:"#fff",fontSize:"14px",cursor:"pointer",fontWeight:900,lineHeight:"1",padding:0}}>×</button>
                       </div>
                       <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
-                        <button onClick={()=>moveResponsePage(i,-1)} disabled={first} title="Move earlier" style={arrowStyle(first)}>\u25c0</button>
-                        <button onClick={()=>moveResponsePage(i,1)} disabled={last} title="Move later" style={arrowStyle(last)}>\u25b6</button>
+                        <button onClick={()=>moveResponsePage(i,-1)} disabled={first} title="Move earlier" style={arrowStyle(first)}>◀</button>
+                        <button onClick={()=>moveResponsePage(i,1)} disabled={last} title="Move later" style={arrowStyle(last)}>▶</button>
                       </div>
                     </div>
                     );
