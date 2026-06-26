@@ -4,7 +4,7 @@
   "subjectShortName": "Bio",
   "dominantMode": "Mechanism + evidence + evaluation",
   "cleanRule": "Biology = explain the biological mechanism + link to evidence or data where provided + judge effectiveness/significance where directed",
-  "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type \u2014 show the biological mechanism (HOW and WHY), not just the outcome.",
+  "leaderboardTip": "~60% of HSC questions are Explain/Analyse/Evaluate type — show the biological mechanism (HOW and WHY), not just the outcome.",
   "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=BIO",
   "sheetTabCube": "BIO CUBE",
   "sheetTabFull": "BIO",
@@ -687,17 +687,17 @@
         "Assess the significance of a discovery or process (e.g. assess the impact of recombinant DNA technology)"
       ],
       "biology_specific_tips": [
-        "Always name the specific biological molecule, cell type, or structure involved \u2014 not just 'the cell' or 'the system'.",
-        "Show the mechanism: state WHAT happens \u2192 explain HOW/WHY it happens \u2192 link to the biological outcome.",
+        "Always name the specific biological molecule, cell type, or structure involved — not just 'the cell' or 'the system'.",
+        "Show the mechanism: state WHAT happens → explain HOW/WHY it happens → link to the biological outcome.",
         "For evaluate/assess questions: weigh evidence on both sides, use quantitative data where available, then make a justified judgement.",
         "Distinguish between correlation and causation when interpreting epidemiological data.",
         "Use correct biological terminology consistently: mitosis vs meiosis, innate vs adaptive, pathogen vs disease."
       ],
       "common_errors": [
-        "Confusing mitosis and meiosis \u2014 always specify which process and why it applies.",
+        "Confusing mitosis and meiosis — always specify which process and why it applies.",
         "Describing immune responses without naming specific cell types (B cells, T cells, phagocytes).",
-        "Using 'it' or 'this' without a clear biological referent \u2014 always name the molecule, cell or structure.",
-        "Writing 'vaccines cause the body to fight disease' without explaining the mechanism (antigen \u2192 antibody \u2192 memory cell formation).",
+        "Using 'it' or 'this' without a clear biological referent — always name the molecule, cell or structure.",
+        "Writing 'vaccines cause the body to fight disease' without explaining the mechanism (antigen → antibody → memory cell formation).",
         "Forgetting to link homeostatic mechanisms back to maintaining the internal environment within tolerance limits."
       ]
     },
@@ -747,7 +747,7 @@
         },
         "forbidden_behaviours": [
           "Do not generate Band 6 responses by merely increasing word count.",
-          "Do not use vague biological references \u2014 always name the specific structure or molecule.",
+          "Do not use vague biological references — always name the specific structure or molecule.",
           "Do not ignore the syllabus or stimulus.",
           "Do not use vague judgements such as 'it is effective' without criteria or evidence."
         ]
@@ -908,7 +908,7 @@
       "modality": "required"
     },
     "investigate": {
-      "tier": 3,
+      "tier": 4,
       "modality": "required"
     },
     "justify": {
