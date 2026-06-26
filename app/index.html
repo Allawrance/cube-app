@@ -936,7 +936,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
   ];
 
   // ── Response text renderer (print-safe — no React spans with dark bg) ──
-  function _c99bf3({ text }) {
+  function PrintResponse({ text }) {
     if (!text) return null;
     const cleaned = _6ec938(text);
     const parts = [];
@@ -1067,7 +1067,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           CUBE the question — the syllabus points underlined below show exactly where this question comes from in the syllabus, so you know where to focus next time.
         </div>
         {kwds.length > 0 && (()=>{
-          function _37af55({ sylText, kwWord }) {
+          function DotPointWithUnderline({ sylText, kwWord }) {
             if (!sylText) return null;
             if (!kwWord) return <span>{sylText}</span>;
             const stem = kwWord.toLowerCase().split(" ")[0].slice(0, Math.max(5, kwWord.split(" ")[0].length - 2));
@@ -1105,7 +1105,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
                         <td style={{padding:"6px 10px",color:"#666",whiteSpace:"nowrap"}}>{moduleRef||"—"}</td>
                         <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.6"}}>
                           {sylText
-                            ? <_37af55 sylText={sylText} kwWord={kwWord} />
+                            ? <DotPointWithUnderline sylText={sylText} kwWord={kwWord} />
                             : <span style={{color:"#999",fontStyle:"italic"}}>{kw.topicTitle||"—"}</span>
                           }
                         </td>
@@ -1238,7 +1238,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
         </div>
         <div className="pr-paper pr-paper-lines">
           <div className="pr-response-text">
-            <_c99bf3 text={responseText}/>
+            <PrintResponse text={responseText}/>
           </div>
         </div>
       </div>
@@ -1461,6 +1461,12 @@ function _ac863f() {
   const [modelLoading, setModelLoading] = useState(false);
   const fileRef = useRef();
   const abortRef = useRef(null);
+  // ── Visual Arts mode (config-driven; students only ever load their subject) ──
+  const isVA = config.markingMode === "visualArts";
+  const respPagesMax = config.responsePagesMax || 6;
+  const [responseImgs, setResponseImgs] = useState([]); // preview object URLs
+  const [responseB64s, setResponseB64s] = useState([]); // base64 sent to Stage 2
+  const respFileRef = useRef();
 
   // ── Shared file processor — used by file input, paste, and drag-drop ──
   // ── PDF → JPEG conversion (page 1 only) ─────────────────────────────────
@@ -1502,6 +1508,7 @@ function _ac863f() {
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
+    if (isVA) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // VA: single extended-response question; no scan
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1533,15 +1540,48 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     await handleFileFromSource(f);
   };
 
+  // ── Visual Arts: append a handwritten response page (multi-page) ──
+  const addResponsePage = async (f) => {
+    if (!f) return;
+    if (f.type === "application/pdf" || f.name?.toLowerCase().endsWith(".pdf")) {
+      setError("Converting PDF page 1...");
+      try { f = await pdfToImageFile(f); }
+      catch(err) { setError("Could not read PDF: " + err.message); return; }
+    }
+    if (!f.type.startsWith("image/")) { setError("Please add an image or PDF file."); return; }
+    const p = studentName.trim().split(/\s+/).filter(Boolean);
+    if (!(p.length >= 2 && p[p.length-1].length === 1)) { setError("Please enter your name before adding a response page."); return; }
+    const url = URL.createObjectURL(f);
+    const b64 = await toB64(f);
+    setResponseImgs(prev => prev.length>=respPagesMax ? prev : [...prev, url]);
+    setResponseB64s(prev => prev.length>=respPagesMax ? prev : [...prev, b64]);
+    setError(null);
+  };
+  const removeResponsePage = (i) => {
+    setResponseImgs(prev => prev.filter((_,j)=>j!==i));
+    setResponseB64s(prev => prev.filter((_,j)=>j!==i));
+  };
+  const handleRespInput = (e) => {
+    const files = Array.from(e.target.files||[]);
+    e.target.value = "";
+    files.forEach(f => addResponsePage(f));
+  };
+
   // ── Paste anywhere on the page to upload a screenshot ──
   React.useEffect(() => {
     const onPaste = (e) => {
-      if (phase !== 0 || pageImg) return; // only on upload screen, no image yet
+      if (phase !== 0) return;
       const items = Array.from(e.clipboardData?.items || []);
       const imgItem = items.find(it => it.type.startsWith("image/") || it.type === "application/pdf");
       if (!imgItem) return;
       e.preventDefault();
-      handleFileFromSource(imgItem.getAsFile());
+      if (isVA) {
+        if (!pageImg) handleFileFromSource(imgItem.getAsFile());
+        else addResponsePage(imgItem.getAsFile());
+      } else {
+        if (pageImg) return; // non-VA: one image only
+        handleFileFromSource(imgItem.getAsFile());
+      }
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
@@ -1568,6 +1608,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     if (nameParts.length < 2) { setError("Please enter your first name and the first initial of your surname before analysing."); return; }
     if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
+    if (isVA && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
@@ -1582,7 +1623,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           stage: "stage1",
           subject: config.subjectCode,
           syllabus: config.syllabus,
-          messages:[{ role:"user", content:[
+          messages:[{ role:"user", content: isVA ? [
+            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
+            { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
+          ] : [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${_d0c6fa(questionNumber)} in this image, apply CUBE to the printed question text only. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
@@ -1628,9 +1672,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           const modNum  = String(kw.module || "").replace(/[^0-9]/g, "");
           const topCode = (kw.topicCode || "").trim();
           const modData = config.syllabus[modNum];
-          if (!modData) return kw;
+          if (!modData) return kw; // module not in config — leave as-is
           const topic = modData.topics?.find(t => t.code === topCode);
           if (!topic) {
+            // topicCode not found — try to find the topic whose keywords include this word
             const kwLower = (kw.word || "").toLowerCase();
             const fallbackTopic = modData.topics?.find(t =>
               t.keywords?.some(k => k.toLowerCase().includes(kwLower) || kwLower.includes(k.toLowerCase()))
@@ -1648,6 +1693,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               syllabusLabel: fallbackDp?.label || kw.syllabusLabel || "",
             };
           }
+          // Topic found — pick the best dot point by keyword match
           const kwLower = (kw.word || "").toLowerCase();
           const best = topic.dotPoints?.find(dp =>
             dp.text.toLowerCase().includes(kwLower)
@@ -1710,7 +1756,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setResponseImgs([]); setResponseB64s([]); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   const triggerPrint = () => {
     // window.print() is blocked inside Google Sites iframes.
@@ -1830,6 +1876,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
   const markFullAnswer = async () => {
     if (!pageB64 || !results) return;
+    if (isVA && responseB64s.length === 0) { setStage2Error("Add at least one response page first."); return; }
     setStage2Loading(true); setStage2Error(null);
     const c1 = results.phase1_cube;
     const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
@@ -1841,7 +1888,23 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
         headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))},
-        body: JSON.stringify({
+        body: JSON.stringify(isVA ? {
+          stage:           "stage2",
+          subject:         config.subjectCode,
+          questionImage:   pageB64,
+          responseImages:  responseB64s,
+          bandRules:       config.bandRules,
+          questionText:    _d0c6fa(c1.questionText),
+          questionNumber:  _d0c6fa(questionNumber),
+          primaryDir:      primaryDir,
+          dirs:            dirs,
+          kwds:            kwds,
+          constraints:     c1.constraints||[],
+          marks:           c1.marks||"not stated",
+          requiredAspects: c1.requiredAspects||[],
+          plates:          c1.plates||[],
+          evidenceRequired: c1.evidenceRequired||false,
+        } : {
           stage:           "stage2",
           subject:         config.subjectCode,
           imageData:       pageB64,
@@ -2110,10 +2173,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
-                  {dragOver?"Drop to upload!":nameValid?"Tap to upload a photo or PDF":"Enter your name above first"}
+                  {dragOver?"Drop to upload!":nameValid?(isVA?"Tap to upload the QUESTION / stimulus page":"Tap to upload a photo or PDF"):"Enter your name above first"}
                 </div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
-                  {nameValid?"Your page can include the printed question, your handwritten answer, and any stimulus material.":"Your name is required before you can upload a photo."}
+                  {nameValid?(isVA?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Your page can include the printed question, your handwritten answer, and any stimulus material."):"Your name is required before you can upload a photo."}
                 </div>
                 {nameValid&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
                   <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
@@ -2169,7 +2232,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
             {/* Question number selector */}
-            {pageImg&&<div style={{marginBottom:"16px"}}>
+            {!isVA&&pageImg&&<div style={{marginBottom:"16px"}}>
               <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed?</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
                 {questionsOnPage.map(n=>(
@@ -2181,6 +2244,33 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </div>}
             </div>}
 
+            {isVA&&pageImg&&(()=>{
+              const p = studentName.trim().split(/\s+/).filter(Boolean);
+              const nameValid = p.length >= 2 && p[p.length-1].length === 1;
+              return <div style={{marginBottom:"16px"}}>
+                <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Your response pages ({responseImgs.length}/{respPagesMax})</div>
+                <div
+                  onClick={()=>{ if(!nameValid){setError("Enter your name first.");return;} if(responseImgs.length>=respPagesMax){setError("Maximum "+respPagesMax+" response pages.");return;} respFileRef.current.click(); }}
+                  onDragOver={e=>{e.preventDefault();e.stopPropagation();setDragOver(true);}}
+                  onDragLeave={e=>{e.preventDefault();setDragOver(false);}}
+                  onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);Array.from(e.dataTransfer.files||[]).forEach(f=>addResponsePage(f));}}
+                  style={{border:`2px dashed ${dragOver?"#c9a84c":"rgba(201,168,76,0.4)"}`,borderRadius:"16px",padding:"22px 18px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":"rgba(201,168,76,0.03)",transition:"all 0.2s",marginBottom:"12px"}}>
+                  <div style={{fontSize:"34px",marginBottom:"8px"}}>📝</div>
+                  <div style={{fontSize:"15px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"4px"}}>Add a response page</div>
+                  <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>Tap, drag &amp; drop, or paste (Ctrl+V) each handwritten page in order. Up to {respPagesMax} pages.</div>
+                </div>
+                <input ref={respFileRef} type="file" accept="image/*,application/pdf" multiple style={{display:"none"}} onChange={handleRespInput}/>
+                {responseImgs.length>0&&<div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
+                  {responseImgs.map((u,i)=>(
+                    <div key={i} style={{position:"relative"}}>
+                      <img src={u} alt={"Response page "+(i+1)} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:"2px solid rgba(201,168,76,0.4)"}}/>
+                      <div style={{position:"absolute",bottom:"3px",left:"3px",background:"rgba(0,0,0,0.7)",color:"#f0e6c8",fontSize:"10px",padding:"1px 6px",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:700}}>p{i+1}</div>
+                      <button onClick={()=>removeResponsePage(i)} style={{position:"absolute",top:"-8px",right:"-8px",width:"22px",height:"22px",borderRadius:"50%",border:"none",background:"#c0392b",color:"#fff",fontSize:"14px",cursor:"pointer",fontWeight:900,lineHeight:"1",padding:0}}>×</button>
+                    </div>
+                  ))}
+                </div>}
+              </div>;
+            })()}
             {error&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px 16px",marginBottom:"16px",fontFamily:"sans-serif"}}>
               <div style={{color:"#ff8a80",fontSize:"14px",whiteSpace:"pre-line",marginBottom:"10px"}}>{error}</div>
               <button onClick={()=>{setError(null);}} style={{background:"rgba(244,67,54,0.2)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"8px",padding:"6px 16px",color:"#ff8a80",fontSize:"13px",cursor:"pointer",fontFamily:"sans-serif",fontWeight:700}}>✕ Dismiss and try again</button>
@@ -2192,10 +2282,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <span className="cube-spinner-dim"></span>
                     Reading your image for available questions...
                   </div>
-                : <button onClick={analyse} disabled={loading} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
+                : <button onClick={analyse} disabled={loading||(isVA&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
                     {loading
                       ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner-dim"></span>{loadingMsg}</span>
-                      : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE"}
+                      : (isVA ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
                   </button>
             )}
           </div>
@@ -2215,6 +2305,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           const verbType = primaryDir.verbType || "other";
           const isExplain = verbType==="explain" || dirs.some(d=>d.verbType==="explain");
           const isAssessEval = ["assess","evaluate","critically evaluate"].includes(verbType);
+          const isVisualArts = a?.specialCheck?.type === "visualarts";
           const marksKnown = c.marks !== null && c.marks !== undefined;
           // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
           const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
@@ -2704,7 +2795,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </_e3ea66>
 
               {/* Photo below the typed response — annotation detail moved to Plan tab */}
-              {pageB64&&<div style={{marginTop:"12px"}}>
+              {isVA&&responseB64s.length>0 ? <div style={{marginTop:"12px"}}>
+                <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR RESPONSE PAGES</div>
+                <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
+                  {responseB64s.map((b,i)=>(<img key={i} src={`data:image/jpeg;base64,${b}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt={"Response page "+(i+1)}/>))}
+                </div>
+              </div> : pageB64&&<div style={{marginTop:"12px"}}>
                 <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR ORIGINAL PHOTO — Check highlighted words against your handwriting</div>
                 <img src={`data:image/jpeg;base64,${pageB64}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt="Your worksheet"/>
               </div>}
@@ -2868,8 +2964,43 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </Card>}
 
 
+              {/* ── Visual Arts interpretive check ── */}
+              {isVisualArts&&a.specialCheck?.visualArtsCheck&&(()=>{
+                const v = a.specialCheck.visualArtsCheck;
+                const cov = a.specialCheck.coverageCheck || [];
+                const rows = [
+                  [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame named & applied"],
+                  [v.conceptualFrameworkRelational, "Conceptual framework used relationally (artist \u21c4 artwork \u21c4 world \u21c4 audience)"],
+                  [(v.namedArtworksEvidence||[]).length>0, "Specific named artists / artworks as evidence"],
+                  [v.usedStimulusPlates, "Stimulus plates / extracts referenced accurately"],
+                  [v.synthesisSubjectMatterForm, "Synthesis of subject matter AND form"],
+                  [v.informedPointOfView, "Sustained, informed point of view"],
+                  [v.directiveAnswered, "Directive verb answered"],
+                ];
+                return <Card bg="rgba(244,143,177,0.10)" border="rgba(244,143,177,0.35)">
+                  <SectionTitle color="#f48fb1">🎨 VISUAL ARTS — INTERPRETIVE CHECK</SectionTitle>
+                  {rows.map((r,i)=>(
+                    <div key={i} style={{display:"flex",gap:"10px",alignItems:"center",marginBottom:"8px",fontSize:"13px",fontFamily:"sans-serif"}}>
+                      <Tick ok={!!r[0]}/><span style={{color:"#e8eaf0"}}>{r[1]}</span>
+                    </div>
+                  ))}
+                  {(v.namedArtworksEvidence||[]).length>0&&<div style={{margin:"2px 0 8px",fontSize:"12px",color:"#f8bbd0",fontFamily:"sans-serif"}}>Evidence cited: {v.namedArtworksEvidence.join("; ")}</div>}
+                  {cov.length>0&&<div style={{marginTop:"6px",background:"rgba(244,143,177,0.08)",border:"1px solid rgba(244,143,177,0.25)",borderRadius:"8px",padding:"10px 12px"}}>
+                    <div style={{fontSize:"11px",color:"#f48fb1",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>QUESTION COVERAGE</div>
+                    {cov.map((c,i)=>(
+                      <div key={i} style={{display:"flex",gap:"8px",alignItems:"center",marginBottom:"6px",fontSize:"13px",fontFamily:"sans-serif"}}>
+                        <Tick ok={!!c.addressed&&!!c.withEvidence}/>
+                        <span style={{color:"#e8eaf0",textTransform:"capitalize",fontWeight:700}}>{c.aspect}</span>
+                        <span style={{color:"#c8d8e8"}}>{c.addressed ? (c.withEvidence ? "addressed with evidence" : "addressed — add evidence") : "not addressed"}</span>
+                      </div>
+                    ))}
+                  </div>}
+                  {v.comment&&<div style={{marginTop:"6px",color:"#f8bbd0",fontSize:"13px",fontFamily:"sans-serif",lineHeight:"1.6"}}>{v.comment}</div>}
+                </Card>;
+              })()}
+
               {/* ── 3. Special check (connectives / argument structure) ── */}
-              {a.specialCheck?.type!=="none"&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
+              {a.specialCheck?.type!=="none"&&!isVisualArts&&<Card bg={isExplain?"rgba(123,31,162,0.1)":"rgba(230,81,0,0.1)"} border={isExplain?"rgba(123,31,162,0.35)":"rgba(230,81,0,0.35)"}>
                 <SectionTitle color={isExplain?"#ce93d8":"#ffab91"}>{isExplain?"⚠️ EXPLAIN — CAUSAL CONNECTIVES":"⚠️ ASSESS/EVALUATE — ARGUMENT STRUCTURE"}</SectionTitle>
                 {isExplain&&a.specialCheck?.explainCheck&&(()=>{
                   const ec = a.specialCheck.explainCheck;
