@@ -1354,6 +1354,65 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
         </div>
       )}
 
+      {/* ── SECTION 6: VISUAL ARTS — INTERPRETIVE CHECK + EXAMINER SUMMARY (VA only) ── */}
+      {a.specialCheck?.type === "visualarts" && a.specialCheck?.visualArtsCheck && (()=>{
+        const v = a.specialCheck.visualArtsCheck;
+        const cov = a.specialCheck.coverageCheck || [];
+        const yn = (b) => <span style={{fontWeight:800,color: b ? "#2e7d32" : "#c62828"}}>{b ? "\u2713" : "\u2717"}</span>;
+        const rows = [
+          [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame named & applied"],
+          [v.conceptualFrameworkRelational, "Conceptual framework used relationally (artist / artwork / world / audience)"],
+          [(v.namedArtworksEvidence||[]).length > 0, "Specific named artists / artworks as evidence"],
+          [v.usedStimulusPlates, "Stimulus plates / extracts referenced"],
+          [v.synthesisSubjectMatterForm, "Synthesis of subject matter AND form"],
+          [v.informedPointOfView, "Sustained, informed point of view"],
+          [v.directiveAnswered, "Directive verb answered"],
+        ];
+        return (
+          <div className="pr-no-break" style={{margin:"0 28px 20px"}}>
+            <div className="pr-section-label">Visual Arts \u2014 Interpretive Check</div>
+            <table className="pr-table" style={{marginBottom:"14px"}}>
+              <tbody>
+                {rows.map((r,i)=>(
+                  <tr key={i}>
+                    <td className="center" style={{width:"36px"}}>{yn(!!r[0])}</td>
+                    <td style={{fontSize:"12.5px",color:"#222"}}>{r[1]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {cov.length > 0 && (
+              <div style={{marginBottom:"14px"}}>
+                <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1px",color:"#b8860b",textTransform:"uppercase",marginBottom:"8px"}}>Question Coverage</div>
+                <table className="pr-table">
+                  <thead><tr><th>Required aspect</th><th className="center">Addressed</th><th className="center">With evidence</th></tr></thead>
+                  <tbody>
+                    {cov.map((c2,i)=>(
+                      <tr key={i}>
+                        <td style={{textTransform:"capitalize",fontWeight:600,color:"#1a1a2e"}}>{c2.aspect}</td>
+                        <td className="center">{yn(!!c2.addressed)}</td>
+                        <td className="center">{yn(!!c2.withEvidence)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {(v.namedArtworksEvidence||[]).length > 0 && (
+              <div style={{fontFamily:"sans-serif",fontSize:"11.5px",color:"#555",marginBottom:"12px"}}>
+                <strong>Evidence cited:</strong> {v.namedArtworksEvidence.join("; ")}
+              </div>
+            )}
+            {v.comment && (
+              <div style={{background:"#f6f0ff",border:"2px solid #7b1fa2",borderLeft:"5px solid #7b1fa2",borderRadius:"8px",padding:"14px 16px"}}>
+                <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#7b1fa2",textTransform:"uppercase",marginBottom:"8px"}}>Examiner Summary</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:"13px",color:"#2a2a3a",lineHeight:"1.7"}}>{v.comment}</div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── FOOTER ── */}
       <div className="pr-footer">
         <span>CUBE HSC Marking Coach · {subjectCode} · AI-assisted feedback — not official NESA marking</span>
@@ -1560,6 +1619,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
   const removeResponsePage = (i) => {
     setResponseImgs(prev => prev.filter((_,j)=>j!==i));
     setResponseB64s(prev => prev.filter((_,j)=>j!==i));
+  };
+  const moveResponsePage = (i, dir) => {
+    const j = i + dir;
+    if (j < 0 || j >= responseB64s.length) return;
+    const sw = (arr) => { const a=[...arr]; const t=a[i]; a[i]=a[j]; a[j]=t; return a; };
+    setResponseImgs(prev => sw(prev));
+    setResponseB64s(prev => sw(prev));
   };
   const handleRespInput = (e) => {
     const files = Array.from(e.target.files||[]);
@@ -2256,19 +2322,35 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);Array.from(e.dataTransfer.files||[]).forEach(f=>addResponsePage(f));}}
                   style={{border:`2px dashed ${dragOver?"#c9a84c":"rgba(201,168,76,0.4)"}`,borderRadius:"16px",padding:"22px 18px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":"rgba(201,168,76,0.03)",transition:"all 0.2s",marginBottom:"12px"}}>
                   <div style={{fontSize:"34px",marginBottom:"8px"}}>📝</div>
-                  <div style={{fontSize:"15px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"4px"}}>Add a response page</div>
+                  <div style={{fontSize:"15px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"4px"}}>Add your response pages</div>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>Tap, drag &amp; drop, or paste (Ctrl+V) each handwritten page in order. Up to {respPagesMax} pages.</div>
                 </div>
                 <input ref={respFileRef} type="file" accept="image/*,application/pdf" multiple style={{display:"none"}} onChange={handleRespInput}/>
-                {responseImgs.length>0&&<div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
-                  {responseImgs.map((u,i)=>(
-                    <div key={i} style={{position:"relative"}}>
-                      <img src={u} alt={"Response page "+(i+1)} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:"2px solid rgba(201,168,76,0.4)"}}/>
-                      <div style={{position:"absolute",bottom:"3px",left:"3px",background:"rgba(0,0,0,0.7)",color:"#f0e6c8",fontSize:"10px",padding:"1px 6px",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:700}}>p{i+1}</div>
-                      <button onClick={()=>removeResponsePage(i)} style={{position:"absolute",top:"-8px",right:"-8px",width:"22px",height:"22px",borderRadius:"50%",border:"none",background:"#c0392b",color:"#fff",fontSize:"14px",cursor:"pointer",fontWeight:900,lineHeight:"1",padding:0}}>×</button>
+                {responseImgs.length>0&&<>
+                  <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
+                    <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>PAGE 1 = FIRST PAGE</span>
+                    <span>Pages are marked in order, left \u2192 right. Use \u25c0 \u25b6 to reorder.</span>
+                  </div>
+                  <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
+                  {responseImgs.map((u,i)=>{
+                    const first=i===0, last=i===responseImgs.length-1;
+                    const arrowStyle=(off)=>({width:"32px",height:"28px",borderRadius:"6px",border:"1px solid rgba(201,168,76,0.5)",background:off?"rgba(255,255,255,0.04)":"rgba(201,168,76,0.18)",color:off?"#5a6b7a":gold,fontSize:"14px",fontWeight:900,cursor:off?"default":"pointer",lineHeight:"1",padding:0});
+                    return (
+                    <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px"}}>
+                      <div style={{position:"relative"}}>
+                        <img src={u} alt={"Response page "+(i+1)} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:first?("3px solid "+gold):"2px solid rgba(201,168,76,0.4)"}}/>
+                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:first?gold:"rgba(0,0,0,0.78)",color:first?"#1a1a2e":"#f0e6c8",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{first?"\u2605 PAGE 1":"PAGE "+(i+1)}</div>
+                        <button onClick={()=>removeResponsePage(i)} title="Remove this page" style={{position:"absolute",top:"-8px",right:"-8px",width:"22px",height:"22px",borderRadius:"50%",border:"none",background:"#c0392b",color:"#fff",fontSize:"14px",cursor:"pointer",fontWeight:900,lineHeight:"1",padding:0}}>×</button>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
+                        <button onClick={()=>moveResponsePage(i,-1)} disabled={first} title="Move earlier" style={arrowStyle(first)}>\u25c0</button>
+                        <button onClick={()=>moveResponsePage(i,1)} disabled={last} title="Move later" style={arrowStyle(last)}>\u25b6</button>
+                      </div>
                     </div>
-                  ))}
-                </div>}
+                    );
+                  })}
+                  </div>
+                </>}
               </div>;
             })()}
             {error&&<div style={{background:"rgba(244,67,54,0.08)",border:"1px solid rgba(244,67,54,0.4)",borderRadius:"10px",padding:"14px 16px",marginBottom:"16px",fontFamily:"sans-serif"}}>
