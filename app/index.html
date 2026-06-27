@@ -504,6 +504,9 @@ function _e701da({ text, directives, syllabusKeywords, constraints, planningArro
   const H = PT + PLAN_EXTRA + nLines * LH + 30;
 
   const shapes = [];
+  // ── CUBE priority C > U > B: each character region gets ONE decoration ──
+  const cSpans = [], uSpans = [];
+  const overlapsAny = (st, en, spans) => spans.some(sp => st < sp.e && sp.s < en);
 
   // ── helper: find exact char position of a word near a given index ──────────
   // Searches ±25 chars around hintIdx to find where `word` actually appears.
@@ -535,6 +538,7 @@ function _e701da({ text, directives, syllabusKeywords, constraints, planningArro
   dirs.forEach((dv, di) => {
     if (dv.startIndex == null || !dv.word) return;
     const exactStart = findExact(dv.word, dv.startIndex);
+    cSpans.push({ s: exactStart, e: exactStart + dv.word.length }); // claim directive chars (C)
     const s = _85c320(exactStart, lines, PLAN_EXTRA);
     const wPx = dv.word.length * CW;
     const rx = wPx/2 + 10;
@@ -555,6 +559,8 @@ function _e701da({ text, directives, syllabusKeywords, constraints, planningArro
     const wordStr = kw.word || kw.topicTitle || "";
     const exactStart = findExact(wordStr, kw.startIndex);
     const exactEnd = exactStart + wordStr.length;
+    if (overlapsAny(exactStart, exactEnd, cSpans)) return; // C > U: directive is not underlined
+    uSpans.push({ s: exactStart, e: exactEnd });           // claim keyword chars (U)
     const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty segment).
@@ -584,6 +590,7 @@ function _e701da({ text, directives, syllabusKeywords, constraints, planningArro
     if (SKIP_WORDS.has(tl) || kwdTexts.has(tl) || dirTexts.has(tl)) return;
     const exactStart = findExact(trimmed, ct.startIndex);
     const exactEnd   = exactStart + trimmed.length;
+    if (overlapsAny(exactStart, exactEnd, cSpans) || overlapsAny(exactStart, exactEnd, uSpans)) return; // C/U > B: don't box circled or underlined text
     const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty box).
