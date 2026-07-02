@@ -1722,6 +1722,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         body: JSON.stringify({
           stage: "stage1",
           subject: config.subjectCode,
+          markingMode: config.markingMode,
           syllabus: config.syllabus,
           messages:[{ role:"user", content: isVA ? [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
@@ -1991,6 +1992,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         body: JSON.stringify(isVA ? {
           stage:           "stage2",
           subject:         config.subjectCode,
+          markingMode:     config.markingMode,
           questionImage:   pageB64,
           responseImages:  responseB64s,
           bandRules:       config.bandRules,
@@ -2007,6 +2009,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         } : {
           stage:           "stage2",
           subject:         config.subjectCode,
+          markingMode:     config.markingMode,
           imageData:       pageB64,
           questionText:    _d0c6fa(c1.questionText),
           questionNumber:  _d0c6fa(questionNumber),
