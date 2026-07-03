@@ -270,6 +270,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
+console.log("CUBE Marking Coach — build 2026-07-04 · mobile-responsive v1");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -837,6 +838,80 @@ const ScoreDot = ({score,max=5}) => {
 const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
+
+// ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
+// build 2026-07-04 · mobile-responsive v1
+function _7e41ab() {
+  const [mob, setMob] = useState(() => typeof window !== "undefined" && window.innerWidth <= 640);
+  useEffect(() => {
+    const onR = () => setMob(window.innerWidth <= 640);
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
+  }, []);
+  return mob;
+}
+
+// Wraps children in a tap-to-expand accordion when `when` is true; renders children unchanged otherwise.
+function _2f96cd({when, label, children, defaultOpen=false}) {
+  const [open, setOpen] = useState(defaultOpen);
+  if (!when) return children;
+  return <div style={{marginBottom:"12px"}} onClick={e=>e.stopPropagation()}>
+    <button onClick={(e)=>{e.stopPropagation(); setOpen(o=>!o);}} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:800,cursor:"pointer",fontFamily:"sans-serif",letterSpacing:"0.5px",textAlign:"left"}}>
+      <span>{label}</span><span style={{color:"#c9a84c",fontSize:"14px",flexShrink:0,marginLeft:"8px"}}>{open?"▲":"▼"}</span>
+    </button>
+    {open&&<div style={{marginTop:"10px"}}>{children}</div>}
+  </div>;
+}
+
+// Compact ◀ STEP ▶ pager for mobile — replaces the 7-circle step indicator.
+function _9a03be({activeTab, onTabChange, unlocked}) {
+  const order = ["cube","plan","script","rubric","feedback","rank"];
+  const meta = {
+    cube:{n:2,label:"CUBE"}, plan:{n:3,label:"PLAN"}, script:{n:4,label:"SCRIPT"},
+    rubric:{n:5,label:"RUBRIC"}, feedback:{n:6,label:"FEEDBACK"}, rank:{n:null,label:"🏆 SCORE"},
+  };
+  const idx = Math.max(0, order.indexOf(activeTab));
+  const canBack = idx > 0;
+  const canFwd  = idx < order.length-1 && unlocked;
+  const m = meta[order[idx]] || meta.cube;
+  const btn = (on) => ({width:"52px",height:"46px",borderRadius:"10px",border:"1.5px solid",flexShrink:0,fontSize:"18px",fontWeight:900,cursor:on?"pointer":"default",fontFamily:"sans-serif",background:on?"rgba(201,168,76,0.18)":"rgba(255,255,255,0.03)",borderColor:on?"#c9a84c":"rgba(255,255,255,0.1)",color:on?"#c9a84c":"#3a4a5a",padding:0});
+  return <div style={{marginBottom:"16px",fontFamily:"sans-serif"}}>
+    <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
+      <button onClick={canBack?()=>onTabChange(order[idx-1]):undefined} style={btn(canBack)}>◀</button>
+      <div style={{flex:1,textAlign:"center",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(201,168,76,0.35)",borderRadius:"10px",padding:"7px 6px"}}>
+        <div style={{fontSize:"9px",color:"#8899bb",fontWeight:800,letterSpacing:"1.5px"}}>{m.n?("STEP "+m.n+" OF 6"):"LEADERBOARD"}</div>
+        <div style={{fontSize:"16px",fontWeight:900,color:"#c9a84c",letterSpacing:"1px"}}>{m.label}</div>
+      </div>
+      <button onClick={canFwd?()=>onTabChange(order[idx+1]):undefined} style={btn(canFwd)}>▶</button>
+    </div>
+    {!unlocked&&idx===0&&<div style={{fontSize:"11px",color:"#7a9ab8",textAlign:"center",marginTop:"6px"}}>🔒 Next steps unlock once your full answer is marked</div>}
+  </div>;
+}
+
+// Stacked mobile rubric row — criterion + score always visible, evidence & comment behind a tap.
+function _4c78ef({label, data, applicable=true, dimMax=5}) {
+  const [open, setOpen] = useState(false);
+  const rawScore = data?.score||0;
+  const score = Math.min(rawScore, dimMax);
+  if (!applicable) return <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"10px",padding:"10px 14px",marginBottom:"8px",fontFamily:"sans-serif",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+    <span style={{color:"#8899aa",fontSize:"13px"}}>{label}</span>
+    <span style={{color:"#555",fontSize:"12px",fontStyle:"italic"}}>N/A</span>
+  </div>;
+  const col = score>=dimMax?"#69f0ae":score>=(dimMax*0.5)?"#ffa726":"#ef5350";
+  return <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"10px",marginBottom:"8px",fontFamily:"sans-serif",overflow:"hidden"}}>
+    <div onClick={()=>setOpen(o=>!o)} style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",gap:"10px"}}>
+      <span style={{color:"#e8eaf0",fontSize:"13px",fontWeight:600,flex:1}}>{label}</span>
+      <ScoreDot score={score} max={dimMax}/>
+      <span style={{fontWeight:900,fontSize:"15px",color:col,flexShrink:0}}>+{score}<span style={{fontSize:"9px",color:"#888",marginLeft:"2px"}}>XP</span></span>
+      <span style={{color:"#c9a84c",fontSize:"12px",flexShrink:0}}>{open?"▲":"▼"}</span>
+    </div>
+    {open&&<div style={{padding:"0 14px 12px",fontSize:"12px",color:"#e8eaf0",lineHeight:"1.5"}}>
+      {data?.evidence&&<div style={{marginBottom:"4px",color:"#c8d8e8",fontStyle:"italic"}}>"{data.evidence}"</div>}
+      {data?.comment}
+    </div>}
+  </div>;
+}
+
 function _f3a294({current, activeTab, onTabChange}) {
   const steps = ["Upload","CUBE","Plan","Script","Rubric","Feedback","🏆"];
   const tabToStep = {cube:1, plan:2, script:3, rubric:4, feedback:5, rank:6};
@@ -1431,6 +1506,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 function _ac863f() {
+  const mobileView = _7e41ab();
   const [studentName, setStudentName] = useState(() => {
     try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
   });
@@ -2192,13 +2268,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       `}</style>
 
       {/* ── HEADER ── */}
-      <div style={{background:"linear-gradient(90deg,#0a1e35,#071528)",borderBottom:`3px solid ${gold}`,padding:"12px 24px",position:"sticky",top:0,zIndex:100}}>
-        <div style={{maxWidth:"860px",margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"16px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
-            <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:"6px 14px",fontWeight:900,fontSize:"18px",letterSpacing:"4px",fontFamily:"sans-serif"}}>CUBE</div>
+      <div style={{background:"linear-gradient(90deg,#0a1e35,#071528)",borderBottom:`3px solid ${gold}`,padding:mobileView?"8px 10px":"12px 24px",position:"sticky",top:0,zIndex:100}}>
+        <div style={{maxWidth:"860px",margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:mobileView?"8px":"16px"}}>
+          <div style={{display:"flex",alignItems:"center",gap:mobileView?"8px":"16px"}}>
+            <div style={{background:gold,color:"#040d18",borderRadius:"8px",padding:mobileView?"4px 8px":"6px 14px",fontWeight:900,fontSize:mobileView?"14px":"18px",letterSpacing:mobileView?"2px":"4px",fontFamily:"sans-serif"}}>CUBE</div>
             <div>
-              <div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>CUBE Marking Coach</div>
-              <div style={{fontSize:"11px",color:"#e8eaf0",fontFamily:"sans-serif"}}>
+              {!mobileView&&<div style={{fontSize:"17px",fontWeight:700,color:"#f0e6c8",fontFamily:"sans-serif"}}>CUBE Marking Coach</div>}
+              <div style={{fontSize:mobileView?"14px":"11px",fontWeight:mobileView?800:400,color:mobileView?"#f0e6c8":"#e8eaf0",fontFamily:"sans-serif"}}>
                 <span className="hide-mobile">{config.subjectName}</span>
                 <span className="show-mobile">{config.subjectShortName||config.subjectCode}</span>
               </div>
@@ -2206,7 +2282,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           </div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
             {/* ── MC Coach button — shown only for subjects with an MC section (config.hasMC) ── */}
-            {config.hasMC !== false && (
+            {config.hasMC !== false && !(mobileView && phase===2) && (
             <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
               title="Multiple Choice Coach"
               style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
@@ -2216,10 +2292,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               <span className="hide-mobile">MC Coach</span>
             </a>
             )}
-            {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:"14px"}}>day{streak!==1?"s":""}</span></div>}
-            {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
+            {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:mobileView?"14px":"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:mobileView?"4px 10px":"6px 18px",display:"flex",alignItems:"center",gap:mobileView?"4px":"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:mobileView?"11px":"14px"}}>day{streak!==1?"s":""}</span></div>}
+            {sessionXP>0&&!mobileView&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
             {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
-              <span style={{fontSize:"17px"}}>↩</span> New Question
+              <span style={{fontSize:"17px"}}>↩</span> {mobileView?"Next Q":"New Question"}
             </button>}
             {phase===2&&stage2Results&&<button onClick={triggerPrint} style={{padding:"6px 14px",background:"rgba(108,99,255,0.2)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"8px",color:"#a89fff",fontSize:"13px",fontWeight:800,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"6px",whiteSpace:"nowrap"}}>
               <span style={{fontSize:"15px"}}>⬇</span><span className="hide-mobile">Download</span> Report
@@ -2228,7 +2304,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
         </div>
       </div>
 
-      <div style={{maxWidth:"860px",margin:"0 auto",padding:"28px 18px"}}>
+      <div style={{maxWidth:"860px",margin:"0 auto",padding:mobileView?"16px 10px":"28px 18px"}}>
 
         {/* ── PHASE 0: UPLOAD ── */}
         {phase===0&&(
@@ -2273,7 +2349,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onDragOver={e=>{e.preventDefault();e.stopPropagation();setDragOver(true);}}
                 onDragLeave={e=>{e.preventDefault();setDragOver(false);}}
                 onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);const f=e.dataTransfer.files[0];if(f)handleFileFromSource(f);}}
-                style={{border:`2px dashed ${dragOver?"#c9a84c":nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:"40px 24px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}}
+                style={{border:`2px dashed ${dragOver?"#c9a84c":nameValid?"rgba(201,168,76,0.4)":"rgba(229,115,115,0.5)"}`,borderRadius:"20px",padding:mobileView?"24px 14px":"40px 24px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)",transition:"all 0.2s",marginBottom:"20px",opacity:nameValid?1:0.75}}
                 onMouseOver={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.08)":"rgba(229,115,115,0.08)";}}
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
@@ -2283,12 +2359,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
                   {nameValid?(isVA?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Your page can include the printed question, your handwritten answer, and any stimulus material."):"Your name is required before you can upload a photo."}
                 </div>
-                {nameValid&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
+                {nameValid&&!mobileView&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
                   <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
                   <span style={{color:"rgba(255,255,255,0.2)"}}>|</span>
                   <span>🖱️ Drag &amp; drop an image or PDF (page 1 only)</span>
                 </div>}
-                {nameValid&&<div style={{marginTop:"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
+                {nameValid&&<_2f96cd when={mobileView} label={"📌 Photo tips — orientation, iPhone & PDF"}><div style={{marginTop:mobileView?"4px":"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
                   <div style={{display:"flex",justifyContent:"center",gap:"24px",alignItems:"flex-start"}}>
                     {/* CORRECT — vertical */}
@@ -2327,9 +2403,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                       <div style={{fontSize:"11px",color:"#9aabb8",fontFamily:"sans-serif",textAlign:"center",maxWidth:"90px",lineHeight:"1.4"}}>Rotated — will not mark accurately</div>
                     </div>
                   </div>
-                </div>}
-                {nameValid&&<div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>}
-                {nameValid&&<div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div>}
+                </div>
+                <div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>
+                <div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div></_2f96cd>}
               </div>;
             })()}
             <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{display:"none"}} onChange={handleImg}/>
@@ -2444,7 +2520,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
           return <div>
             {/* ── ORDER: 1) Question bar  2) _f3a294 nav  3) Tab content — DO NOT REORDER ── */}
-            {/* ── Question summary bar ── */}
+            {/* ── Question summary bar — collapsed behind a tap on mobile ── */}
+            <_2f96cd when={mobileView} label={"Q"+(questionNumber||"?")+(c.marks!=null&&c.marks!==""?(" · "+c.marks+" marks"):"")+" — view question"}>
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               {/* Metadata row */}
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
@@ -2460,6 +2537,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </div>
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
+            </_2f96cd>
 
             {/* ── Results strip — only shown after Stage 2 marking ── */}
             {stage2Results&&(()=>{
@@ -2494,9 +2572,9 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                         <div style={{fontSize:"26px",fontWeight:900,color:"#64b5f6",lineHeight:1}}>{band}</div>
                       </div>
                     )}
-                    <div style={{width:"1px",height:"36px",background:"rgba(255,255,255,0.1)"}}/>
-                    {/* XP breakdown */}
-                    {[
+                    {!mobileView&&<div style={{width:"1px",height:"36px",background:"rgba(255,255,255,0.1)"}}/>}
+                    {/* XP breakdown — hidden on mobile; detail lives in the PLAN step */}
+                    {!mobileView&&[
                       {label:"CUBE XP", val:cubeXP,  color:"#64b5f6"},
                       {label:"Plan XP", val:annoXP,  color:"#ce93d8"},
                       {label:"Write XP",val:writeXP, color:"#81c784"},
@@ -2520,10 +2598,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               );
             })()}
 
-            <_f3a294 current={4} activeTab={activeTab} onTabChange={(tab)=>{
-                setActiveTab(tab);
-                if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
-              }}/>
+            {mobileView
+              ? <_9a03be activeTab={activeTab} unlocked={!!stage2Results} onTabChange={(tab)=>{
+                  setActiveTab(tab);
+                  if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
+                }}/>
+              : <_f3a294 current={4} activeTab={activeTab} onTabChange={(tab)=>{
+                  setActiveTab(tab);
+                  if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
+                }}/>}
 
             {/* ═══ TAB: CUBE ═══ */}
             {activeTab==="cube"&&<div>
@@ -2537,6 +2620,22 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 mode="cube"
               />
 
+              {/* ── Mobile-only: syllabus points + where they came from ── */}
+              {mobileView&&kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
+                <SectionTitle color="#64b5f6">SYLLABUS POINTS — WHERE THIS QUESTION COMES FROM</SectionTitle>
+                {kwds.map((kw,i)=>(
+                  <div key={i} style={{marginBottom:i<kwds.length-1?"12px":0,fontFamily:"sans-serif"}}>
+                    <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"2px"}}>
+                      <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+                      {(kw.module||kw.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400}}>{kw.module?("Module "+kw.module):""}{kw.topicCode?(" · "+kw.topicCode):""}</span>}
+                    </div>
+                    {kw.syllabusText&&<div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.5"}}>{kw.syllabusText}</div>}
+                    {(kw.moduleTitle||kw.topicTitle||kw.syllabusLabel)&&<div style={{color:"#90caf9",fontSize:"10px",marginTop:"3px",fontStyle:"italic"}}>From: {kw.moduleTitle||""}{kw.topicTitle?((kw.moduleTitle?" — ":"")+kw.topicTitle):""}{kw.syllabusLabel?(" ("+kw.syllabusLabel+")"):""}</div>}
+                  </div>
+                ))}
+              </Card>}
+
+              <_2f96cd when={mobileView} label="Full CUBE detail — C · U · B · E">
               {/* Legend */}
               <div style={{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px",padding:"10px 14px",background:"rgba(255,255,255,0.04)",borderRadius:"10px",border:"1px solid rgba(255,255,255,0.08)"}}>
                 {[
@@ -2708,7 +2807,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </div>;
                 })()}
               </Card>}
-
+              </_2f96cd>
 
               {/* ── Now ready button at bottom of CUBE tab ── */}
               {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
@@ -2740,6 +2839,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
               {/* SVG + all plan content — only shown after Stage 2 has run */}
               {stage2Results&&<div>
+              {/* ── Mobile-only: points scored at a glance ── */}
+              {mobileView&&<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"rgba(108,99,255,0.1)",border:"1px solid #6c63ff44",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px",fontFamily:"sans-serif"}}>
+                <span style={{fontSize:"13px",fontWeight:800,color:"#e8eaf0"}}>⚡ CUBE + Annotation points</span>
+                <span style={{fontSize:"24px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+(annoXP||0)} XP</span>
+              </div>}
               {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
               <_e701da
                 text={c.questionText}
@@ -2750,6 +2854,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 mode="plan"
               />
 
+              <_2f96cd when={mobileView} label="Points detail & writing scaffold">
               {/* ── Annotation XP + Stage 1 total (combined) ── */}
               {(()=>{
                 const maxCubeXP = (()=>{
@@ -2884,6 +2989,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </div>
                 ))}
               </Card>}
+              </_2f96cd>
 
               </div>}{/* end stage2Results gate */}
 
@@ -2903,12 +3009,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
               </div>}
               {(stage1Done||stage2Results)&&<div>
-              <SectionTitle>STEP 4 — YOUR RESPONSE (FORMATTED)</SectionTitle>
+              <SectionTitle>{mobileView?"STEP 4 — YOUR RESPONSE":"STEP 4 — YOUR RESPONSE (FORMATTED)"}</SectionTitle>
+              <_2f96cd when={mobileView} label="Legend — bold · underline · ?">
               <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"6px 12px",marginBottom:"12px",border:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"center"}}>
                 <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
                 <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
                 <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
               </div>
+              </_2f96cd>
               <_e3ea66 subtitle="STUDENT RESPONSE — VERBATIM">
                 <div style={{fontSize:"16px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>
                   <_35d126 text={_9eca9d(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
@@ -2942,9 +3050,17 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
               </div>}
               {stage2Results&&<div>
-              <SectionTitle>STEP 5 — WRITTEN ANALYSIS</SectionTitle>
+              <SectionTitle>{mobileView?"STEP 5 — YOUR MARKS":"STEP 5 — WRITTEN ANALYSIS"}</SectionTitle>
 
-              <Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.08)" style={{padding:0,overflow:"hidden"}}>
+              {mobileView&&<div style={{marginBottom:"14px"}}>
+                <_4c78ef label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
+                <_4c78ef label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
+                <_4c78ef label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
+                <_4c78ef label="Logical Flow & Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
+                <div style={{fontSize:"11px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"4px",textAlign:"center"}}>Tap a criterion to see the evidence &amp; full comment</div>
+              </div>}
+
+              {!mobileView&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.08)" style={{padding:0,overflow:"hidden"}}>
                 <table style={{width:"100%",borderCollapse:"collapse"}}>
                   <thead>
                     <tr style={{background:"rgba(201,168,76,0.12)"}}>
@@ -2962,7 +3078,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
                   </tbody>
                 </table>
-              </Card>
+              </Card>}
 
               {/* ── XP summary strip ── */}
               <div style={{background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
@@ -2976,7 +3092,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </div>
 
               {/* Detected features */}
-              <div style={{display:"grid",gridTemplateColumns:`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
+              <_2f96cd when={mobileView} label="Connectives & noun groups found">
+              <div style={{display:"grid",gridTemplateColumns:mobileView?"1fr":`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
                 {causalApplicable&&<Card bg="rgba(123,31,162,0.08)" border="rgba(123,31,162,0.3)">
                   <SectionTitle color="#ce93d8">CONNECTIVES FOUND</SectionTitle>
                   {a.detectedConnectives?.length>0 ? <>
@@ -3003,6 +3120,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   :<div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontStyle:"italic"}}>None detected</div>}
                 </Card>
               </div>
+              </_2f96cd>
 
 
             </div>}
@@ -3022,10 +3140,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 <button onClick={()=>setActiveTab("cube")} style={{padding:"10px 24px",background:"linear-gradient(135deg,#c9a84c,#e8c96a)",color:"#040d18",border:"none",borderRadius:"10px",fontSize:"13px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif"}}>← Go to CUBE tab</button>
               </div>}
               {stage2Results&&<div>
-              <SectionTitle>STEP 6 — MEDALS, MISSION &amp; FEEDBACK</SectionTitle>
+              <SectionTitle>{mobileView?"STEP 6 — MISSION & FEEDBACK":"STEP 6 — MEDALS, MISSION & FEEDBACK"}</SectionTitle>
 
               {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
               {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
+                {(a.medals?.medal1||a.medals?.medal2)&&<_2f96cd when={mobileView} label="🥇 Your medals — what you did well">
                 {a.medals?.medal1&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.medals?.medal2||a.mission?"12px":0}}>
                   <div style={{fontSize:"26px",flexShrink:0}}>🥇</div>
                   <div style={{flex:1}}>
@@ -3040,7 +3159,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <div style={{color:"#d0d0d0",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal2.quote}"</div>
                   </div>
                 </div>}
-                {a.mission&&<div style={{paddingTop:(a.medals?.medal1||a.medals?.medal2)?"10px":0,borderTop:(a.medals?.medal1||a.medals?.medal2)?"1px solid rgba(255,255,255,0.07)":"none"}}>
+                </_2f96cd>}
+                {a.mission&&<div style={{paddingTop:(a.medals?.medal1||a.medals?.medal2)&&!mobileView?"10px":0,borderTop:(a.medals?.medal1||a.medals?.medal2)&&!mobileView?"1px solid rgba(255,255,255,0.07)":"none"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{fontSize:"26px",flexShrink:0}}>🎯</div>
                     <div style={{flex:1}}>
@@ -3062,7 +3182,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </Card>}
 
               {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
-              {a.specialCheck?.modelSentenceStarter&&<Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
+              {a.specialCheck?.modelSentenceStarter&&<_2f96cd when={mobileView} label="💡 How to structure your answer">
+              <Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
 
                 {/* ── STEP 1: Structure Pattern ── */}
                 <SectionTitle color={gold}>💡 HOW TO STRUCTURE YOUR ANSWER</SectionTitle>
@@ -3082,7 +3203,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </div>
                 </div>
 
-              </Card>}
+              </Card>
+              </_2f96cd>}
 
 
               {/* ── Visual Arts interpretive check ── */}
