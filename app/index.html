@@ -270,7 +270,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-04 · mobile-responsive v1");
+console.log("CUBE Marking Coach — build 2026-07-04 · mobile-responsive v1.1");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -840,7 +840,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-04 · mobile-responsive v1
+// build 2026-07-04 · mobile-responsive v1.1
 function _7e41ab() {
   const [mob, setMob] = useState(() => typeof window !== "undefined" && window.innerWidth <= 640);
   useEffect(() => {
@@ -2282,7 +2282,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           </div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
             {/* ── MC Coach button — shown only for subjects with an MC section (config.hasMC) ── */}
-            {config.hasMC !== false && !(mobileView && phase===2) && (
+            {config.hasMC !== false && !(mobileView && (phase===2 || pageImg)) && (
             <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
               title="Multiple Choice Coach"
               style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
@@ -2313,6 +2313,15 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             <div style={{textAlign:"center",marginBottom:"24px"}}>
               <h1 style={{fontSize:"26px",margin:"0 0 8px",color:"#f0e6c8",fontWeight:700}}>Check Your Answer</h1>
             </div>
+
+            {/* ── Mobile-only MC Coach button — hidden once a question is loaded ── */}
+            {mobileView&&!pageImg&&config.hasMC!==false&&(
+              <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
+                style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px",width:"100%",padding:"13px 16px",marginBottom:"18px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"12px",color:"#a89fff",fontSize:"15px",fontWeight:900,fontFamily:"sans-serif",textDecoration:"none",letterSpacing:"0.5px",boxSizing:"border-box"}}>
+                <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="" style={{width:"24px",height:"24px",borderRadius:"5px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
+                🎯 Multiple Choice Coach
+              </a>
+            )}
 
             {/* ── Student name field ── */}
             <div style={{marginBottom:"20px"}}>
