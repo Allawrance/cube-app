@@ -2205,7 +2205,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-            {/* ── MC Coach button — always visible ── */}
+            {/* ── MC Coach button — shown only for subjects with an MC section (config.hasMC) ── */}
+            {config.hasMC !== false && (
             <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
               title="Multiple Choice Coach"
               style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
@@ -2214,6 +2215,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="MC" style={{width:"22px",height:"22px",borderRadius:"4px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
               <span className="hide-mobile">MC Coach</span>
             </a>
+            )}
             {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:"14px"}}>day{streak!==1?"s":""}</span></div>}
             {sessionXP>0&&<div style={{fontFamily:"sans-serif",fontSize:"18px",fontWeight:900,color:"#a89fff",background:"rgba(108,99,255,0.18)",border:"1.5px solid rgba(108,99,255,0.45)",borderRadius:"24px",padding:"6px 18px",display:"flex",alignItems:"center",gap:"6px"}}>⚡ <span>{sessionXP}</span><span style={{fontSize:"14px"}}>XP</span></div>}
             {phase===2&&<button onClick={reset} style={{padding:"6px 16px",background:`linear-gradient(135deg,${gold},#e8c96a)`,border:"none",borderRadius:"8px",color:"#040d18",fontSize:"14px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"7px",boxShadow:"0 3px 10px rgba(201,168,76,0.4)",letterSpacing:"0.3px",whiteSpace:"nowrap"}}>
