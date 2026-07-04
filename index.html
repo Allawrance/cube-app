@@ -299,7 +299,7 @@ footer {
 /* ── RESPONSIVE ── */
 /* ── Mobile UI — driven by html.mobile-ui class (UA + width detection) because
      inside the Google Sites iframe the window width is desktop-sized on phones,
-     so width-only media queries never fire. build 2026-07-04 · landing-mobile v3 ── */
+     so width-only media queries never fire. build 2026-07-04 · landing-mobile v4 ── */
 html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 40px; }
 html.mobile-ui .hero-visual { display: none; }
 html.mobile-ui .how-grid { grid-template-columns: 1fr; }
@@ -737,10 +737,11 @@ setTimeout(sendHeight, 1500);
 // Cache-bust subject links: GitHub Pages / Chrome can serve a stale cached copy of the
 // marking app, so a bare app/?subject=EES click may load an old (non-mobile) build. Stamp the
 // current build version onto each app/ link so every click fetches the live version.
-// Skipped for links the iframe block swaps to Google Sites. build 2026-07-04 · landing-mobile v3
-var CUBE_BUILD = "20260704c";
+// Applies whether or not the page is inside the Google Sites iframe — every subject
+// links straight to the app (opens in a new tab), which is the path proven to work.
+// build 2026-07-04 · landing-mobile v4
+var CUBE_BUILD = "20260704d";
 (function(){
-  if (window.self !== window.top) return; // in Google Sites iframe → handled by the swap block below
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
     a.setAttribute("href", href + (href.indexOf("?") > -1 ? "&" : "?") + "cv=" + CUBE_BUILD);
@@ -782,29 +783,11 @@ var CUBE_BUILD = "20260704c";
   });
   sendHeight();
 })();
-
-// If embedded in Google Sites iframe, swap subject buttons to Google Sites URLs
-(function() {
-  const inIframe = window.self !== window.top;
-  if (inIframe) {
-    const links = {
-      'link-ees':     'https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home/earth-environmental-science?authuser=1',
-      'link-buss':    'https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home/business-studies?authuser=1',
-      'link-hlthm':   'https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home/health-movement?authuser=1',
-      'link-engs':    'https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home/engineering-studies?authuser=1',
-      'link-comfam':  'https://sites.google.com/education.nsw.gov.au/eesmarkingcoach/home/community-family-studies?authuser=1'
-    };
-    Object.entries(links).forEach(([id, url]) => {
-      const el = document.getElementById(id);
-      if (el) { el.href = url; el.target = '_top'; }
-    });
-  }
-})();
 </script>
 <div id="cube-build-tag" title="Build version — tap to confirm you are on the latest deploy"
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · landing-mobile v3 · 2026-07-04</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · landing-mobile v4 · 2026-07-04</div>
 </body>
 </html>
