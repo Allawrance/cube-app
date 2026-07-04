@@ -5,6 +5,16 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/cube-app/favicon-home-180.png">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script>
+(function(){
+  var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
+  function isMob(){ return UA_MOBILE || window.innerWidth <= 768; }
+  function apply(){ document.documentElement.classList.toggle("mobile-ui", isMob()); }
+  apply();
+  window.addEventListener("resize", apply);
+  window.CUBE_IS_MOBILE = isMob;
+})();
+</script>
 <title>CUBE Marking Coach — HSC Learning Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <style>
@@ -287,16 +297,40 @@ footer {
 }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-  .hero-visual { display: none; }
-  .how-grid { grid-template-columns: 1fr; }
-  .photo-grid { grid-template-columns: 1fr; }
-  .limits-grid { grid-template-columns: 1fr; }
-  .subjects-grid { grid-template-columns: 1fr 1fr; }
-  .nav-links { display: none; }
-  .staff-callout { flex-direction: column; }
+/* ── Mobile UI — driven by html.mobile-ui class (UA + width detection) because
+     inside the Google Sites iframe the window width is desktop-sized on phones,
+     so width-only media queries never fire. build 2026-07-04 · landing-mobile v1 ── */
+html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+html.mobile-ui .hero-visual { display: none; }
+html.mobile-ui .how-grid { grid-template-columns: 1fr; }
+html.mobile-ui .photo-grid { grid-template-columns: 1fr; }
+html.mobile-ui .limits-grid { grid-template-columns: 1fr; }
+html.mobile-ui .subjects-grid { grid-template-columns: 1fr; }
+html.mobile-ui .nav-links { display: none; }
+html.mobile-ui .staff-callout { flex-direction: column; }
+
+/* Students land here to pick a subject — everything else steps back on mobile */
+html.mobile-ui .hero { padding: 24px 5% 32px; }
+html.mobile-ui .hero-tag { display: none; }
+html.mobile-ui .hero h1 { font-size: 1.35rem; margin-bottom: 10px; }
+html.mobile-ui .hero-desc { display: none; }
+html.mobile-ui .hero-actions { display: none; }
+/* Subject rows stack; class links get full-width thumb targets */
+html.mobile-ui #subjects > div { flex-direction: column; }
+html.mobile-ui #subjects a { font-size: 15px !important; padding: 12px 10px !important; margin: 0 !important; }
+html.mobile-ui #subjects .subj-card { min-height: 0 !important; }
+/* Collapsible info sections */
+.sec-toggle { display: none; }
+html.mobile-ui section.collapsed-mobile { padding: 0 5%; }
+html.mobile-ui .sec-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; max-width: 640px; margin: 8px auto; padding: 14px 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; color: #e8eaf0; font-family: inherit; font-size: 14px;
+  font-weight: 700; text-align: left; cursor: pointer;
 }
+html.mobile-ui .sec-toggle .arrow { color: var(--gold); font-size: 12px; flex-shrink: 0; }
+html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; padding: 24px 5% 30px; }
 
 /* anchor offset removed */
 </style>
@@ -678,6 +712,42 @@ window.addEventListener('resize', sendHeight);
 // Also send after fonts/images load
 setTimeout(sendHeight, 500);
 setTimeout(sendHeight, 1500);
+
+// On mobile, collapse the info sections behind tap-to-expand toggles —
+// students land here to pick a subject; research/photo/privacy stay one tap away.
+(function(){
+  if (!(window.CUBE_IS_MOBILE && window.CUBE_IS_MOBILE())) return;
+  var labels = {
+    research: "📚 Research supporting timely feedback",
+    how:      "⚙️ How it works",
+    photos:   "📸 Getting your photo right",
+    limits:   "⚠️ Limitations & honest expectations",
+    privacy:  "🔒 Privacy & DET guidelines"
+  };
+  Object.keys(labels).forEach(function(id){
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    var inner = document.createElement("div");
+    while (sec.firstChild) inner.appendChild(sec.firstChild);
+    inner.style.display = "none";
+    inner.style.paddingTop = "14px";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sec-toggle";
+    btn.innerHTML = "<span>" + labels[id] + "</span><span class=\"arrow\">▼</span>";
+    btn.addEventListener("click", function(){
+      var open = inner.style.display === "none";
+      inner.style.display = open ? "block" : "none";
+      btn.querySelector(".arrow").textContent = open ? "▲" : "▼";
+      sendHeight();
+      setTimeout(sendHeight, 350);
+    });
+    sec.classList.add("collapsed-mobile");
+    sec.appendChild(btn);
+    sec.appendChild(inner);
+  });
+  sendHeight();
+})();
 
 // If embedded in Google Sites iframe, swap subject buttons to Google Sites URLs
 (function() {
