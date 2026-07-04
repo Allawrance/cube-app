@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* build 2026-07-04 · mc-mobile v2 — UA + width mobile detection (Google Sites iframe safe) */
+(function(){
+  var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
+  function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
+  function apply(){ document.documentElement.classList.toggle("mobile-ui", isMob()); }
+  apply();
+  window.addEventListener("resize", apply);
+})();
+</script>
 <title>MC & Short Answer Coach — CUBE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono&display=swap" rel="stylesheet">
@@ -457,84 +467,77 @@ body {
 }
 .start-bar { width: 100%; max-width: 580px; text-align: center; }
 
-/* ── Mobile responsive ─────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
+/* ── Mobile UI — applied via html.mobile-ui class (UA + width detection),
+     because inside the Google Sites iframe the window width is desktop-sized
+     on phones and width media queries never fire. ─────────────────────── */
+
   /* Selector sheets: summary button visible; pill panel collapses like a dropdown */
-  .selector-summary-btn {
+html.mobile-ui .selector-summary-btn {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
     width: 100%; box-sizing: border-box; margin-top: 8px;
     background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px;
     color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
     padding: 12px 14px; cursor: pointer; text-align: left;
   }
-  .selector-summary-btn .sel-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .selector-summary-btn .arrow { color: var(--accent); font-size: 11px; flex-shrink: 0; }
-  .sheet-wrap .module-pills, .sheet-wrap .year-pills, .sheet-wrap .subject-pills { display: none; }
-  .sheet-wrap.open .module-pills, .sheet-wrap.open .year-pills, .sheet-wrap.open .subject-pills {
+html.mobile-ui .selector-summary-btn .sel-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.mobile-ui .selector-summary-btn .arrow { color: var(--accent); font-size: 11px; flex-shrink: 0; }
+html.mobile-ui .sheet-wrap .module-pills, html.mobile-ui .sheet-wrap .year-pills, html.mobile-ui .sheet-wrap .subject-pills { display: none; }
+html.mobile-ui .sheet-wrap.open .module-pills, html.mobile-ui .sheet-wrap.open .year-pills, html.mobile-ui .sheet-wrap.open .subject-pills {
     display: block; margin-top: 8px; background: var(--surface2);
     border: 1px solid var(--border); border-radius: 10px; padding: 8px;
     max-height: 300px; overflow-y: auto;
   }
   /* Pills become full-width checklist rows inside the sheet */
-  .sheet-wrap .module-pill, .sheet-wrap .year-pill, .sheet-wrap .subject-pill {
+html.mobile-ui .sheet-wrap .module-pill, html.mobile-ui .sheet-wrap .year-pill, html.mobile-ui .sheet-wrap .subject-pill {
     display: flex; width: 100%; box-sizing: border-box; justify-content: space-between;
     align-items: center; border-radius: 8px; padding: 11px 12px; font-size: 14px;
     margin: 0 0 6px 0; white-space: normal; text-align: left;
   }
-  .sheet-wrap .module-pill::after, .sheet-wrap .year-pill::after, .sheet-wrap .subject-pill::after {
+html.mobile-ui .sheet-wrap .module-pill::after, html.mobile-ui .sheet-wrap .year-pill::after, html.mobile-ui .sheet-wrap .subject-pill::after {
     content: "○"; color: var(--muted); font-size: 14px; margin-left: 8px; flex-shrink: 0;
   }
-  .sheet-wrap .module-pill.active::after, .sheet-wrap .year-pill.active::after, .sheet-wrap .subject-pill.active::after {
+html.mobile-ui .sheet-wrap .module-pill.active::after, html.mobile-ui .sheet-wrap .year-pill.active::after, html.mobile-ui .sheet-wrap .subject-pill.active::after {
     content: "✓"; color: var(--accent); font-weight: 900;
   }
   /* Compact mode cards — icon + label only */
-  .filter-mode-desc { display: none; }
-  .filter-mode-cards { display: flex; gap: 8px; }
-  .filter-mode-card { flex: 1; padding: 10px 4px; text-align: center; }
-  .filter-mode-icon { font-size: 18px; margin-bottom: 2px; }
-  .filter-mode-label { font-size: 12px; }
+html.mobile-ui .filter-mode-desc { display: none; }
+html.mobile-ui .filter-mode-cards { display: flex; gap: 8px; }
+html.mobile-ui .filter-mode-card { flex: 1; padding: 10px 4px; text-align: center; }
+html.mobile-ui .filter-mode-icon { font-size: 18px; margin-bottom: 2px; }
+html.mobile-ui .filter-mode-label { font-size: 12px; }
   /* Sticky start bar */
-  .start-bar {
+html.mobile-ui .start-bar {
     position: sticky; bottom: 0; padding: 10px 0 14px; margin-top: 4px;
     background: linear-gradient(180deg, transparent, var(--bg, #0d1117) 30%);
     z-index: 50;
   }
-  .start-bar .btn-start { width: 100%; margin-top: 6px; }
+html.mobile-ui .start-bar .btn-start { width: 100%; margin-top: 6px; }
+html.mobile-ui .topbar { padding: 8px 12px; }
+html.mobile-ui .topbar-title { font-size: 12px; }
+html.mobile-ui .topbar-title small { display: none; }
+html.mobile-ui .chip-module { display: none; }
+html.mobile-ui .logo-badge { font-size: 11px; padding: 3px 7px; }
+html.mobile-ui .btn-exit { padding: 4px 8px; font-size: 11px; }
+html.mobile-ui .main-layout { padding: 10px; gap: 10px; }
+html.mobile-ui .side-panel { display: none; }
+html.mobile-ui .q-body { padding: 14px 12px; }
+html.mobile-ui .q-stem { font-size: 15px; margin-bottom: 14px; }
+html.mobile-ui .option-btn { font-size: 14px; padding: 10px 12px; gap: 8px; }
+html.mobile-ui .option-label { font-size: 13px; }
+html.mobile-ui .stimulus-img { max-height: 220px; }
+html.mobile-ui .stimulus-box { padding: 10px; }
+html.mobile-ui .reflection-btns { flex-direction: column; }
+html.mobile-ui .ref-btn { width: 100%; text-align: center; padding: 10px; }
+html.mobile-ui .feedback-panel { font-size: 13px; }
+html.mobile-ui .mode-screen { padding: 24px 16px 40px; }
+html.mobile-ui .mode-headline { font-size: 28px; margin-bottom: 20px; }
+html.mobile-ui .module-pills { gap: 6px; }
+html.mobile-ui .module-pill { padding: 6px 10px; font-size: 12px; }
+html.mobile-ui .year-pills { gap: 6px; }
+html.mobile-ui .year-pill { padding: 5px 10px; font-size: 12px; }
+html.mobile-ui .btn-start { font-size: 15px; padding: 14px 24px; }
+html.mobile-ui .complete-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
 
-  .topbar { padding: 8px 12px; }
-  .topbar-title { font-size: 12px; }
-  .topbar-title small { display: none; }
-  .chip-module { display: none; }
-  .logo-badge { font-size: 11px; padding: 3px 7px; }
-  .btn-exit { padding: 4px 8px; font-size: 11px; }
-
-  .main-layout { padding: 10px; gap: 10px; }
-  .side-panel { display: none; }
-
-  .q-body { padding: 14px 12px; }
-  .q-stem { font-size: 15px; margin-bottom: 14px; }
-  .option-btn { font-size: 14px; padding: 10px 12px; gap: 8px; }
-  .option-label { font-size: 13px; }
-
-  .stimulus-img { max-height: 220px; }
-  .stimulus-box { padding: 10px; }
-
-  .reflection-btns { flex-direction: column; }
-  .ref-btn { width: 100%; text-align: center; padding: 10px; }
-
-  .feedback-panel { font-size: 13px; }
-
-  .mode-screen { padding: 24px 16px 40px; }
-  .mode-headline { font-size: 28px; margin-bottom: 20px; }
-  .module-pills { gap: 6px; }
-  .module-pill { padding: 6px 10px; font-size: 12px; }
-  .year-pills { gap: 6px; }
-  .year-pill { padding: 5px 10px; font-size: 12px; }
-
-  .btn-start { font-size: 15px; padding: 14px 24px; }
-
-  .complete-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-}
 
 .q-stem {
   font-size: 17px;
