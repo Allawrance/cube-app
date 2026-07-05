@@ -1,0 +1,17 @@
+{
+  "schoolCode": "SIHS",
+  "schoolName": "St Ives High School",
+  "year": 2026,
+  "comment": "Enrolment structure only — pedagogy lives in config-{SUBJECT}.json. Update classCodes each year. classCodes: [] = single cohort, launches without a class parameter; 1 entry = launches with that class; 2+ entries = student picks their class on the landing page.",
+  "subjects": [
+    { "code": "EES",    "name": "Earth & Environmental Science", "emoji": "🌏", "accent": "#69f0ae", "kla": "Science",  "classCodes": [] },
+    { "code": "BIO",    "name": "Biology",                       "emoji": "🔬", "accent": "#a5d6a7", "kla": "Science",  "classCodes": ["12Bio-1", "12Bio-2", "12Bio-3", "12Bio-4"] },
+    { "code": "BusS",   "name": "Business Studies",              "emoji": "📊", "accent": "#64b5f6", "kla": "HSIE",     "classCodes": [] },
+    { "code": "LEG",    "name": "Legal Studies",                 "emoji": "⚖️", "accent": "#ce93d8", "kla": "HSIE",     "classCodes": ["12LS-1", "12LS-2"] },
+    { "code": "ANCH",   "name": "Ancient History",               "emoji": "🏛️", "accent": "#ffcc80", "kla": "HSIE",     "classCodes": ["12AHis"] },
+    { "code": "HlthM",  "name": "Health & Movement Science",     "emoji": "🏃", "accent": "#80cbc4", "kla": "PDHPE",    "classCodes": [] },
+    { "code": "ComFam", "name": "Community & Family Studies",    "emoji": "🏠", "accent": "#80cbc4", "kla": "PDHPE",    "classCodes": [] },
+    { "code": "EngS",   "name": "Engineering Studies",           "emoji": "⚙️", "accent": "#ffab91", "kla": "TAS",      "classCodes": [] },
+    { "code": "VISART", "name": "Visual Arts",                   "emoji": "🎨", "accent": "#f48fb1", "kla": "CAPA",     "classCodes": ["12VA-1", "12VA-2"] }
+  ]
+}
