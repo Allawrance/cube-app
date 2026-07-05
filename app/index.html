@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-04 · responseModes-v1.0 */
+     width-only checks and CSS media queries never fire there. build 2026-07-05 · missionScaling-v1.0 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-04 · responseModes-v1.0");
+console.log("CUBE Marking Coach — build 2026-07-05 · missionScaling-v1.0");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -330,6 +330,21 @@ const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"
 const _2c7e13 = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
+};
+
+// ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
+const getFeedbackPlan = (marksLost) => {
+  const lost = (marksLost == null || isNaN(marksLost)) ? 1 : Math.max(0, marksLost);
+  if (lost <= 0) return { medals: 2, missions: 1, isPerfect: true };
+  if (lost === 1) return { medals: 2, missions: 1, isPerfect: false };
+  if (lost === 2) return { medals: 1, missions: 2, isPerfect: false };
+  return { medals: 1, missions: 3, isPerfect: false };
+};
+const normaliseMissions = (a) => {
+  if (!a) return [];
+  if (Array.isArray(a.missions)) return a.missions.filter(m => m && (m.weakness || m.targetCategory));
+  if (a.mission && (a.mission.weakness || a.mission.targetCategory)) return [a.mission];
+  return [];
 };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -851,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-04 · responseModes-v1.0
+// build 2026-07-05 · missionScaling-v1.0
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1385,69 +1400,70 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
 
       </div>
 
-      {/* ── SECTION 5: MEDALS + MISSION ── */}
-      {(a.medals?.medal1 || a.medals?.medal2 || a.mission) && (
-        <div className="pr-medals-section pr-no-break">
-          <div className="pr-section-label">Feedback</div>
+      {/* ── SECTION 5: MEDALS + MISSION(S) — count driven by marks lost (build 2026-07-05) ── */}
+      {(()=>{
+        const marksKnownPr = c.marks !== null && c.marks !== undefined && c.marks !== "";
+        const awdMarkPr   = marksKnownPr ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks) : null;
+        const marksLostPr = marksKnownPr ? (c.marks - awdMarkPr) : null;
+        const planPr      = getFeedbackPlan(marksLostPr);
+        const allMedalsPr = [a.medals?.medal1, a.medals?.medal2].filter(m=>m&&(m.category||m.quote));
+        const medalsPr    = allMedalsPr.slice(0, planPr.medals);
+        const missionsPr  = normaliseMissions(a).slice(0, planPr.missions);
+        const stripLeadPr = w => (w||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"");
+        if (!medalsPr.length && !missionsPr.length) return null;
+        const medalMetaPr = [{emoji:"🥇",col:"#b8860b"},{emoji:"🥈",col:"#666"}];
+        return (
+          <div className="pr-medals-section pr-no-break">
+            <div className="pr-section-label">Feedback</div>
 
-          {/* ── What You Did Well ── */}
-          {(a.medals?.medal1 || a.medals?.medal2) && (
-            <div style={{marginBottom:"16px"}}>
-              <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#b8860b",textTransform:"uppercase",marginBottom:"10px",borderBottom:"1.5px solid #f0c040",paddingBottom:"4px"}}>
-                ✅ What You Did Well
-              </div>
-
-              {a.medals?.medal1 && (
-                <div style={{marginBottom:"10px",paddingLeft:"4px"}}>
-                  <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#b8860b",marginBottom:"3px"}}>🥇 {a.medals.medal1.category}</div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:"12.5px",color:"#333",lineHeight:"1.6",paddingLeft:"24px"}}>
-                    <em>"{a.medals.medal1.quote}"</em>
-                  </div>
+            {/* ── What You Did Well ── */}
+            {medalsPr.length>0 && (
+              <div style={{marginBottom:"16px"}}>
+                <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#b8860b",textTransform:"uppercase",marginBottom:"10px",borderBottom:"1.5px solid #f0c040",paddingBottom:"4px"}}>
+                  ✅ What You Did Well
                 </div>
-              )}
-
-              {a.medals?.medal2 && (
-                <div style={{paddingLeft:"4px"}}>
-                  <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:"#666",marginBottom:"3px"}}>🥈 {a.medals.medal2.category}</div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:"12.5px",color:"#333",lineHeight:"1.6",paddingLeft:"24px"}}>
-                    <em>"{a.medals.medal2.quote}"</em>
+                {medalsPr.map((md,mi)=>(
+                  <div key={mi} style={{marginBottom:mi<medalsPr.length-1?"10px":0,paddingLeft:"4px"}}>
+                    <div style={{fontFamily:"sans-serif",fontSize:"13px",fontWeight:800,color:medalMetaPr[mi]?.col||"#b8860b",marginBottom:"3px"}}>{medalMetaPr[mi]?.emoji||"🏅"} {md.category}</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:"12.5px",color:"#333",lineHeight:"1.6",paddingLeft:"24px"}}>
+                      <em>"{md.quote}"</em>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Your Next Step ── */}
-          {a.mission && (
-            <div style={{
-              background:"#fff8f0",
-              border:"2px solid #e65100",
-              borderLeft:"5px solid #e65100",
-              borderRadius:"8px",
-              padding:"14px 16px",
-            }}>
-              <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
-                🎯 Your Next Step
+                ))}
               </div>
-              <div style={{fontFamily:"sans-serif",fontSize:"13px",color:"#444",lineHeight:"1.6",marginBottom:"12px"}}>
-                {(a.mission.weakness||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")}
-              </div>
-              {a.mission.originalPhrase && a.mission.improvedVersion && (
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
-                  <div style={{background:"#fde8e8",border:"1px solid #e57373",borderRadius:"6px",padding:"10px 12px"}}>
-                    <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#c62828",marginBottom:"5px",textTransform:"uppercase"}}>Instead of writing</div>
-                    <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#555",fontStyle:"italic",lineHeight:"1.5"}}>"{a.mission.originalPhrase}"</div>
-                  </div>
-                  <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:"6px",padding:"10px 12px"}}>
-                    <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#2e7d32",marginBottom:"5px",textTransform:"uppercase"}}>Try this instead</div>
-                    <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#2e7d32",fontStyle:"italic",lineHeight:"1.5"}}>"{a.mission.improvedVersion}"</div>
-                  </div>
+            )}
+
+            {/* ── Your Next Step(s) ── */}
+            {missionsPr.length>0 && (
+              <div style={{background:"#fff8f0",border:"2px solid #e65100",borderLeft:"5px solid #e65100",borderRadius:"8px",padding:"14px 16px"}}>
+                <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
+                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next Steps`}
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+                {missionsPr.map((ms,idx)=>(
+                  <div key={idx} style={{marginBottom:idx<missionsPr.length-1?"14px":0,paddingLeft:missionsPr.length>1?"6px":0,borderLeft:missionsPr.length>1?"3px solid #f0a070":"none"}}>
+                    <div style={{fontFamily:"sans-serif",fontSize:"13px",color:"#444",lineHeight:"1.6",marginBottom:idx===0&&ms.originalPhrase&&ms.improvedVersion?"12px":0}}>
+                      {missionsPr.length>1&&<strong style={{color:"#e65100"}}>{idx+1}. </strong>}
+                      {stripLeadPr(ms.weakness)}
+                    </div>
+                    {idx===0 && ms.originalPhrase && ms.improvedVersion && (
+                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",paddingLeft:missionsPr.length>1?"16px":0}}>
+                        <div style={{background:"#fde8e8",border:"1px solid #e57373",borderRadius:"6px",padding:"10px 12px"}}>
+                          <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#c62828",marginBottom:"5px",textTransform:"uppercase"}}>Instead of writing</div>
+                          <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#555",fontStyle:"italic",lineHeight:"1.5"}}>"{ms.originalPhrase}"</div>
+                        </div>
+                        <div style={{background:"#e8f5e9",border:"1px solid #81c784",borderRadius:"6px",padding:"10px 12px"}}>
+                          <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#2e7d32",marginBottom:"5px",textTransform:"uppercase"}}>Try this instead</div>
+                          <div style={{fontFamily:"Georgia,serif",fontSize:"12px",color:"#2e7d32",fontStyle:"italic",lineHeight:"1.5"}}>"{ms.improvedVersion}"</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── SECTION 6: VISUAL ARTS — INTERPRETIVE CHECK + EXAMINER SUMMARY (VA only) ── */}
       {a.specialCheck?.type === "visualarts" && a.specialCheck?.visualArtsCheck && (()=>{
@@ -2212,10 +2228,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             awdMark:          awdMark,
             questionMarks:    c1.marks ?? "",
             indBand:          indBand,
-            missionCategory:  parsed.mission?.targetCategory || "",
-            missionFix:       parsed.mission?.weakness || "",
-            studentPhrase:    parsed.mission?.originalPhrase || "",
-            improvedVersion:  parsed.mission?.improvedVersion || "",
+            missionCategory:  (parsed.missions?.[0]?.targetCategory ?? parsed.mission?.targetCategory) || "",
+            missionFix:       (parsed.missions?.[0]?.weakness ?? parsed.mission?.weakness) || "",
+            studentPhrase:    (parsed.missions?.[0]?.originalPhrase ?? parsed.mission?.originalPhrase) || "",
+            improvedVersion:  (parsed.missions?.[0]?.improvedVersion ?? parsed.mission?.improvedVersion) || "",
             illegibleCount:   (parsed.studentResponseText||"").split("[?]").length - 1,
             wordCount:        (parsed.studentResponseText||"").replace(/\[\?]/g,"").trim().split(/\s+/).filter(w=>w.length>0).length,
             markPct:          (c1.marks && awdMark !== "") ? Math.round((awdMark/c1.marks)*100)+"%" : "",
@@ -3188,44 +3204,60 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {stage2Results&&<div>
               <SectionTitle>{mobileView?"STEP 6 — MISSION & FEEDBACK":"STEP 6 — MEDALS, MISSION & FEEDBACK"}</SectionTitle>
 
-              {/* ── 1. MEDALS + MISSION — all in one compact card ── */}
-              {(a.medals?.medal1||a.medals?.medal2||a.mission)&&<Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
-                {(a.medals?.medal1||a.medals?.medal2)&&<_2f96cd when={mobileView} label="🥇 Your medals — what you did well">
-                {a.medals?.medal1&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.medals?.medal2||a.mission?"12px":0}}>
-                  <div style={{fontSize:"26px",flexShrink:0}}>🥇</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontWeight:800,color:"#ffd700",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal1.category}</div>
-                    <div style={{color:"#f5d67a",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal1.quote}"</div>
-                  </div>
-                </div>}
-                {a.medals?.medal2&&<div style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:a.mission?"12px":0,paddingTop:a.medals?.medal1?"10px":0,borderTop:a.medals?.medal1?"1px solid rgba(255,255,255,0.07)":"none"}}>
-                  <div style={{fontSize:"26px",flexShrink:0}}>🥈</div>
-                  <div style={{flex:1}}>
-                    <div style={{fontWeight:800,color:"#c0c0c0",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {a.medals.medal2.category}</div>
-                    <div style={{color:"#d0d0d0",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{a.medals.medal2.quote}"</div>
-                  </div>
-                </div>}
-                </_2f96cd>}
-                {a.mission&&<div style={{paddingTop:(a.medals?.medal1||a.medals?.medal2)&&!mobileView?"10px":0,borderTop:(a.medals?.medal1||a.medals?.medal2)&&!mobileView?"1px solid rgba(255,255,255,0.07)":"none"}}>
-                  <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
-                    <div style={{fontSize:"26px",flexShrink:0}}>🎯</div>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:800,color:"#ff8a80",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>Your mission</div>
-                      <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:"8px"}}>To improve: {(w=>(w.replace(/^(add|include|use|write|ensure|make sure)\s+/i,"")))(a.mission.weakness||"")}</div>
-                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px"}}>
-                        <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(244,67,54,0.25)"}}>
-                          <div style={{fontSize:"9px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
-                          <div style={{fontSize:"12px",color:"#ffcdd2",fontStyle:"italic"}}>"{a.mission.originalPhrase}"</div>
-                        </div>
-                        <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(76,175,80,0.25)"}}>
-                          <div style={{fontSize:"9px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>TO THIS</div>
-                          <div style={{fontSize:"12px",color:"#c8e6c9",fontStyle:"italic"}}>"{a.mission.improvedVersion}"</div>
-                        </div>
+              {/* ── 1. MEDALS + MISSION(S) — count driven by marks lost (build 2026-07-05) ── */}
+              {(()=>{
+                const awdMark  = marksKnown ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks) : null;
+                const marksLost = marksKnown ? (c.marks - awdMark) : null;
+                const plan     = getFeedbackPlan(marksLost);
+                const allMedals   = [a.medals?.medal1, a.medals?.medal2].filter(m=>m&&(m.category||m.quote));
+                const medals      = allMedals.slice(0, plan.medals);
+                const missions    = normaliseMissions(a).slice(0, plan.missions);
+                const stripLead   = w => (w||"").replace(/^(add|include|use|write|ensure|make sure)\s+/i,"");
+                if (!medals.length && !missions.length) return null;
+                const medalMeta = [
+                  { emoji:"🥇", cat:"#ffd700", quote:"#f5d67a" },
+                  { emoji:"🥈", cat:"#c0c0c0", quote:"#d0d0d0" },
+                ];
+                return <Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
+                  {medals.length>0&&<_2f96cd when={mobileView} label="🥇 Your medals — what you did well">
+                  {medals.map((md,mi)=>(
+                    <div key={mi} style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:(mi<medals.length-1||missions.length)?"12px":0,paddingTop:mi>0?"10px":0,borderTop:mi>0?"1px solid rgba(255,255,255,0.07)":"none"}}>
+                      <div style={{fontSize:"26px",flexShrink:0}}>{medalMeta[mi]?.emoji||"🏅"}</div>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:800,color:medalMeta[mi]?.cat||"#ffd700",fontSize:"14px",marginBottom:"4px",fontFamily:"sans-serif"}}>You did well at {md.category}</div>
+                        <div style={{color:medalMeta[mi]?.quote||"#f5d67a",fontSize:"13px",fontStyle:"italic",lineHeight:"1.4"}}>"{md.quote}"</div>
                       </div>
                     </div>
-                  </div>
-                </div>}
-              </Card>}
+                  ))}
+                  </_2f96cd>}
+                  {missions.length>0&&<div style={{paddingTop:medals.length&&!mobileView?"10px":0,borderTop:medals.length&&!mobileView?"1px solid rgba(255,255,255,0.07)":"none"}}>
+                    <div style={{fontWeight:800,color:"#ff8a80",fontSize:"14px",marginBottom:"10px",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"8px"}}>
+                      <span style={{fontSize:"22px"}}>🎯</span>
+                      {plan.isPerfect ? "Full marks — your stretch goal" : missions.length===1 ? "Your mission" : `Your ${missions.length} missions to improve`}
+                    </div>
+                    {missions.map((ms,idx)=>(
+                      <div key={idx} style={{marginBottom:idx<missions.length-1?"12px":0,paddingLeft:missions.length>1?"6px":0,borderLeft:missions.length>1?"3px solid rgba(255,138,128,0.35)":"none"}}>
+                        <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:idx===0&&ms.originalPhrase&&ms.improvedVersion?"8px":0}}>
+                          {missions.length>1&&<strong style={{color:"#ff8a80"}}>{idx+1}. </strong>}
+                          {plan.isPerfect ? "To push even further: " : "To improve: "}{stripLead(ms.weakness)}
+                        </div>
+                        {idx===0&&ms.originalPhrase&&ms.improvedVersion&&(
+                          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px",paddingLeft:missions.length>1?"14px":0}}>
+                            <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(244,67,54,0.25)"}}>
+                              <div style={{fontSize:"9px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
+                              <div style={{fontSize:"12px",color:"#ffcdd2",fontStyle:"italic"}}>"{ms.originalPhrase}"</div>
+                            </div>
+                            <div style={{background:"rgba(76,175,80,0.08)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(76,175,80,0.25)"}}>
+                              <div style={{fontSize:"9px",color:"#81c784",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>TO THIS</div>
+                              <div style={{fontSize:"12px",color:"#c8e6c9",fontStyle:"italic"}}>"{ms.improvedVersion}"</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>}
+                </Card>;
+              })()}
 
               {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
               {a.specialCheck?.modelSentenceStarter&&<_2f96cd when={mobileView} label="💡 How to structure your answer">
