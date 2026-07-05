@@ -3,6 +3,10 @@
   "subjectName": "Visual Arts",
   "subjectShortName": "Vis Art",
   "markingMode": "visualArts",
+  "responseModes": [
+    "multiPage"
+  ],
+  "promptVariant": "visualArts",
   "responsePagesMax": 6,
   "dominantMode": "Art criticism + interpretive frameworks + informed point of view",
   "cleanRule": "Visual Arts = adopt a frame (subjective/cultural/structural/postmodern) + apply the conceptual framework (artist/artwork/world/audience) + develop a sustained, evidence-based interpretive point of view about practice, representation and meaning",
