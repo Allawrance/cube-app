@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-04 · mobile-v1.2 */
+     width-only checks and CSS media queries never fire there. build 2026-07-04 · responseModes-v1.0 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-04 · mobile-responsive v1.2");
+console.log("CUBE Marking Coach — build 2026-07-04 · responseModes-v1.0");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -851,7 +851,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-04 · mobile-responsive v1.2
+// build 2026-07-04 · responseModes-v1.0
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1616,8 +1616,17 @@ function _ac863f() {
   const [modelLoading, setModelLoading] = useState(false);
   const fileRef = useRef();
   const abortRef = useRef(null);
-  // ── Visual Arts mode (config-driven; students only ever load their subject) ──
-  const isVA = config.markingMode === "visualArts";
+  // ── Response modes (config-driven; students only ever load their subject) ──
+  // responseModes-v1.0: payload shape (single vs multi page) and prompt variant
+  // (standard vs Visual Arts) are independent axes. Legacy configs that only
+  // declare markingMode:"visualArts" derive multiPage + VA prompts.
+  const legacyVAConfig = config.markingMode === "visualArts";
+  const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
+  const availableModes = (Array.isArray(config.responseModes) && config.responseModes.length)
+    ? config.responseModes
+    : (legacyVAConfig ? ["multiPage"] : ["singlePage"]);
+  const [responseMode, setResponseMode] = useState(availableModes.length === 1 ? availableModes[0] : null);
+  const isMulti = responseMode === "multiPage";
   const respPagesMax = config.responsePagesMax || 6;
   const [responseImgs, setResponseImgs] = useState([]); // preview object URLs
   const [responseB64s, setResponseB64s] = useState([]); // base64 sent to Stage 2
@@ -1683,7 +1692,7 @@ function _ac863f() {
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
-    if (isVA) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // VA: single extended-response question; no scan
+    if (isMulti) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1764,17 +1773,17 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       const imgItem = items.find(it => it.type.startsWith("image/") || it.type === "application/pdf");
       if (!imgItem) return;
       e.preventDefault();
-      if (isVA) {
+      if (isMulti) {
         if (!pageImg) handleFileFromSource(imgItem.getAsFile());
         else addResponsePage(imgItem.getAsFile());
       } else {
-        if (pageImg) return; // non-VA: one image only
+        if (pageImg) return; // singlePage: one image only
         handleFileFromSource(imgItem.getAsFile());
       }
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, [phase, pageImg, studentName]); // re-bind when name/phase changes
+  }, [phase, pageImg, studentName, responseMode]); // re-bind when name/phase/mode changes
 
   // ── Drag-and-drop state ──
   const [dragOver, setDragOver] = React.useState(false);
@@ -1797,7 +1806,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     if (nameParts.length < 2) { setError("Please enter your first name and the first initial of your surname before analysing."); return; }
     if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
-    if (isVA && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
+    if (isMulti && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
@@ -1812,8 +1821,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           stage: "stage1",
           subject: config.subjectCode,
           markingMode: config.markingMode,
+          responseMode: responseMode,
+          promptVariant: vaPrompts ? "visualArts" : "standard",
           syllabus: config.syllabus,
-          messages:[{ role:"user", content: isVA ? [
+          messages:[{ role:"user", content: vaPrompts ? [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
@@ -2066,7 +2077,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
   const markFullAnswer = async () => {
     if (!pageB64 || !results) return;
-    if (isVA && responseB64s.length === 0) { setStage2Error("Add at least one response page first."); return; }
+    if (isMulti && responseB64s.length === 0) { setStage2Error("Add at least one response page first."); return; }
     setStage2Loading(true); setStage2Error(null);
     const c1 = results.phase1_cube;
     const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
@@ -2078,28 +2089,12 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
         headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))},
-        body: JSON.stringify(isVA ? {
+        body: JSON.stringify({
           stage:           "stage2",
           subject:         config.subjectCode,
           markingMode:     config.markingMode,
-          questionImage:   pageB64,
-          responseImages:  responseB64s,
-          bandRules:       config.bandRules,
-          questionText:    _d0c6fa(c1.questionText),
-          questionNumber:  _d0c6fa(questionNumber),
-          primaryDir:      primaryDir,
-          dirs:            dirs,
-          kwds:            kwds,
-          constraints:     c1.constraints||[],
-          marks:           c1.marks||"not stated",
-          requiredAspects: c1.requiredAspects||[],
-          plates:          c1.plates||[],
-          evidenceRequired: c1.evidenceRequired||false,
-        } : {
-          stage:           "stage2",
-          subject:         config.subjectCode,
-          markingMode:     config.markingMode,
-          imageData:       pageB64,
+          responseMode:    responseMode,
+          promptVariant:   vaPrompts ? "visualArts" : "standard",
           questionText:    _d0c6fa(c1.questionText),
           questionNumber:  _d0c6fa(questionNumber),
           primaryDir:      primaryDir,
@@ -2108,6 +2103,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
           constraints:     c1.constraints||[],
           marks:           c1.marks||"not stated",
           evidenceRequired: c1.evidenceRequired||false,
+          // payload shape follows the session's response mode
+          ...(isMulti
+            ? { questionImage: pageB64, responseImages: responseB64s }
+            : { imageData: pageB64 }),
+          // VA-prompt-only fields (band framing, aspects, plates)
+          ...(vaPrompts
+            ? { bandRules: config.bandRules, requiredAspects: c1.requiredAspects||[], plates: c1.plates||[] }
+            : {}),
         })
       });
       const data = await res.json();
@@ -2358,8 +2361,29 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {(()=>{const p=studentName.trim().split(/\s+/).filter(Boolean); if(!studentName.trim()) return null; if(p.length<2) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Please enter your first name AND the first initial of your surname — e.g. Sue W</div>; if(p[p.length-1].length>1) return <div style={{fontSize:"12px",color:"#e57373",fontFamily:"sans-serif",marginTop:"5px"}}>⚠ Only provide the first initial of your surname — e.g. Sue W, not Sue Wilson</div>; return null;})()}
             </div>
 
-            {/* Single upload zone — hidden once photo selected */}
+            {/* Response-mode selector — only for subjects offering both modes (responseModes-v1.0) */}
+            {availableModes.length>1&&!pageImg&&(()=>{
+              const cards = [
+                { mode:"singlePage", icon:"📄", title:"Single page", desc:"Question and your handwritten answer together on one photo — short answers." },
+                { mode:"multiPage",  icon:"📚", title:"Extended response", desc:"Question page first, then each handwritten answer page — essays and longer responses (up to "+respPagesMax+" pages)." },
+              ].filter(c=>availableModes.includes(c.mode));
+              return <div style={{marginBottom:"20px"}}>
+                <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>What are you uploading?</div>
+                <div style={{display:"flex",gap:"12px",flexDirection:mobileView?"column":"row"}}>
+                  {cards.map(c=>(
+                    <button key={c.mode} onClick={()=>{if(c.mode!==responseMode){setResponseImgs([]);setResponseB64s([]);}setResponseMode(c.mode);setError(null);}} style={{flex:1,textAlign:"left",padding:"16px",borderRadius:"14px",cursor:"pointer",border:`2px solid ${responseMode===c.mode?gold:"rgba(255,255,255,0.12)"}`,background:responseMode===c.mode?"rgba(201,168,76,0.15)":"rgba(255,255,255,0.04)",transition:"all 0.15s",fontFamily:"sans-serif"}}>
+                      <div style={{fontSize:"26px",marginBottom:"6px"}}>{c.icon}</div>
+                      <div style={{fontSize:"15px",fontWeight:800,color:responseMode===c.mode?gold:"#e8eaf0",marginBottom:"4px"}}>{c.title}</div>
+                      <div style={{fontSize:"13px",color:"#c8d8e8",lineHeight:"1.5"}}>{c.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>;
+            })()}
+
+            {/* Single upload zone — hidden once photo selected, or until a mode is chosen */}
             {(()=>{
+              if (availableModes.length>1 && !responseMode) return null; // must pick a mode first
               const p = studentName.trim().split(/\s+/).filter(Boolean);
               const nameValid = p.length >= 2 && p[p.length-1].length === 1;
               const handleUploadClick = () => {
@@ -2376,10 +2400,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
-                  {dragOver?"Drop to upload!":nameValid?(isVA?"Tap to upload the QUESTION / stimulus page":"Tap to upload a photo or PDF"):"Enter your name above first"}
+                  {dragOver?"Drop to upload!":nameValid?(isMulti?"Tap to upload the QUESTION / stimulus page":"Tap to upload a photo or PDF"):"Enter your name above first"}
                 </div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
-                  {nameValid?(isVA?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Your page can include the printed question, your handwritten answer, and any stimulus material."):"Your name is required before you can upload a photo."}
+                  {nameValid?(isMulti?(vaPrompts?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Upload the printed QUESTION page (with any sources or stimulus). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints."):"Your page can include the printed question, your handwritten answer, and any stimulus material."):"Your name is required before you can upload a photo."}
                 </div>
                 {nameValid&&!mobileView&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
                   <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
@@ -2435,7 +2459,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
             {/* Question number selector */}
-            {!isVA&&pageImg&&<div style={{marginBottom:"16px"}}>
+            {!isMulti&&pageImg&&<div style={{marginBottom:"16px"}}>
               <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed?</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
                 {questionsOnPage.map(n=>(
@@ -2447,7 +2471,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </div>}
             </div>}
 
-            {isVA&&pageImg&&(()=>{
+            {isMulti&&pageImg&&(()=>{
               const p = studentName.trim().split(/\s+/).filter(Boolean);
               const nameValid = p.length >= 2 && p[p.length-1].length === 1;
               return <div style={{marginBottom:"16px"}}>
@@ -2501,10 +2525,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <span className="cube-spinner-dim"></span>
                     Reading your image for available questions...
                   </div>
-                : <button onClick={analyse} disabled={loading||(isVA&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
+                : <button onClick={analyse} disabled={loading||(isMulti&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
                     {loading
                       ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner-dim"></span>{loadingMsg}</span>
-                      : (isVA ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
+                      : (isMulti ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
                   </button>
             )}
           </div>
@@ -3046,7 +3070,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               </_e3ea66>
 
               {/* Photo below the typed response — annotation detail moved to Plan tab */}
-              {isVA&&responseB64s.length>0 ? <div style={{marginTop:"12px"}}>
+              {isMulti&&responseB64s.length>0 ? <div style={{marginTop:"12px"}}>
                 <div style={{fontSize:"11px",color:"#ff9800",fontWeight:800,letterSpacing:"1px",marginBottom:"8px",fontFamily:"sans-serif"}}>📷 YOUR RESPONSE PAGES</div>
                 <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
                   {responseB64s.map((b,i)=>(<img key={i} src={`data:image/jpeg;base64,${b}`} style={{maxWidth:"100%",borderRadius:"10px",border:"2px solid rgba(255,152,0,0.4)",boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}} alt={"Response page "+(i+1)}/>))}
