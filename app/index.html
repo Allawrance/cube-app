@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-05 · kwGrouping-v1.0 */
+     width-only checks and CSS media queries never fire there. build 2026-07-05 · missionScaling-v1.1 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-05 · kwGrouping-v1.0");
+console.log("CUBE Marking Coach — build 2026-07-05 · missionScaling-v1.1");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -332,11 +332,7 @@ const _2c7e13 = (score, maxScore=20) => {
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
 };
 
-// ── Feedback plan: how many medals & missions to SHOW, driven by marks lost ──
-// Rule (build 2026-07-05): 0 lost → 2 medals + 1 stretch mission; 1 lost → 2 medals + 1 mission;
-// 2 lost → 1 medal + 2 missions; 3+ lost → 1 medal + 3 missions. Always ≥1 medal, ≥1 mission.
-// Only mission[0] shows the change→to pair; later missions render as one-line fixes.
-// marksLost is null when the question has no stated marks (band-estimated) → default to 1 lost.
+// ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
 const getFeedbackPlan = (marksLost) => {
   const lost = (marksLost == null || isNaN(marksLost)) ? 1 : Math.max(0, marksLost);
   if (lost <= 0) return { medals: 2, missions: 1, isPerfect: true };
@@ -344,46 +340,12 @@ const getFeedbackPlan = (marksLost) => {
   if (lost === 2) return { medals: 1, missions: 2, isPerfect: false };
   return { medals: 1, missions: 3, isPerfect: false };
 };
-
-// Normalise mission data across schema versions:
-// new Worker returns missions[] (up to 3); old Worker returns single mission{} → wrap it.
 const normaliseMissions = (a) => {
   if (!a) return [];
   if (Array.isArray(a.missions)) return a.missions.filter(m => m && (m.weakness || m.targetCategory));
   if (a.mission && (a.mission.weakness || a.mission.targetCategory)) return [a.mission];
   return [];
 };
-
-// ── Group syllabus keywords that share the same syllabus point (kwGrouping-v1.0) ──
-// Multiple question words often map to ONE organiser (e.g. VA: imagery/colour/scale
-// all map to Module R "Representation"). Render the dot-point text ONCE with all the
-// words in the heading, instead of repeating identical text per word.
-const _576def = (kwds) => {
-  const groups = []; const seen = {};
-  (kwds || []).forEach((kw, i) => {
-    const text = (kw.syllabusText || kw.nesa_descriptor || "").trim();
-    const key = text ? [(kw.module||""),(kw.topicCode||""),text].join("|") : ("__solo__" + i);
-    if (seen[key] === undefined) { seen[key] = groups.length; groups.push({ words: [], kw }); }
-    const w = kw.word || kw.topicTitle || "";
-    if (w && !groups[seen[key]].words.includes(w)) groups[seen[key]].words.push(w);
-  });
-  return groups;
-};
-
-// Fresh case-insensitive regex matching the stem of EVERY word in a group (for underlining
-// the words inside the dot-point text). Returns null when no usable stems.
-const _fe1140 = (words) => {
-  const stems = [];
-  (words || []).forEach(w => {
-    const t = String(w||"").toLowerCase().replace(/[^a-z0-9]/g," ").trim().split(" ")[0];
-    if (!t) return;
-    const stem = t.slice(0, Math.max(5, t.length - 2));
-    if (stem && !stems.includes(stem)) stems.push(stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  });
-  if (!stems.length) return null;
-  try { return new RegExp("((?:" + stems.join("|") + ")\\S*)", "gi"); } catch { return null; }
-};
-
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -904,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-05 · kwGrouping-v1.0
+// build 2026-07-05 · missionScaling-v1.1
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1215,11 +1177,12 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           CUBE the question — the syllabus points underlined below show exactly where this question comes from in the syllabus, so you know where to focus next time.
         </div>
         {kwds.length > 0 && (()=>{
-          function DotPointWithUnderline({ sylText, words }) {
+          function DotPointWithUnderline({ sylText, kwWord }) {
             if (!sylText) return null;
-            const re = _fe1140(words);
-            if (!re) return <span>{sylText}</span>;
+            if (!kwWord) return <span>{sylText}</span>;
+            const stem = kwWord.toLowerCase().split(" ")[0].slice(0, Math.max(5, kwWord.split(" ")[0].length - 2));
             try {
+              const re = new RegExp(`(${stem}\\S*)`, "gi");
               const parts = []; let last = 0, m;
               while ((m = re.exec(sylText)) !== null) {
                 if (m.index > last) parts.push(<span key={last}>{sylText.slice(last, m.index)}</span>);
@@ -1242,18 +1205,18 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
                   </tr>
                 </thead>
                 <tbody>
-                  {_576def(kwds).map((g,i)=>{
-                    const sylText = g.kw.syllabusText || g.kw.nesa_descriptor || "";
-                    const kwWords = g.words.length ? g.words : [g.kw.topicTitle || ""];
-                    const moduleRef = [g.kw.module ? `Module ${g.kw.module}` : "", g.kw.topicCode || ""].filter(Boolean).join(" · ");
+                  {kwds.map((kw,i)=>{
+                    const sylText = kw.syllabusText || kw.nesa_descriptor || "";
+                    const kwWord  = kw.word || kw.topicTitle || "";
+                    const moduleRef = [kw.module ? `Module ${kw.module}` : "", kw.topicCode || ""].filter(Boolean).join(" · ");
                     return (
                       <tr key={i} style={{borderBottom:"1px solid #d0d8e8"}}>
-                        <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5"}}>{kwWords.join(", ")}</td>
+                        <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5"}}>{kwWord}</td>
                         <td style={{padding:"6px 10px",color:"#666",whiteSpace:"nowrap"}}>{moduleRef||"—"}</td>
                         <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.6"}}>
                           {sylText
-                            ? <DotPointWithUnderline sylText={sylText} words={kwWords} />
-                            : <span style={{color:"#999",fontStyle:"italic"}}>{g.kw.topicTitle||"—"}</span>
+                            ? <DotPointWithUnderline sylText={sylText} kwWord={kwWord} />
+                            : <span style={{color:"#999",fontStyle:"italic"}}>{kw.topicTitle||"—"}</span>
                           }
                         </td>
                       </tr>
@@ -1474,15 +1437,15 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
             {missionsPr.length>0 && (
               <div style={{background:"#fff8f0",border:"2px solid #e65100",borderLeft:"5px solid #e65100",borderRadius:"8px",padding:"14px 16px"}}>
                 <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
-                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next _f3a294`}
+                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next Steps`}
                 </div>
                 {missionsPr.map((ms,idx)=>(
                   <div key={idx} style={{marginBottom:idx<missionsPr.length-1?"14px":0,paddingLeft:missionsPr.length>1?"6px":0,borderLeft:missionsPr.length>1?"3px solid #f0a070":"none"}}>
-                    <div style={{fontFamily:"sans-serif",fontSize:"13px",color:"#444",lineHeight:"1.6",marginBottom:idx===0&&ms.originalPhrase&&ms.improvedVersion?"12px":0}}>
+                    <div style={{fontFamily:"sans-serif",fontSize:"13px",color:"#444",lineHeight:"1.6",marginBottom:ms.originalPhrase&&ms.improvedVersion?"12px":0}}>
                       {missionsPr.length>1&&<strong style={{color:"#e65100"}}>{idx+1}. </strong>}
                       {stripLeadPr(ms.weakness)}
                     </div>
-                    {idx===0 && ms.originalPhrase && ms.improvedVersion && (
+                    {ms.originalPhrase && ms.improvedVersion && (
                       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",paddingLeft:missionsPr.length>1?"16px":0}}>
                         <div style={{background:"#fde8e8",border:"1px solid #e57373",borderRadius:"6px",padding:"10px 12px"}}>
                           <div style={{fontFamily:"sans-serif",fontSize:"9px",fontWeight:800,letterSpacing:"1px",color:"#c62828",marginBottom:"5px",textTransform:"uppercase"}}>Instead of writing</div>
@@ -2722,14 +2685,14 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               {/* ── Mobile-only: syllabus points + where they came from ── */}
               {mobileView&&kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
                 <SectionTitle color="#64b5f6">SYLLABUS POINTS — WHERE THIS QUESTION COMES FROM</SectionTitle>
-                {_576def(kwds).map((g,i,arr)=>(
-                  <div key={i} style={{marginBottom:i<arr.length-1?"12px":0,fontFamily:"sans-serif"}}>
+                {kwds.map((kw,i)=>(
+                  <div key={i} style={{marginBottom:i<kwds.length-1?"12px":0,fontFamily:"sans-serif"}}>
                     <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"2px"}}>
-                      {(g.words.length?g.words:[g.kw.topicTitle||""]).map((w,j,ws)=>(<span key={j}><span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{w}</span>{j<ws.length-1&&<span style={{color:"#5a7a9a"}}>{" · "}</span>}</span>))}
-                      {(g.kw.module||g.kw.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400}}>{g.kw.module?("Module "+g.kw.module):""}{g.kw.topicCode?(" · "+g.kw.topicCode):""}</span>}
+                      <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+                      {(kw.module||kw.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400}}>{kw.module?("Module "+kw.module):""}{kw.topicCode?(" · "+kw.topicCode):""}</span>}
                     </div>
-                    {g.kw.syllabusText&&<div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.5"}}>{g.kw.syllabusText}</div>}
-                    {(g.kw.moduleTitle||g.kw.topicTitle||g.kw.syllabusLabel)&&<div style={{color:"#90caf9",fontSize:"10px",marginTop:"3px",fontStyle:"italic"}}>From: {g.kw.moduleTitle||""}{g.kw.topicTitle?((g.kw.moduleTitle?" — ":"")+g.kw.topicTitle):""}{g.kw.syllabusLabel?(" ("+g.kw.syllabusLabel+")"):""}</div>}
+                    {kw.syllabusText&&<div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.5"}}>{kw.syllabusText}</div>}
+                    {(kw.moduleTitle||kw.topicTitle||kw.syllabusLabel)&&<div style={{color:"#90caf9",fontSize:"10px",marginTop:"3px",fontStyle:"italic"}}>From: {kw.moduleTitle||""}{kw.topicTitle?((kw.moduleTitle?" — ":"")+kw.topicTitle):""}{kw.syllabusLabel?(" ("+kw.syllabusLabel+")"):""}</div>}
                   </div>
                 ))}
               </Card>}
@@ -2811,27 +2774,31 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>U</div>
                     <div style={{flex:1}}>
-                      {_576def(kwds).map((g,i)=>(
+                      {kwds.map((kw,i)=>(
                         <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.15)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
                           <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"3px"}}>
-                            {(g.words.length?g.words:[g.kw.topicTitle||""]).map((w,j,ws)=>(<span key={j}><span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{w}</span>{j<ws.length-1&&<span style={{color:"#5a7a9a"}}>{" · "}</span>}</span>))}
-                            <span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {g.kw.module} · {g.kw.topicCode}</span>
+                            <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
+                            <span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
                           </div>
                           <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>
                             {(()=>{
-                              const sylText = g.kw.syllabusText || "";
-                              if (!sylText) return sylText;
-                              const re = _fe1140(g.words.length?g.words:[g.kw.topicTitle||""]);
-                              if (!re) return sylText;
-                              const parts = [];
-                              let last = 0, m;
-                              while ((m = re.exec(sylText)) !== null) {
-                                if (m.index > last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
-                                parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[1]}</span>);
-                                last = m.index + m[1].length;
-                              }
-                              if (last < sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
-                              return parts.length > 1 ? parts : sylText;
+                              const sylText = kw.syllabusText || "";
+                              const kwWord  = (kw.word||kw.topicTitle||"").toLowerCase().replace(/[^a-z0-9]/g," ").trim();
+                              if (!kwWord || !sylText) return sylText;
+                              // Build regex: match keyword stem (first 5+ chars) case-insensitively
+                              const stem = kwWord.split(" ")[0].slice(0,Math.max(5,kwWord.split(" ")[0].length-2));
+                              try {
+                                const re = new RegExp(`(${stem}\\S*)`, "gi");
+                                const parts = [];
+                                let last = 0, m;
+                                while ((m = re.exec(sylText)) !== null) {
+                                  if (m.index > last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
+                                  parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[1]}</span>);
+                                  last = m.index + m[1].length;
+                                }
+                                if (last < sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
+                                return parts.length > 1 ? parts : sylText;
+                              } catch { return sylText; }
                             })()}
                           </div>
                         </div>
@@ -3270,11 +3237,11 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     </div>
                     {missions.map((ms,idx)=>(
                       <div key={idx} style={{marginBottom:idx<missions.length-1?"12px":0,paddingLeft:missions.length>1?"6px":0,borderLeft:missions.length>1?"3px solid rgba(255,138,128,0.35)":"none"}}>
-                        <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:idx===0&&ms.originalPhrase&&ms.improvedVersion?"8px":0}}>
+                        <div style={{color:"#ffcdd2",fontSize:"13px",lineHeight:"1.4",marginBottom:ms.originalPhrase&&ms.improvedVersion?"8px":0}}>
                           {missions.length>1&&<strong style={{color:"#ff8a80"}}>{idx+1}. </strong>}
                           {plan.isPerfect ? "To push even further: " : "To improve: "}{stripLead(ms.weakness)}
                         </div>
-                        {idx===0&&ms.originalPhrase&&ms.improvedVersion&&(
+                        {ms.originalPhrase&&ms.improvedVersion&&(
                           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px",paddingLeft:missions.length>1?"14px":0}}>
                             <div style={{background:"rgba(244,67,54,0.1)",borderRadius:"8px",padding:"8px 10px",border:"1px solid rgba(244,67,54,0.25)"}}>
                               <div style={{fontSize:"9px",color:"#ff8a80",fontWeight:700,letterSpacing:"1px",marginBottom:"4px",fontFamily:"sans-serif"}}>CHANGE THIS</div>
