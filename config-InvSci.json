@@ -1,0 +1,149 @@
+{
+  "subjectCode": "InvSci",
+  "subjectName": "Investigating Science",
+  "subjectShortName": "InvSci",
+  "accentColor": "#69f0ae",
+  "kla": "Science",
+
+  "dominantMode": "Working Scientifically — judging the validity, reliability and accuracy of investigations, data and claims, supported by evidence",
+  "cleanRule": "Investigating Science answers are marked on scientific process, not just content: an evaluate/justify/assess response must make an explicit judgement about the method, data or claim against criteria (validity, reliability, accuracy, relevance, ethics) and back it with evidence — a correct explanation of the underlying science that does not address method or data quality does NOT meet the directive.",
+  "hasMC": true,
+
+  "responseModes": ["typed"],
+  "uploadSlots": 1,
+  "interpretiveCheck": false,
+  "stage1MaxTokens": 4000,
+  "stage2MaxTokens": 4000,
+
+  "sheetTabCube": "InvSci CUBE",
+  "sheetTabFull": "InvSci",
+  "classCodes": ["12InvSci-1", "12InvSci-2", "12InvSci-3"],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=InvSci",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+
+  "leaderboardTip": "Investigating Science is a skills course: most marks reward judging validity, reliability and accuracy — evaluate the investigation or the evidence, don't just describe the science.",
+
+  "syllabus": {
+    "5": {
+      "title": "Scientific Investigations",
+      "organisers": {
+        "practical_investigations": {
+          "inquiry": "What initiates an investigation?",
+          "keywords": ["observation", "phenomenon", "inquiry question", "hypothesis", "primary data", "independent variable", "dependent variable", "controlled variable"]
+        },
+        "types_of_investigations": {
+          "inquiry": "What are the different types of scientific investigations?",
+          "keywords": ["controlled experiment", "fieldwork", "model", "simulation", "trial", "qualitative data", "quantitative data"]
+        },
+        "reliability_validity": {
+          "inquiry": "How is a scientific investigation made reliable and valid?",
+          "keywords": ["reliability", "validity", "accuracy", "precision", "repeatability", "reproducibility", "random error", "systematic error", "uncertainty", "control"]
+        },
+        "reporting": {
+          "inquiry": "What is the structure of an investigative report?",
+          "keywords": ["aim", "hypothesis", "method", "results", "discussion", "conclusion", "referencing", "peer review"]
+        }
+      }
+    },
+    "6": {
+      "title": "Technologies",
+      "organisers": {
+        "investigation_and_technology": {
+          "inquiry": "How does technology enhance and/or limit scientific investigation?",
+          "keywords": ["technology", "instrumentation", "data logger", "measurement", "resolution", "sensitivity", "limitation", "enhancement"]
+        },
+        "continuous_cycle": {
+          "inquiry": "How are technology and science interdependent?",
+          "keywords": ["scientific advancement", "technological development", "interdependence", "innovation", "new evidence"]
+        }
+      }
+    },
+    "7": {
+      "title": "Fact or Fallacy?",
+      "organisers": {
+        "testing_claims": {
+          "inquiry": "How can a claim be tested?",
+          "keywords": ["claim", "testable", "falsifiable", "hypothesis", "empirical evidence", "replication", "control group", "placebo"]
+        },
+        "impacts_on_investigations": {
+          "inquiry": "What factors can affect the way data can be interpreted, analysed and understood?",
+          "keywords": ["bias", "sample size", "confounding variable", "correlation", "causation", "anecdotal evidence", "misinterpretation"]
+        },
+        "evidence_based_analysis": {
+          "inquiry": "What type of evidence is needed to draw valid conclusions?",
+          "keywords": ["valid conclusion", "reliable evidence", "peer-reviewed", "reproducibility", "weight of evidence", "scientific consensus"]
+        },
+        "reading_between_the_lines": {
+          "inquiry": "How does the reporting of science influence the public's understanding?",
+          "keywords": ["media", "misrepresentation", "pseudoscience", "sensationalism", "source reliability", "cherry-picking"]
+        }
+      }
+    },
+    "8": {
+      "title": "Science and Society",
+      "organisers": {
+        "incidents_events_science": {
+          "inquiry": "How do science-related events affect society's view of science?",
+          "keywords": ["public perception", "trust", "risk", "scientific event", "communication"]
+        },
+        "regulation_of_research": {
+          "inquiry": "Why is scientific research regulated?",
+          "keywords": ["ethics", "regulation", "legislation", "safety", "informed consent", "animal ethics", "research integrity"]
+        },
+        "economic_social_political": {
+          "inquiry": "How do economic, social and political influences affect scientific research?",
+          "keywords": ["funding", "economic", "social", "political", "vested interest", "priorities", "policy"]
+        }
+      }
+    }
+  },
+
+  "bandRules": {
+    "Band6": "Extensive knowledge of scientific concepts including complex/abstract ideas; communicates succinctly, logically and consistently with precise scientific terms and nomenclature across varied contexts; designs/plans investigations for accurate, reliable, valid, relevant data, evaluating and mitigating risk and modifying in response to new evidence; selects, processes and interprets data across scientific formats to derive trends and relationships, explain phenomena and make predictions; applies knowledge to unfamiliar situations to propose comprehensive solutions/explanations.",
+    "Band5": "Thorough knowledge including complex/abstract ideas; communicates logically and effectively with correct scientific terms and nomenclature; designs/plans investigations for accurate, reliable, valid, relevant data with some modification to new evidence; processes and interprets data across formats to derive trends and relationships; applies knowledge to unfamiliar situations to propose explanations.",
+    "Band4": "Sound knowledge of scientific concepts; communicates effectively using scientific terms and nomenclature; designs/plans investigations and evaluates risk; processes and interprets data using a range of formats; identifies problems, questions or hypotheses and applies processes to data; applies relevant knowledge to scientific scenarios.",
+    "Band3": "Basic knowledge; communicates with basic scientific terms; implements processes to obtain data and identifies risk; processes data using scientific formats; responds to problems, questions or hypotheses; recalls scientific knowledge.",
+    "Band2": "Limited knowledge; communicates with limited scientific terms; partially outlines investigations to obtain data; provides simple descriptions of phenomena; recalls basic scientific knowledge.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+
+  "directiveTiers": {
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "In Investigating Science, 'evaluate' asks for a judgement about the investigation, data or claim — its validity, reliability, accuracy, relevance or ethics — supported by evidence, and where relevant a suggested improvement. A correct explanation of the science alone does NOT satisfy 'evaluate'. Modality and a criteria-referenced verdict are required."
+    },
+    "justify": {
+      "tier": 3,
+      "subjectNote": "'Justify' requires supporting a decision or conclusion about method or evidence (e.g. why a control or variable makes a procedure valid, why a conclusion is warranted) with reasons and evidence."
+    },
+    "assess": {
+      "tier": 3,
+      "subjectNote": "'Assess' requires a judgement of value/quality against criteria — e.g. assessing error, uncertainty and limitations, or the relevance/accuracy/validity/reliability of data — not just a description."
+    },
+    "analyse": {
+      "tier": 3,
+      "subjectNote": "'Analyse' requires identifying components and relationships in data or an argument (trends, patterns, correlation vs causation, sources of error) and drawing out their implications."
+    },
+    "explain": {
+      "tier": 3,
+      "subjectNote": "'Explain' requires relating how/why — cause and effect, or how a method produces valid/reliable data — using causal connectives, not just a statement of what occurs."
+    },
+    "describe": { "tier": 2 },
+    "outline": { "tier": 2 },
+    "identify": { "tier": 1 },
+    "define": { "tier": 1 }
+  },
+
+  "connectives": {
+    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
+    "accepted": ["since", "thus", "hence", "due to", "leads to", "which shows that", "indicating that"],
+    "contrast": ["however", "although", "whereas", "in contrast", "despite", "on the other hand", "nevertheless"]
+  },
+
+  "subjectContext": {
+    "examStructure": "HSC written exam: Section I multiple-choice; Section II short-answer and extended-response. Assessment is skills-oriented and frequently applies Working Scientifically to unfamiliar stimulus, data and claims.",
+    "workingScientificallyFocus": "Marks cluster on judging validity, reliability and accuracy of investigations and data, evaluating claims and evidence, and suggesting improvements — reflected in outcomes INS11/12-1 to INS11/12-7.",
+    "investigatingScienceNote": "Treat validity/reliability/accuracy as the core assessable vocabulary. When a question provides stimulus (a method, dataset, claim or media report), the high-band response engages critically with that stimulus rather than reciting content."
+  }
+}
