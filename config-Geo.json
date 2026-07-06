@@ -1,0 +1,129 @@
+{
+  "subjectCode": "Geo",
+  "subjectName": "Geography",
+  "subjectShortName": "Geo",
+  "accentColor": "#4db6ac",
+  "kla": "HSIE",
+
+  "dominantMode": "Evaluating responses and management strategies for sustainability, at a range of scales, incorporating multiple perspectives and geographical data",
+  "cleanRule": "Geography (2022 syllabus) answers are marked on geographical reasoning about places, environments and change: a high-band evaluate/assess response must judge responses or management strategies for sustainability, at a range of scales, using evidence, geographical concepts (place, space, environment, interconnection, scale, sustainability, change) and — where the directive requires — multiple perspectives. Describing a strategy without judging its effectiveness for sustainability does NOT meet an evaluate/assess directive.",
+  "hasMC": true,
+
+  "responseModes": ["typed"],
+  "uploadSlots": 1,
+  "interpretiveCheck": false,
+  "stage1MaxTokens": 4000,
+  "stage2MaxTokens": 4000,
+
+  "sheetTabCube": "Geo CUBE",
+  "sheetTabFull": "Geo",
+  "classCodes": ["GEO-1", "GEO-2", "GEO-3"],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Geo",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+
+  "leaderboardTip": "Geography rewards judgement, not description: evaluate/assess management strategies for sustainability AT A RANGE OF SCALES, and bring in different perspectives and geographical data.",
+
+  "syllabus": {
+    "5": {
+      "title": "Global Sustainability",
+      "organisers": {
+        "sustainability_contemporary_world": {
+          "inquiry": "What is sustainability and how is it evaluated?",
+          "keywords": ["sustainability", "sustainable development", "pillars of sustainability", "social", "economic", "environmental", "cultural", "ecologically sustainable development", "precautionary principle", "intergenerational equity", "ecological integrity"]
+        },
+        "evaluating_sustainability": {
+          "inquiry": "How can sustainability be evaluated at a range of scales?",
+          "keywords": ["indicators", "range of scales", "global forums", "agreements", "Sustainable Development Goals", "SDGs", "IGO", "NGO", "management strategy", "responses"]
+        },
+        "global_economic_activity": {
+          "inquiry": "How does a global economic activity affect sustainability?",
+          "keywords": ["global economic activity", "supply chain", "transnational corporation", "TNC", "economic integration", "environmental impact", "human wellbeing"]
+        }
+      }
+    },
+    "6": {
+      "title": "Rural and Urban Places",
+      "organisers": {
+        "rural_urban_settlement": {
+          "inquiry": "What are the characteristics and spatial patterns of rural and urban settlement?",
+          "keywords": ["settlement", "spatial distribution", "spatial pattern", "urbanisation", "urban", "rural", "counterurbanisation", "urban decay", "urban renewal", "urban sprawl"]
+        },
+        "investigation_rural_urban_place": {
+          "inquiry": "How and why are a rural and an urban place changing?",
+          "keywords": ["change over time", "characteristics", "liveability", "wellbeing", "internal structure", "land use", "perceptions", "responses"]
+        },
+        "large_city_outside_australia": {
+          "inquiry": "What challenges and management strategies shape a large city outside Australia?",
+          "keywords": ["megacity", "world city", "challenges", "informal settlement", "housing", "transport", "management strategy", "sustainability"]
+        }
+      }
+    },
+    "7": {
+      "title": "Ecosystems and Global Biodiversity",
+      "organisers": {
+        "ecosystems_biodiversity": {
+          "inquiry": "How do ecosystems function and why is biodiversity important?",
+          "keywords": ["ecosystem", "biodiversity", "ecosystem functioning", "energy flow", "nutrient cycle", "biological productivity", "resilience", "ecosystem services"]
+        },
+        "investigation_of_ecosystems": {
+          "inquiry": "What are the threats to, and management strategies for, ecosystems and biodiversity?",
+          "keywords": ["threat", "biodiversity loss", "habitat", "degradation", "conservation", "management strategy", "protected area", "range of scales", "sustainability", "responses"]
+        }
+      }
+    }
+  },
+
+  "bandRules": {
+    "Band6": "Extensive knowledge and understanding of geographical concepts; evaluates responses and management strategies, at a range of scales, for sustainability; synthesises and interprets complex geographical data and information for patterns, trends and relationships and to support investigation; proposes well-developed explanations for and responses to geographical challenges and opportunities in different and unfamiliar contexts; applies an extensive range of geographical skills and tools; plans and conducts sophisticated geographical inquiry including fieldwork; communicates logically and effectively using precise geographical terms in a variety of forms and contexts.",
+    "Band5": "Thorough knowledge and understanding; assesses responses and management strategies, at a range of scales, for sustainability; interprets complex geographical data for patterns, trends and relationships; proposes explanations for and responses to challenges and opportunities in different and unfamiliar contexts; applies a range of geographical skills and tools; plans and conducts well-developed geographical inquiry including fieldwork; communicates logically and clearly using appropriate geographical terms.",
+    "Band4": "Sound knowledge and understanding; explains responses and management strategies, at different scales, for sustainability; interprets geographical data to show patterns, trends and relationships; proposes responses to challenges and opportunities in different contexts; uses a range of geographical skills and tools; plans and conducts sound geographical inquiry including fieldwork; communicates using appropriate geographical terms in different forms and contexts.",
+    "Band3": "Basic knowledge and understanding; outlines responses and/or management strategies for sustainability; identifies patterns or trends from geographical data; proposes basic responses to challenges and/or opportunities; uses geographical skills and tools; plans and/or conducts geographical inquiry including fieldwork; communicates using some appropriate geographical terms.",
+    "Band2": "Limited knowledge and understanding; identifies aspects of management strategies for sustainability; identifies basic geographical data; identifies responses to challenges and/or opportunities; limited use of geographical skills and tools; conducts basic geographical inquiry; communicates using basic geographical terms.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+
+  "directiveTiers": {
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "In Geography, 'evaluate' asks for a judgement about responses or management strategies for sustainability, at a range of scales — their effectiveness/worth against criteria — supported by geographical data and, where relevant, differing perspectives. Naming or describing a strategy without judging it for sustainability does NOT satisfy 'evaluate'. A criteria-referenced verdict with modality is required."
+    },
+    "assess": {
+      "tier": 3,
+      "subjectNote": "'Assess' requires a judgement of value/effectiveness — of geographical challenges and opportunities, perspectives, or management strategies — with reasons and geographical evidence. Consider a range of scales where relevant."
+    },
+    "analyse": {
+      "tier": 3,
+      "subjectNote": "'Analyse' requires identifying components and relationships — spatial patterns, trends, interconnections, causes and effects of change in places and environments — and drawing out their geographical implications, using data where provided."
+    },
+    "explain": {
+      "tier": 3,
+      "subjectNote": "'Explain' requires relating how/why — geographical processes and influences that form and transform places and environments — using causal connectives and geographical concepts, not just description."
+    },
+    "account": {
+      "tier": 3,
+      "subjectNote": "'Account for' requires reasons/causes for a geographical pattern, process or change — a causal explanation, not a description of what is observed."
+    },
+    "compare": {
+      "tier": 2,
+      "subjectNote": "'Compare' requires identifying similarities AND differences between places, environments or strategies — use contrast connectives (whereas, in contrast) and geographical criteria."
+    },
+    "describe": { "tier": 2 },
+    "outline": { "tier": 2 },
+    "identify": { "tier": 1 },
+    "define": { "tier": 1 }
+  },
+
+  "connectives": {
+    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
+    "accepted": ["since", "thus", "hence", "due to", "leads to", "which shows that", "resulting in"],
+    "contrast": ["however", "whereas", "although", "in contrast", "on the other hand", "despite", "conversely"]
+  },
+
+  "subjectContext": {
+    "examStructure": "HSC written exam (2022 syllabus, first examined 2025): four sections, 100 marks, all compulsory. Section I — 15 multiple-choice (often stimulus/skills based). Section II — short answer. Sections III & IV — extended response. A minor revision to the Section III rubric applies from the 2026 HSC.",
+    "geographicalConcepts": ["place", "space", "environment", "interconnection", "scale", "sustainability", "change"],
+    "markingSpine": "Year 12 outcomes centre on analysing places/environments and change (GE-12-01/02), assessing opportunities, challenges and perspectives (GE-12-03), and evaluating responses and management strategies for sustainability at a range of scales (GE-12-04/05). High-band answers judge strategies for sustainability across scales with data and perspectives — not description.",
+    "geographyNote": "Reward use of the seven geographical concepts, explicit reference to a RANGE OF SCALES (local→global), and integration of geographical data/stimulus where provided. Evaluate/assess questions require a judgement about sustainability, not a recount of the strategy."
+  }
+}
