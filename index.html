@@ -322,7 +322,7 @@ footer {
 /* ── RESPONSIVE ── */
 /* ── Mobile UI — driven by html.mobile-ui class (UA + width detection) because
      inside the Google Sites iframe the window width is desktop-sized on phones,
-     so width-only media queries never fire. build 2026-07-05 · schoolConfig v5 ── */
+     so width-only media queries never fire. build 2026-07-05 · schoolConfig v6 (label/tab split + InvSci) ── */
 html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 40px; }
 html.mobile-ui .hero-visual { display: none; }
 html.mobile-ui .how-grid { grid-template-columns: 1fr; }
@@ -762,7 +762,7 @@ setTimeout(sendHeight, 1500);
 // current build version onto each app/ link so every click fetches the live version.
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
-// build 2026-07-05 · schoolConfig v5
+// build 2026-07-05 · schoolConfig v6 (label/tab split + InvSci)
 var CUBE_BUILD = "20260704d";
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
@@ -777,7 +777,7 @@ var CUBE_BUILD = "20260704d";
 // file fails to load, the static markup above is left untouched.
 (function(){
   var SCHOOL_FILE = "school-SIHS.json";
-  var VER = "2026-07-05";
+  var VER = "2026-07-06";
   function buildHref(code, cls){
     return "app/?subject=" + encodeURIComponent(code) + (cls ? "&class=" + encodeURIComponent(cls) : "");
   }
@@ -813,11 +813,14 @@ var CUBE_BUILD = "20260704d";
     try { last = JSON.parse(localStorage.getItem("cubeLastLaunch") || "null"); } catch(e){}
     if (last && last.subject) {
       var match = school.subjects.filter(function(su){ return su.code === last.subject; })[0];
-      var clsOk = match && (!last.cls || (match.classCodes || []).indexOf(last.cls) > -1);
+      // Accept new shape classes:[{label,tab}] and fall back to legacy classCodes:[...]
+      var clsList = normaliseClasses(match);
+      var clsOk = match && (!last.cls || clsList.some(function(c){ return c.tab === last.cls; }));
       if (match && clsOk) {
+        var lastLabel = last.cls ? (clsList.filter(function(c){ return c.tab === last.cls; })[0] || {}).label || last.cls : "";
         root.appendChild(launchLink(match, last.cls,
           "sv2-continue",
-          "↩︎ Continue — " + match.emoji + " " + match.name + (last.cls ? " · " + last.cls : "")));
+          "↩︎ Continue — " + match.emoji + " " + match.name + (last.cls ? " · " + lastLabel : "")));
       }
     }
 
@@ -842,15 +845,29 @@ var CUBE_BUILD = "20260704d";
     ping();
   }
 
+  // Normalise a subject's class list to [{label, tab}] regardless of file shape.
+  // New shape: classes:[{label,tab}]. Legacy shape: classCodes:["12Bio-1",...]
+  // (label == tab). This keeps an old school file working during transition.
+  function normaliseClasses(su){
+    if (Array.isArray(su.classes)) {
+      return su.classes.map(function(c){
+        if (typeof c === "string") return { label: c, tab: c };
+        return { label: c.label || c.tab, tab: c.tab || c.label };
+      });
+    }
+    return (su.classCodes || []).map(function(c){ return { label: c, tab: c }; });
+  }
+
   function tile(su){
-    var codes = su.classCodes || [];
+    var classes = normaliseClasses(su);
     var accent = su.accent || "#c9a84c";
     var title = '<div class="sv2-name">' + su.emoji + " 12 " + su.name + "</div>";
 
-    // 0 or 1 class: the whole tile launches directly
-    if (codes.length <= 1) {
-      var a = launchLink(su, codes[0] || null, "sv2-tile",
-        title + '<div class="sv2-meta">' + (codes[0] ? codes[0] : "Tap to start") + "</div>");
+    // 0 or 1 class: the whole tile launches directly. Param uses tab; display uses label.
+    if (classes.length <= 1) {
+      var only = classes[0] || null;
+      var a = launchLink(su, only ? only.tab : null, "sv2-tile",
+        title + '<div class="sv2-meta">' + (only ? only.label : "Tap to start") + "</div>");
       a.style.borderColor = accent + "66";
       return a;
     }
@@ -859,17 +876,17 @@ var CUBE_BUILD = "20260704d";
     var d = document.createElement("div");
     d.className = "sv2-tile";
     d.style.borderColor = accent + "66";
-    d.innerHTML = title + '<div class="sv2-meta">' + codes.length + " classes — tap to choose yours</div>";
+    d.innerHTML = title + '<div class="sv2-meta">' + classes.length + " classes — tap to choose yours</div>";
     var open = false, picker = null;
     d.addEventListener("click", function(ev){
       if (ev.target.closest && (ev.target.closest(".sv2-pill") || ev.target.tagName === "SELECT" || ev.target.tagName === "OPTION")) return;
       open = !open;
       if (open && !picker) {
-        if (codes.length <= 4) {
+        if (classes.length <= 4) {
           picker = document.createElement("div");
           picker.className = "sv2-pills";
-          codes.forEach(function(c){
-            var p = launchLink(su, c, "sv2-pill", su.emoji + " " + c);
+          classes.forEach(function(c){
+            var p = launchLink(su, c.tab, "sv2-pill", su.emoji + " " + c.label);
             p.style.borderColor = accent + "99";
             picker.appendChild(p);
           });
@@ -879,9 +896,9 @@ var CUBE_BUILD = "20260704d";
           var o0 = document.createElement("option");
           o0.value = ""; o0.textContent = "Select your class…";
           picker.appendChild(o0);
-          codes.forEach(function(c){
+          classes.forEach(function(c){
             var o = document.createElement("option");
-            o.value = c; o.textContent = c;
+            o.value = c.tab; o.textContent = c.label;
             picker.appendChild(o);
           });
           picker.addEventListener("change", function(){
@@ -941,6 +958,6 @@ var CUBE_BUILD = "20260704d";
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · schoolConfig v5 · 2026-07-05</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · schoolConfig v6 (label/tab split + InvSci) · 2026-07-05</div>
 </body>
 </html>
