@@ -68,6 +68,18 @@
       ]
     },
     {
+      "code": "Geo",
+      "name": "Geography",
+      "emoji": "🗺️",
+      "accent": "#4db6ac",
+      "kla": "HSIE",
+      "classes": [
+        { "label": "12HGE1", "tab": "GEO-1" },
+        { "label": "12HGE2", "tab": "GEO-2" },
+        { "label": "12HGE3", "tab": "GEO-3" }
+      ]
+    },
+    {
       "code": "HlthM",
       "name": "Health & Movement Science",
       "emoji": "🏃",
