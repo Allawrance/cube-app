@@ -39,6 +39,18 @@
       ]
     },
     {
+      "code": "Chem",
+      "name": "Chemistry",
+      "emoji": "⚗️",
+      "accent": "#4fc3f7",
+      "kla": "Science",
+      "classes": [
+        { "label": "12SCH1", "tab": "Chem-1" },
+        { "label": "12SCH2", "tab": "Chem-2" },
+        { "label": "12SCH3", "tab": "Chem-3" }
+      ]
+    },
+    {
       "code": "BusS",
       "name": "Business Studies",
       "emoji": "📊",
@@ -80,6 +92,16 @@
       ]
     },
     {
+      "code": "SOR2",
+      "name": "Studies of Religion II",
+      "emoji": "🕊️",
+      "accent": "#b39ddb",
+      "kla": "HSIE",
+      "classes": [
+        { "label": "12HRS1", "tab": "RELIG" }
+      ]
+    },
+    {
       "code": "HlthM",
       "name": "Health & Movement Science",
       "emoji": "🏃",
@@ -112,6 +134,18 @@
       "classes": [
         { "label": "12VA-1", "tab": "12VA-1" },
         { "label": "12VA-2", "tab": "12VA-2" }
+      ]
+    },
+    {
+      "code": "Hosp",
+      "name": "Hospitality (Food and Beverage)",
+      "emoji": "🍽️",
+      "accent": "#ff8a65",
+      "kla": "VET",
+      "classes": [
+        { "label": "11THC1", "tab": "HOSP-1" },
+        { "label": "11THC2", "tab": "HOSP-2" },
+        { "label": "11THC3", "tab": "HOSP-3" }
       ]
     }
   ]
