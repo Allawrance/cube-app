@@ -1,0 +1,183 @@
+{
+  "subjectCode": "Chem",
+  "subjectName": "Chemistry",
+  "subjectShortName": "Chem",
+  "accentColor": "#4fc3f7",
+  "kla": "Science",
+
+  "dominantMode": "Dual-mode: causal explanation of chemical phenomena (mechanism, terminology, nomenclature) AND quantitative analysis (setup, method, units, significant figures) with arithmetic flagged for teacher verification",
+  "cleanRule": "Chemistry answers split by question type. Explanation/analysis questions are marked on correct chemical reasoning — cause and effect using precise terminology, nomenclature, models (e.g. Le Chatelier, Brønsted–Lowry, collision theory) and, where stimulus/data is given, its integration. Calculation questions are marked on METHOD: the correct relationship/formula chosen, correct substitution, units and significant figures, and logical working shown — the final numerical answer is NOT asserted correct; CUBE flags 'arithmetic not verified — teacher to confirm the value'. Balanced equations/formulae are checked on convention and balancing, flagged for teacher confirmation where uncertain.",
+  "hasMC": true,
+
+  "responseModes": ["typed"],
+  "uploadSlots": 1,
+  "interpretiveCheck": false,
+  "stage1MaxTokens": 4000,
+  "stage2MaxTokens": 4000,
+
+  "sheetTabCube": "Chem CUBE",
+  "sheetTabFull": "Chem",
+  "classCodes": ["Chem-1", "Chem-2", "Chem-3"],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Chem",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+
+  "leaderboardTip": "Chemistry rewards precision: explain with correct terminology and nomenclature; for calculations, show the method, units and significant figures — CUBE checks your working, your teacher confirms the final number.",
+
+  "syllabus": {
+    "5": {
+      "title": "Equilibrium and Acid Reactions",
+      "organisers": {
+        "static_dynamic_equilibrium": {
+          "inquiry": "What happens when chemical reactions do not go through to completion?",
+          "keywords": ["static equilibrium", "dynamic equilibrium", "open system", "closed system", "reversible reaction", "entropy", "enthalpy", "collision theory", "reaction rate"]
+        },
+        "factors_affecting_equilibrium": {
+          "inquiry": "What factors affect equilibrium and how?",
+          "keywords": ["Le Chatelier's principle", "temperature", "concentration", "volume", "pressure", "equilibrium position", "activation energy", "heat of reaction", "shift"]
+        },
+        "equilibrium_constant": {
+          "inquiry": "How can the position of equilibrium be described and what does the equilibrium constant represent?",
+          "keywords": ["equilibrium constant", "Keq", "equilibrium expression", "homogeneous", "ICE table", "concentration", "predict direction", "iron(III) thiocyanate"]
+        },
+        "solution_equilibria": {
+          "inquiry": "How does solubility relate to chemical equilibrium?",
+          "keywords": ["solubility", "Ksp", "solubility product", "saturated solution", "precipitate", "dissociation", "ionic substance"]
+        }
+      }
+    },
+    "6": {
+      "title": "Acid/Base Reactions",
+      "organisers": {
+        "properties_of_acids_bases": {
+          "inquiry": "What is an acid and what is a base?",
+          "keywords": ["acid", "base", "Arrhenius", "indicator", "neutralisation", "salt", "conjugate", "definitions over time"]
+        },
+        "bronsted_lowry": {
+          "inquiry": "What is the role of water in solutions of acids and bases?",
+          "keywords": ["Brønsted–Lowry", "proton donor", "proton acceptor", "conjugate acid-base pair", "amphiprotic", "self-ionisation of water", "Kw", "strong acid", "weak acid"]
+        },
+        "quantitative_analysis": {
+          "inquiry": "How are solutions of acids and bases analysed?",
+          "keywords": ["pH", "pOH", "Ka", "Kb", "titration", "standard solution", "concentration", "conductivity", "enthalpy of neutralisation", "buffer"]
+        }
+      }
+    },
+    "7": {
+      "title": "Organic Chemistry",
+      "organisers": {
+        "nomenclature": {
+          "inquiry": "How do we systematically name organic chemical compounds?",
+          "keywords": ["IUPAC nomenclature", "functional group", "homologous series", "structural formula", "isomer", "alkane", "alkene", "alkyne"]
+        },
+        "hydrocarbons": {
+          "inquiry": "How can hydrocarbons be classified based on their structure and reactivity?",
+          "keywords": ["hydrocarbon", "saturated", "unsaturated", "boiling point", "intermolecular force", "dispersion force", "reactivity"]
+        },
+        "products_of_reactions": {
+          "inquiry": "What are the products of reactions of hydrocarbons and how do they react?",
+          "keywords": ["addition reaction", "substitution reaction", "combustion", "halogenation", "hydrogenation", "Markovnikov"]
+        },
+        "alcohols": {
+          "inquiry": "How can alcohols be produced and what are their properties?",
+          "keywords": ["alcohol", "hydroxyl", "primary", "secondary", "tertiary", "fermentation", "hydration", "oxidation", "enthalpy of combustion"]
+        },
+        "organic_acids_bases": {
+          "inquiry": "What are the properties of organic acids and bases?",
+          "keywords": ["carboxylic acid", "amine", "amide", "esterification", "ester", "condensation reaction"]
+        },
+        "polymers": {
+          "inquiry": "What are the properties and uses of polymers?",
+          "keywords": ["polymer", "monomer", "addition polymer", "condensation polymer", "polymerisation"]
+        }
+      }
+    },
+    "8": {
+      "title": "Applying Chemical Ideas",
+      "organisers": {
+        "analysis_inorganic": {
+          "inquiry": "How are the ions present in the environment identified and measured?",
+          "keywords": ["qualitative analysis", "flame test", "precipitation", "cation", "anion", "AAS", "atomic absorption spectroscopy", "colourimetry", "gravimetric analysis"]
+        },
+        "analysis_organic": {
+          "inquiry": "How is information about the reactivity and structure of organic compounds obtained?",
+          "keywords": ["mass spectroscopy", "infrared spectroscopy", "IR", "NMR", "proton NMR", "carbon-13 NMR", "degree of unsaturation", "structural determination"]
+        },
+        "chemical_synthesis_design": {
+          "inquiry": "What are the implications for society of chemical synthesis and design?",
+          "keywords": ["chemical synthesis", "yield", "green chemistry", "reaction pathway", "industrial process", "sustainability"]
+        }
+      }
+    }
+  },
+
+  "bandRules": {
+    "Band6": "Extensive knowledge and understanding of scientific concepts in Chemistry including complex and abstract ideas; communicates succinctly, logically and consistently using correct and precise scientific terms and nomenclature across varied contexts; designs investigations for accurate, reliable, valid data, evaluating and mitigating risk and modifying to new evidence; selects, processes and interprets data across formats to derive trends, show relationships, explain phenomena and make predictions; designs solutions using data and scientific evidence; applies knowledge to unfamiliar situations to propose comprehensive solutions/explanations.",
+    "Band5": "Thorough knowledge including complex/abstract ideas; communicates logically and effectively with correct scientific terms and nomenclature; designs investigations for reliable/valid data with some modification to evidence; selects, processes and interprets data to derive trends and relationships; designs solutions using data and evidence; applies knowledge to unfamiliar situations to propose explanations.",
+    "Band4": "Sound knowledge of scientific concepts; communicates effectively using scientific terms and nomenclature; designs and plans investigations and evaluates risk; processes, interprets and represents data across formats; identifies problems/questions/hypotheses and applies processes to data; applies relevant knowledge to scientific scenarios.",
+    "Band3": "Basic knowledge; communicates with basic scientific terms and nomenclature; implements processes to obtain data and identifies risk; processes data using scientific formats; responds to problems/questions/hypotheses; recalls scientific knowledge.",
+    "Band2": "Limited knowledge; communicates with limited scientific terms; partially outlines investigations; provides simple descriptions of phenomena; recalls basic knowledge.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+
+  "directiveTiers": {
+    "explain": {
+      "tier": 3,
+      "subjectNote": "Relate how/why using chemical cause and effect — e.g. how Le Chatelier's principle predicts an equilibrium shift, why a weak acid has a lower pH change — with correct terminology, nomenclature and models. Not description."
+    },
+    "analyse": {
+      "tier": 3,
+      "subjectNote": "Draw out components and relationships — trends in reactivity, data patterns, structure–property links. Includes 'quantitatively analyses' (CH12-13): where a calculation supports the analysis, mark the setup/method/units and flag the arithmetic for teacher verification."
+    },
+    "assess": {
+      "tier": 3,
+      "subjectNote": "Judgement of value with chemical evidence — e.g. reliability/validity of a method, or a chemical system's suitability. Reasons and evidence required."
+    },
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "Judge with evidence — a chemical process, method or claim (CH12-15 'describes and evaluates chemical systems'). A criteria-referenced verdict with modality is required."
+    },
+    "calculate": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Mark the METHOD only: correct relationship/formula chosen, correct substitution, correct UNITS and SIGNIFICANT FIGURES, logical working shown. Do NOT assert the final number is correct — return 'arithmetic not verified — teacher to confirm the value'."
+    },
+    "determine": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Ascertain a value using a chemical method (e.g. Keq, pH, concentration). Mark method, substitution, units and significant figures; flag arithmetic for teacher verification."
+    },
+    "deduce": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Reach a conclusion from evidence/data (e.g. an equilibrium expression, a structure from spectra). Mark the reasoning and correct chemical convention; flag any numerical result for teacher verification."
+    },
+    "predict": {
+      "tier": 3,
+      "subjectNote": "State a likely outcome (e.g. direction of equilibrium shift, precipitate formation from Ksp) WITH chemical justification — the reasoning is marked, not just the outcome."
+    },
+    "describe": { "tier": 2 },
+    "outline": { "tier": 2 },
+    "identify": { "tier": 1 },
+    "define": { "tier": 1 }
+  },
+
+  "connectives": {
+    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
+    "accepted": ["since", "thus", "hence", "due to", "leads to", "which shows that", "resulting in"],
+    "contrast": ["however", "whereas", "although", "in contrast", "on the other hand", "despite", "conversely"]
+  },
+
+  "subjectContext": {
+    "examStructure": "HSC written exam (Chemistry 2017 syllabus): Section I — 20 multiple-choice (often calculation/skills based); Section II — short answer and extended response spanning explanation, quantitative analysis, equations and structural determination. Year 12 modules: 5 Equilibrium and Acid Reactions, 6 Acid/Base Reactions, 7 Organic Chemistry, 8 Applying Chemical Ideas.",
+    "dualMode": "Chemistry questions split into (a) explanation/analysis — marked on chemical reasoning, terminology, nomenclature and models; and (b) calculation/procedural — marked on method, substitution, units and significant figures, with the numerical answer flagged for teacher verification (LLMs do not reliably verify multi-step arithmetic).",
+    "calculationNote": "For pH/Ka/Kb, Keq/ICE, Ksp, titration, stoichiometry and thermochemistry: assess whether the correct relationship was chosen, substitution is set up correctly, and units/significant figures are right. Explicitly return 'arithmetic not verified — teacher to confirm the value' rather than scoring the final number as correct or incorrect.",
+    "chemistryNote": "Reward correct IUPAC nomenclature, balanced equations with states, and precise use of models (Le Chatelier, Brønsted–Lowry, collision theory). Flag balanced-equation and structural-formula correctness for teacher confirmation where the chemistry cannot be verified with confidence."
+  }
+}
