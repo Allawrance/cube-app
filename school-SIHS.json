@@ -79,7 +79,7 @@
         { "label": "12AHis", "tab": "12AHis" }
       ]
     },
-    {
+    {	
       "code": "Geo",
       "name": "Geography",
       "emoji": "🗺️",
