@@ -2,16 +2,105 @@
   "schoolCode": "SIHS",
   "schoolName": "St Ives High School",
   "year": 2026,
-  "comment": "Enrolment structure only — pedagogy lives in config-{SUBJECT}.json. Update classCodes each year. classCodes: [] = single cohort, launches without a class parameter; 1 entry = launches with that class; 2+ entries = student picks their class on the landing page.",
+  "schemaVersion": 2,
+  "comment": "Enrolment structure ONLY — pedagogy lives in config-{SUBJECT}.json, tab routing lives in the Apps Script webhooks. classes: [] = single cohort (launches with no class parameter). Otherwise each entry is { label, tab }: 'label' is what students see and pick on the landing page; 'tab' is the Google Sheet tab data is logged to and MUST match a key in the webhook TAB_MAP. For most subjects label == tab; they differ only where students know a class by a different name (e.g. Investigating Science: students see 12SIS1, data goes to 12InvSci-1). One entry launches straight into that class; two or more shows a picker.",
   "subjects": [
-    { "code": "EES",    "name": "Earth & Environmental Science", "emoji": "🌏", "accent": "#69f0ae", "kla": "Science",  "classCodes": [] },
-    { "code": "BIO",    "name": "Biology",                       "emoji": "🔬", "accent": "#a5d6a7", "kla": "Science",  "classCodes": ["12Bio-1", "12Bio-2", "12Bio-3", "12Bio-4"] },
-    { "code": "BusS",   "name": "Business Studies",              "emoji": "📊", "accent": "#64b5f6", "kla": "HSIE",     "classCodes": [] },
-    { "code": "LEG",    "name": "Legal Studies",                 "emoji": "⚖️", "accent": "#ce93d8", "kla": "HSIE",     "classCodes": ["12LS-1", "12LS-2"] },
-    { "code": "ANCH",   "name": "Ancient History",               "emoji": "🏛️", "accent": "#ffcc80", "kla": "HSIE",     "classCodes": ["12AHis"] },
-    { "code": "HlthM",  "name": "Health & Movement Science",     "emoji": "🏃", "accent": "#80cbc4", "kla": "PDHPE",    "classCodes": [] },
-    { "code": "ComFam", "name": "Community & Family Studies",    "emoji": "🏠", "accent": "#80cbc4", "kla": "PDHPE",    "classCodes": [] },
-    { "code": "EngS",   "name": "Engineering Studies",           "emoji": "⚙️", "accent": "#ffab91", "kla": "TAS",      "classCodes": [] },
-    { "code": "VISART", "name": "Visual Arts",                   "emoji": "🎨", "accent": "#f48fb1", "kla": "CAPA",     "classCodes": ["12VA-1", "12VA-2"] }
+    {
+      "code": "EES",
+      "name": "Earth & Environmental Science",
+      "emoji": "🌏",
+      "accent": "#69f0ae",
+      "kla": "Science",
+      "classes": []
+    },
+    {
+      "code": "BIO",
+      "name": "Biology",
+      "emoji": "🔬",
+      "accent": "#a5d6a7",
+      "kla": "Science",
+      "classes": [
+        { "label": "12Bio-1", "tab": "12Bio-1" },
+        { "label": "12Bio-2", "tab": "12Bio-2" },
+        { "label": "12Bio-3", "tab": "12Bio-3" },
+        { "label": "12Bio-4", "tab": "12Bio-4" }
+      ]
+    },
+    {
+      "code": "InvSci",
+      "name": "Investigating Science",
+      "emoji": "🔬",
+      "accent": "#69f0ae",
+      "kla": "Science",
+      "classes": [
+        { "label": "12SIS1", "tab": "12InvSci-1" },
+        { "label": "12SIS2", "tab": "12InvSci-2" },
+        { "label": "12SIS3", "tab": "12InvSci-3" }
+      ]
+    },
+    {
+      "code": "BusS",
+      "name": "Business Studies",
+      "emoji": "📊",
+      "accent": "#64b5f6",
+      "kla": "HSIE",
+      "classes": []
+    },
+    {
+      "code": "LEG",
+      "name": "Legal Studies",
+      "emoji": "⚖️",
+      "accent": "#ce93d8",
+      "kla": "HSIE",
+      "classes": [
+        { "label": "12LS-1", "tab": "12LS-1" },
+        { "label": "12LS-2", "tab": "12LS-2" }
+      ]
+    },
+    {
+      "code": "ANCH",
+      "name": "Ancient History",
+      "emoji": "🏛️",
+      "accent": "#ffcc80",
+      "kla": "HSIE",
+      "classes": [
+        { "label": "12AHis", "tab": "12AHis" }
+      ]
+    },
+    {
+      "code": "HlthM",
+      "name": "Health & Movement Science",
+      "emoji": "🏃",
+      "accent": "#80cbc4",
+      "kla": "PDHPE",
+      "classes": []
+    },
+    {
+      "code": "ComFam",
+      "name": "Community & Family Studies",
+      "emoji": "🏠",
+      "accent": "#80cbc4",
+      "kla": "PDHPE",
+      "classes": []
+    },
+    {
+      "code": "EngS",
+      "name": "Engineering Studies",
+      "emoji": "⚙️",
+      "accent": "#ffab91",
+      "kla": "TAS",
+      "classes": []
+    },
+    {
+      "code": "VISART",
+      "name": "Visual Arts",
+      "emoji": "🎨",
+      "accent": "#f48fb1",
+      "kla": "CAPA",
+      "classes": [
+        { "label": "12VA-1", "tab": "12VA-1" },
+        { "label": "12VA-2", "tab": "12VA-2" }
+      ]
+    }
   ]
 }
