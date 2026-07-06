@@ -1,0 +1,130 @@
+{
+  "subjectCode": "Hosp",
+  "subjectName": "Hospitality (Food and Beverage)",
+  "subjectShortName": "Hosp",
+  "accentColor": "#ff8a65",
+  "kla": "VET",
+
+  "dominantMode": "Applying industry-related skills and knowledge to workplace contexts and scenarios, using correct industry terminology and relevant workplace examples",
+  "cleanRule": "Hospitality (VET) answers are marked on APPLICATION of industry skills and knowledge to workplace contexts and scenarios — not abstract theory. A high-band response applies knowledge to solve a workplace problem, supports points with relevant WORKPLACE EXAMPLES, and uses correct INDUSTRY TERMINOLOGY. For scenario/assess/propose/recommend questions, the response must give an appropriate, industry-realistic response to the situation (e.g. a food-safety breach, a customer complaint) — a generic answer with no workplace application or industry terms stays in the lower bands. Compliance detail matters: food safety, WHS and hygiene answers must reflect correct industry practice.",
+  "hasMC": true,
+
+  "responseModes": ["typed"],
+  "uploadSlots": 1,
+  "interpretiveCheck": false,
+  "stage1MaxTokens": 4000,
+  "stage2MaxTokens": 4000,
+
+  "sheetTabCube": "Hosp CUBE",
+  "sheetTabFull": "Hosp",
+  "classCodes": ["HOSP-1", "HOSP-2", "HOSP-3"],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Hosp",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+
+  "leaderboardTip": "Hospitality rewards APPLICATION: answer the workplace scenario with a realistic industry response, use correct industry terminology, and back it with a workplace example — don't just recite theory.",
+
+  "syllabus": {
+    "5": {
+      "title": "Hygiene (mandatory)",
+      "organisers": {
+        "hygienic_practices": {
+          "inquiry": "What hygienic work practices prevent food contamination?",
+          "keywords": ["personal hygiene", "food safety", "contamination", "cross-contamination", "cleaning", "sanitising", "food storage", "ready-to-eat food", "pest control", "waste disposal"]
+        },
+        "food_safety_programs": {
+          "inquiry": "How is food safety managed in the workplace?",
+          "keywords": ["HACCP", "critical control point", "food safety program", "temperature control", "danger zone", "food spoilage", "workplace policy", "food safety standards"]
+        }
+      }
+    },
+    "6": {
+      "title": "Safety (mandatory)",
+      "organisers": {
+        "whs": {
+          "inquiry": "How are hazards and risks managed in a hospitality workplace?",
+          "keywords": ["WHS", "work health and safety", "hazard", "risk assessment", "hazard identification", "risk control", "hierarchy of control", "PPE", "manual handling", "emergency procedures", "duty of care"]
+        }
+      }
+    },
+    "7": {
+      "title": "Working with colleagues and customers (mandatory)",
+      "organisers": {
+        "workplace_relationships": {
+          "inquiry": "How do hospitality staff work effectively with colleagues and customers?",
+          "keywords": ["teamwork", "communication", "customer service", "conflict resolution", "customer complaint", "workplace relationships", "cultural awareness", "professional presentation", "feedback"]
+        }
+      }
+    },
+    "8": {
+      "title": "Food and Beverage (stream)",
+      "organisers": {
+        "food_beverage_service": {
+          "inquiry": "How is food and beverage service prepared, provided and closed down?",
+          "keywords": ["preparation for service", "mise en place", "provision of service", "taking orders", "serve", "clear", "closing down", "covers", "table service", "upselling", "menu knowledge"]
+        },
+        "customer_service_response": {
+          "inquiry": "How are customer inquiries, dissatisfaction and complaints handled?",
+          "keywords": ["customer inquiry", "dissatisfaction", "complaint handling", "problem resolution", "service recovery", "customer needs"]
+        },
+        "non_alcoholic_and_espresso": {
+          "inquiry": "How are non-alcoholic beverages and espresso coffee prepared and served?",
+          "keywords": ["non-alcoholic beverage", "tea", "espresso coffee", "coffee beans", "grind", "extraction", "milk texturing", "commercial espresso machine", "beverage presentation", "workstation"]
+        }
+      }
+    }
+  },
+
+  "bandRules": {
+    "Band6": "Extensive knowledge and understanding of HSC content in the focus areas (mandatory and stream); comprehensive understanding and proficiency in applying industry-related skills to workplace contexts and scenarios; applies knowledge and skills to solve complex problems; effectively presents logical and cohesive responses using relevant workplace examples; effectively communicates ideas using a range of appropriate industry terminology.",
+    "Band5": "Thorough knowledge and understanding of HSC content (mandatory and stream); well-developed understanding and proficiency in applying industry-related skills to workplace contexts and scenarios; applies knowledge and skills to solve familiar and unfamiliar problems; presents logical and cohesive responses using workplace examples; communicates using appropriate industry terminology.",
+    "Band4": "Sound knowledge and understanding of HSC content (mandatory and stream); sound understanding in applying industry-related skills to workplace contexts and/or scenarios; applies knowledge and skills to solve familiar problems; presents logical responses using workplace examples; communicates using industry terminology.",
+    "Band3": "Basic understanding of HSC content (mandatory and stream); basic understanding of workplace skills; presents a basic response using workplace examples; communicates using basic industry terminology.",
+    "Band2": "Elementary understanding of HSC content (mandatory and stream); limited understanding of workplace skills; communicates using non-industry-specific terminology.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+
+  "directiveTiers": {
+    "assess": {
+      "tier": 3,
+      "subjectNote": "In Hospitality, 'assess' asks for a judgement about a workplace situation, practice or response — its appropriateness/effectiveness in an industry context — with reasons and a relevant workplace example. Generic judgement without workplace application stays lower band."
+    },
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "Judge the effectiveness of a workplace practice or response against industry criteria, with a clear verdict and workplace evidence. Modality required."
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "required",
+      "subjectNote": "'Propose' (and 'recommend') requires putting forward an appropriate, industry-realistic course of action for a workplace scenario (e.g. a response to a food-safety breach or customer complaint) AND justifying it with industry knowledge — naming the action IS the modality requirement."
+    },
+    "recommend": {
+      "tier": 3,
+      "modality": "required",
+      "subjectNote": "Put forward a specific, industry-appropriate recommendation for the workplace scenario and justify it with reasons grounded in industry practice."
+    },
+    "explain": {
+      "tier": 3,
+      "subjectNote": "Relate how/why — how a hygiene/WHS/service practice works and why it matters in the workplace — using cause and effect and correct industry terminology, applied to a workplace context."
+    },
+    "describe": { "tier": 2 },
+    "outline": { "tier": 2 },
+    "demonstrate": { "tier": 2, "subjectNote": "Show, using a workplace example, how a skill or practice is applied — link the knowledge to a concrete industry context." },
+    "identify": { "tier": 1 },
+    "define": { "tier": 1 }
+  },
+
+  "connectives": {
+    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
+    "accepted": ["since", "thus", "hence", "due to", "leads to", "which ensures that", "in order to"],
+    "contrast": ["however", "whereas", "although", "in contrast", "on the other hand", "despite"]
+  },
+
+  "subjectContext": {
+    "examStructure": "HSC Hospitality (Food and Beverage) optional exam: 80 marks. Section I — 15 multiple-choice (15 marks). Section II — short answer (35 marks). Section III — extended response to a workplace scenario (15 marks). Based on the three mandatory focus areas (Hygiene, Safety, Working with colleagues and customers) plus the Food and Beverage stream.",
+    "focusAreas": ["Hygiene", "Safety", "Working with colleagues and customers", "Food and Beverage (stream)"],
+    "delivery": "At this school Hospitality is delivered in a CONDENSED model — students complete the 240-hour course across Year 11, sitting the standard single HSC optional exam. Marking standard is the same HSC standard regardless of the compressed timeline.",
+    "markingSpine": "Band descriptors reward APPLICATION of industry skills to workplace contexts/scenarios, relevant WORKPLACE EXAMPLES, and appropriate INDUSTRY TERMINOLOGY. The higher bands solve problems (familiar and unfamiliar); lower bands recite theory or use non-industry terms.",
+    "hospitalityNote": "This is a VET applied subject, NOT an academic science/theory subject. Reward realistic industry responses to workplace scenarios, correct industry terminology (e.g. mise en place, covers, danger zone, HACCP, service recovery), and concrete workplace examples. A theoretically correct answer with no workplace application or industry terminology cannot reach the top bands. Food safety, WHS and hygiene answers must reflect correct, compliant industry practice."
+  }
+}
