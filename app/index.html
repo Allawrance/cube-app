@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.1 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.2 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.1");
+console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.2");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -866,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-07 · universalMultiPage-v1.1
+// build 2026-07-07 · universalMultiPage-v1.2
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1638,7 +1638,7 @@ function _ac863f() {
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
   const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
-  // universalMultiPage-v1.1
+  // universalMultiPage-v1.2
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
@@ -1844,7 +1844,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${_d0c6fa(questionNumber)} ONLY in this image, apply CUBE to the printed question text only. Ignore every other question visible on the page. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
+            { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${_d0c6fa(questionNumber)}. Apply CUBE to the printed text of THAT question. IMPORTANT — SHARED STEM RULE: many exam questions have a parent number (e.g. 21) with a shared stem or stimulus (a menu, a source, a data set, a scenario) printed ABOVE the sub-parts (a), (b), (c) or (i), (ii), (iii). That shared stem BELONGS to every sub-part. So when the selected question is a sub-part like "${_d0c6fa(questionNumber)}", you MUST read and include the parent question's shared stem/stimulus that sits above the sub-parts as part of this question's context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts you were not asked about, and (b) entirely different question numbers. Extract phase1_cube with questionText (the sub-part wording), directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem, e.g. the specific menu dishes / source details), marks etc. Do NOT read or transcribe the student written answer below the question.` },
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${_d0c6fa(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
