@@ -55,6 +55,10 @@
         "industry_knowledge": {
           "inquiry": "How is the hospitality industry structured and regulated?",
           "keywords": ["sectors", "interrelationship between sectors", "menu types", "set menu", "cyclic menu", "table d'hote", "a la carte", "occupational licensing", "RSA", "RCG", "legislation", "privacy", "environmentally sustainable practices", "efficient use of resources"]
+        },
+        "technology_and_operations": {
+          "inquiry": "What is the impact of current and emerging technologies on operational duties and service delivery in the hospitality industry?",
+          "keywords": ["current and emerging technologies", "emerging technology", "technology", "operational duties", "service delivery", "point of sale", "POS system", "self-serve ordering", "online reservations", "electronic key cards", "productivity", "efficiency", "automation", "staff training", "job displacement", "combi oven", "electronic thermometer"]
         }
       }
     },
