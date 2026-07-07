@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.0 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.1 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.0");
+console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.1");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -866,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-07 · universalMultiPage-v1.0
+// build 2026-07-07 · universalMultiPage-v1.1
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1638,7 +1638,7 @@ function _ac863f() {
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
   const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
-  // universalMultiPage-v1.0
+  // universalMultiPage-v1.1
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
@@ -2502,20 +2502,30 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{vaPrompts?"Tap, drag & drop, or paste (Ctrl+V) each handwritten page in order. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically.":"If your whole answer is on page 1, skip this. Otherwise tap, drag & drop, or paste (Ctrl+V) each following handwritten page IN ORDER. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically."}</div>
                 </div>
                 <input ref={respFileRef} type="file" accept="image/*,application/pdf" multiple style={{display:"none"}} onChange={handleRespInput}/>
-                {responseImgs.length>0&&<>
+                {(responseImgs.length>0||(!vaPrompts&&pageImg))&&<>
                   <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
-                    <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>{vaPrompts?"PAGE 1 = FIRST PAGE":"THESE FOLLOW PAGE 1"}</span>
+                    <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>{vaPrompts?"PAGE 1 = FIRST PAGE":"CHECK YOUR PAGES ARE IN ORDER"}</span>
                     <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder.</span>
                   </div>
                   <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
+                  {!vaPrompts&&pageImg&&
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px"}}>
+                      <div style={{position:"relative"}}>
+                        <img src={pageImg} alt="Page 1 — question page" style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:"3px solid "+gold}}/>
+                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:gold,color:"#1a1a2e",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{"★ PAGE 1"+(questionNumber?" — Q"+questionNumber:"")}</div>
+                      </div>
+                      <div style={{fontSize:"10px",color:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:"1.3",maxWidth:"84px"}}>question page</div>
+                    </div>}
                   {responseImgs.map((u,i)=>{
                     const first=i===0, last=i===responseImgs.length-1;
+                    const pageLabel = vaPrompts ? (first?"★ PAGE 1":"PAGE "+(i+1)) : "PAGE "+(i+2);
+                    const hl = vaPrompts && first;
                     const arrowStyle=(off)=>({width:"32px",height:"28px",borderRadius:"6px",border:"1px solid rgba(201,168,76,0.5)",background:off?"rgba(255,255,255,0.04)":"rgba(201,168,76,0.18)",color:off?"#5a6b7a":gold,fontSize:"14px",fontWeight:900,cursor:off?"default":"pointer",lineHeight:"1",padding:0});
                     return (
                     <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px"}}>
                       <div style={{position:"relative"}}>
-                        <img src={u} alt={"Response page "+(i+1)} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:first?("3px solid "+gold):"2px solid rgba(201,168,76,0.4)"}}/>
-                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:first?gold:"rgba(0,0,0,0.78)",color:first?"#1a1a2e":"#f0e6c8",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{first?"★ PAGE 1":"PAGE "+(i+1)}</div>
+                        <img src={u} alt={pageLabel} style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:hl?("3px solid "+gold):"2px solid rgba(201,168,76,0.4)"}}/>
+                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:hl?gold:"rgba(0,0,0,0.78)",color:hl?"#1a1a2e":"#f0e6c8",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{pageLabel}</div>
                         <button onClick={()=>removeResponsePage(i)} title="Remove this page" style={{position:"absolute",top:"-8px",right:"-8px",width:"22px",height:"22px",borderRadius:"50%",border:"none",background:"#c0392b",color:"#fff",fontSize:"14px",cursor:"pointer",fontWeight:900,lineHeight:"1",padding:0}}>×</button>
                       </div>
                       <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
