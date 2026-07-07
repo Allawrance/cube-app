@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-05 · missionScaling-v1.1 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.0 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-05 · missionScaling-v1.1");
+console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.0");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -866,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-05 · missionScaling-v1.1
+// build 2026-07-07 · universalMultiPage-v1.0
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1638,10 +1638,9 @@ function _ac863f() {
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
   const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
-  const availableModes = (Array.isArray(config.responseModes) && config.responseModes.length)
-    ? config.responseModes
-    : (legacyVAConfig ? ["multiPage"] : ["singlePage"]);
-  const [responseMode, setResponseMode] = useState(availableModes.length === 1 ? availableModes[0] : null);
+  // universalMultiPage-v1.0
+  const availableModes = ["multiPage"];
+  const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
   const respPagesMax = config.responsePagesMax || 6;
   const [responseImgs, setResponseImgs] = useState([]); // preview object URLs
@@ -1708,7 +1707,7 @@ function _ac863f() {
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
-    if (isMulti) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
+    if (vaPrompts) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1822,7 +1821,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
     if (nameParts.length < 2) { setError("Please enter your first name and the first initial of your surname before analysing."); return; }
     if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
-    if (isMulti && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
+    if (vaPrompts && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
@@ -1845,7 +1844,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${_d0c6fa(questionNumber)} in this image, apply CUBE to the printed question text only. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
+            { type:"text", text:`TASK 1 — CUBE ANALYSIS: For Question ${_d0c6fa(questionNumber)} ONLY in this image, apply CUBE to the printed question text only. Ignore every other question visible on the page. Extract phase1_cube with questionText, directives, syllabusKeywords, constraints, marks etc. Do NOT read or transcribe the student written answer below the question.` },
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${_d0c6fa(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
@@ -2093,7 +2092,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
   const markFullAnswer = async () => {
     if (!pageB64 || !results) return;
-    if (isMulti && responseB64s.length === 0) { setStage2Error("Add at least one response page first."); return; }
+    if (vaPrompts && responseB64s.length === 0) { setStage2Error("Add at least one response page first."); return; }
     setStage2Loading(true); setStage2Error(null);
     const c1 = results.phase1_cube;
     const dirs = c1.directives?.length ? c1.directives : c1.directive ? [c1.directive] : [];
@@ -2416,10 +2415,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                 onMouseOut={e=>{ if(!dragOver) e.currentTarget.style.background=nameValid?"rgba(201,168,76,0.03)":"rgba(229,115,115,0.03)";}}>
                 <div style={{fontSize:"52px",marginBottom:"12px"}}>{dragOver?"📋":nameValid?"📄":"🔒"}</div>
                 <div style={{fontSize:"16px",color:nameValid?gold:"#e57373",fontWeight:700,fontFamily:"sans-serif",marginBottom:"6px"}}>
-                  {dragOver?"Drop to upload!":nameValid?(isMulti?"Tap to upload the QUESTION / stimulus page":"Tap to upload a photo or PDF"):"Enter your name above first"}
+                  {dragOver?"Drop to upload!":nameValid?(vaPrompts?"Tap to upload the QUESTION / stimulus page":"Tap to upload PAGE 1 — the page with the question"):"Enter your name above first"}
                 </div>
                 <div style={{fontSize:"15px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>
-                  {nameValid?(isMulti?(vaPrompts?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Upload the printed QUESTION page (with any sources or stimulus). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints."):"Your page can include the printed question, your handwritten answer, and any stimulus material."):"Your name is required before you can upload a photo."}
+                  {nameValid?(vaPrompts?"Upload the printed QUESTION / stimulus page (including the plates). If you can, annotate it with CUBE first — circle the directive, underline the key terms, box the constraints.":"Page 1 must show the printed question — it may also include your handwritten answer and any stimulus material. If your answer continues on more pages, add them next IN ORDER. If you can, annotate the question with CUBE first — circle the directive, underline the key terms, box the constraints."):"Your name is required before you can upload a photo."}
                 </div>
                 {nameValid&&!mobileView&&<div style={{marginTop:"10px",fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",flexWrap:"wrap"}}>
                   <span>📋 <strong>Ctrl+V</strong> to paste a screenshot</span>
@@ -2475,8 +2474,8 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
             {/* Question number selector */}
-            {!isMulti&&pageImg&&<div style={{marginBottom:"16px"}}>
-              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed?</div>
+            {!vaPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
+              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed? (one question at a time)</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
                 {questionsOnPage.map(n=>(
                   <button key={n} onClick={()=>setQuestionNumber(String(n))} style={{minWidth:"52px",height:"52px",padding:"0 14px",borderRadius:"10px",border:`2px solid ${questionNumber===String(n)?gold:"rgba(255,255,255,0.12)"}`,background:questionNumber===String(n)?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:questionNumber===String(n)?gold:"#7a9ab8",fontSize:"22px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",boxShadow:questionNumber===String(n)?`0 0 0 2px ${gold}`:"none"}}>
@@ -2491,7 +2490,7 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               const p = studentName.trim().split(/\s+/).filter(Boolean);
               const nameValid = p.length >= 2 && p[p.length-1].length === 1;
               return <div style={{marginBottom:"16px"}}>
-                <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Your response pages ({responseImgs.length}/{respPagesMax})</div>
+                <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>{vaPrompts?"Your response pages":"Extra answer pages — only if your answer continues past page 1"} ({responseImgs.length}/{respPagesMax})</div>
                 <div
                   onClick={()=>{ if(!nameValid){setError("Enter your name first.");return;} if(responseImgs.length>=respPagesMax){setError("Maximum "+respPagesMax+" response pages.");return;} respFileRef.current.click(); }}
                   onDragOver={e=>{e.preventDefault();e.stopPropagation();setDragOver(true);}}
@@ -2499,13 +2498,13 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   onDrop={e=>{e.preventDefault();e.stopPropagation();setDragOver(false);Array.from(e.dataTransfer.files||[]).forEach(f=>addResponsePage(f));}}
                   style={{border:`2px dashed ${dragOver?"#c9a84c":"rgba(201,168,76,0.4)"}`,borderRadius:"16px",padding:"22px 18px",textAlign:"center",cursor:"pointer",background:dragOver?"rgba(201,168,76,0.08)":"rgba(201,168,76,0.03)",transition:"all 0.2s",marginBottom:"12px"}}>
                   <div style={{fontSize:"34px",marginBottom:"8px"}}>📝</div>
-                  <div style={{fontSize:"15px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"4px"}}>Add your response pages</div>
-                  <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>Tap, drag &amp; drop, or paste (Ctrl+V) each handwritten page in order. Up to {respPagesMax} pages. A multi-page PDF is split into separate pages automatically.</div>
+                  <div style={{fontSize:"15px",color:gold,fontWeight:700,fontFamily:"sans-serif",marginBottom:"4px"}}>{vaPrompts?"Add your response pages":"Add pages (optional)"}</div>
+                  <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{vaPrompts?"Tap, drag & drop, or paste (Ctrl+V) each handwritten page in order. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically.":"If your whole answer is on page 1, skip this. Otherwise tap, drag & drop, or paste (Ctrl+V) each following handwritten page IN ORDER. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically."}</div>
                 </div>
                 <input ref={respFileRef} type="file" accept="image/*,application/pdf" multiple style={{display:"none"}} onChange={handleRespInput}/>
                 {responseImgs.length>0&&<>
                   <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
-                    <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>PAGE 1 = FIRST PAGE</span>
+                    <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>{vaPrompts?"PAGE 1 = FIRST PAGE":"THESE FOLLOW PAGE 1"}</span>
                     <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder.</span>
                   </div>
                   <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
@@ -2541,10 +2540,10 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                     <span className="cube-spinner-dim"></span>
                     Reading your image for available questions...
                   </div>
-                : <button onClick={analyse} disabled={loading||(isMulti&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
+                : <button onClick={analyse} disabled={loading||(vaPrompts&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
                     {loading
                       ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner-dim"></span>{loadingMsg}</span>
-                      : (isMulti ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
+                      : (vaPrompts ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
                   </button>
             )}
           </div>
