@@ -11,7 +11,7 @@
 
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 8,
+  "responsePagesMax": 10,
 
   "sheetTabCube": "Geo CUBE",
   "sheetTabFull": "Geo",
