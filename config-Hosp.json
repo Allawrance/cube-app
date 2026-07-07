@@ -9,11 +9,9 @@
   "cleanRule": "Hospitality (VET, Kitchen Operations and Cookery) answers are marked on APPLICATION of industry skills and knowledge to kitchen and workplace contexts and scenarios — not abstract theory. A high-band response applies knowledge to solve a workplace/kitchen problem, supports points with relevant WORKPLACE EXAMPLES, and uses correct INDUSTRY TERMINOLOGY (e.g. mise en place, precision cuts, roux, danger zone, HACCP, hierarchy of control). For scenario/assess/propose/recommend questions, the response must give an appropriate, industry-realistic response to the situation (e.g. a food-safety breach, a chemical spill, a cookery fault) — a generic answer with no workplace application or industry terms stays in the lower bands. Compliance detail matters: food safety, WHS and hygiene answers must reflect correct industry practice.",
   "hasMC": true,
 
-  "responseModes": ["typed"],
-  "uploadSlots": 1,
-  "interpretiveCheck": false,
-  "stage1MaxTokens": 4000,
-  "stage2MaxTokens": 4000,
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 6,
 
   "sheetTabCube": "Hosp CUBE",
   "sheetTabFull": "Hosp",
