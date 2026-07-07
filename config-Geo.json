@@ -9,11 +9,9 @@
   "cleanRule": "Geography (2022 syllabus) answers are marked on geographical reasoning about places, environments and change: a high-band evaluate/assess response must judge responses or management strategies for sustainability, at a range of scales, using evidence, geographical concepts (place, space, environment, interconnection, scale, sustainability, change) and — where the directive requires — multiple perspectives. Describing a strategy without judging its effectiveness for sustainability does NOT meet an evaluate/assess directive.",
   "hasMC": true,
 
-  "responseModes": ["typed"],
-  "uploadSlots": 1,
-  "interpretiveCheck": false,
-  "stage1MaxTokens": 4000,
-  "stage2MaxTokens": 4000,
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 8,
 
   "sheetTabCube": "Geo CUBE",
   "sheetTabFull": "Geo",
