@@ -1,0 +1,221 @@
+{
+  "subjectCode": "SOR2",
+  "subjectName": "Studies of Religion II",
+  "subjectShortName": "SOR II",
+  "responseModes": [
+    "multiPage"
+  ],
+  "promptVariant": "standard",
+  "responsePagesMax": 6,
+  "accentColor": "#b39ddb",
+  "kla": "HSIE",
+  "dominantMode": "Religious tradition knowledge + specific evidence (sacred texts, references, terminology) + significance for adherents, synthesised and sustained on the question",
+  "cleanRule": "Studies of Religion answers are marked on knowledge and understanding of religious traditions and their significance FOR ADHERENTS, supported by specific evidence — sacred texts, references, named practices/people, and accurate religious terminology — synthesised into a coherent argument that stays focused on the question. Evaluate/assess questions require a judgement about influence or significance, sustained and linked back to the question throughout, not stated only in the conclusion. Recounting content without linking it to adherents or the question does NOT reach the higher bands.",
+  "hasMC": true,
+  "sheetTabCube": "SOR2 CUBE",
+  "sheetTabFull": "SOR2",
+  "classCodes": [
+    "12HRS1"
+  ],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=SOR2",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "leaderboardTip": "SOR rewards evidence + significance for adherents: quote sacred texts and use accurate terminology, and keep every point linked back to the question — don't just recount content.",
+  "syllabus": {
+    "5": {
+      "title": "Religion and Belief Systems in Australia post-1945",
+      "organisers": {
+        "religious_landscape": {
+          "inquiry": "How has Australia's religious landscape changed since 1945?",
+          "keywords": [
+            "census",
+            "immigration",
+            "denominational switching",
+            "rise of New Age religions",
+            "secularism",
+            "Christianity as the major religious tradition",
+            "religious diversity"
+          ]
+        },
+        "aboriginal_spiritualities": {
+          "inquiry": "What is the effect of dispossession and the Land Rights movement on Aboriginal spiritualities?",
+          "keywords": [
+            "Dreaming",
+            "kinship",
+            "connection to the land",
+            "dispossession",
+            "separation from the land",
+            "Stolen Generations",
+            "Native Title",
+            "Mabo",
+            "reconciliation"
+          ]
+        },
+        "religious_dialogue": {
+          "inquiry": "How do religious traditions relate to one another in Australia?",
+          "keywords": [
+            "ecumenism",
+            "interfaith dialogue",
+            "NCCA",
+            "National Council of Churches",
+            "multiculturalism",
+            "reconciliation"
+          ]
+        }
+      }
+    },
+    "6": {
+      "title": "Religious Tradition Depth Studies (adherent significance)",
+      "organisers": {
+        "significant_person_or_school": {
+          "inquiry": "How has a significant person/school of thought contributed to the tradition?",
+          "keywords": [
+            "significant person",
+            "school of thought",
+            "contribution",
+            "impact",
+            "direction for adherents",
+            "development of the tradition"
+          ]
+        },
+        "significant_practice": {
+          "inquiry": "How does a significant practice express principal beliefs?",
+          "keywords": [
+            "significant practice",
+            "principal belief",
+            "ritual",
+            "expression of belief",
+            "significance for the individual",
+            "significance for the community"
+          ]
+        },
+        "ethics": {
+          "inquiry": "How do ethical teachings guide adherents?",
+          "keywords": [
+            "ethical teaching",
+            "sacred text",
+            "bioethics",
+            "environmental ethics",
+            "sexual ethics",
+            "application to adherents' lives"
+          ]
+        }
+      }
+    },
+    "7": {
+      "title": "Religion and Peace",
+      "organisers": {
+        "inner_and_world_peace": {
+          "inquiry": "How do religious traditions understand and contribute to peace?",
+          "keywords": [
+            "inner peace",
+            "world peace",
+            "principal teachings on peace",
+            "sacred texts",
+            "peace organisations",
+            "role of religion in peace"
+          ]
+        }
+      }
+    },
+    "8": {
+      "title": "Religion and Non-Religion",
+      "organisers": {
+        "non_religion": {
+          "inquiry": "How do non-religious worldviews respond to the human search for meaning?",
+          "keywords": [
+            "atheism",
+            "agnosticism",
+            "secular humanism",
+            "New Age",
+            "religion vs non-religion",
+            "search for meaning",
+            "response of religious traditions"
+          ]
+        }
+      }
+    }
+  },
+  "bandRules": {
+    "Band6": "Comprehensive knowledge and understanding of the influence of religion and its expression in Australian society, including Aboriginal beliefs and spiritualities; comprehensive knowledge of religious traditions and their significance for adherents; comprehensive understanding of concepts and issues; comprehensive analysis, synthesis and evaluation of relevant sources and research findings; communicates complex information using terminology appropriate to Studies of Religion.",
+    "Band5": "Thorough knowledge and understanding of the influence and expression of religion in Australia including Aboriginal beliefs and spiritualities; thorough knowledge of religious traditions and their significance for adherents; thorough understanding of concepts and issues; thorough analysis and evaluation of sources; communicates clearly using appropriate terminology.",
+    "Band4": "Sound knowledge and understanding of religion's influence and expression in Australia including Aboriginal beliefs and spiritualities; sound knowledge of religious traditions and their significance for adherents; sound understanding of concepts and issues; sound evaluation of sources; communicates using some appropriate terminology.",
+    "Band3": "Basic knowledge of religion's influence and expression in Australia including Aboriginal beliefs and spiritualities; basic knowledge of religious traditions and their significance for adherents; basic understanding of issues; basic use of sources; communicates using limited terminology.",
+    "Band2": "Limited knowledge of religion in Australian society including some Aboriginal beliefs and spiritualities; limited knowledge of religious traditions; limited understanding of issues; communicates limited information using some relevant terminology.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+  "directiveTiers": {
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "In SOR, 'evaluate' asks for a judgement about the influence, significance or contribution of a tradition, person, practice or teaching to the lives of adherents, supported by specific evidence (sacred texts, references, terminology). The judgement must be sustained and linked back to the question THROUGHOUT the response — not stated only in the conclusion. Modality/verdict required."
+    },
+    "assess": {
+      "tier": 3,
+      "subjectNote": "'Assess' requires a judgement of value/significance — e.g. the significance of a practice or person for adherents — with reasons and specific religious evidence, kept focused on the question."
+    },
+    "analyse": {
+      "tier": 3,
+      "subjectNote": "'Analyse' (and 'describe and analyse', per outcomes H2/H4) requires drawing out how aspects of a tradition relate and influence adherents/society — components and relationships — supported by evidence, not just description."
+    },
+    "examine": {
+      "tier": 3,
+      "subjectNote": "'Examine' (central to SOR, per H3) requires inquiring into a religious aspect in detail — its nature, expression and significance — with specific evidence and terminology."
+    },
+    "explain": {
+      "tier": 3,
+      "subjectNote": "'Explain' requires relating how/why — e.g. how a practice expresses a principal belief, or why a teaching matters to adherents — using cause and effect SUSTAINED through the response (not only at a paragraph's end), with sacred-text evidence."
+    },
+    "describe": {
+      "tier": 2
+    },
+    "outline": {
+      "tier": 2
+    },
+    "identify": {
+      "tier": 1
+    },
+    "define": {
+      "tier": 1
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "because",
+      "so",
+      "therefore",
+      "as a result",
+      "this demonstrates that",
+      "consequently"
+    ],
+    "accepted": [
+      "since",
+      "thus",
+      "hence",
+      "this reflects",
+      "meaning that",
+      "which shows that",
+      "as evidenced by"
+    ],
+    "contrast": [
+      "however",
+      "whereas",
+      "although",
+      "in contrast",
+      "on the other hand",
+      "despite",
+      "conversely"
+    ]
+  },
+  "subjectContext": {
+    "examStructure": "HSC written exam (SOR II, 2010 syllabus, current): 100 marks. Section I — Part A & B, 20 multiple-choice (often stimulus based) + short-answer on Australia post-1945 / Aboriginal spiritualities / Religion and Non-Religion. Section II — depth-study short answers on TWO religious traditions. Section III — extended response on a depth study (different tradition from Section II). Section IV — extended response on Religion and Peace.",
+    "religiousTraditions": [
+      "Buddhism",
+      "Christianity",
+      "Hinduism",
+      "Islam",
+      "Judaism"
+    ],
+    "markingSpine": "NESA marking feedback rewards: maintaining consistent focus on the question throughout; supporting judgements consistently and linking them back to the question; integrating stimulus throughout (not only intro/conclusion); using subject-specific terminology; and sustaining explanation with cause and effect across the whole response. Significance FOR ADHERENTS and specific sacred-text evidence separate high-band from recount.",
+    "sorNote": "Reward specific evidence (named sacred texts, quotations, references, practices, people) and accurate religious terminology, and — decisively — the link to significance FOR ADHERENTS and to the question. A response that recounts content without adherent-significance or question-focus stays in the lower-middle bands regardless of detail."
+  }
+}
