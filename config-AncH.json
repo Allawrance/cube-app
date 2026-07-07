@@ -6,7 +6,7 @@
     "multiPage"
   ],
   "promptVariant": "standard",
-  "responsePagesMax": 8,
+  "responsePagesMax": 10,
   "dominantMode": "Historical argument + source analysis + historiographical interpretation",
   "cleanRule": "Ancient History = construct an historical argument + analyse and interpret sources (archaeological and written) + evaluate differing historical interpretations + use historical concepts (causation, continuity and change, perspectives, significance, contestability)",
   "leaderboardTip": "HSC Ancient History rewards specific historical evidence — named sources (Papyrus Lansing, Karnak reliefs, Amarna Letters), named historians (Shaw, Tyldesley, Redford), and named archaeological sites. Generic statements about 'ancient Egyptians' without specific source reference cannot reach Band 5. Always link evidence to the historical argument.",
