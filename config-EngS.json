@@ -4,7 +4,7 @@
   "subjectShortName": "ES",
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 6,
+  "responsePagesMax": 12,
   "dominantMode": "Design + systems + technical application",
   "cleanRule": "Engineering = solve + show (not just explain)",
   "leaderboardTip": "Explain and Analyse questions require technical reasoning \u2014 forces, materials, energy transfer, and design features.",
