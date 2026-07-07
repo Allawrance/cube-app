@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.2 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.4 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.2");
+console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.4");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -866,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-07 · universalMultiPage-v1.2
+// build 2026-07-07 · universalMultiPage-v1.4
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1177,51 +1177,58 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           CUBE the question — the syllabus points underlined below show exactly where this question comes from in the syllabus, so you know where to focus next time.
         </div>
         {kwds.length > 0 && (()=>{
-          function DotPointWithUnderline({ sylText, kwWord }) {
+          const stemOf = w => { const f=String(w).toLowerCase().replace(/[^a-z0-9]/g," ").trim().split(/\s+/)[0]||""; return f.length>=5?f.slice(0,5):f; };
+          const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+          function DotPointWithUnderline({ sylText, words }) {
             if (!sylText) return null;
-            if (!kwWord) return <span>{sylText}</span>;
-            const stem = kwWord.toLowerCase().split(" ")[0].slice(0, Math.max(5, kwWord.split(" ")[0].length - 2));
+            const stems=[...new Set((words||[]).map(stemOf).filter(Boolean))].sort((a,b)=>b.length-a.length);
+            if (!stems.length) return <span>{sylText}</span>;
             try {
-              const re = new RegExp(`(${stem}\\S*)`, "gi");
+              const re = new RegExp(`(${stems.map(esc).join("|")})[a-z]*`, "gi");
               const parts = []; let last = 0, m;
               while ((m = re.exec(sylText)) !== null) {
                 if (m.index > last) parts.push(<span key={last}>{sylText.slice(last, m.index)}</span>);
-                parts.push(<u key={m.index} style={{textDecorationColor:"#1a6db5",fontWeight:700,color:"#1a1a2e"}}>{m[1]}</u>);
-                last = m.index + m[1].length;
+                parts.push(<u key={m.index} style={{textDecorationColor:"#1a6db5",fontWeight:700,color:"#1a1a2e"}}>{m[0]}</u>);
+                last = m.index + m[0].length;
               }
               if (last < sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
               return parts.length > 1 ? <>{parts}</> : <span>{sylText}</span>;
             } catch { return <span>{sylText}</span>; }
           }
+          // Group keywords sharing the same dot-point sentence + module into ONE row.
+          const groups = []; const byKey = new Map();
+          kwds.forEach(kw => {
+            const sylText = kw.syllabusText || kw.nesa_descriptor || "";
+            const moduleRef = [kw.module ? `Module ${kw.module}` : "", kw.topicCode || ""].filter(Boolean).join(" · ");
+            const key = sylText + "||" + moduleRef;
+            if (!byKey.has(key)) { const g={sylText,moduleRef,topicTitle:kw.topicTitle||"",words:[]}; byKey.set(key,g); groups.push(g); }
+            const w = kw.word || kw.topicTitle || "";
+            if (w && !byKey.get(key).words.includes(w)) byKey.get(key).words.push(w);
+          });
           return (
             <div style={{marginTop:"12px"}}>
               <div style={{fontFamily:"sans-serif",fontSize:"10px",fontWeight:800,letterSpacing:"1.5px",color:"#1a6db5",marginBottom:"6px",textTransform:"uppercase"}}>Where these underlined words appear in the syllabus</div>
               <table style={{width:"100%",borderCollapse:"collapse",fontFamily:"sans-serif",fontSize:"11px"}}>
                 <thead>
                   <tr>
-                    <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"22%"}}>Syllabus Term</th>
+                    <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"26%"}}>Syllabus Term(s)</th>
                     <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5",width:"14%"}}>Module</th>
                     <th style={{background:"#e8f0fb",color:"#1a1a2e",padding:"6px 10px",textAlign:"left",fontWeight:800,borderBottom:"2px solid #1a6db5"}}>Syllabus dot point</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {kwds.map((kw,i)=>{
-                    const sylText = kw.syllabusText || kw.nesa_descriptor || "";
-                    const kwWord  = kw.word || kw.topicTitle || "";
-                    const moduleRef = [kw.module ? `Module ${kw.module}` : "", kw.topicCode || ""].filter(Boolean).join(" · ");
-                    return (
-                      <tr key={i} style={{borderBottom:"1px solid #d0d8e8"}}>
-                        <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5"}}>{kwWord}</td>
-                        <td style={{padding:"6px 10px",color:"#666",whiteSpace:"nowrap"}}>{moduleRef||"—"}</td>
-                        <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.6"}}>
-                          {sylText
-                            ? <DotPointWithUnderline sylText={sylText} kwWord={kwWord} />
-                            : <span style={{color:"#999",fontStyle:"italic"}}>{kw.topicTitle||"—"}</span>
-                          }
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {groups.map((g,i)=>(
+                    <tr key={i} style={{borderBottom:"1px solid #d0d8e8"}}>
+                      <td style={{padding:"6px 10px",fontWeight:700,color:"#1a6db5"}}>{g.words.join(", ")}</td>
+                      <td style={{padding:"6px 10px",color:"#666",whiteSpace:"nowrap"}}>{g.moduleRef||"—"}</td>
+                      <td style={{padding:"6px 10px",color:"#333",lineHeight:"1.6"}}>
+                        {g.sylText
+                          ? <DotPointWithUnderline sylText={g.sylText} words={g.words} />
+                          : <span style={{color:"#999",fontStyle:"italic"}}>{g.topicTitle||"—"}</span>
+                        }
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -1638,7 +1645,7 @@ function _ac863f() {
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
   const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
-  // universalMultiPage-v1.2
+  // universalMultiPage-v1.4
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
@@ -2692,19 +2699,46 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
               />
 
               {/* ── Mobile-only: syllabus points + where they came from ── */}
-              {mobileView&&kwds.length>0&&<Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
+              {mobileView&&kwds.length>0&&(()=>{
+                const stemOf = w => { const f=String(w).toLowerCase().replace(/[^a-z0-9]/g," ").trim().split(/\s+/)[0]||""; return f.length>=5?f.slice(0,5):f; };
+                const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+                const underlineAll = (sylText, words) => {
+                  const stems=[...new Set((words||[]).map(stemOf).filter(Boolean))].sort((a,b)=>b.length-a.length);
+                  if(!sylText||!stems.length) return sylText;
+                  try {
+                    const re=new RegExp(`(${stems.map(esc).join("|")})[a-z]*`,"gi");
+                    const parts=[]; let last=0,m;
+                    while((m=re.exec(sylText))!==null){
+                      if(m.index>last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
+                      parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[0]}</span>);
+                      last=m.index+m[0].length;
+                    }
+                    if(last<sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
+                    return parts.length>1?parts:sylText;
+                  } catch { return sylText; }
+                };
+                const groups = []; const byKey = new Map();
+                kwds.forEach(kw => {
+                  const sylText = kw.syllabusText || "";
+                  const key = sylText + "||" + (kw.module||"") + "·" + (kw.topicCode||"");
+                  if (!byKey.has(key)) { const g={sylText,module:kw.module,topicCode:kw.topicCode,moduleTitle:kw.moduleTitle,topicTitle:kw.topicTitle,syllabusLabel:kw.syllabusLabel,words:[]}; byKey.set(key,g); groups.push(g); }
+                  const w = kw.word || kw.topicTitle || "";
+                  if (w && !byKey.get(key).words.includes(w)) byKey.get(key).words.push(w);
+                });
+                return <Card bg="rgba(21,101,192,0.08)" border="rgba(21,101,192,0.3)">
                 <SectionTitle color="#64b5f6">SYLLABUS POINTS — WHERE THIS QUESTION COMES FROM</SectionTitle>
-                {kwds.map((kw,i)=>(
-                  <div key={i} style={{marginBottom:i<kwds.length-1?"12px":0,fontFamily:"sans-serif"}}>
+                {groups.map((g,i)=>(
+                  <div key={i} style={{marginBottom:i<groups.length-1?"12px":0,fontFamily:"sans-serif"}}>
                     <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"2px"}}>
-                      <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
-                      {(kw.module||kw.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400}}>{kw.module?("Module "+kw.module):""}{kw.topicCode?(" · "+kw.topicCode):""}</span>}
+                      {g.words.map((w,j)=>(<span key={j}>{j>0&&<span style={{color:"#90caf9",fontWeight:400}}>, </span>}<span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{w}</span></span>))}
+                      {(g.module||g.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400}}>{g.module?("Module "+g.module):""}{g.topicCode?(" · "+g.topicCode):""}</span>}
                     </div>
-                    {kw.syllabusText&&<div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.5"}}>{kw.syllabusText}</div>}
-                    {(kw.moduleTitle||kw.topicTitle||kw.syllabusLabel)&&<div style={{color:"#90caf9",fontSize:"10px",marginTop:"3px",fontStyle:"italic"}}>From: {kw.moduleTitle||""}{kw.topicTitle?((kw.moduleTitle?" — ":"")+kw.topicTitle):""}{kw.syllabusLabel?(" ("+kw.syllabusLabel+")"):""}</div>}
+                    {g.sylText&&<div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.5"}}>{underlineAll(g.sylText, g.words)}</div>}
+                    {(g.moduleTitle||g.topicTitle||g.syllabusLabel)&&<div style={{color:"#90caf9",fontSize:"10px",marginTop:"3px",fontStyle:"italic"}}>From: {g.moduleTitle||""}{g.topicTitle?((g.moduleTitle?" — ":"")+g.topicTitle):""}{g.syllabusLabel?(" ("+g.syllabusLabel+")"):""}</div>}
                   </div>
                 ))}
-              </Card>}
+              </Card>;
+              })()}
 
               <_2f96cd when={mobileView} label="Full CUBE detail — C · U · B · E">
               {/* Legend */}
@@ -2779,42 +2813,51 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
                   </div>
                 </div>}
                 {/* U — Syllabus keywords */}
-                {kwds.length>0&&<div style={{padding:"14px 16px",borderBottom:c.constraints?.length>0?"1px solid rgba(21,101,192,0.2)":"none",background:"rgba(21,101,192,0.06)"}}>
+                {kwds.length>0&&(()=>{
+                  // Group keywords sharing the same dot-point sentence + module into ONE row.
+                  const groups = []; const byKey = new Map();
+                  kwds.forEach(kw => {
+                    const sylText = kw.syllabusText || "";
+                    const key = sylText + "||" + (kw.module||"") + "·" + (kw.topicCode||"");
+                    if (!byKey.has(key)) { const g={sylText,module:kw.module,topicCode:kw.topicCode,words:[]}; byKey.set(key,g); groups.push(g); }
+                    const w = kw.word || kw.topicTitle || "";
+                    if (w && !byKey.get(key).words.includes(w)) byKey.get(key).words.push(w);
+                  });
+                  // Stem to ~5 chars so inflected forms match (preparation→prepar→"prepared"; presentation→presen→"presented").
+                  const stemOf = w => { const f=String(w).toLowerCase().replace(/[^a-z0-9]/g," ").trim().split(/\s+/)[0]||""; return f.length>=5?f.slice(0,5):f; };
+                  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+                  const underlineAll = (sylText, words) => {
+                    const stems=[...new Set(words.map(stemOf).filter(Boolean))].sort((a,b)=>b.length-a.length);
+                    if(!sylText||!stems.length) return sylText;
+                    try {
+                      const re=new RegExp(`(${stems.map(esc).join("|")})[a-z]*`,"gi");
+                      const parts=[]; let last=0,m;
+                      while((m=re.exec(sylText))!==null){
+                        if(m.index>last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
+                        parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[0]}</span>);
+                        last=m.index+m[0].length;
+                      }
+                      if(last<sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
+                      return parts.length>1?parts:sylText;
+                    } catch { return sylText; }
+                  };
+                  return <div style={{padding:"14px 16px",borderBottom:c.constraints?.length>0?"1px solid rgba(21,101,192,0.2)":"none",background:"rgba(21,101,192,0.06)"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
                     <div style={{background:"#1565c0",color:"white",borderRadius:"50%",width:"26px",height:"26px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"13px",flexShrink:0,marginTop:"2px"}}>U</div>
                     <div style={{flex:1}}>
-                      {kwds.map((kw,i)=>(
+                      {groups.map((g,i)=>(
                         <div key={i} style={{borderTop:i>0?"1px solid rgba(21,101,192,0.15)":"none",paddingTop:i>0?"8px":"0",marginTop:i>0?"8px":"0"}}>
                           <div style={{fontWeight:700,color:"#ffffff",fontSize:"13px",marginBottom:"3px"}}>
-                            <span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{kw.word||kw.topicTitle}</span>
-                            <span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>Module {kw.module} · {kw.topicCode}</span>
+                            {g.words.map((w,j)=>(<span key={j}>{j>0&&<span style={{color:"#90caf9",fontWeight:400}}>, </span>}<span style={{borderBottom:"2px solid #2196f3",paddingBottom:"1px"}}>{w}</span></span>))}
+                            {(g.module||g.topicCode)&&<span style={{marginLeft:"8px",fontSize:"10px",color:"#90caf9",fontWeight:400,fontFamily:"sans-serif"}}>{g.module?("Module "+g.module):""}{g.topicCode?(" · "+g.topicCode):""}</span>}
                           </div>
-                          <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>
-                            {(()=>{
-                              const sylText = kw.syllabusText || "";
-                              const kwWord  = (kw.word||kw.topicTitle||"").toLowerCase().replace(/[^a-z0-9]/g," ").trim();
-                              if (!kwWord || !sylText) return sylText;
-                              // Build regex: match keyword stem (first 5+ chars) case-insensitively
-                              const stem = kwWord.split(" ")[0].slice(0,Math.max(5,kwWord.split(" ")[0].length-2));
-                              try {
-                                const re = new RegExp(`(${stem}\\S*)`, "gi");
-                                const parts = [];
-                                let last = 0, m;
-                                while ((m = re.exec(sylText)) !== null) {
-                                  if (m.index > last) parts.push(<span key={last}>{sylText.slice(last,m.index)}</span>);
-                                  parts.push(<span key={m.index} style={{borderBottom:"2px solid #2196f3",fontWeight:700,color:"#ffffff"}}>{m[1]}</span>);
-                                  last = m.index + m[1].length;
-                                }
-                                if (last < sylText.length) parts.push(<span key="end">{sylText.slice(last)}</span>);
-                                return parts.length > 1 ? parts : sylText;
-                              } catch { return sylText; }
-                            })()}
-                          </div>
+                          <div style={{color:"#c8d8e8",fontSize:"12px",lineHeight:"1.4"}}>{underlineAll(g.sylText, g.words)}</div>
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>}
+                </div>;
+                })()}
                 {/* B — Constraints */}
                 {c.constraints?.length>0&&<div style={{padding:"14px 16px",background:"rgba(46,125,50,0.06)"}}>
                   <div style={{display:"flex",gap:"12px",alignItems:"flex-start"}}>
