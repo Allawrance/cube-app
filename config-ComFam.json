@@ -4,7 +4,7 @@
   "subjectShortName": "CaFS",
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 6,
+  "responsePagesMax": 12,
   "dominantMode": "Social analysis + research evidence",
   "cleanRule": "CaFS = interrelationships + management process + wellbeing",
   "leaderboardTip": "Evaluate and Analyse are dominant verbs — always address interrelationships between individuals, groups, families and communities, and link every point to wellbeing outcomes.",
