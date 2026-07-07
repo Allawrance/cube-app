@@ -9,11 +9,9 @@
   "cleanRule": "Chemistry answers split by question type. Explanation/analysis questions are marked on correct chemical reasoning — cause and effect using precise terminology, nomenclature, models (e.g. Le Chatelier, Brønsted–Lowry, collision theory) and, where stimulus/data is given, its integration. Calculation questions are marked on METHOD: the correct relationship/formula chosen, correct substitution, units and significant figures, and logical working shown — the final numerical answer is NOT asserted correct; CUBE flags 'arithmetic not verified — teacher to confirm the value'. Balanced equations/formulae are checked on convention and balancing, flagged for teacher confirmation where uncertain.",
   "hasMC": true,
 
-  "responseModes": ["typed"],
-  "uploadSlots": 1,
-  "interpretiveCheck": false,
-  "stage1MaxTokens": 4000,
-  "stage2MaxTokens": 4000,
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 6,
 
   "sheetTabCube": "Chem CUBE",
   "sheetTabFull": "Chem",
