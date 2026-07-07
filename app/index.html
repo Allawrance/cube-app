@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.4 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.5 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -281,7 +281,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.4");
+console.log("CUBE Marking Coach — build 2026-07-07 · universalMultiPage-v1.5");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -866,7 +866,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-07 · universalMultiPage-v1.4
+// build 2026-07-07 · universalMultiPage-v1.5
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -1645,7 +1645,7 @@ function _ac863f() {
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
   const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
-  // universalMultiPage-v1.4
+  // universalMultiPage-v1.5
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
@@ -1723,8 +1723,15 @@ function _ac863f() {
           model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:b64 }},
-            { type:"text", text:`Look at this worksheet image. List all question numbers visible (e.g. Q1, Q2, Question 3, (a), (b) etc).
-Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No other text.` }
+            { type:"text", text:`Look at this worksheet/exam image and list every question a student could answer here, as SEPARATE selectable labels.
+
+CRITICAL — KEEP SUB-PARTS ATTACHED TO THEIR PARENT NUMBER:
+- If a question has sub-parts like (a), (b), (c) or (i), (ii), (iii), return each sub-part WITH its parent number attached, e.g. "23(a)", "23(b)", "24(i)", "24(ii)".
+- NEVER return a bare sub-part letter like "a" or "b" on its own — it is ambiguous when the page shows more than one parent question (e.g. Q22 and Q23 each have a (b)).
+- If a question has no sub-parts, return just its number, e.g. "5", "24".
+- Include the "Q" prefix ONLY if that is how it is printed; otherwise return the number alone.
+
+Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(b)","23(a)","23(b)"] or ["1","2","3"] or ["24"]. No other text.` }
           ]}]
         })
       });
@@ -1851,7 +1858,16 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
             { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${_d0c6fa(questionNumber)}. Apply CUBE to the printed text of THAT question. IMPORTANT — SHARED STEM RULE: many exam questions have a parent number (e.g. 21) with a shared stem or stimulus (a menu, a source, a data set, a scenario) printed ABOVE the sub-parts (a), (b), (c) or (i), (ii), (iii). That shared stem BELONGS to every sub-part. So when the selected question is a sub-part like "${_d0c6fa(questionNumber)}", you MUST read and include the parent question's shared stem/stimulus that sits above the sub-parts as part of this question's context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts you were not asked about, and (b) entirely different question numbers. Extract phase1_cube with questionText (the sub-part wording), directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem, e.g. the specific menu dishes / source details), marks etc. Do NOT read or transcribe the student written answer below the question.` },
+            { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${_d0c6fa(questionNumber)}. This label may include a parent number and a sub-part, e.g. "23(b)" means parent QUESTION 23, sub-part (b).
+
+LOCK ONTO THE CORRECT QUESTION — CRITICAL:
+- Find the printed heading that matches the PARENT number in the selected label (e.g. locate the "QUESTION 23" heading), then within it find the specific sub-part (e.g. "(b)").
+- Exam pages often show MORE THAN ONE parent question, and several may each have a sub-part with the same letter (e.g. Q22 has a (b) AND Q23 has a (b)). You MUST use the parent number to pick the RIGHT one. Do NOT assume the nearest "(b)" on the page is the right one — match the parent number first.
+- If the selected label has no parent number (just a bare number like "24"), use that question directly.
+
+SHARED STEM RULE: many parent questions have a shared stem or stimulus (a menu, source, data set, image, scenario) printed ABOVE the sub-parts. That shared stem belongs to the selected sub-part — read and include it as context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts under the same parent, and (b) entirely different parent questions.
+
+Extract phase1_cube with questionText (the exact wording of the selected sub-part), directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem), marks etc. Do NOT read or transcribe the student written answer below the question.` },
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${_d0c6fa(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
@@ -2482,14 +2498,19 @@ Return ONLY a JSON array of strings, e.g. ["1","2","3"] or ["a","b","c"]. No oth
 
             {/* Question number selector */}
             {!vaPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
-              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question do you want analysed? (one question at a time)</div>
+              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"4px",letterSpacing:"0.5px"}}>Which question do you want analysed? (one question at a time)</div>
+              <div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginBottom:"10px"}}>If a question has parts, pick the exact part — e.g. <strong>23(b)</strong>, not just (b).</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
-                {questionsOnPage.map(n=>(
-                  <button key={n} onClick={()=>setQuestionNumber(String(n))} style={{minWidth:"52px",height:"52px",padding:"0 14px",borderRadius:"10px",border:`2px solid ${questionNumber===String(n)?gold:"rgba(255,255,255,0.12)"}`,background:questionNumber===String(n)?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:questionNumber===String(n)?gold:"#7a9ab8",fontSize:"22px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",boxShadow:questionNumber===String(n)?`0 0 0 2px ${gold}`:"none"}}>
-                    {n}
+                {questionsOnPage.map(n=>{
+                  const label = String(n);
+                  const fs = label.length<=2 ? 22 : label.length<=4 ? 18 : 15;
+                  return (
+                  <button key={n} onClick={()=>setQuestionNumber(label)} style={{minWidth:"52px",height:"52px",padding:"0 16px",borderRadius:"10px",border:`2px solid ${questionNumber===label?gold:"rgba(255,255,255,0.12)"}`,background:questionNumber===label?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:questionNumber===label?gold:"#7a9ab8",fontSize:fs+"px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",whiteSpace:"nowrap",boxShadow:questionNumber===label?`0 0 0 2px ${gold}`:"none"}}>
+                    {label}
                   </button>
-                ))}
-                <input value={!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?questionNumber:""} onChange={e=>setQuestionNumber(e.target.value)} placeholder="Other" style={{width:"72px",height:"52px",borderRadius:"10px",border:`2px solid ${!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?gold:"rgba(255,255,255,0.12)"}`,background:"rgba(255,255,255,0.04)",color:"#e8eaf0",fontSize:"15px",fontWeight:700,textAlign:"center",fontFamily:"sans-serif",outline:"none"}}/>
+                  );
+                })}
+                <input value={!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?questionNumber:""} onChange={e=>setQuestionNumber(e.target.value)} placeholder="Other" style={{width:"90px",height:"52px",borderRadius:"10px",border:`2px solid ${!questionsOnPage.map(String).includes(questionNumber)&&questionNumber?gold:"rgba(255,255,255,0.12)"}`,background:"rgba(255,255,255,0.04)",color:"#e8eaf0",fontSize:"15px",fontWeight:700,textAlign:"center",fontFamily:"sans-serif",outline:"none"}}/>
               </div>}
             </div>}
 
