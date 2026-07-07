@@ -4,7 +4,7 @@
   "subjectShortName": "HM",
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 6,
+  "responsePagesMax": 12,
   "dominantMode": "Inquiry + application",
   "cleanRule": "Health = inquiry + application (not just theory)",
   "leaderboardTip": "Discuss, Evaluate and Investigate are the dominant verbs \u2014 use health data and real-world strategies as evidence.",
