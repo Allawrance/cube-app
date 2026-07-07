@@ -8,7 +8,7 @@
   <script>
   /* Mobile detection — UA-based as well as width, because inside the Google Sites
      embed iframe the reported window width is desktop-sized even on a phone, so
-     width-only checks and CSS media queries never fire there. build 2026-07-07 · universalMultiPage-v1.6 */
+     width-only checks and CSS media queries never fire there. build 2026-07-07 · proceduralTrack-v1.7 */
   (function(){
     var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
     function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
@@ -276,7 +276,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v1.6 · 2026-07-07";
+    window.CUBE_BUILD = "v1.7 · 2026-07-07";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -871,7 +871,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 // ─── STEP INDICATOR ──────────────────────────────────────────────────────────
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
-// build 2026-07-07 · universalMultiPage-v1.6
+// build 2026-07-07 · proceduralTrack-v1.7
 function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
@@ -922,6 +922,27 @@ function _9a03be({activeTab, onTabChange, unlocked}) {
 }
 
 // Stacked mobile rubric row — criterion + score always visible, evidence & comment behind a tap.
+// procedural track: 4 method dims mirror the literacy rubric — arithmetic never scored
+const _9d41ce = [
+  { key:"formulaSelection", label:"Formula / Relationship Chosen" },
+  { key:"substitution",     label:"Correct Substitution" },
+  { key:"unitsSigFigs",     label:"Units & Significant Figures" },
+  { key:"workingLogic",     label:"Logical Working Shown" },
+];
+const _37f8a2 = (r) => !!(r && r.scoringTrack === "procedural" && r.procedural);
+
+function _c5e1b8({ procedural, compact }) {
+  if (!procedural) return null;
+  return <div style={{background:"rgba(255,167,38,0.1)",border:"1.5px solid rgba(255,167,38,0.5)",borderRadius:"10px",padding:compact?"10px 14px":"12px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
+    <div style={{color:"#ffb74d",fontSize:compact?"13px":"14px",fontWeight:800,marginBottom:procedural.statedFinalAnswer?"4px":"0"}}>
+      ⚠️ Arithmetic not verified — teacher to confirm the final value
+    </div>
+    {procedural.statedFinalAnswer&&<div style={{color:"#e8eaf0",fontSize:compact?"12px":"13px"}}>
+      Your stated answer: <strong style={{color:"#ffcc80"}}>{procedural.statedFinalAnswer}</strong> — CUBE marked your <strong>method</strong>; your teacher confirms the number.
+    </div>}
+  </div>;
+}
+
 function _4c78ef({label, data, applicable=true, dimMax=5}) {
   const [open, setOpen] = useState(false);
   const rawScore = data?.score||0;
@@ -1042,13 +1063,15 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
   const dateStr = now.toLocaleDateString("en-AU", {day:"2-digit",month:"short",year:"numeric"});
   const timeStr = now.toLocaleTimeString("en-AU", {hour:"2-digit",minute:"2-digit"});
 
-  // ── Literacy rows helper ──
-  const litRows = [
-    { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
-    { label:"Complex Noun Groups",   data:a.rubric?.complexNounGroups, applicable:true              },
-    { label:"Modality",              data:a.rubric?.modality,          applicable:modalityApplicable },
-    { label:"Logical Flow & Cohesion", data:a.rubric?.logicalFlow,     applicable:true              },
-  ];
+  const isProcPr = _37f8a2(a);
+  const litRows = isProcPr
+    ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
+    : [
+        { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
+        { label:"Complex Noun Groups",   data:a.rubric?.complexNounGroups, applicable:true              },
+        { label:"Modality",              data:a.rubric?.modality,          applicable:modalityApplicable },
+        { label:"Logical Flow & Cohesion", data:a.rubric?.logicalFlow,     applicable:true              },
+      ];
 
   // ── Response text renderer (print-safe — no React spans with dark bg) ──
   function PrintResponse({ text }) {
@@ -1365,12 +1388,18 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
         </div>
       </div>
 
-      {/* ── SECTION 4: LITERACY SCORES ── */}
+      {/* ── SECTION 4: LITERACY / METHOD SCORES ── */}
       <div className="pr-literacy-section pr-page-break pr-no-break">
-        <div className="pr-section-label">Literacy Marks</div>
+        <div className="pr-section-label">{isProcPr ? "Method Marks" : "Literacy Marks"}</div>
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.6"}}>
-          The table below shows how your response was assessed across the four CUBE literacy criteria. Each criterion is scored out of the maximum for this question, with evidence drawn directly from your writing.
+          {isProcPr
+            ? "This is a calculation question, so your response was assessed on METHOD across the four criteria below: the relationship chosen, your substitution, units and significant figures, and the logic of your working."
+            : "The table below shows how your response was assessed across the four CUBE literacy criteria. Each criterion is scored out of the maximum for this question, with evidence drawn directly from your writing."}
         </div>
+        {isProcPr&&<div style={{fontFamily:"sans-serif",fontSize:"12px",background:"#fff8e6",border:"1.5px solid #e8b23c",borderRadius:"8px",padding:"10px 14px",marginBottom:"10px",lineHeight:"1.6",color:"#7a5c00"}}>
+          <strong>⚠️ Arithmetic not verified — teacher to confirm the final value.</strong>
+          {a.procedural?.statedFinalAnswer&&<> Stated answer: <strong>{a.procedural.statedFinalAnswer}</strong></>}
+        </div>}
         <table className="pr-table">
           <thead>
             <tr>
@@ -2207,8 +2236,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
         // Calculate dimMax FIRST so totalScore can cap per-dimension — prevents AI over-scoring exceeding maxScore
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
+        const isProcT = _37f8a2(parsed);
         const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
-        const mx  = (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
+        const mx  = isProcT ? dimMax*4 : (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
         // Update session XP using correctly capped score and max
         setWriteXP(Math.min(sc, mx));
         setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
@@ -2241,13 +2271,13 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             annoIdeas:        annoPresXP,
             annoUsed:         annoUsdXP,
             annoXP:           annoTotal,
-            wConn:            causalApp ? Math.min(parsed.rubric?.causalConnectives?.score ?? 0, dimMax) : "",
-            wConnMax:         causalApp ? dimMax : "",
-            wNoun:            Math.min(parsed.rubric?.complexNounGroups?.score ?? 0, dimMax),
+            wConn:            isProcT ? Math.min(parsed.procedural.formulaSelection?.score ?? 0, dimMax) : (causalApp ? Math.min(parsed.rubric?.causalConnectives?.score ?? 0, dimMax) : ""),
+            wConnMax:         (isProcT || causalApp) ? dimMax : "",
+            wNoun:            isProcT ? Math.min(parsed.procedural.substitution?.score ?? 0, dimMax) : Math.min(parsed.rubric?.complexNounGroups?.score ?? 0, dimMax),
             wNounMax:         dimMax,
-            wMod:             modalApp  ? Math.min(parsed.rubric?.modality?.score ?? 0, dimMax) : "",
-            wModMax:          modalApp  ? dimMax : "",
-            wFlow:            Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
+            wMod:             isProcT ? Math.min(parsed.procedural.unitsSigFigs?.score ?? 0, dimMax) : (modalApp ? Math.min(parsed.rubric?.modality?.score ?? 0, dimMax) : ""),
+            wModMax:          (isProcT || modalApp) ? dimMax : "",
+            wFlow:            isProcT ? Math.min(parsed.procedural.workingLogic?.score ?? 0, dimMax) : Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
             wFlowMax:         dimMax,
             writeXP:          Math.min(sc, mx),
             writeMax:         mx,
@@ -2276,7 +2306,10 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
 
   const totalScore = (r, causalOverride, modalOverride, dimMax=5) => {
     if (!r) return 0;
-    const { rubric } = r;
+    if (_37f8a2(r)) {
+      return _9d41ce.reduce((s,d) => s + Math.min(r.procedural[d.key]?.score||0, dimMax), 0);
+    }
+    const rubric = r.rubric || {};
     // Use client-side derived applicable values if provided, else fall back to AI value
     const causalAppl  = causalOverride !== undefined ? causalOverride : (rubric.causalConnectives?.applicable !== false);
     const modalAppl   = modalOverride  !== undefined ? modalOverride  : (rubric.modality?.applicable === true);
@@ -2618,8 +2651,17 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
           // Calculate dimMaxR BEFORE score so totalScore can apply per-dimension caps — prevents score > maxScore
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
+          const isProcR = _37f8a2(a);
           const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
-          const maxScore = (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
+          const maxScore = isProcR ? dimMaxR*4 : (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
+          const rubricRowsR = isProcR
+            ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
+            : [
+                { label:"Causal Connectives",      data:a?.rubric?.causalConnectives, applicable:causalApplicable },
+                { label:"Complex Noun Groups",     data:a?.rubric?.complexNounGroups, applicable:true },
+                { label:"Modality",                data:a?.rubric?.modality,          applicable:modalityApplicable },
+                { label:"Logical Flow & Cohesion", data:a?.rubric?.logicalFlow,       applicable:true },
+              ];
           const band = marksKnown ? null : _2c7e13(score, maxScore);
 
           return <div>
@@ -3192,11 +3234,10 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               {stage2Results&&<div>
               <SectionTitle>{mobileView?"STEP 5 — YOUR MARKS":"STEP 5 — WRITTEN ANALYSIS"}</SectionTitle>
 
+              {isProcR&&<_c5e1b8 procedural={a.procedural} compact={mobileView}/>}
+
               {mobileView&&<div style={{marginBottom:"14px"}}>
-                <_4c78ef label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
-                <_4c78ef label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
-                <_4c78ef label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
-                <_4c78ef label="Logical Flow & Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
+                {rubricRowsR.map((row,i)=><_4c78ef key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
                 <div style={{fontSize:"11px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"4px",textAlign:"center"}}>Tap a criterion to see the evidence &amp; full comment</div>
               </div>}
 
@@ -3204,18 +3245,14 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 <table style={{width:"100%",borderCollapse:"collapse"}}>
                   <thead>
                     <tr style={{background:"rgba(201,168,76,0.12)"}}>
-                      <th style={{padding:"12px 14px",textAlign:"left",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px"}}>CRITERION</th>
+                      <th style={{padding:"12px 14px",textAlign:"left",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px"}}>{isProcR?"METHOD CRITERION":"CRITERION"}</th>
                       <th style={{padding:"12px 14px",textAlign:"center",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px",width:"64px"}}>SCORE</th>
                       <th style={{padding:"12px 14px",textAlign:"center",color:"#69f0ae",fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px",width:"52px"}}>XP</th>
                       <th style={{padding:"12px 14px",textAlign:"left",color:gold,fontSize:"12px",fontFamily:"sans-serif",fontWeight:800,letterSpacing:"1px"}}>EVIDENCE &amp; COMMENT</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <_b6a519 label="Causal Connectives" data={a.rubric?.causalConnectives} applicable={causalApplicable} dimMax={dimMaxR}/>
-                    <_b6a519 label="Complex Noun Groups" data={a.rubric?.complexNounGroups} dimMax={dimMaxR}/>
-                    <_b6a519 label="Modality" data={a.rubric?.modality} applicable={modalityApplicable} dimMax={dimMaxR}/>
-                    <_b6a519 label="Logical Flow &amp; Cohesion" data={a.rubric?.logicalFlow} dimMax={dimMaxR}/>
-
+                    {rubricRowsR.map((row,i)=><_b6a519 key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
                   </tbody>
                 </table>
               </Card>}
