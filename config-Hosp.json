@@ -11,7 +11,7 @@
 
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 6,
+  "responsePagesMax": 8,
 
   "sheetTabCube": "Hosp CUBE",
   "sheetTabFull": "Hosp",
