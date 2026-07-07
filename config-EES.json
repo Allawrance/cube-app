@@ -4,7 +4,7 @@
   "subjectShortName": "EES",
   "responseModes": ["multiPage"],
   "promptVariant": "standard",
-  "responsePagesMax": 6,
+  "responsePagesMax": 8,
   "dominantMode": "Evidence + systems + data",
   "cleanRule": "EES = causal explanation + evidence from stimulus where provided",
   "leaderboardTip": "~60% of HSC questions are Explain/Analyse type \u2014 causal connectives (SO, BECAUSE, BUT) are essential.",
