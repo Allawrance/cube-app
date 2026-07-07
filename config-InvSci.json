@@ -9,11 +9,9 @@
   "cleanRule": "Investigating Science answers are marked on scientific process, not just content: an evaluate/justify/assess response must make an explicit judgement about the method, data or claim against criteria (validity, reliability, accuracy, relevance, ethics) and back it with evidence — a correct explanation of the underlying science that does not address method or data quality does NOT meet the directive.",
   "hasMC": true,
 
-  "responseModes": ["typed"],
-  "uploadSlots": 1,
-  "interpretiveCheck": false,
-  "stage1MaxTokens": 4000,
-  "stage2MaxTokens": 4000,
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 6,
 
   "sheetTabCube": "InvSci CUBE",
   "sheetTabFull": "InvSci",
