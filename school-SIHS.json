@@ -20,10 +20,22 @@
       "accent": "#a5d6a7",
       "kla": "Science",
       "classes": [
-        { "label": "12Bio-1", "tab": "12Bio-1" },
-        { "label": "12Bio-2", "tab": "12Bio-2" },
-        { "label": "12Bio-3", "tab": "12Bio-3" },
-        { "label": "12Bio-4", "tab": "12Bio-4" }
+        {
+          "label": "12Bio-1",
+          "tab": "12Bio-1"
+        },
+        {
+          "label": "12Bio-2",
+          "tab": "12Bio-2"
+        },
+        {
+          "label": "12Bio-3",
+          "tab": "12Bio-3"
+        },
+        {
+          "label": "12Bio-4",
+          "tab": "12Bio-4"
+        }
       ]
     },
     {
@@ -33,9 +45,18 @@
       "accent": "#69f0ae",
       "kla": "Science",
       "classes": [
-        { "label": "12SIS1", "tab": "12InvSci-1" },
-        { "label": "12SIS2", "tab": "12InvSci-2" },
-        { "label": "12SIS3", "tab": "12InvSci-3" }
+        {
+          "label": "12SIS1",
+          "tab": "12InvSci-1"
+        },
+        {
+          "label": "12SIS2",
+          "tab": "12InvSci-2"
+        },
+        {
+          "label": "12SIS3",
+          "tab": "12InvSci-3"
+        }
       ]
     },
     {
@@ -45,9 +66,18 @@
       "accent": "#4fc3f7",
       "kla": "Science",
       "classes": [
-        { "label": "12SCH1", "tab": "Chem-1" },
-        { "label": "12SCH2", "tab": "Chem-2" },
-        { "label": "12SCH3", "tab": "Chem-3" }
+        {
+          "label": "12SCH1",
+          "tab": "Chem-1"
+        },
+        {
+          "label": "12SCH2",
+          "tab": "Chem-2"
+        },
+        {
+          "label": "12SCH3",
+          "tab": "Chem-3"
+        }
       ]
     },
     {
@@ -56,7 +86,20 @@
       "emoji": "📊",
       "accent": "#64b5f6",
       "kla": "HSIE",
-      "classes": []
+      "classes": [
+        {
+          "label": "BusS-1",
+          "tab": "BusS-1"
+        },
+        {
+          "label": "BusS-2",
+          "tab": "BusS-2"
+        },
+        {
+          "label": "BusS-3",
+          "tab": "BusS-3"
+        }
+      ]
     },
     {
       "code": "LEG",
@@ -65,8 +108,14 @@
       "accent": "#ce93d8",
       "kla": "HSIE",
       "classes": [
-        { "label": "12LS-1", "tab": "12LS-1" },
-        { "label": "12LS-2", "tab": "12LS-2" }
+        {
+          "label": "12LS-1",
+          "tab": "12LS-1"
+        },
+        {
+          "label": "12LS-2",
+          "tab": "12LS-2"
+        }
       ]
     },
     {
@@ -76,19 +125,31 @@
       "accent": "#ffcc80",
       "kla": "HSIE",
       "classes": [
-        { "label": "12AHis", "tab": "12AHis" }
+        {
+          "label": "12AHis",
+          "tab": "12AHis"
+        }
       ]
     },
-    {	
+    {
       "code": "Geo",
       "name": "Geography",
       "emoji": "🗺️",
       "accent": "#4db6ac",
       "kla": "HSIE",
       "classes": [
-        { "label": "12HGE1", "tab": "GEO-1" },
-        { "label": "12HGE2", "tab": "GEO-2" },
-        { "label": "12HGE3", "tab": "GEO-3" }
+        {
+          "label": "12HGE1",
+          "tab": "GEO-1"
+        },
+        {
+          "label": "12HGE2",
+          "tab": "GEO-2"
+        },
+        {
+          "label": "12HGE3",
+          "tab": "GEO-3"
+        }
       ]
     },
     {
@@ -98,7 +159,10 @@
       "accent": "#b39ddb",
       "kla": "HSIE",
       "classes": [
-        { "label": "12HRS1", "tab": "RELIG" }
+        {
+          "label": "12HRS1",
+          "tab": "SOR2"
+        }
       ]
     },
     {
@@ -107,7 +171,24 @@
       "emoji": "🏃",
       "accent": "#80cbc4",
       "kla": "PDHPE",
-      "classes": []
+      "classes": [
+        {
+          "label": "12PHS-1",
+          "tab": "HlthM-1"
+        },
+        {
+          "label": "12PHS-2",
+          "tab": "HlthM-2"
+        },
+        {
+          "label": "12PHS-3",
+          "tab": "HlthM-3"
+        },
+        {
+          "label": "12PHS-4",
+          "tab": "HlthM-4"
+        }
+      ]
     },
     {
       "code": "ComFam",
@@ -132,8 +213,14 @@
       "accent": "#f48fb1",
       "kla": "CAPA",
       "classes": [
-        { "label": "12VA-1", "tab": "12VA-1" },
-        { "label": "12VA-2", "tab": "12VA-2" }
+        {
+          "label": "12VA-1",
+          "tab": "12VA-1"
+        },
+        {
+          "label": "12VA-2",
+          "tab": "12VA-2"
+        }
       ]
     },
     {
@@ -143,9 +230,18 @@
       "accent": "#ff8a65",
       "kla": "VET",
       "classes": [
-        { "label": "11THC1", "tab": "HOSP-1" },
-        { "label": "11THC2", "tab": "HOSP-2" },
-        { "label": "11THC3", "tab": "HOSP-3" }
+        {
+          "label": "11THC1",
+          "tab": "HOSP-1"
+        },
+        {
+          "label": "11THC2",
+          "tab": "HOSP-2"
+        },
+        {
+          "label": "11THC3",
+          "tab": "HOSP-3"
+        }
       ]
     }
   ]
