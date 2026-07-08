@@ -276,7 +276,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v1.8 · 2026-07-08";
+    window.CUBE_BUILD = "v1.9 · 2026-07-08";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -286,7 +286,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · auralVariant");
+console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · stage1AllPages");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -1899,19 +1899,26 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
             { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
-            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
+            ...[pageB64, ...responseB64s].flatMap((pB64, pIdx, allP) => ([
+              { type:"text", text:`PAGE ${pIdx+1} of ${allP.length}:` },
+              { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pB64 }}
+            ])),
             { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${_d0c6fa(questionNumber)}. This label may include a parent number and a sub-part, e.g. "23(b)" means parent QUESTION 23, sub-part (b).
 
+THE PAGES: You have been given EVERY page of the submission IN ORDER (PAGE 1, PAGE 2, …). The printed question for the selected label may appear on ANY of these pages — exam papers often print a later sub-part on a later page.
+
 LOCK ONTO THE CORRECT QUESTION — CRITICAL:
-- Find the printed heading that matches the PARENT number in the selected label (e.g. locate the "QUESTION 23" heading), then within it find the specific sub-part (e.g. "(b)").
-- Exam pages often show MORE THAN ONE parent question, and several may each have a sub-part with the same letter (e.g. Q22 has a (b) AND Q23 has a (b)). You MUST use the parent number to pick the RIGHT one. Do NOT assume the nearest "(b)" on the page is the right one — match the parent number first.
+- Find the printed heading that matches the PARENT number in the selected label (e.g. locate the "QUESTION 23" heading), then find the specific sub-part (e.g. "(b)") — checking EVERY page.
+- Exam pages often show MORE THAN ONE parent question, and several may each have a sub-part with the same letter (e.g. Q22 has a (b) AND Q23 has a (b)). You MUST use the parent number to pick the RIGHT one. Do NOT assume the nearest "(b)" is the right one — match the parent number first.
 - If the selected label has no parent number (just a bare number like "24"), use that question directly.
+- RANGE-REFERENCE RULE: an instruction line such as "answer parts (b)–(c)" or "Answer Questions 21–23" is a RANGE REFERENCE — it is NEVER the question itself, even though it contains the selected letter or number. Never extract the question printed next to a range reference just because the reference mentions the selected label. The real question is printed where its OWN label opens the question line, followed by that question's own wording and (usually) a marks value.
+- Report the 1-based page number where the selected question's printed text appears as "foundOnPage" inside phase1_cube.
+- NOT FOUND: if the selected question's printed text does not appear on ANY page, do NOT substitute a sibling sub-part or any similar question. Return EXACTLY this JSON instead and nothing else: {"questionNotFound": true, "labelsFound": ["…"]} where labelsFound lists the fully-qualified question labels actually printed across the pages.
 
-SHARED STEM RULE: many parent questions have a shared stem or stimulus (a menu, source, data set, image, scenario) printed ABOVE the sub-parts. That shared stem belongs to the selected sub-part — read and include it as context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts under the same parent, and (b) entirely different parent questions.
+SHARED STEM RULE: many parent questions have a shared stem or stimulus (a menu, source, data set, image, scenario) printed ABOVE the sub-parts — possibly on an EARLIER page than the selected sub-part. That shared stem still belongs to the selected sub-part — read and include it as context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts under the same parent, and (b) entirely different parent questions.
 
-Extract phase1_cube with questionText (the exact wording of the selected sub-part), directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem), marks etc. Do NOT read or transcribe the student written answer below the question.` },
-            { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Look at this image again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on the printed question text for Question ${_d0c6fa(questionNumber)}. Ignore the written answer below. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
+Extract phase1_cube with questionText (the exact wording of the selected sub-part), foundOnPage, directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem), marks etc. Take the marks value printed beside the SELECTED sub-part on its own page — never a sibling's marks. Do NOT read or transcribe the student written answer.` },
+            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Now return to the page where you found the printed question for Question ${_d0c6fa(questionNumber)} (the foundOnPage you are reporting) and look at that printed question again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on that printed question text. Ignore the written answer. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
         })
       });
@@ -1941,6 +1948,15 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
       } catch(jsonErr) {
         console.error("Stage 1 JSON parse failed:", jsonErr.message, "\nRaw:", clean.slice(0,500));
         throw new Error("Could not read AI response — please try again.");
+      }
+      // ── questionNotFound (stage1AllPages-v1.9): selected label is not printed on any uploaded page ──
+      if (parsed.questionNotFound) {
+        const found = Array.isArray(parsed.labelsFound) && parsed.labelsFound.length
+          ? " Questions found on your pages: " + parsed.labelsFound.slice(0,12).join(", ") + "."
+          : "";
+        const nfErr = new Error(`Couldn't find Question ${_d0c6fa(questionNumber)} printed on your uploaded pages — a line like "answer parts (b)–(c)" is only an instruction, not the question itself.${found} Add the page where Question ${_d0c6fa(questionNumber)} is actually printed (or check your page order), then try again.`);
+        nfErr.isPageIssue = true;
+        throw nfErr;
       }
       // ── Validate minimal expected structure ──
       if (!parsed.phase1_cube || !parsed.phase1_cube.questionText) {
@@ -2001,7 +2017,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     } catch(e) {
       if (e.name !== "AbortError") {
         console.error("Stage 1 analysis error:", e.message, e);
-        setError("⚠️ CUBE analysis failed — " + e.message + "\n\nPlease check your internet connection and try again. If the problem continues, try a different photo.");
+        setError(e.isPageIssue
+          ? "⚠️ " + e.message
+          : "⚠️ CUBE analysis failed — " + e.message + "\n\nPlease check your internet connection and try again. If the problem continues, try a different photo.");
       }
     }
     setLoading(false);
@@ -2189,7 +2207,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           evidenceRequired: c1.evidenceRequired||false,
           // payload shape follows the session's response mode
           ...(isMulti
-            ? { questionImage: pageB64, responseImages: responseB64s }
+            ? { questionImage: pageB64, responseImages: responseB64s,
+                questionFoundOnPage: Math.max(1, parseInt(c1.foundOnPage, 10) || 1) }
             : { imageData: pageB64 }),
           // VA-prompt-only fields (band framing, aspects, plates)
           ...(vaPrompts
