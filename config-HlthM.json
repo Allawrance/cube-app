@@ -2,12 +2,32 @@
   "subjectCode": "HlthM",
   "subjectName": "Health & Movement Science",
   "subjectShortName": "HM",
-  "responseModes": ["multiPage"],
+  "classes": [
+    {
+      "label": "12PHS-1",
+      "tab": "HlthM-1"
+    },
+    {
+      "label": "12PHS-2",
+      "tab": "HlthM-2"
+    },
+    {
+      "label": "12PHS-3",
+      "tab": "HlthM-3"
+    },
+    {
+      "label": "12PHS-4",
+      "tab": "HlthM-4"
+    }
+  ],
+  "responseModes": [
+    "multiPage"
+  ],
   "promptVariant": "standard",
   "responsePagesMax": 12,
   "dominantMode": "Inquiry + application",
   "cleanRule": "Health = inquiry + application (not just theory)",
-  "leaderboardTip": "Discuss, Evaluate and Investigate are the dominant verbs \u2014 use health data and real-world strategies as evidence.",
+  "leaderboardTip": "Discuss, Evaluate and Investigate are the dominant verbs — use health data and real-world strategies as evidence.",
   "sheetTabCube": "HM CUBE",
   "sheetTabFull": "HlthM",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
@@ -20,18 +40,18 @@
     "last_updated": "2026-04",
     "course": "Health and Movement Science HSC",
     "source": "Health and Movement Science 11-12 (2023), NESA NSW. Implementation from 2025.",
-    "purpose": "Syllabus keyword database for CUBE Marking Coach \u2014 Year 12 HSC content only. Keywords are strictly from NESA syllabus text.",
+    "purpose": "Syllabus keyword database for CUBE Marking Coach — Year 12 HSC content only. Keywords are strictly from NESA syllabus text.",
     "hsc_outcomes": [
       "HM-12-01: analyses the health status of Australians at a national and international level",
       "HM-12-02: examines how technology and data can achieve better health for all Australians",
       "HM-12-03: evaluates how the Sustainable Development Goals can be used to improve the health of a community",
       "HM-12-04: investigates factors that impact movement and performance",
       "HM-12-05: analyses individual and group training programs to improve performance",
-      "HM-12-06: Analysis \u2014 critically analyses the relationships and implications of health and movement concepts",
-      "HM-12-07: Communication \u2014 communicates health and movement concepts using modes appropriate to a range of audiences and contexts",
-      "HM-12-08: Creative thinking \u2014 generates and assesses new ideas that are meaningful and relevant to health and movement contexts",
-      "HM-12-09: Problem-solving \u2014 proposes and evaluates solutions to complex health and movement issues",
-      "HM-12-10: Research \u2014 analyses a range of sources to make conclusions and judgements about health and movement concepts"
+      "HM-12-06: Analysis — critically analyses the relationships and implications of health and movement concepts",
+      "HM-12-07: Communication — communicates health and movement concepts using modes appropriate to a range of audiences and contexts",
+      "HM-12-08: Creative thinking — generates and assesses new ideas that are meaningful and relevant to health and movement contexts",
+      "HM-12-09: Problem-solving — proposes and evaluates solutions to complex health and movement issues",
+      "HM-12-10: Research — analyses a range of sources to make conclusions and judgements about health and movement concepts"
     ],
     "topics": {
       "HAG": {
@@ -157,7 +177,7 @@
               },
               {
                 "id": "HAG.2.2",
-                "syllabus_text": "Explain how government and non-government organisations share responsibility for the health system, including: federal, state and territory and local government; non-government sector \u2014 private and not-for-profit",
+                "syllabus_text": "Explain how government and non-government organisations share responsibility for the health system, including: federal, state and territory and local government; non-government sector — private and not-for-profit",
                 "keywords": [
                   "government",
                   "non-government organisations",
@@ -414,7 +434,7 @@
             "dot_points": [
               {
                 "id": "TIP.2.1",
-                "syllabus_text": "Assess the types of training and training methods and their relevance for a variety of sports, including: anaerobic training \u2014 anaerobic interval, High Intensity Interval Training (HIIT), Sprint Interval Training (SIT), plyometric, and resistance training; aerobic training \u2014 continuous, fartlek, aerobic interval, and circuit training; flexibility training \u2014 static, dynamic, ballistic, and Proprioceptive Neuromuscular Facilitation (PNF); strength training \u2014 free/fixed weights, body weight exercises and elastics; skill and tactical development \u2014 drills, modified games and games for specific outcomes",
+                "syllabus_text": "Assess the types of training and training methods and their relevance for a variety of sports, including: anaerobic training — anaerobic interval, High Intensity Interval Training (HIIT), Sprint Interval Training (SIT), plyometric, and resistance training; aerobic training — continuous, fartlek, aerobic interval, and circuit training; flexibility training — static, dynamic, ballistic, and Proprioceptive Neuromuscular Facilitation (PNF); strength training — free/fixed weights, body weight exercises and elastics; skill and tactical development — drills, modified games and games for specific outcomes",
                 "keywords": [
                   "anaerobic training",
                   "anaerobic interval",
@@ -531,7 +551,7 @@
               },
               {
                 "id": "TIP.3.2",
-                "syllabus_text": "Compare a yearly training program for an individual and a group sport, including: phases of competition \u2014 pre-season, in-season and off-season; sub-phases; peaking and tapering; sport-specific attributes \u2014 fitness components, skill requirements",
+                "syllabus_text": "Compare a yearly training program for an individual and a group sport, including: phases of competition — pre-season, in-season and off-season; sub-phases; peaking and tapering; sport-specific attributes — fitness components, skill requirements",
                 "keywords": [
                   "yearly training program",
                   "pre-season",
@@ -656,7 +676,7 @@
               },
               {
                 "id": "TIP.5.2",
-                "syllabus_text": "Justify recovery strategies used for sustained movement and performance, including: physiological \u2014 cool-down, hydrotherapy; psychological \u2014 relaxation",
+                "syllabus_text": "Justify recovery strategies used for sustained movement and performance, including: physiological — cool-down, hydrotherapy; psychological — relaxation",
                 "keywords": [
                   "recovery strategies",
                   "cool-down",
@@ -676,7 +696,7 @@
               },
               {
                 "id": "TIP.5.4",
-                "syllabus_text": "Explain the management and prevention of sporting injuries, including: classification of sports injuries \u2014 direct and indirect, soft and hard tissue or overuse; assessment of injuries \u2014 Talk, Observe, Touch, Active movement, Passive movement, Skill (TOTAPS) test; management of injuries; rehabilitation procedures \u2014 progressive mobilisation, graduated exercise, training, use of heat and cold; return-to-play policy and procedures",
+                "syllabus_text": "Explain the management and prevention of sporting injuries, including: classification of sports injuries — direct and indirect, soft and hard tissue or overuse; assessment of injuries — Talk, Observe, Touch, Active movement, Passive movement, Skill (TOTAPS) test; management of injuries; rehabilitation procedures — progressive mobilisation, graduated exercise, training, use of heat and cold; return-to-play policy and procedures",
                 "keywords": [
                   "sporting injuries",
                   "direct injuries",
@@ -749,7 +769,7 @@
       "keyword_principle": "All keywords are strictly from NESA syllabus text only. Students may be examined on any syllabus keyword. Specific statistics, named examples and detailed data will be provided as stimulus material in the exam.",
       "topic_structure": "Two Year 12 HSC topics: Health in an Australian and Global Context (HAG) and Training for Improved Performance (TIP). Each topic has inquiry questions as organising headings.",
       "inquiry_questions": "NESA uses inquiry questions to organise content. These are included as subtopic titles to support question interpretation.",
-      "note_on_statistics": "Students do not need to know the latest statistics on rates of illness and death \u2014 they develop understanding of trends only.",
+      "note_on_statistics": "Students do not need to know the latest statistics on rates of illness and death — they develop understanding of trends only.",
       "topic_codes": "HAG = Health in an Australian and Global Context, TIP = Training for Improved Performance"
     }
   },
@@ -757,14 +777,14 @@
     "file_name": "10_HEALTH_MOVEMENT_BAND_RESPONSE_GENERATOR_RULES.json",
     "course": "Health and Movement Science HSC",
     "purpose": "Band descriptor rules for generating indicative HSC responses at each band level. Used by CUBE Marking Coach model answer generator.",
-    "source_basis": "NESA Personal Development, Health and Physical Education (PDHPE) 2025 Course Report band descriptors \u2014 used as the closest available approximator for Health and Movement Science HSC (first examination 2027). The two subjects share cognate content in health, movement, performance, and the roles of individuals, groups and governments. Band descriptors will be updated when official Health and Movement Science descriptors are published.",
+    "source_basis": "NESA Personal Development, Health and Physical Education (PDHPE) 2025 Course Report band descriptors — used as the closest available approximator for Health and Movement Science HSC (first examination 2027). The two subjects share cognate content in health, movement, performance, and the roles of individuals, groups and governments. Band descriptors will be updated when official Health and Movement Science descriptors are published.",
     "approximation_note": "Health and Movement Science is a new Stage 6 course (2023 syllabus, implementation from 2025, first HSC examination 2027). No official band descriptors exist yet. PDHPE descriptors are used as the best available proxy given substantial content overlap in health analysis, training for performance, physiological adaptations, and health promotion frameworks.",
     "global_rules": {
       "always": [
         "Align all content to the NSW HSC Health and Movement Science syllabus (2023).",
         "Answer the directive verb exactly as asked.",
         "Use accurate health and movement science terminology throughout.",
-        "Keep all claims relevant to the question \u2014 health status, training, performance, or health systems as applicable.",
+        "Keep all claims relevant to the question — health status, training, performance, or health systems as applicable.",
         "Apply cause-and-effect reasoning when explaining physiological or health mechanisms.",
         "Support arguments with relevant examples, data references or research evidence.",
         "Address the roles of individuals, groups and governments where relevant to health promotion questions."
@@ -836,7 +856,7 @@
           "Arguments clearly structured and supported with precise health and movement science terminology."
         ],
         "style_rules": [
-          "Critically analyse \u2014 do not merely describe or list.",
+          "Critically analyse — do not merely describe or list.",
           "Integrate multiple health and movement concepts rather than treating them in isolation.",
           "Apply theoretical principles explicitly to the specific health, participation or performance context.",
           "Use precise health and movement science terminology consistently.",
@@ -878,8 +898,8 @@
           "Arguments supported thoroughly with relevant examples and current information."
         ],
         "style_rules": [
-          "Clearly express ideas \u2014 thorough but may be less critical in depth than Band 6.",
-          "Discuss links between individual behaviour, social issues and community health \u2014 not just one dimension.",
+          "Clearly express ideas — thorough but may be less critical in depth than Band 6.",
+          "Discuss links between individual behaviour, social issues and community health — not just one dimension.",
           "Use relevant examples and current information to support arguments.",
           "May be less comprehensive in strategy evaluation than Band 6."
         ],
@@ -901,9 +921,9 @@
           "Information communicated clearly and logically with some examples."
         ],
         "style_rules": [
-          "Communicate clearly and logically \u2014 some examples provided.",
+          "Communicate clearly and logically — some examples provided.",
           "Relate strategies to risk factors rather than just listing them.",
-          "Sound but not detailed \u2014 less integration of interrelated roles than Band 5."
+          "Sound but not detailed — less integration of interrelated roles than Band 5."
         ],
         "avoid": [
           "Unsupported broad claims without risk factor connection.",
@@ -924,7 +944,7 @@
         ],
         "style_rules": [
           "Short, straightforward and mostly factual.",
-          "Basic support for arguments \u2014 definitions and facts rather than analysis."
+          "Basic support for arguments — definitions and facts rather than analysis."
         ],
         "avoid": [
           "Large sections of irrelevant material.",
@@ -943,8 +963,8 @@
           "Limited support provided for arguments on health, participation and performance."
         ],
         "style_rules": [
-          "Brief descriptions only \u2014 partial and underdeveloped.",
-          "Elementary terms \u2014 simple cause and effect at most."
+          "Brief descriptions only — partial and underdeveloped.",
+          "Elementary terms — simple cause and effect at most."
         ],
         "avoid": [
           "Invented health or movement science facts.",
@@ -962,55 +982,55 @@
     },
     "directive_verb_rules": {
       "identify": {
-        "typical_marks": "1\u20132",
-        "key_feature": "Name only \u2014 no explanation required unless directed"
+        "typical_marks": "1–2",
+        "key_feature": "Name only — no explanation required unless directed"
       },
       "outline": {
-        "typical_marks": "2\u20133",
-        "key_feature": "Main features \u2014 limited but accurate"
+        "typical_marks": "2–3",
+        "key_feature": "Main features — limited but accurate"
       },
       "describe": {
-        "typical_marks": "2\u20134",
+        "typical_marks": "2–4",
         "key_feature": "Characteristics, features, function"
       },
       "explain": {
-        "typical_marks": "3\u20136",
+        "typical_marks": "3–6",
         "key_feature": "Cause and effect with health/movement reasoning"
       },
       "analyse": {
-        "typical_marks": "4\u20136",
+        "typical_marks": "4–6",
         "key_feature": "Break into parts, show relationships and patterns"
       },
       "assess": {
-        "typical_marks": "4\u20138",
+        "typical_marks": "4–8",
         "key_feature": "Judge strengths and limitations with evidence"
       },
       "evaluate": {
-        "typical_marks": "5\u20138",
+        "typical_marks": "5–8",
         "key_feature": "Judge overall value or effectiveness with final judgement"
       },
       "justify": {
-        "typical_marks": "3\u20135",
+        "typical_marks": "3–5",
         "key_feature": "Give reasons supporting a conclusion"
       },
       "compare": {
-        "typical_marks": "3\u20136",
+        "typical_marks": "3–6",
         "key_feature": "Similarities AND differences"
       },
       "contrast": {
-        "typical_marks": "3\u20134",
+        "typical_marks": "3–4",
         "key_feature": "Differences only"
       },
       "discuss": {
-        "typical_marks": "4\u20138",
+        "typical_marks": "4–8",
         "key_feature": "Examine multiple aspects and come to a considered position"
       },
       "investigate": {
-        "typical_marks": "4\u20136",
+        "typical_marks": "4–6",
         "key_feature": "Examine with evidence and draw conclusions"
       },
       "recommend": {
-        "typical_marks": "3\u20136",
+        "typical_marks": "3–6",
         "key_feature": "Propose with justification linked to outcomes"
       }
     },
@@ -1053,7 +1073,7 @@
       ],
       "Band6_outline": [
         "State the main features or steps of the concept or strategy.",
-        "Keep detail focused and accurate \u2014 not exhaustive.",
+        "Keep detail focused and accurate — not exhaustive.",
         "Use correct health and movement science terminology.",
         "Structure clearly if multiple features are required."
       ],
@@ -1090,7 +1110,7 @@
       "Band6_investigate": [
         "State what is being investigated and why it matters.",
         "Present relevant evidence, data or examples from health or movement research.",
-        "Interpret the evidence \u2014 what does it show or mean?",
+        "Interpret the evidence — what does it show or mean?",
         "Draw a clear conclusion supported by the investigation."
       ]
     },
@@ -1108,7 +1128,7 @@
       "band6_checklist": [
         "Precise health and movement science terminology used consistently.",
         "Multiple linked concepts included and critically analysed.",
-        "Strategies evaluated \u2014 not just identified or described.",
+        "Strategies evaluated — not just identified or described.",
         "Relevant and accurate examples justify complex arguments.",
         "Response is coherent and logically structured.",
         "Judgement is explicit if required by the directive.",
@@ -1117,11 +1137,11 @@
     },
     "output_controls": {
       "target_band_selection_rule": {
-        "Band6": "Generate with extensive knowledge \u2014 comprehensively apply theoretical principles, critically analyse movement and performance factors, address interrelated roles of individuals, groups and governments, justify complex arguments with accurate examples.",
-        "Band5": "Generate with thorough understanding \u2014 identify strategies and discuss links between individual behaviour, social issues and community health. Detailed understanding of interrelated roles. Supported with relevant examples and current information.",
-        "Band4": "Generate with clear understanding of broad concepts \u2014 relate strategies to risk factors, sound understanding of roles, describe factors affecting performance, communicate clearly with some examples.",
-        "Band3": "Generate using basic definitions and facts \u2014 identify causes of sickness and death, note the need for government and community action, identify some factors influencing physical performance. Basic support for arguments.",
-        "Band2": "Generate brief descriptions \u2014 recall simple facts, recognise elementary cause and effect, outline factors affecting health, identify illness prevention measures. Limited support for arguments.",
+        "Band6": "Generate with extensive knowledge — comprehensively apply theoretical principles, critically analyse movement and performance factors, address interrelated roles of individuals, groups and governments, justify complex arguments with accurate examples.",
+        "Band5": "Generate with thorough understanding — identify strategies and discuss links between individual behaviour, social issues and community health. Detailed understanding of interrelated roles. Supported with relevant examples and current information.",
+        "Band4": "Generate with clear understanding of broad concepts — relate strategies to risk factors, sound understanding of roles, describe factors affecting performance, communicate clearly with some examples.",
+        "Band3": "Generate using basic definitions and facts — identify causes of sickness and death, note the need for government and community action, identify some factors influencing physical performance. Basic support for arguments.",
+        "Band2": "Generate brief descriptions — recall simple facts, recognise elementary cause and effect, outline factors affecting health, identify illness prevention measures. Limited support for arguments.",
         "Band1": "Do not intentionally generate unless explicitly requested as a wholly inadequate response example."
       },
       "forbidden_behaviours": [
