@@ -1,0 +1,570 @@
+{
+  "subjectCode": "MUS1",
+  "subjectName": "Music 1",
+  "subjectShortName": "Music 1",
+  "responseModes": [
+    "multiPage"
+  ],
+  "promptVariant": "aural",
+  "responsePagesMax": 4,
+  "dominantMode": "Aural analysis — concept-based listening + specific musical evidence + concept vocabulary",
+  "cleanRule": "Music 1 Aural = name the concept(s) the question targets (duration / pitch / dynamics and expressive techniques / tone colour / texture / structure) + describe SPECIFIC musical events heard in the excerpt (instruments, sections, changes over time) + use correct concept vocabulary (syncopation, register, crescendo, ostinato, layers, riff) + track HOW the concept changes across the excerpt, not just what is present",
+  "leaderboardTip": "HSC Music 1 Aural rewards SPECIFIC, well-supported observations — name the instruments, describe what they do, say WHERE in the excerpt it happens (opening / middle / end), and use concept vocabulary correctly. Generic statements like 'the tempo is fast and there are drums' earn 2–3 marks. Top responses track how the concept CHANGES across the excerpt and cover EVERY concept the question names (e.g. both pitch AND dynamics and expressive techniques).",
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=MUS1",
+  "hasMC": false,
+  "sheetTabCube": "MUS1 CUBE",
+  "sheetTabFull": "MUS1",
+  "accentColor": "#ffe082",
+  "kla": "CAPA",
+  "classCodes": [],
+  "aural": {
+    "comment": "Aural-variant plumbing. The marker CANNOT hear audio — ground truth for each excerpt comes from NESA marking-guideline notes stored server-side. Frontend must collect examYear + questionNumber and pass both to the Worker; Worker injects the matching excerptNotes + criteria into the Stage 2 prompt.",
+    "groundTruthSource": "kv",
+    "kvNamespace": "CUBE_AURAL_MUS1",
+    "kvKey": "guidelines",
+    "years": [2019],
+    "questionsPerYear": 4,
+    "requireQuestionSelect": true,
+    "audioPolicy": "Audio is never uploaded or hosted. Students play the excerpt themselves (class copy / own recording / original track) the prescribed number of times, then photograph the question page and their handwritten response as normal."
+  },
+  "subjectContext": {
+    "examStructure": {
+      "auralPaper": "30 marks, 1 hour — 30% of the HSC examination mark. FOUR questions, each based on a recorded excerpt played 5–6 times with timed pauses. Questions target one or more concepts of music. This is the only component assessed by this tool.",
+      "corePerformance": "10 marks practical — not assessed by this tool",
+      "electives": "Three electives (any combination of performance / composition / musicology), 20 marks each — not assessed by this tool",
+      "typicalQuestionShape": "Q1 is usually 6 marks on a single concept; Q2–Q4 are usually 8 marks, often pairing concepts (e.g. pitch AND dynamics and expressive techniques) or targeting unity and contrast. Each question names the work, artist/composer and excerpt length."
+    },
+    "auralUnderstandingLadder": {
+      "comment": "NESA aural criteria use a consistent quality ladder across all questions. The top of each question's range always requires well-supported observations and appropriate examples.",
+      "levels": [
+        "limited aural understanding — 1 mark",
+        "basic aural understanding — outlines some features, little supporting detail",
+        "competent aural understanding — addresses the concept(s) with observations and examples",
+        "developed aural understanding — addresses the concept(s) in some detail with appropriate observations and examples",
+        "highly developed aural understanding — detailed, well-supported observations and appropriate examples tracking the whole excerpt"
+      ]
+    },
+    "conceptsOfMusic": {
+      "duration": "The lengths of sounds and silences: beat, rhythm, metre (regular/irregular, groupings of 2,3,4,5,6,7...), tempo and its gradations, pulse and absence of pulse, rhythmic devices such as syncopation, augmentation and diminution",
+      "pitch": "The relative highness and lowness of sounds: melody, harmony, pitch direction and contour, pitch patterns, range and register, definite and indefinite pitch, scales and modes",
+      "dynamicsAndExpressiveTechniques": "Dynamics = the volume of sound including gradations (crescendo/decrescendo), contrast and accent. Expressive techniques = the musical detail that articulates a style or interpretation: articulation, phrasing, tempo gradations, stylistic indications",
+      "toneColour": "The aspect of sound that identifies the sound source or combination of sources: instrument and voice types, sound source material, method of sound production, acoustic vs electronic vs synthesised sounds, traditional and non-traditional uses of sound sources",
+      "texture": "The way voices and/or instruments are combined: the layers of sound and their function, the roles of instruments and/or voices, density of layers",
+      "structure": "Design or form in music — how music sounds the same and/or different: phrases, motifs, riffs/repetitive patterns, call and response, sections, traditional and non-traditional patterns, unity and contrast"
+    }
+  },
+  "syllabus": {
+    "concepts": {
+      "code": "C",
+      "title": "The Concepts of Music",
+      "description": "The content of the Music 1 syllabus is organised through six concepts of music, constantly revisited at increasing levels of sophistication. Aural questions require students to recognise, analyse and comment on the concepts as heard in unfamiliar excerpts.",
+      "topics": [
+        {
+          "label": "Duration",
+          "code": "C-DUR",
+          "description": "The lengths of sounds and silences in music, including beat, rhythm, metre, tempo, pulse rates and absence of pulse.",
+          "dotPoints": [
+            "Beat: the underlying pulse in music",
+            "Rhythm: patterns of long and short sounds and silences",
+            "Tempo: the speed of the beat, including changes (faster/slower)",
+            "Metre: grouping of beats — regular and irregular metres, groupings of 2, 3, 4, 5, 6, 7 and so on",
+            "Rhythmic devices: syncopation, augmentation, diminution",
+            "Methods of notating duration, traditional and graphic"
+          ],
+          "keywords": [
+            "duration",
+            "beat",
+            "rhythm",
+            "rhythmic",
+            "tempo",
+            "metre",
+            "meter",
+            "pulse",
+            "syncopation",
+            "syncopated",
+            "augmentation",
+            "diminution",
+            "time signature",
+            "irregular",
+            "ostinato",
+            "riff",
+            "semiquaver",
+            "quaver",
+            "crotchet",
+            "silence",
+            "rest",
+            "accent",
+            "unison"
+          ]
+        },
+        {
+          "label": "Pitch",
+          "code": "C-PIT",
+          "description": "The relative highness and lowness of sounds, including direction of pitch movement, melody, harmony, and definite and indefinite pitch.",
+          "dotPoints": [
+            "High/low: pitches can be comparatively high or low",
+            "Direction of pitch movement: up, down, same level; contour",
+            "Melody: a horizontal succession of pitches",
+            "Harmony: two or more pitches sounding together",
+            "Definite pitch (tuned sounds) and indefinite pitch (untuned sounds, e.g. speaking voice)",
+            "Pitch patterns, range and register; scales, modes and other ways of organising pitch"
+          ],
+          "keywords": [
+            "pitch",
+            "melody",
+            "melodic",
+            "harmony",
+            "harmonic",
+            "contour",
+            "register",
+            "range",
+            "high",
+            "low",
+            "ascending",
+            "descending",
+            "scale",
+            "scalic",
+            "mode",
+            "major",
+            "minor",
+            "interval",
+            "octave",
+            "pedal point",
+            "definite",
+            "indefinite",
+            "countermelody"
+          ]
+        },
+        {
+          "label": "Dynamics and expressive techniques",
+          "code": "C-DYN",
+          "description": "Dynamics refer to the volume of sound — relative softness and loudness, change of loudness (contrast), and emphasis on individual sounds (accent). Expressive techniques refer to the musical detail that articulates a style or interpretation of a style.",
+          "dotPoints": [
+            "A range of dynamics, including gradations (crescendo, decrescendo)",
+            "Contrast in loudness and sudden dynamic change",
+            "Accent — emphasis on individual sounds",
+            "Articulations (legato, staccato, pizzicato, accents)",
+            "Tempo including gradations; stylistic indications",
+            "Vocal and instrumental expressive devices (vibrato, whisper, spoken delivery, sustain)"
+          ],
+          "keywords": [
+            "dynamics",
+            "dynamic",
+            "expressive",
+            "crescendo",
+            "decrescendo",
+            "loud",
+            "soft",
+            "accent",
+            "articulation",
+            "legato",
+            "staccato",
+            "pizzicato",
+            "vibrato",
+            "sustained",
+            "whisper",
+            "climax",
+            "intensity",
+            "fade",
+            "decay",
+            "gradation",
+            "contrast"
+          ]
+        },
+        {
+          "label": "Tone colour",
+          "code": "C-TON",
+          "description": "The aspect of sound that allows the listener to identify the sound source or combinations of sound sources.",
+          "dotPoints": [
+            "Sound source material: wood, metal, string, skin, electronic, vocal",
+            "Method of sound production: blowing, hitting, plucking, scraping, shaking",
+            "Combinations of sound sources: single/multiple voices, accompanied or unaccompanied",
+            "Types of instruments and voices; combinations of voices and instruments",
+            "Acoustic, electronic and synthesised sounds",
+            "Traditional and non-traditional ways of using sound sources"
+          ],
+          "keywords": [
+            "tone colour",
+            "timbre",
+            "instrument",
+            "instrumentation",
+            "acoustic",
+            "electronic",
+            "synthesised",
+            "synthesizer",
+            "synth",
+            "sample",
+            "sampled",
+            "distortion",
+            "reverb",
+            "echo",
+            "effects",
+            "vocal",
+            "voice",
+            "strings",
+            "brass",
+            "woodwind",
+            "percussion",
+            "guitar",
+            "drums",
+            "bright",
+            "warm",
+            "harsh",
+            "mellow"
+          ]
+        },
+        {
+          "label": "Texture",
+          "code": "C-TEX",
+          "description": "Texture results from the way voices and/or instruments are combined in music.",
+          "dotPoints": [
+            "The layers of sound and their function (melody, accompaniment, bass, rhythmic layers)",
+            "The roles of instruments and/or voices",
+            "Density — thick/thin, layers added and removed over time"
+          ],
+          "keywords": [
+            "texture",
+            "layer",
+            "layers",
+            "layered",
+            "dense",
+            "density",
+            "thick",
+            "thin",
+            "accompaniment",
+            "melody and accompaniment",
+            "polyphonic",
+            "homophonic",
+            "monophonic",
+            "unison",
+            "doubling",
+            "role",
+            "foreground",
+            "background"
+          ]
+        },
+        {
+          "label": "Structure",
+          "code": "C-STR",
+          "description": "The idea of design or form in music — the ways in which music sounds the same (or similar) and/or different. Duration, dynamics, pitch and tone colour are combined for a particular purpose.",
+          "dotPoints": [
+            "Phrases and motifs",
+            "Riffs and repetitive patterns",
+            "Call and response / question and answer",
+            "Sections, interludes, verse/chorus and other traditional and non-traditional patterns",
+            "Unity and contrast — repetition and variation of material across the work",
+            "Structures used in single pieces and multi-movement structures"
+          ],
+          "keywords": [
+            "structure",
+            "form",
+            "section",
+            "sections",
+            "phrase",
+            "motif",
+            "riff",
+            "repetition",
+            "repeated",
+            "variation",
+            "unity",
+            "contrast",
+            "verse",
+            "chorus",
+            "interlude",
+            "introduction",
+            "call and response",
+            "binary",
+            "ternary",
+            "loop"
+          ]
+        }
+      ]
+    },
+    "contexts": {
+      "code": "T",
+      "title": "Topics (Contexts)",
+      "description": "Students study music in a variety of contexts (styles, periods and genres) through specific topics. HSC aural questions draw excerpts from across these contexts — students are not restricted to their own three studied topics in the aural paper.",
+      "topics": [
+        {
+          "label": "Topics available for study",
+          "code": "T-ALL",
+          "description": "An instrument and its repertoire; Australian music; Baroque music; Jazz; Medieval music; Methods of notating music; Music and religion; Music and the related arts; Music for large ensembles; Music for radio, film, television and multimedia; Music for small ensembles; Music in education; Music of a culture; Music of the 18th century; Music of the 19th century; Music of the 20th and 21st centuries; Popular music; Renaissance music; Rock music; Technology and its influence on music; Theatre music.",
+          "keywords": [
+            "Australian",
+            "jazz",
+            "baroque",
+            "popular",
+            "rock",
+            "technology",
+            "film",
+            "television",
+            "multimedia",
+            "theatre",
+            "ensemble",
+            "culture",
+            "improvisation"
+          ]
+        }
+      ]
+    },
+    "aural": {
+      "code": "A",
+      "title": "Aural (Learning Experience)",
+      "description": "Aural refers to the ability to discriminate between sounds and to make judgements about their use in a wide range of musical styles, periods and genres. Students develop skills to recognise, analyse and comment on the concepts of music, the use of technology, music of various cultures, and unity, contrast and style.",
+      "topics": [
+        {
+          "label": "Aural skills",
+          "code": "A-SKL",
+          "description": "Recognise, analyse and comment on the six concepts of music, the use of technology, music of various cultures, and unity, contrast and style, through wide listening across styles, periods and genres.",
+          "keywords": [
+            "aural",
+            "listening",
+            "excerpt",
+            "recognise",
+            "analyse",
+            "comment",
+            "unity",
+            "contrast",
+            "style",
+            "technology"
+          ]
+        }
+      ]
+    },
+    "outcomes": {
+      "code": "H",
+      "title": "HSC Outcomes assessed in the Aural paper",
+      "description": "The aural paper primarily assesses H4 and H6, with H7 and H8 engaged where questions target technology.",
+      "topics": [
+        {
+          "label": "H4",
+          "code": "H4",
+          "description": "Articulates an aural understanding of musical concepts and their relationships in a wide variety of musical styles.",
+          "keywords": ["aural understanding", "concepts", "relationships", "styles"]
+        },
+        {
+          "label": "H6",
+          "code": "H6",
+          "description": "Critically evaluates and discusses the use of the concepts of music in works representative of the topics studied and through wide listening.",
+          "keywords": ["critically evaluates", "discusses", "concepts", "wide listening"]
+        },
+        {
+          "label": "H7",
+          "code": "H7",
+          "description": "Understands the capabilities of performing media, incorporates technologies into composition and performance as appropriate to the topics studied.",
+          "keywords": ["performing media", "technologies"]
+        },
+        {
+          "label": "H8",
+          "code": "H8",
+          "description": "Identifies, recognises, experiments with, and discusses the use and effects of technology in music.",
+          "keywords": ["technology", "effects", "use of technology"]
+        }
+      ]
+    },
+    "marking_guidance": {
+      "aural_ground_truth_rules": [
+        "THE MARKER CANNOT HEAR THE EXCERPT. The injected excerptNotes (from NESA marking guidelines) are the ONLY verified account of what happens in the recording. Treat them as ground truth.",
+        "Student observations that MATCH or are consistent with the excerptNotes are verified — credit them according to their specificity and concept relevance.",
+        "Student observations that DIRECTLY CONTRADICT the excerptNotes (e.g. claims the metre is regular where the notes state irregular, or names an instrument the notes explicitly exclude) must not be credited, and the feedback should gently correct them using the notes.",
+        "Plausible observations NOT covered by the excerptNotes (the notes are indicative, not exhaustive) receive benefit of the doubt IF they are musically coherent, use concept vocabulary correctly, and do not conflict with the notes. Do not penalise a student for hearing something the guidelines did not list.",
+        "Never invent excerpt details beyond the excerptNotes when writing feedback or model responses. If a model answer is requested, build it ONLY from the excerptNotes."
+      ],
+      "aural_marking_steps": [
+        "Identify EVERY concept the question names (compound questions like 'pitch and dynamics and expressive techniques' or 'unity and contrast' require BOTH/ALL parts — a response covering only one caps in the middle of the range).",
+        "Check the directive verb tier (explain / explore / describe / analyse) and whether the response performs it or merely lists features.",
+        "Map each student observation to the excerptNotes: verified, plausible-uncontradicted, or contradicted.",
+        "Assess specificity: are instruments named, events located in time (opening / after the first section / at the climax / at the end), and changes tracked across the excerpt?",
+        "Assess concept vocabulary: correct use of terms like syncopation, register, crescendo, layers, ostinato, riff, unison.",
+        "Place the response on the aural understanding ladder (limited → basic → competent → developed → highly developed) using the question's NESA criteria bands, then assign the mark within the band."
+      ],
+      "quality_checks": {
+        "before_output": [
+          "Has EVERY concept named in the question been addressed?",
+          "Are observations specific (instrument + event + location in excerpt) rather than generic?",
+          "Is concept vocabulary used and used correctly?",
+          "Does the response track CHANGE across the excerpt, not just a static description of the opening?",
+          "Has the directive verb been answered (describe vs explain vs explore vs analyse)?",
+          "Have contradicted observations been identified and corrected against the excerptNotes?",
+          "Is the awarded mark justified against the question's specific NESA criteria band wording?"
+        ],
+        "band6_checklist": [
+          "Detailed, well-supported observations with appropriate examples across the WHOLE excerpt.",
+          "All named concepts covered in balance, with relationships between them noted where relevant.",
+          "Accurate, fluent concept vocabulary.",
+          "Events located in time and changes tracked (what changes, where, and its musical effect).",
+          "Directive verb fully performed — analysis/explanation, not description, where required.",
+          "Nothing contradicting the verified account of the excerpt."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Highly developed aural understanding: detailed, well-supported observations and appropriate examples covering all named concepts across the whole excerpt, with accurate vocabulary and change tracked over time.",
+          "Band5": "Developed aural understanding: addresses all named concepts in some detail with appropriate observations and examples; mostly specific; minor gaps in coverage or vocabulary.",
+          "Band4": "Competent aural understanding: addresses the named concept(s) with observations and examples, but coverage is uneven, some observations generic or not located in time.",
+          "Band3": "Basic aural understanding: outlines some features of the concept(s); largely generic statements; limited vocabulary; may cover only one part of a compound question.",
+          "Band2": "Limited-to-basic: few relevant features identified; vocabulary absent or misused; little connection to the excerpt.",
+          "Band1": "Do not generate unless explicitly requested as a wholly inadequate response."
+        },
+        "forbidden_behaviours": [
+          "Do not credit or generate observations that contradict the excerptNotes.",
+          "Do not invent excerpt details not present in the excerptNotes.",
+          "Do not award top-range marks to responses that ignore one part of a compound question.",
+          "Do not accept concept-vocabulary name-dropping without connection to specific events in the excerpt.",
+          "Do not treat a description of the opening bars alone as coverage of the whole excerpt."
+        ]
+      }
+    }
+  },
+  "bandRules": {
+    "comment": "From the NESA Music 1 course report band descriptors. These are COURSE-WIDE (they span aural, performance and composition). Use them to frame feedback language; the mark itself comes from the question-specific NESA criteria bands injected with the excerptNotes.",
+    "Band6": {
+      "descriptor": "Displays extensive knowledge and skills about the concepts of music and of music as an art form in a variety of cultural and historical contexts. Displays extensive understanding of the concepts of music in a diverse range of aural experiences. Communicates a comprehensive understanding of the concepts of music and makes extensive musical observations on the chosen topic.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Extensive knowledge of the concepts of music across cultural and historical contexts",
+        "Extensive understanding of the concepts in a diverse range of aural experiences",
+        "Comprehensive communication with extensive, well-supported musical observations"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Displays detailed knowledge and skills about the concepts of music and of music as an art form in a variety of cultural and historical contexts. Displays a detailed understanding of the concepts of music in a diverse range of aural experiences. Communicates a thorough understanding of the concepts of music and makes detailed musical observations on the chosen topic.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Detailed knowledge and understanding of the concepts of music",
+        "Detailed understanding across a diverse range of aural experiences",
+        "Thorough communication with detailed musical observations"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Displays sound knowledge and skills about the concepts of music and of music as an art form in a variety of cultural and historical contexts. Displays a clear understanding of the concepts of music in a diverse range of aural experiences. Communicates a clear understanding of the concepts of music and makes sound musical observations.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Sound knowledge of the concepts of music",
+        "Clear understanding across aural experiences",
+        "Clear communication with sound musical observations"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Displays basic knowledge and skills about the concepts of music and of music as an art form in a variety of cultural and historical contexts. Displays a basic understanding of the concepts of music across a range of aural experiences. Communicates a basic understanding of the concepts of music and makes musical observations.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Basic knowledge of the concepts of music",
+        "Basic understanding across aural experiences",
+        "Basic communication with simple musical observations"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Displays limited knowledge and skills about the concepts of music and of music as an art form in a variety of cultural and historical contexts. Displays a simplistic understanding of the concepts of music in aural experiences. Communicates a limited understanding of the concepts of music and simple musical observations.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Limited knowledge of the concepts of music",
+        "Simplistic understanding in aural experiences",
+        "Limited communication with simple observations"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": [
+        "Minimum standard not demonstrated"
+      ]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Explain/describe how a single concept (e.g. duration) is used in the excerpt",
+        "Explore/discuss the use of TWO paired concepts (e.g. pitch AND dynamics and expressive techniques)",
+        "Describe how the use of technology has affected named concepts (e.g. tone colour and texture)",
+        "Analyse the use of unity and contrast in the work",
+        "Compare the use of a concept across two excerpts (appears in some years)"
+      ],
+      "music1_specific_tips": [
+        "ALWAYS name the sound source — 'the guitar and bass play in rhythmic unison', not 'the instruments play together'.",
+        "ALWAYS locate observations in time — opening, after the first section, at the climax, at the end. Section-by-section responses read as developed aural understanding.",
+        "Track CHANGE — the top criteria reward hearing how the concept develops across the excerpt (metre changes, layers added, dynamics building), not a snapshot of the first ten seconds.",
+        "Use concept vocabulary precisely — syncopation, irregular metre, register, crescendo, ostinato, riff, layers, unison, legato/staccato.",
+        "Answer EVERY part of compound questions — 'pitch and dynamics and expressive techniques' is three things; 'unity and contrast' is two.",
+        "Musical effect earns marks — say what the feature DOES ('the decrescendo relieves the intensity of the climax'), not just that it exists."
+      ],
+      "common_errors": [
+        "Generic statements with no sound source or location — 'the music gets louder' earns basic-range marks.",
+        "Covering only one half of a compound question — caps the response mid-range regardless of quality.",
+        "Describing only the opening of the excerpt.",
+        "Name-dropping vocabulary without connecting it to events actually heard.",
+        "Writing about lyrics/meaning instead of the concepts of music.",
+        "Confusing concepts — describing dynamics when the question asks for tone colour."
+      ]
+    }
+  },
+  "directiveTiers": {
+    "define": { "tier": 1, "modality": "ignore" },
+    "identify": { "tier": 1, "modality": "ignore" },
+    "list": { "tier": 1, "modality": "ignore" },
+    "name": { "tier": 1, "modality": "ignore" },
+    "outline": { "tier": 2, "modality": "ignore" },
+    "state": { "tier": 1, "modality": "ignore" },
+    "describe": { "tier": 2, "modality": "ignore" },
+    "distinguish": { "tier": 2, "modality": "ignore" },
+    "compare": { "tier": 2, "modality": "ignore" },
+    "contrast": { "tier": 2, "modality": "ignore" },
+    "explain": { "tier": 3, "modality": "ignore" },
+    "explore": { "tier": 3, "modality": "ignore" },
+    "examine": { "tier": 3, "modality": "ignore" },
+    "analyse": { "tier": 3, "modality": "ignore" },
+    "discuss": { "tier": 3, "modality": "optional" },
+    "investigate": { "tier": 4, "modality": "required" },
+    "interpret": { "tier": 3, "modality": "optional" },
+    "apply": { "tier": 3, "modality": "ignore" },
+    "synthesise": { "tier": 3, "modality": "optional" },
+    "assess": { "tier": 4, "modality": "required" },
+    "evaluate": { "tier": 4, "modality": "required" },
+    "critically analyse": { "tier": 4, "modality": "required" },
+    "justify": { "tier": 4, "modality": "ignore" },
+    "account for": { "tier": 3, "modality": "ignore" }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this enables",
+      "leading to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet",
+      "while",
+      "whereas",
+      "through which",
+      "by which",
+      "in doing so"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas",
+      "rather than",
+      "unlike"
+    ]
+  },
+  "auralNote": "Music 1 Aural responses are assessed on the quality of aural observations — specific, located-in-time musical evidence expressed in correct concept vocabulary. CUBE in Music 1 should identify: the directive verb (Circle), the concept(s) of music named in the question — ALL of them in compound questions (Underline), and the excerpt constraint — work title, artist/composer, excerpt length (Box). Planning arrows should suggest a section-by-section listening plan (opening / middle / end), which concept features to listen for, and a reminder to cover every named concept.",
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
