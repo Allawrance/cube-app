@@ -224,6 +224,14 @@
       ]
     },
     {
+      "code": "MUS1",
+      "name": "Music 1",
+      "emoji": "🎵",
+      "accent": "#ffe082",
+      "kla": "CAPA",
+      "classes": []
+    },
+    {
       "code": "Hosp",
       "name": "Hospitality (Kitchen Operations and Cookery)",
       "emoji": "🍽️",
