@@ -276,7 +276,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v1.7 · 2026-07-07";
+    window.CUBE_BUILD = "v1.8 · 2026-07-08";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -286,7 +286,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · universalMultiPage");
+console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · auralVariant");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -314,7 +314,7 @@ async function _f674dd() {
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
     // Map short URL codes to config filenames
-    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal", VISART:"config-VisArt", VA:"config-VisArt", ANCH:"config-AncH", ANCHIST:"config-AncH", CHEM:"config-Chem", GEO:"config-Geo", INVSCI:"config-InvSci", SOR2:"config-SOR2", SOR:"config-SOR2", HOSP:"config-Hosp" };
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal", VISART:"config-VisArt", VA:"config-VisArt", ANCH:"config-AncH", ANCHIST:"config-AncH", CHEM:"config-Chem", GEO:"config-Geo", INVSCI:"config-InvSci", SOR2:"config-SOR2", SOR:"config-SOR2", HOSP:"config-Hosp", MUS1:"config-Music1", MUSIC1:"config-Music1" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
     const res = await fetch(configFile);
@@ -1662,6 +1662,7 @@ function _ac863f() {
   const [pageImg, setPageImg] = useState(null);
   const [pageB64, setPageB64] = useState(null);
   const [questionNumber, setQuestionNumber] = useState("");
+  const [examYear, setExamYear] = useState(""); // auralVariant-v1.0: which HSC paper the excerpt question comes from
   const [questionsOnPage, setQuestionsOnPage] = useState(null); // null=not scanned yet
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -1678,7 +1679,12 @@ function _ac863f() {
   // (standard vs Visual Arts) are independent axes. Legacy configs that only
   // declare markingMode:"visualArts" derive multiPage + VA prompts.
   const legacyVAConfig = config.markingMode === "visualArts";
-  const vaPrompts = config.promptVariant ? config.promptVariant === "visualArts" : legacyVAConfig;
+  // auralVariant-v1.0: pass the config's promptVariant through VERBATIM. The old
+  // binary (vaPrompts ? "visualArts" : "standard") silently flattened "aural" to
+  // "standard", which would mark Music with no excerpt ground truth at all.
+  const pVariant = config.promptVariant || (legacyVAConfig ? "visualArts" : "standard");
+  const vaPrompts = pVariant === "visualArts";
+  const auralPrompts = pVariant === "aural";
   // universalMultiPage-v1.5
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
@@ -1868,6 +1874,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     const nameParts = studentName.trim().split(/\s+/).filter(Boolean);
     if (nameParts.length < 2) { setError("Please enter your first name and the first initial of your surname before analysing."); return; }
     if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
+    if (auralPrompts && !examYear) { setError("Please select the exam year first."); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
     if (vaPrompts && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
     abortRef.current = new AbortController();
@@ -1885,7 +1892,8 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
           subject: config.subjectCode,
           markingMode: config.markingMode,
           responseMode: responseMode,
-          promptVariant: vaPrompts ? "visualArts" : "standard",
+          promptVariant: pVariant,
+          examYear: examYear,
           syllabus: config.syllabus,
           messages:[{ role:"user", content: vaPrompts ? [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
@@ -2015,6 +2023,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           stage:       "modelAnswer",
           subject:     config.subjectCode,
           subjectName: config.subjectName,
+          promptVariant: pVariant,
+          examYear:      examYear,
+          questionNumber: _d0c6fa(questionNumber),
           bandRules:   config.bandRules,
           questionText: _d0c6fa(questionText),
           dirs:        dirs2,
@@ -2029,7 +2040,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     setModelLoading(false);
   };
 
-  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setResponseImgs([]); setResponseB64s([]); setQuestionNumber(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
+  const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setResponseImgs([]); setResponseB64s([]); setQuestionNumber(""); setExamYear(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); };
 
   const triggerPrint = () => {
     // window.print() is blocked inside Google Sites iframes.
@@ -2166,7 +2177,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           subject:         config.subjectCode,
           markingMode:     config.markingMode,
           responseMode:    responseMode,
-          promptVariant:   vaPrompts ? "visualArts" : "standard",
+          promptVariant:   pVariant,
+          examYear:        examYear,
           questionText:    _d0c6fa(c1.questionText),
           questionNumber:  _d0c6fa(questionNumber),
           primaryDir:      primaryDir,
@@ -2534,8 +2546,32 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
 
             {pageImg&&<button onClick={cancelAndReset} style={{width:"100%",padding:"10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"10px",color:"#e8eaf0",fontSize:"13px",cursor:"pointer",marginBottom:"12px",fontFamily:"sans-serif"}}>✕ Choose a different photo</button>}
 
+            {/* Aural year + question selector (auralVariant-v1.0) — fixed lists from config.aural, independent of the page scan */}
+            {auralPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
+              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"4px",letterSpacing:"0.5px"}}>Which exam year is this question from?</div>
+              <div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginBottom:"10px"}}>Only papers with verified NESA excerpt notes can be marked.</div>
+              <div style={{display:"flex",gap:"10px",flexWrap:"wrap",marginBottom:"16px"}}>
+                {(config.aural?.years||[]).map(y=>{
+                  const label = String(y);
+                  return (
+                  <button key={label} onClick={()=>setExamYear(label)} style={{minWidth:"76px",height:"52px",padding:"0 16px",borderRadius:"10px",border:`2px solid ${examYear===label?gold:"rgba(255,255,255,0.12)"}`,background:examYear===label?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:examYear===label?gold:"#7a9ab8",fontSize:"18px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",whiteSpace:"nowrap",boxShadow:examYear===label?`0 0 0 2px ${gold}`:"none"}}>
+                    {label}
+                  </button>
+                  );
+                })}
+              </div>
+              <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"10px",letterSpacing:"0.5px"}}>Which question did you answer? (one question at a time)</div>
+              <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
+                {Array.from({length:config.aural?.questionsPerYear||4},(_,i)=>String(i+1)).map(label=>(
+                  <button key={label} onClick={()=>setQuestionNumber(label)} style={{minWidth:"52px",height:"52px",padding:"0 16px",borderRadius:"10px",border:`2px solid ${questionNumber===label?gold:"rgba(255,255,255,0.12)"}`,background:questionNumber===label?`rgba(201,168,76,0.25)`:"rgba(255,255,255,0.04)",color:questionNumber===label?gold:"#7a9ab8",fontSize:"22px",fontWeight:900,cursor:"pointer",fontFamily:"sans-serif",transition:"all 0.15s",whiteSpace:"nowrap",boxShadow:questionNumber===label?`0 0 0 2px ${gold}`:"none"}}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>}
+
             {/* Question number selector */}
-            {!vaPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
+            {!vaPrompts&&!auralPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
               <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"4px",letterSpacing:"0.5px"}}>Which question do you want analysed? (one question at a time)</div>
               <div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginBottom:"10px"}}>If a question has parts, pick the exact part — e.g. <strong>23(b)</strong>, not just (b).</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
