@@ -276,7 +276,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v1.9 · 2026-07-08";
+    window.CUBE_BUILD = "v2.0 · 2026-07-09";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -286,7 +286,7 @@
   </script>
   <script type="text/babel">
 const { useState, useRef, useEffect } = React;
-console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · stage1AllPages");
+console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · rotateFix");
 
 // ─── CONFIG — loaded from config.json at startup ──────────────────────────────
 // config.json lives in the same directory as index.html (one per subject repo).
@@ -354,95 +354,53 @@ const normaliseMissions = (a) => {
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
-// Read EXIF orientation tag from raw JPEG buffer (handles all 8 values)
-const _8ea27a = (buffer) => {
-  try {
-    const view = new DataView(buffer);
-    if (view.getUint16(0, false) !== 0xFFD8) return 1; // not a JPEG
-    let offset = 2;
-    while (offset < view.byteLength - 2) {
-      const marker = view.getUint16(offset, false);
-      offset += 2;
-      if (marker === 0xFFE1) { // APP1 block — contains EXIF
-        const exifStart = offset + 2;
-        if (view.getUint32(exifStart, false) !== 0x45786966) return 1; // no "Exif" header
-        const little = view.getUint16(exifStart + 6, false) === 0x4949;
-        const ifdOffset = view.getUint32(exifStart + 10, little) + exifStart + 6;
-        const entries = view.getUint16(ifdOffset, little);
-        for (let i = 0; i < entries; i++) {
-          const tag = view.getUint16(ifdOffset + 2 + i * 12, little);
-          if (tag === 0x0112) { // Orientation tag
-            return view.getUint16(ifdOffset + 2 + i * 12 + 8, little);
-          }
-        }
-        return 1;
-      } else if ((marker & 0xFF00) !== 0xFF00) break;
-      else offset += view.getUint16(offset, false);
-    }
-  } catch (e) { /* ignore parse errors — treat as normal orientation */ }
-  return 1;
-};
-
-// Apply canvas transform for EXIF orientation before drawing image
-// Orientations 5-8 are rotated 90/270° so canvas width/height must be swapped
-const _5ab340 = (canvas, ctx, orientation, w, h) => {
-  switch (orientation) {
-    case 2: ctx.transform(-1, 0, 0,  1, w, 0); break;           // flip horizontal
-    case 3: ctx.transform(-1, 0, 0, -1, w, h); break;           // 180°
-    case 4: ctx.transform( 1, 0, 0, -1, 0, h); break;           // flip vertical
-    case 5: ctx.transform( 0, 1, 1,  0, 0, 0); break;           // transpose
-    case 6: ctx.transform( 0, 1,-1,  0, h, 0); break;           // 90° clockwise
-    case 7: ctx.transform( 0,-1,-1,  0, h, w); break;           // transverse
-    case 8: ctx.transform( 0,-1, 1,  0, 0, w); break;           // 90° counter-clockwise
-    default: break;                                               // 1 = normal, no transform
-  }
-};
-
-const toB64 = f => new Promise((res, rej) => {
-  // Read file as ArrayBuffer first to extract EXIF orientation, then as image for drawing
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const buffer = e.target.result;
-    const orientation = _8ea27a(buffer);
-    const rotated = orientation >= 5; // orientations 5-8 swap width/height
-
-    const blob = new Blob([buffer], { type: f.type });
-    const objectUrl = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      const MAX_W = 1600;
-      // Raw pixel dimensions (before any rotation correction)
-      const rawW = img.width;
-      const rawH = img.height;
-      // After correction, the "display" dimensions may be swapped
-      const dispW = rotated ? rawH : rawW;
-      const dispH = rotated ? rawW : rawH;
-      const scale = dispW > MAX_W ? MAX_W / dispW : 1;
-      const outW = Math.round(dispW * scale);
-      const outH = Math.round(dispH * scale);
-
-      const canvas = document.createElement("canvas");
-      canvas.width = outW;
-      canvas.height = outH;
-      const ctx = canvas.getContext("2d");
-      ctx.save();
-      _5ab340(canvas, ctx, orientation, outW, outH);
-      // Draw scaled to output size (ctx transform handles rotation)
-      if (rotated) {
-        ctx.drawImage(img, 0, 0, rawW * scale, rawH * scale);
-      } else {
-        ctx.drawImage(img, 0, 0, outW, outH);
-      }
-      ctx.restore();
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.90);
-      res(dataUrl.split(",")[1]);
-    };
-    img.onerror = rej;
-    img.src = objectUrl;
+// ─── IMAGE INGEST — orientation-safe JPEG re-encode ─────────────────────────
+// rotateFix-v2.0: the old pipeline parsed the EXIF Orientation tag manually and
+// applied its own canvas rotation. Modern browsers ALREADY auto-apply EXIF
+// orientation when an image element is decoded (image-orientation: from-image
+// is the default), so phone photos were rotated TWICE and reached the model
+// sideways — while the object-URL preview looked upright to the student.
+// DO NOT reintroduce manual EXIF transforms here.
+// _c90809: decode via <img> (browser orients it), downscale, re-encode JPEG.
+// The returned dataUrl is used as the preview, so the student sees EXACTLY the
+// pixels the model receives; the ↻ button handles any page with no EXIF tag
+// (screenshots, some PDF exports) that arrives genuinely sideways.
+const _c90809 = (f) => new Promise((res, rej) => {
+  const objectUrl = URL.createObjectURL(f);
+  const img = new Image();
+  img.onload = () => {
+    URL.revokeObjectURL(objectUrl);
+    const MAX_W = 1600;
+    const scale = img.width > MAX_W ? MAX_W / img.width : 1;
+    const outW = Math.round(img.width * scale);
+    const outH = Math.round(img.height * scale);
+    const canvas = document.createElement("canvas");
+    canvas.width = outW;
+    canvas.height = outH;
+    canvas.getContext("2d").drawImage(img, 0, 0, outW, outH);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.90);
+    res({ b64: dataUrl.split(",")[1], dataUrl });
   };
-  reader.onerror = rej;
-  reader.readAsArrayBuffer(f);
+  img.onerror = () => { URL.revokeObjectURL(objectUrl); rej(new Error("Could not read that image.")); };
+  img.src = objectUrl;
+});
+
+// Rotate an already-ingested page 90° clockwise. Four taps = full circle.
+const _8c2e35 = (b64) => new Promise((res, rej) => {
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.height;   // dimensions swap on a 90° turn
+    canvas.height = img.width;
+    const ctx = canvas.getContext("2d");
+    ctx.translate(canvas.width, 0);
+    ctx.rotate(Math.PI / 2);
+    ctx.drawImage(img, 0, 0);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.90);
+    res({ b64: dataUrl.split(",")[1], dataUrl });
+  };
+  img.onerror = () => rej(new Error("Could not rotate that page."));
+  img.src = "data:image/jpeg;base64," + b64;
 });
 
 const _d0c6fa = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
@@ -1478,7 +1436,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
             {missionsPr.length>0 && (
               <div style={{background:"#fff8f0",border:"2px solid #e65100",borderLeft:"5px solid #e65100",borderRadius:"8px",padding:"14px 16px"}}>
                 <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
-                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next Steps`}
+                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next _f3a294`}
                 </div>
                 {missionsPr.map((ms,idx)=>(
                   <div key={idx} style={{marginBottom:idx<missionsPr.length-1?"14px":0,paddingLeft:missionsPr.length>1?"6px":0,borderLeft:missionsPr.length>1?"3px solid #f0a070":"none"}}>
@@ -1747,14 +1705,21 @@ function _ac863f() {
     const p = studentName.trim().split(/\s+/).filter(Boolean);
     const nameValid = p.length >= 2 && p[p.length-1].length === 1;
     if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
-    const url = URL.createObjectURL(f);
-    const b64 = await toB64(f);
-    setPageImg(url);
-    setPageB64(b64);
+    let ingested;
+    try { ingested = await _c90809(f); }
+    catch(err) { setError("Could not read that image — try another photo."); return; }
+    setPageImg(ingested.dataUrl); // preview shows EXACTLY what the model receives (rotateFix-v2.0)
+    setPageB64(ingested.b64);
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
     if (vaPrompts) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
+    await scanPage1Questions(ingested.b64);
+  };
+
+  // Scan page 1 for selectable question labels (factored out so the ↻ rotate
+  // button can re-scan after correcting a sideways page — rotateFix-v2.0)
+  const scanPage1Questions = async (b64) => {
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
@@ -1808,10 +1773,11 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     } else { setError("Please add an image or PDF file."); return; }
     const room = Math.max(0, respPagesMax - responseB64s.length);
     for (const file of imgFiles.slice(0, room)) {
-      const url = URL.createObjectURL(file);
-      const b64 = await toB64(file);
-      setResponseImgs(prev => prev.length>=respPagesMax ? prev : [...prev, url]);
-      setResponseB64s(prev => prev.length>=respPagesMax ? prev : [...prev, b64]);
+      let ingested;
+      try { ingested = await _c90809(file); }
+      catch(err) { setError("Could not read one of those images — try re-adding it."); continue; }
+      setResponseImgs(prev => prev.length>=respPagesMax ? prev : [...prev, ingested.dataUrl]); // preview = model pixels (rotateFix-v2.0)
+      setResponseB64s(prev => prev.length>=respPagesMax ? prev : [...prev, ingested.b64]);
     }
     const overflow = imgFiles.length - room;
     if (overflow > 0) setError("That PDF has " + imgFiles.length + " pages, but only " + respPagesMax + " response pages are allowed \u2014 the first " + room + " were added.");
@@ -1827,6 +1793,26 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     const sw = (arr) => { const a=[...arr]; const t=a[i]; a[i]=a[j]; a[j]=t; return a; };
     setResponseImgs(prev => sw(prev));
     setResponseB64s(prev => sw(prev));
+  };
+  // ── rotateFix-v2.0: ↻ rotates a page 90° per tap — the fallback for images
+  // with no EXIF tag (screenshots, some PDF exports) that arrive sideways ──
+  const rotatePage1 = async () => {
+    if (!pageB64 || loading) return;
+    try {
+      const { b64, dataUrl } = await _8c2e35(pageB64);
+      setPageImg(dataUrl);
+      setPageB64(b64);
+      // Page 1 was scanned for question labels at upload — a sideways scan is
+      // unreliable, so re-scan with the corrected orientation (VA never scans).
+      if (!vaPrompts) { setQuestionNumber(""); setQuestionsOnPage(null); await scanPage1Questions(b64); }
+    } catch(err) { setError("Could not rotate that page — try re-uploading it."); }
+  };
+  const rotateResponsePage = async (i) => {
+    try {
+      const { b64, dataUrl } = await _8c2e35(responseB64s[i]);
+      setResponseImgs(prev => prev.map((u,j)=>j===i?dataUrl:u));
+      setResponseB64s(prev => prev.map((b,j)=>j===i?b64:b));
+    } catch(err) { setError("Could not rotate that page — try re-uploading it."); }
   };
   const handleRespInput = (e) => {
     const files = Array.from(e.target.files||[]);
@@ -2400,19 +2386,22 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               <div style={{fontSize:mobileView?"14px":"11px",fontWeight:mobileView?800:400,color:mobileView?"#f0e6c8":"#e8eaf0",fontFamily:"sans-serif"}}>
                 <span className="hide-mobile">{config.subjectName}</span>
                 <span className="show-mobile">{config.subjectShortName||config.subjectCode}</span>
+                {/* classInHeader-v2.0: echo the class picked on the landing page so students can spot a wrong pick before marking is logged */}
+                {config.studentClass && <span style={{color:gold,fontWeight:800}}>{" · "+config.studentClass}</span>}
               </div>
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
             {/* ── MC Coach button — shown only for subjects with an MC section (config.hasMC) ── */}
-            {config.hasMC !== false && !(mobileView && (phase===2 || pageImg)) && (
+            {/* Hidden on ALL layouts once a marking run starts (page 1 loaded or results showing) */}
+            {config.hasMC !== false && phase!==2 && !pageImg && (
             <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
               title="Multiple Choice Coach"
-              style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(255,255,255,0.06)",border:"1.5px solid rgba(255,255,255,0.15)",borderRadius:"10px",color:"#c8d8e8",fontSize:"13px",fontWeight:700,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
-              onMouseOver={e=>{e.currentTarget.style.borderColor="rgba(201,168,76,0.6)";e.currentTarget.style.color="#c9a84c";}}
-              onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.15)";e.currentTarget.style.color="#c8d8e8";}}>
+              style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"10px",color:"#a89fff",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
+              onMouseOver={e=>{e.currentTarget.style.borderColor="rgba(108,99,255,0.95)";e.currentTarget.style.color="#c9c2ff";e.currentTarget.style.background="rgba(108,99,255,0.22)";}}
+              onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(108,99,255,0.5)";e.currentTarget.style.color="#a89fff";e.currentTarget.style.background="rgba(108,99,255,0.14)";}}>
               <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="MC" style={{width:"22px",height:"22px",borderRadius:"4px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
-              <span className="hide-mobile">MC Coach</span>
+              <span className="hide-mobile">🎯 Multiple Choice</span>
             </a>
             )}
             {streak>0&&<div style={{fontFamily:"sans-serif",fontSize:mobileView?"14px":"18px",fontWeight:900,color:"#ff6d00",background:"rgba(255,109,0,0.15)",border:"1.5px solid rgba(255,109,0,0.4)",borderRadius:"24px",padding:mobileView?"4px 10px":"6px 18px",display:"flex",alignItems:"center",gap:mobileView?"4px":"6px"}}>🔥 <span>{streak}</span><span style={{fontSize:mobileView?"11px":"14px"}}>day{streak!==1?"s":""}</span></div>}
@@ -2626,7 +2615,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 {(responseImgs.length>0||(!vaPrompts&&pageImg))&&<>
                   <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
                     <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>{vaPrompts?"PAGE 1 = FIRST PAGE":"CHECK YOUR PAGES ARE IN ORDER"}</span>
-                    <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder.</span>
+                    <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder — and ↻ to fix a page that shows sideways.</span>
                   </div>
                   <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
                   {!vaPrompts&&pageImg&&
@@ -2635,6 +2624,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                         <img src={pageImg} alt="Page 1 — question page" style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:"3px solid "+gold}}/>
                         <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:gold,color:"#1a1a2e",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{"★ PAGE 1"+(questionNumber?" — Q"+questionNumber:"")}</div>
                       </div>
+                      <button onClick={rotatePage1} title="Rotate this page 90° — tap until it is upright" style={{width:"32px",height:"28px",borderRadius:"6px",border:"1px solid rgba(201,168,76,0.5)",background:"rgba(201,168,76,0.18)",color:gold,fontSize:"15px",fontWeight:900,cursor:"pointer",lineHeight:"1",padding:0}}>↻</button>
                       <div style={{fontSize:"10px",color:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:"1.3",maxWidth:"84px"}}>question page</div>
                     </div>}
                   {responseImgs.map((u,i)=>{
@@ -2651,6 +2641,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                       </div>
                       <div style={{display:"flex",alignItems:"center",gap:"4px"}}>
                         <button onClick={()=>moveResponsePage(i,-1)} disabled={first} title="Move earlier" style={arrowStyle(first)}>◀</button>
+                        <button onClick={()=>rotateResponsePage(i)} title="Rotate this page 90° — tap until it is upright" style={arrowStyle(false)}>↻</button>
                         <button onClick={()=>moveResponsePage(i,1)} disabled={last} title="Move later" style={arrowStyle(last)}>▶</button>
                       </div>
                     </div>
