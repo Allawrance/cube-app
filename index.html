@@ -75,15 +75,16 @@ nav {
 }
 .nav-cta:hover { background: var(--gold-light); }
 
-/* ── HERO ── */
+/* ── HERO (compact) ──
+   v7 2026-07-10: the large marking-demo panel (hero-visual / steps / cube-card / xp)
+   that previously filled the hero's right column was REMOVED BY DESIGN — the hero is
+   now a compact intro with a "Continue where you left off" card. Do not reintroduce. */
 .hero {
-  min-height: 0;
-  background: 
+  background:
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 90% 80%, rgba(108,99,255,0.08) 0%, transparent 50%),
     var(--navy);
-  display: flex; align-items: center;
-  padding: 20px 5% 24px;
+  padding: 28px 5% 22px;
   position: relative; overflow: hidden;
 }
 .hero::before {
@@ -92,79 +93,42 @@ nav {
   background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
 }
-.hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3);
-  border-radius: 20px; padding: 4px 14px; margin-bottom: 20px;
-  font-size: 12px; color: var(--gold); font-weight: 500; letter-spacing: 0.5px;
-}
+.hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: center; position: relative; }
 .hero h1 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800; line-height: 1.1;
-  color: var(--text); margin-bottom: 20px;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 800; line-height: 1.15;
+  color: var(--text); margin-bottom: 10px;
 }
 .hero h1 span { color: var(--gold); }
-.hero-desc { font-size: 16px; color: #c8daea; line-height: 1.7; margin-bottom: 32px; max-width: 480px; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-primary {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--navy); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700;
-  font-size: 14px; padding: 12px 24px; border-radius: 10px;
-  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
-}
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
-.btn-secondary {
-  background: transparent; color: var(--text);
-  border: 1.5px solid rgba(255,255,255,0.15);
-  font-size: 14px; padding: 12px 24px; border-radius: 10px;
-  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-  transition: border-color 0.2s;
-}
-.btn-secondary:hover { border-color: rgba(255,255,255,0.3); }
+.hero-desc { font-size: 14px; color: #c8daea; line-height: 1.65; max-width: 460px; }
 
-/* Hero visual */
-.hero-visual {
-  background: linear-gradient(135deg, #0e1e34, #141e30);
-  border: 1px solid rgba(201,168,76,0.2);
-  border-radius: 16px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  position: relative;
+/* Continue / get-started card (hero right) */
+.hero-side { display: flex; justify-content: flex-end; }
+.cw-card {
+  width: 100%; max-width: 380px;
+  background: linear-gradient(135deg, #0e1e34, #101a2c);
+  border: 1px solid rgba(201,168,76,0.35); border-radius: 16px;
+  padding: 18px 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.35);
 }
-.hv-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-.hv-badge { background: var(--gold); color: var(--navy); font-family: 'Syne',sans-serif; font-weight: 800; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
-.hv-title { font-size: 13px; font-weight: 600; color: var(--text); }
-.hv-sub { font-size: 10px; color: var(--text-dim); }
-.steps-row { display: flex; align-items: center; gap: 0; margin-bottom: 20px; }
-.step-dot {
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Syne',sans-serif; font-weight: 800; font-size: 12px;
-  flex-shrink: 0; position: relative;
+.cw-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.cw-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.cw-emoji { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(201,168,76,0.5); background: rgba(201,168,76,0.08); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cw-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px; line-height: 1.25; color: var(--text); }
+.cw-class { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.cw-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 12px; font-size: 11px; color: var(--text-dim); }
+.cw-resume {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 800; font-size: 14px;
+  padding: 11px 0; border-radius: 10px; text-decoration: none;
+  box-shadow: 0 4px 18px rgba(201,168,76,0.3); transition: transform .2s, box-shadow .2s;
+  border: none; cursor: pointer; box-sizing: border-box;
 }
-.step-dot.done { background: #2e7d32; color: white; }
-.step-dot.done::after { content: '✓'; position: absolute; top: -2px; right: -2px; background: #69f0ae; color: #003300; width: 12px; height: 12px; border-radius: 50%; font-size: 7px; display: flex; align-items: center; justify-content: center; }
-.step-dot.active { background: var(--gold); color: var(--navy); }
-.step-dot.inactive { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1.5px solid var(--border); }
-.step-line { flex: 1; height: 2px; background: rgba(201,168,76,0.3); }
-.step-line.done { background: #2e7d32; }
-.steps-labels { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.step-label { font-size: 9px; color: var(--text-dim); text-align: center; width: 32px; }
-.step-label.active { color: var(--gold); font-weight: 700; }
-.step-label.done { color: #69f0ae; }
-.cube-card {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.15);
-  border-radius: 10px; padding: 14px; margin-bottom: 12px;
-}
-.cube-q { font-family: 'Courier New', monospace; font-size: 11px; color: #c8d8e8; line-height: 1.6; margin-bottom: 10px; }
-.cube-q .c { color: #ff8a80; text-decoration: underline; font-weight: 700; }
-.cube-q .u { color: #90caf9; border-bottom: 2px solid #2196f3; }
-.cube-q .b { color: #a5d6a7; border: 1px solid #4caf50; border-radius: 2px; padding: 0 2px; }
-.xp-row { display: flex; align-items: center; justify-content: space-between; }
-.xp-pill { background: rgba(108,99,255,0.2); border: 1px solid rgba(108,99,255,0.4); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: #a89fff; }
-.xp-score { font-family: 'Syne',sans-serif; font-weight: 800; font-size: 20px; color: var(--gold); }
+.cw-resume:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(201,168,76,0.4); }
+/* First-visit variant: quick steps instead of a resume target */
+.cw-steps { list-style: none; margin: 0 0 6px; padding: 0; }
+.cw-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #dce8f0; margin-bottom: 8px; line-height: 1.45; }
+.cw-steps .n { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 20px; height: 20px; border-radius: 50%; background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.45); color: var(--gold); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 
 /* ── SECTION WRAPPER ── */
 section { padding: 80px 5%; }
@@ -243,62 +207,66 @@ section { padding: 80px 5%; }
 .limit-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 4px; color: #f0c030; }
 .limit-desc { font-size: 15px; color: #dce8f0; line-height: 1.6; }
 
-/* ── SUBJECTS ── */
-.subjects-section { background: linear-gradient(180deg, var(--navy) 0%, #080f1c 100%); }
-.faculty-block { margin-bottom: 40px; }
-.faculty-label {
-  display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
-}
-.faculty-text {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 800;
-  letter-spacing: 1px; color: var(--gold); white-space: nowrap; font-size: 13px;
-}
-.faculty-line { flex: 1; height: 1px; background: rgba(201,168,76,0.15); }
-.subjects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.subj-card {
-  background: linear-gradient(135deg, #0e1e34, #0a1628);
-  border: 1.5px solid var(--border); border-radius: 14px;
-  padding: 20px 16px; text-align: center; cursor: pointer;
-  transition: all 0.25s; text-decoration: none; display: block;
-}
-.subj-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-.subj-card.ees { border-color: rgba(46,125,50,0.4); }
-.subj-card.ees:hover { border-color: rgba(46,125,50,0.8); box-shadow: 0 8px 24px rgba(46,125,50,0.2); }
-.subj-card.bus { border-color: rgba(21,101,192,0.4); }
-.subj-card.bus:hover { border-color: rgba(21,101,192,0.8); box-shadow: 0 8px 24px rgba(21,101,192,0.2); }
-.subj-card.hlth { border-color: rgba(0,105,92,0.4); }
-.subj-card.hlth:hover { border-color: rgba(0,105,92,0.8); box-shadow: 0 8px 24px rgba(0,105,92,0.2); }
-.subj-card.engs { border-color: rgba(191,54,12,0.4); }
-.subj-card.engs:hover { border-color: rgba(191,54,12,0.8); box-shadow: 0 8px 24px rgba(191,54,12,0.2); }
-.subj-card.soon { opacity: 0.35; cursor: default; }
-.subj-card.soon:hover { transform: none; box-shadow: none; }
-.subj-emoji { font-size: 28px; margin-bottom: 10px; }
-.subj-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
-.subj-code { font-size: 10px; color: var(--text-dim); font-family: monospace; }
-.subj-soon { font-size: 9px; color: var(--text-dim); margin-top: 4px; font-style: italic; }
+/* ── SUBJECT BROWSER v3 — faculty panels (v7 facultyPanels · 2026-07-10) ──
+   Rendered by JS from school-SIHS.json into full-width faculty panels: faculty
+   header (name + description, NO icon), subject cards (emoji + name + class-count
+   badge), 2+ classes expand to a class picker inside the card. If the fetch fails,
+   the static fallback list below remains untouched (automatic rollback). */
+.choose-section { padding: 34px 5% 30px; background: linear-gradient(180deg, var(--navy) 0%, #071120 100%); }
+.choose-inner { max-width: 1100px; margin: 0 auto; }
+.choose-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: clamp(1.4rem, 2.4vw, 1.9rem); font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.choose-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
 
-/* ── SUBJECTS v2 — school-config driven (schoolConfig-v1.0) ──
-   Rendered by JS from school-SIHS.json. If that fetch fails, the static
-   markup below remains untouched (automatic rollback). */
-#subjects.subjects-v2 { display:flex; flex-direction:column; gap:10px; }
-.sv2-kla { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin:4px 0 -2px; display:flex; align-items:center; gap:10px; }
-.sv2-kla::after { content:""; flex:1; height:1px; background:rgba(201,168,76,0.15); }
-.sv2-row { display:flex; flex-wrap:wrap; gap:10px; }
-.sv2-tile { flex:1 1 46%; min-width:150px; background:linear-gradient(135deg,#0e1e34,#0a1628); border:1.5px solid rgba(255,255,255,0.14); border-radius:12px; padding:12px 14px; text-align:left; cursor:pointer; text-decoration:none; color:var(--text); transition:all .2s; display:block; box-sizing:border-box; }
-.sv2-tile:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
-.sv2-name { font-size:13px; font-weight:700; line-height:1.3; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
-.sv2-meta { font-size:10px; color:#9aabb8; margin-top:4px; font-family:monospace; }
-.sv2-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.sv2-pill { font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; border:1.5px solid rgba(255,255,255,0.25); text-decoration:none; color:var(--text); background:rgba(255,255,255,0.05); font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
-.sv2-pill:hover { background:rgba(255,255,255,0.12); }
-.sv2-select { width:100%; margin-top:10px; padding:8px 10px; border-radius:8px; background:#0a1628; color:var(--text); border:1.5px solid rgba(255,255,255,0.25); font-size:13px; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
-.sv2-continue { display:block; margin-bottom:4px; padding:10px 14px; border-radius:10px; border:1.5px solid rgba(201,168,76,0.5); background:linear-gradient(135deg,rgba(201,168,76,0.14),rgba(201,168,76,0.05)); color:var(--gold); font-size:13px; font-weight:700; text-decoration:none; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
-.sv2-continue:hover { background:linear-gradient(135deg,rgba(201,168,76,0.22),rgba(201,168,76,0.08)); }
-/* Neutralise the legacy #subjects mobile rules for the v2 layout */
-html.mobile-ui #subjects.subjects-v2 { column-count:auto; column-gap:0; }
-html.mobile-ui #subjects.subjects-v2 > div { display:flex; }
-html.mobile-ui #subjects.subjects-v2 .sv2-kla { display:flex; }
-html.mobile-ui .sv2-tile { flex:1 1 100%; min-width:100%; }
+#subjects.subjects-v3 { display: flex; flex-wrap: wrap; gap: 14px; }
+.fac-panel {
+  border-radius: 16px; box-sizing: border-box; min-width: 240px;
+  border: 1px solid var(--fac-border, rgba(255,255,255,0.1));
+  background: var(--fac-bg, rgba(255,255,255,0.02));
+  padding: 16px 16px 14px;
+}
+.fac-head { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fac-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--fac-color, var(--gold)); }
+.fac-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.fac-arrow { display: none; }
+.fac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 10px; align-items: start; }
+
+.sv3-card {
+  background: linear-gradient(135deg, #0e1e34, #0a1628);
+  border: 1.5px solid rgba(255,255,255,0.12); border-radius: 12px;
+  padding: 12px 14px; text-align: left; cursor: pointer; text-decoration: none;
+  color: var(--text); transition: transform .2s, box-shadow .2s, border-color .2s;
+  display: block; box-sizing: border-box;
+}
+.sv3-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.sv3-top { display: flex; align-items: flex-start; gap: 9px; }
+.sv3-emoji { font-size: 20px; line-height: 1.2; flex-shrink: 0; }
+.sv3-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+.sv3-badge { display: inline-block; margin-top: 9px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: var(--acc-bg, rgba(255,255,255,0.06)); color: var(--acc, var(--text-dim)); }
+.sv3-hint { font-size: 10px; color: var(--text-dim); margin-top: 8px; font-family: monospace; }
+.sv3-picker-label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 6px; border-top: 1px solid var(--border); padding-top: 10px; }
+.sv3-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.sv3-pill { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.25); text-decoration: none; color: var(--text); background: rgba(255,255,255,0.05); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.sv3-pill:hover { background: rgba(255,255,255,0.12); }
+.sv3-select { width: 100%; margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #0a1628; color: var(--text); border: 1.5px solid rgba(255,255,255,0.25); font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+/* Static fallback (shown only if school-SIHS.json fails to load / JS fails) */
+.subj-fallback { display: flex; flex-direction: column; gap: 6px; }
+.subj-fallback .fb-kla { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-top: 8px; }
+.subj-fallback a { color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.03); }
+.subj-fallback a:hover { border-color: rgba(201,168,76,0.5); }
+
+/* Activity strip under the browser (desktop only; real localStorage data only) */
+.activity-strip { max-width: 1100px; margin: 22px auto 0; display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+.as-panel { border: 1px solid var(--border); border-radius: 14px; background: rgba(255,255,255,0.02); padding: 14px 16px; }
+.as-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.as-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); margin-bottom: 6px; }
+.as-row .t { color: var(--text-dim); font-size: 11px; flex-shrink: 0; }
+.as-empty { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+.as-research { display: flex; gap: 12px; align-items: flex-start; }
+.as-research .icon { font-size: 24px; }
+.as-research .rt { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 3px; }
+.as-research .rd { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }
+.as-research a { color: var(--gold); font-size: 12.5px; font-weight: 700; text-decoration: none; }
 
 /* ── STAFF CALLOUT ── */
 .staff-callout {
@@ -319,41 +287,36 @@ footer {
   font-size: 12px; color: var(--text-dim);
 }
 
-/* ── RESPONSIVE ── */
-/* ── Mobile UI — driven by html.mobile-ui class (UA + width detection) because
+/* ── RESPONSIVE / MOBILE — driven by html.mobile-ui (UA + width detection) because
      inside the Google Sites iframe the window width is desktop-sized on phones,
-     so width-only media queries never fire. build 2026-07-05 · schoolConfig v6 (label/tab split + InvSci) ── */
-html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-html.mobile-ui .hero-visual { display: none; }
+     so width-only media queries never fire. build 2026-07-10 · v7 facultyPanels ── */
+html.mobile-ui .hero { padding: 14px 4% 12px; }
+html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 14px; }
+/* Students land here to pick a subject — hide the headline, keep the continue card */
+html.mobile-ui .hero h1, html.mobile-ui .hero-desc { display: none; }
+html.mobile-ui .hero-side { justify-content: stretch; }
+html.mobile-ui .cw-card { max-width: none; padding: 14px 16px; }
+
+html.mobile-ui .choose-section { padding: 18px 4% 22px; }
+html.mobile-ui .choose-sub { margin-bottom: 14px; }
+/* Faculty panels become tap-to-expand accordions */
+html.mobile-ui #subjects.subjects-v3 { flex-direction: column; gap: 12px; }
+html.mobile-ui .fac-panel { flex-basis: auto !important; min-width: 0; width: 100%; padding: 0; overflow: hidden; }
+html.mobile-ui .fac-head { padding: 14px 16px; margin: 0; cursor: pointer; }
+html.mobile-ui .fac-arrow { display: inline-block; color: var(--fac-color, var(--gold)); font-size: 13px; flex-shrink: 0; transition: transform .2s; }
+html.mobile-ui .fac-grid { display: none; grid-template-columns: 1fr 1fr; gap: 9px; padding: 0 12px 12px; }
+html.mobile-ui .fac-panel.open .fac-grid { display: grid; }
+html.mobile-ui .fac-panel.open .fac-arrow { transform: rotate(180deg); }
+/* An expanded class picker gets the full row so pills have room */
+html.mobile-ui .sv3-card.open { grid-column: 1 / -1; }
+html.mobile-ui .sv3-name { font-size: 13px; }
+html.mobile-ui .activity-strip { display: none !important; }
+
 html.mobile-ui .how-grid { grid-template-columns: 1fr; }
 html.mobile-ui .photo-grid { grid-template-columns: 1fr; }
 html.mobile-ui .limits-grid { grid-template-columns: 1fr; }
-html.mobile-ui .subjects-grid { grid-template-columns: 1fr; }
 html.mobile-ui .nav-links { display: none; }
 html.mobile-ui .staff-callout { flex-direction: column; }
-
-/* Students land here to pick a subject — strip everything else back on mobile */
-html.mobile-ui .hero { padding: 16px 4% 20px; }
-html.mobile-ui .hero-tag,
-html.mobile-ui .hero h1,
-html.mobile-ui .hero-desc,
-html.mobile-ui .hero-actions { display: none; }
-/* Drop the top border/padding above "Select your subject" now the headline is gone */
-html.mobile-ui .hero-inner > div > div[style*="border-top"] { border-top: none !important; padding-top: 4px !important; margin-top: 0 !important; }
-html.mobile-ui .hero-inner > div > div > div:first-child { margin-bottom: 12px !important; font-size: 12px !important; }
-
-/* Subjects: tight two-column masonry — cards flow by height, no stretching */
-html.mobile-ui #subjects { column-count: 2; column-gap: 10px; }
-html.mobile-ui #subjects > div { display: contents; }              /* unwrap the desktop flex rows */
-html.mobile-ui #subjects > div > div[style*="flex:1"]:empty,
-html.mobile-ui #subjects > div > div[style*="flex:1;"]:empty { display: none; }  /* drop empty spacer */
-html.mobile-ui #subjects .subj-card {
-  display: block !important; width: 100% !important; break-inside: avoid;
-  min-height: 0 !important; margin: 0 0 10px 0 !important; padding: 12px !important;
-}
-html.mobile-ui #subjects a { font-size: 14px !important; padding: 10px 10px !important; margin: 0 !important; border-radius: 8px; }
-html.mobile-ui #subjects .subj-card > a[style*="block"] { background: rgba(255,255,255,0.03); margin-bottom: 5px !important; }
-html.mobile-ui #subjects .subj-card > a[style*="block"]:last-child { margin-bottom: 0 !important; }
 
 /* Collapsible info sections — even spacing, clear headings */
 .sec-toggle { display: none; }
@@ -376,7 +339,6 @@ html.mobile-ui section.collapsed-mobile > div:last-child { padding: 4px 2px 18px
 html.mobile-ui #research { margin-top: 14px !important; padding-top: 14px !important; border-top: 1px solid rgba(255,255,255,0.08) !important; }
 html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; padding: 22px 5% 26px; margin-top: 8px; }
 
-/* anchor offset removed */
 </style>
 </head>
 <body id="top">
@@ -401,7 +363,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
 
 </nav>
 
-<!-- HERO -->
+<!-- HERO — compact intro + continue card (v7: demo panel removed by design, do not reintroduce) -->
 <div class="hero">
   <div class="hero-inner">
     <div>
@@ -409,107 +371,89 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
       <p class="hero-desc">
         The CUBE Marking Coach uses AI to analyse your written responses, check your CUBE annotations, and give you personalised feedback — instantly, any time.
       </p>
-      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:28px;margin-top:8px;">
-        <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Select your subject</div>
-        <div id="subjects" style="width:100%;">
-          <div style="display:flex;gap:10px;margin-bottom:10px;">
-            <div class="subj-card ees" style="border-color:rgba(46,125,50,0.6);text-align:left;padding:12px;flex:1;min-height:64px;cursor:default;">
-              <div style="font-size:9px;font-weight:700;color:#69f0ae;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Science</div>
-              <a id="link-ees" href="app/?subject=EES" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(105,240,174,0.12)'" onmouseout="this.style.background='transparent'">🌏 12 EES</a>
-              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
-              <div style="font-size:9px;font-weight:700;color:#a5d6a7;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Biology</div>
-              <a id="link-bio1" href="app/?subject=BIO&amp;class=12Bio-1" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-1</a>
-              <a id="link-bio2" href="app/?subject=BIO&amp;class=12Bio-2" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-2</a>
-              <a id="link-bio3" href="app/?subject=BIO&amp;class=12Bio-3" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-3</a>
-              <a id="link-bio4" href="app/?subject=BIO&amp;class=12Bio-4" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(165,214,167,0.12)'" onmouseout="this.style.background='transparent'">🔬 12Bio-4</a>
-            </div>
-            <div class="subj-card bus" style="border-color:rgba(21,101,192,0.6);text-align:left;padding:12px;flex:1;min-height:64px;cursor:default;">
-              <div style="font-size:9px;font-weight:700;color:#64b5f6;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">HSIE</div>
-              <a id="link-buss" href="app/?subject=BusS" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(100,181,246,0.12)'" onmouseout="this.style.background='transparent'">📊 12 Business Studies</a>
-              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
-              <div style="font-size:9px;font-weight:700;color:#ce93d8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Legal Studies</div>
-              <a id="link-leg1" href="app/?subject=LEG&amp;class=12LS-1" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(206,147,216,0.12)'" onmouseout="this.style.background='transparent'">⚖️ 12LS-1</a>
-              <a id="link-leg2" href="app/?subject=LEG&amp;class=12LS-2" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(206,147,216,0.12)'" onmouseout="this.style.background='transparent'">⚖️ 12LS-2</a>
-              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
-              <div style="font-size:9px;font-weight:700;color:#ffcc80;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Ancient History</div>
-              <a id="link-ahis" href="app/?subject=ANCH&amp;class=12AHis" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,204,128,0.12)'" onmouseout="this.style.background='transparent'">🏛️ 12 Ancient History</a>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;">
-            <div class="subj-card hlth" style="border-color:rgba(0,105,92,0.6);text-align:left;padding:12px;flex:1;min-height:64px;cursor:default;">
-              <div style="font-size:9px;font-weight:700;color:#80cbc4;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">PDHPE</div>
-              <a id="link-hlthm" href="app/?subject=HlthM" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(128,203,196,0.12)'" onmouseout="this.style.background='transparent'">🏃 12 Health &amp; Move.</a>
-              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
-              <a id="link-comfam" href="app/?subject=ComFam" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(128,203,196,0.12)'" onmouseout="this.style.background='transparent'">🏠 12 Community &amp; Fam.</a>
-            </div>
-            <a id="link-engs" href="app/?subject=EngS" target="_blank" class="subj-card engs" style="border-color:rgba(191,54,12,0.6);text-align:left;padding:12px;flex:1;min-height:64px;">
-              <div style="font-size:9px;font-weight:700;color:#ffab91;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">TAS</div>
-              <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3;">⚙️ 12 Engineering</div>
-            </a>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:10px;">
-            <div class="subj-card" style="border-color:rgba(244,143,177,0.6);text-align:left;padding:12px;flex:1;min-height:64px;cursor:default;background:linear-gradient(135deg,rgba(244,143,177,0.05),transparent);">
-              <div style="font-size:9px;font-weight:700;color:#f48fb1;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">CAPA</div>
-              <div style="font-size:9px;font-weight:700;color:#f48fb1;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:2px;">Visual Arts</div>
-              <a id="link-va1" href="app/?subject=VISART&amp;class=12VA-1" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(244,143,177,0.12)'" onmouseout="this.style.background='transparent'">🎨 12VA-1</a>
-              <a id="link-va2" href="app/?subject=VISART&amp;class=12VA-2" target="_blank" style="display:block;font-size:12px;font-weight:700;color:var(--text);line-height:1.4;text-decoration:none;padding:3px 6px;margin:-3px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(244,143,177,0.12)'" onmouseout="this.style.background='transparent'">🎨 12VA-2</a>
-              <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
-              <div style="font-size:9px;font-weight:700;color:#ffe082;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Music 1</div>
-              <a id="link-mus1" href="app/?subject=MUS1" target="_blank" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.3;text-decoration:none;padding:4px 6px;margin:-4px -6px;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,224,130,0.12)'" onmouseout="this.style.background='transparent'">🎵 12 Music 1</a>
-            </div>
-            <div style="flex:1;"></div>
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="hero-visual">
-      <div class="hv-header">
-        <div class="hv-badge">CUBE</div>
-        <div>
-          <div class="hv-title">CUBE Marking Coach</div>
-          <div class="hv-sub">Earth &amp; Environmental Science · Biology · Legal Studies · Ancient History · Visual Arts · Music 1</div>
-        </div>
-      </div>
-      <div class="steps-row">
-        <div class="step-dot done">1</div>
-        <div class="step-line done"></div>
-        <div class="step-dot done">2</div>
-        <div class="step-line done"></div>
-        <div class="step-dot done">3</div>
-        <div class="step-line done"></div>
-        <div class="step-dot active">4</div>
-        <div class="step-line"></div>
-        <div class="step-dot inactive">5</div>
-        <div class="step-line"></div>
-        <div class="step-dot inactive">6</div>
-        <div class="step-line"></div>
-        <div class="step-dot inactive" style="font-size:14px">🏆</div>
-      </div>
-      <div class="steps-labels">
-        <div class="step-label done">Upload</div>
-        <div class="step-label done">CUBE</div>
-        <div class="step-label done">Plan</div>
-        <div class="step-label active">Script</div>
-        <div class="step-label">Rubric</div>
-        <div class="step-label">Feed&shy;back</div>
-        <div class="step-label">Score</div>
-      </div>
-      <div class="cube-card">
-        <div class="cube-q">
-          <span class="c">Evaluate</span> the effectiveness of technology used to predict volcanic eruptions, using a <span class="b">named example</span>, in saving <span class="u">infrastructure</span> and <span class="u">human life</span>.
-        </div>
-        <div style="font-size:10px;color:#9aabb8;margin-bottom:6px;font-style:italic;">Student response recognised — marking in progress…</div>
-        <div class="xp-row">
-          <div class="xp-pill">⚡ CUBE + Annotation</div>
-          <div class="xp-score">17 XP</div>
-        </div>
-      </div>
-      <div style="background:rgba(105,240,174,0.08);border:1px solid rgba(105,240,174,0.2);border-radius:8px;padding:10px 12px;font-size:11px;color:#81c784;line-height:1.5;">
-        🏅 <strong>Strength:</strong> Strong use of BECAUSE to link SO₂ emissions to aerosol formation — excellent causal reasoning.
+    <div class="hero-side" id="heroSide">
+      <!-- Replaced by a "Continue where you left off" card when a previous launch exists -->
+      <div class="cw-card">
+        <div class="cw-label">Get started</div>
+        <ul class="cw-steps">
+          <li><span class="n">1</span>Pick your subject and class below</li>
+          <li><span class="n">2</span>CUBE the question, write your answer, photograph it</li>
+          <li><span class="n">3</span>Get instant, personalised feedback</li>
+        </ul>
+        <a class="cw-resume" href="#choose">Choose a subject ↓</a>
       </div>
     </div>
   </div>
 </div>
+
+<!-- SUBJECT BROWSER — the central feature: faculty panels rendered from school-SIHS.json -->
+<section id="choose" class="choose-section">
+  <div class="choose-inner">
+    <h2 class="choose-title">Choose your subject</h2>
+    <p class="choose-sub">Select your faculty, then your subject to get started.</p>
+    <div id="subjects">
+      <div class="subj-fallback">
+        <div class="fb-kla">Science</div>
+        <a href="app/?subject=EES" target="_blank" rel="noopener">🌏 12 Earth &amp; Environmental Science</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-1" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-1</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-2" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-2</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-3" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-3</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-4" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-4</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-1" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS1</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-2" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS2</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-3" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS3</a>
+        <a href="app/?subject=Chem&amp;class=Chem-1" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH1</a>
+        <a href="app/?subject=Chem&amp;class=Chem-2" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH2</a>
+        <a href="app/?subject=Chem&amp;class=Chem-3" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH3</a>
+        <div class="fb-kla">HSIE</div>
+        <a href="app/?subject=BusS&amp;class=BusS-1" target="_blank" rel="noopener">📊 12 Business Studies — BusS-1</a>
+        <a href="app/?subject=BusS&amp;class=BusS-2" target="_blank" rel="noopener">📊 12 Business Studies — BusS-2</a>
+        <a href="app/?subject=BusS&amp;class=BusS-3" target="_blank" rel="noopener">📊 12 Business Studies — BusS-3</a>
+        <a href="app/?subject=LEG&amp;class=12LS-1" target="_blank" rel="noopener">⚖️ 12 Legal Studies — 12LS-1</a>
+        <a href="app/?subject=LEG&amp;class=12LS-2" target="_blank" rel="noopener">⚖️ 12 Legal Studies — 12LS-2</a>
+        <a href="app/?subject=ANCH&amp;class=12AHis" target="_blank" rel="noopener">🏛️ 12 Ancient History — 12AHis</a>
+        <a href="app/?subject=Geo&amp;class=GEO-1" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE1</a>
+        <a href="app/?subject=Geo&amp;class=GEO-2" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE2</a>
+        <a href="app/?subject=Geo&amp;class=GEO-3" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE3</a>
+        <a href="app/?subject=SOR2&amp;class=SOR2" target="_blank" rel="noopener">🕊️ 12 Studies of Religion II — 12HRS1</a>
+        <div class="fb-kla">PDHPE</div>
+        <a href="app/?subject=HlthM&amp;class=HlthM-1" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-1</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-2" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-2</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-3" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-3</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-4" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-4</a>
+        <a href="app/?subject=ComFam" target="_blank" rel="noopener">🏠 12 Community &amp; Family Studies</a>
+        <div class="fb-kla">TAS</div>
+        <a href="app/?subject=EngS" target="_blank" rel="noopener">⚙️ 12 Engineering Studies</a>
+        <div class="fb-kla">CAPA</div>
+        <a href="app/?subject=VISART&amp;class=12VA-1" target="_blank" rel="noopener">🎨 12 Visual Arts — 12VA-1</a>
+        <a href="app/?subject=VISART&amp;class=12VA-2" target="_blank" rel="noopener">🎨 12 Visual Arts — 12VA-2</a>
+        <a href="app/?subject=MUS1" target="_blank" rel="noopener">🎵 12 Music 1</a>
+        <div class="fb-kla">VET</div>
+        <a href="app/?subject=Hosp&amp;class=HOSP-1" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC1</a>
+        <a href="app/?subject=Hosp&amp;class=HOSP-2" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC2</a>
+        <a href="app/?subject=Hosp&amp;class=HOSP-3" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC3</a>
+      </div>
+    </div>
+    <div class="activity-strip" id="activityStrip" style="display:none;">
+      <div class="as-panel">
+        <div class="as-label">Recent activity</div>
+        <div id="activityRows"></div>
+      </div>
+      <div class="as-panel">
+        <div class="as-label">Built on research</div>
+        <div class="as-research">
+          <div class="icon">🧠</div>
+          <div>
+            <div class="rt">Supporting better feedback for every HSC student.</div>
+            <div class="rd">Timely, specific feedback is one of the highest-impact strategies in education.</div>
+            <a href="#research">Learn more →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- RESEARCH STRIP -->
 <section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;">
@@ -765,8 +709,8 @@ setTimeout(sendHeight, 1500);
 // current build version onto each app/ link so every click fetches the live version.
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
-// build 2026-07-05 · schoolConfig v6 (label/tab split + InvSci)
-var CUBE_BUILD = "20260708a";
+// build 2026-07-10 · v7 facultyPanels (compact hero + faculty browser)
+var CUBE_BUILD = "20260710a";
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
@@ -774,78 +718,68 @@ var CUBE_BUILD = "20260708a";
   });
 })();
 
-// ── schoolConfig-v1.0: render subjects/classes from school-SIHS.json ──
-// Two-step flow: pick subject, then (only if the subject has 2+ classes)
-// pick a class — pills for 2–4 classes, dropdown for 5+. If the school
-// file fails to load, the static markup above is left untouched.
+// ── subjectBrowser-v3 (v7 facultyPanels · 2026-07-10): render faculty panels
+// from school-SIHS.json. Flow unchanged from v2: pick subject, then (only if the
+// subject has 2+ classes) pick a class — pills for 2–4 classes, dropdown for 5+.
+// New in v3: full-width faculty panels with header + description (no faculty icon),
+// class-count badges, hero "Continue where you left off" card, mobile faculty
+// accordions, recent-activity strip (localStorage only). If the school file fails
+// to load, the static fallback markup above is left untouched (automatic rollback).
 (function(){
   var SCHOOL_FILE = "school-SIHS.json";
-  var VER = "2026-07-08";
+  var VER = "2026-07-10";
+  var KLA_META = {
+    "Science": { desc: "Earth systems, biology, chemistry & investigation", color: "#69f0ae" },
+    "HSIE":    { desc: "Humanities, society, business & law",               color: "#ffcc80" },
+    "PDHPE":   { desc: "Health, movement & personal development",           color: "#b39ddb" },
+    "TAS":     { desc: "Technology & applied studies",                      color: "#64b5f6" },
+    "CAPA":    { desc: "Creative & performing arts",                        color: "#f48fb1" },
+    "VET":     { desc: "Vocational education & training",                   color: "#4dd0e1" }
+  };
+
   function buildHref(code, cls){
-    return "app/?subject=" + encodeURIComponent(code) + (cls ? "&class=" + encodeURIComponent(cls) : "");
+    return "app/?subject=" + encodeURIComponent(code)
+      + (cls ? "&class=" + encodeURIComponent(cls) : "")
+      + "&cv=" + CUBE_BUILD; // cache-bust JS-generated links too (static ones are stamped above)
   }
-  function rememberLaunch(code, cls){
-    try { localStorage.setItem("cubeLastLaunch", JSON.stringify({ subject: code, cls: cls || null, t: Date.now() })); } catch(e){}
+  function rememberLaunch(su, clsTab, clsLabel){
+    try {
+      // cubeLastLaunch keeps its v2 shape { subject, cls, t } for backwards compatibility
+      localStorage.setItem("cubeLastLaunch", JSON.stringify({ subject: su.code, cls: clsTab || null, t: Date.now() }));
+      var hist = [];
+      try { hist = JSON.parse(localStorage.getItem("cubeLaunchHistory") || "[]"); } catch(e){}
+      hist.unshift({ subject: su.code, name: su.name, emoji: su.emoji, clsLabel: clsLabel || null, t: Date.now() });
+      localStorage.setItem("cubeLaunchHistory", JSON.stringify(hist.slice(0, 5)));
+    } catch(e){}
   }
   function ping(){ if (typeof sendHeight === "function") { sendHeight(); setTimeout(sendHeight, 350); } }
+  function relTime(t){
+    if (!t) return "recently";
+    var s = Math.floor((Date.now() - t) / 1000);
+    if (s < 60) return "just now";
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + " min ago";
+    var hr = Math.floor(m / 60);
+    if (hr < 24) return hr + (hr === 1 ? " hr ago" : " hrs ago");
+    var d = Math.floor(hr / 24);
+    if (d === 1) return "yesterday";
+    return d + " days ago";
+  }
 
   fetch(SCHOOL_FILE + "?v=" + VER, { cache: "no-cache" })
     .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
     .then(render)
     .catch(function(err){ console.warn("CUBE landing: school config unavailable, using static list.", err); });
 
-  function launchLink(subj, cls, cssClass, label){
+  function launchLink(subj, clsObj, cssClass, label){
     var a = document.createElement("a");
     a.className = cssClass;
-    a.href = buildHref(subj.code, cls);
+    a.href = buildHref(subj.code, clsObj ? clsObj.tab : null);
     a.target = "_blank";
     a.rel = "noopener";
     a.innerHTML = label;
-    a.addEventListener("click", function(){ rememberLaunch(subj.code, cls); });
+    a.addEventListener("click", function(){ rememberLaunch(subj, clsObj ? clsObj.tab : null, clsObj ? clsObj.label : null); });
     return a;
-  }
-
-  function render(school){
-    var root = document.getElementById("subjects");
-    if (!root || !school || !Array.isArray(school.subjects) || !school.subjects.length) return;
-    root.classList.add("subjects-v2");
-    root.innerHTML = "";
-
-    // Continue-where-you-left-off chip
-    var last = null;
-    try { last = JSON.parse(localStorage.getItem("cubeLastLaunch") || "null"); } catch(e){}
-    if (last && last.subject) {
-      var match = school.subjects.filter(function(su){ return su.code === last.subject; })[0];
-      // Accept new shape classes:[{label,tab}] and fall back to legacy classCodes:[...]
-      var clsList = normaliseClasses(match);
-      var clsOk = match && (!last.cls || clsList.some(function(c){ return c.tab === last.cls; }));
-      if (match && clsOk) {
-        var lastLabel = last.cls ? (clsList.filter(function(c){ return c.tab === last.cls; })[0] || {}).label || last.cls : "";
-        root.appendChild(launchLink(match, last.cls,
-          "sv2-continue",
-          "↩︎ Continue — " + match.emoji + " " + match.name + (last.cls ? " · " + lastLabel : "")));
-      }
-    }
-
-    // Group by KLA in file order
-    var klas = [], byKla = {};
-    school.subjects.forEach(function(su){
-      var k = su.kla || "Subjects";
-      if (!byKla[k]) { byKla[k] = []; klas.push(k); }
-      byKla[k].push(su);
-    });
-
-    klas.forEach(function(k){
-      var h = document.createElement("div");
-      h.className = "sv2-kla";
-      h.textContent = k;
-      root.appendChild(h);
-      var row = document.createElement("div");
-      row.className = "sv2-row";
-      byKla[k].forEach(function(su){ row.appendChild(tile(su)); });
-      root.appendChild(row);
-    });
-    ping();
   }
 
   // Normalise a subject's class list to [{label, tab}] regardless of file shape.
@@ -861,43 +795,163 @@ var CUBE_BUILD = "20260708a";
     return (su.classCodes || []).map(function(c){ return { label: c, tab: c }; });
   }
 
-  function tile(su){
-    var classes = normaliseClasses(su);
-    var accent = su.accent || "#c9a84c";
-    var title = '<div class="sv2-name">' + su.emoji + " 12 " + su.name + "</div>";
+  function render(school){
+    var root = document.getElementById("subjects");
+    if (!root || !school || !Array.isArray(school.subjects) || !school.subjects.length) return;
+    var isMobile = !!(window.CUBE_IS_MOBILE && window.CUBE_IS_MOBILE());
 
-    // 0 or 1 class: the whole tile launches directly. Param uses tab; display uses label.
+    var last = null;
+    try { last = JSON.parse(localStorage.getItem("cubeLastLaunch") || "null"); } catch(e){}
+
+    // Hero "Continue where you left off" card (falls back to the static get-started card)
+    var lastMatch = renderHeroSide(school, last);
+
+    root.classList.remove("subjects-v2");
+    root.classList.add("subjects-v3");
+    root.innerHTML = "";
+
+    // Group by KLA in file order
+    var klas = [], byKla = {};
+    school.subjects.forEach(function(su){
+      var k = su.kla || "Subjects";
+      if (!byKla[k]) { byKla[k] = []; klas.push(k); }
+      byKla[k].push(su);
+    });
+
+    // On mobile, open the faculty of the last launch (or the first faculty)
+    var openKla = (lastMatch && lastMatch.kla) || klas[0];
+
+    klas.forEach(function(k){
+      var meta = KLA_META[k] || { desc: "", color: "#c9a84c" };
+      var panel = document.createElement("div");
+      panel.className = "fac-panel";
+      panel.style.setProperty("--fac-color", meta.color);
+      panel.style.setProperty("--fac-border", meta.color + "40");
+      panel.style.setProperty("--fac-bg", meta.color + "0d");
+      var n = byKla[k].length;
+      panel.style.flexGrow = n;
+      panel.style.flexBasis = Math.min(n * 200, 1100) + "px";
+
+      // Faculty header: name + description only — no icon by design
+      var head = document.createElement("div");
+      head.className = "fac-head";
+      head.innerHTML = '<div><div class="fac-name">' + k + '</div>'
+        + (meta.desc ? '<div class="fac-desc">' + meta.desc + '</div>' : '')
+        + '</div><span class="fac-arrow">\u25be</span>';
+      panel.appendChild(head);
+
+      var grid = document.createElement("div");
+      grid.className = "fac-grid";
+      byKla[k].forEach(function(su){ grid.appendChild(card(su, meta)); });
+      panel.appendChild(grid);
+
+      if (isMobile) {
+        if (k === openKla) panel.classList.add("open");
+        head.addEventListener("click", function(){ panel.classList.toggle("open"); ping(); });
+      }
+      root.appendChild(panel);
+    });
+
+    renderActivity();
+    ping();
+  }
+
+  function renderHeroSide(school, last){
+    var side = document.getElementById("heroSide");
+    if (!side || !last || !last.subject) return null;
+    var match = school.subjects.filter(function(su){ return su.code === last.subject; })[0];
+    if (!match) return null;
+    var clsList = normaliseClasses(match);
+    var clsObj = last.cls ? clsList.filter(function(c){ return c.tab === last.cls; })[0] : null;
+    if (last.cls && !clsObj) return null; // stored class no longer exists in the school file
+    var card = document.createElement("div");
+    card.className = "cw-card";
+    card.innerHTML =
+      '<div class="cw-label">Continue where you left off</div>' +
+      '<div class="cw-row"><div class="cw-emoji">' + match.emoji + '</div><div>' +
+        '<div class="cw-name">' + match.name + '</div>' +
+        (clsObj ? '<div class="cw-class">Class: ' + clsObj.label + '</div>' : '') +
+      '</div></div>' +
+      '<div class="cw-meta"><span>Last opened ' + relTime(last.t) + '</span></div>';
+    card.appendChild(launchLink(match, clsObj, "cw-resume", "Resume \u2192"));
+    side.innerHTML = "";
+    side.appendChild(card);
+    return match;
+  }
+
+  function renderActivity(){
+    var strip = document.getElementById("activityStrip");
+    var rows = document.getElementById("activityRows");
+    if (!strip || !rows) return;
+    strip.style.display = ""; // hidden on mobile via CSS
+    var hist = [];
+    try { hist = JSON.parse(localStorage.getItem("cubeLaunchHistory") || "[]"); } catch(e){}
+    if (!hist.length) {
+      rows.innerHTML = '<div class="as-empty">No activity yet \u2014 pick a subject above to get started.</div>';
+      return;
+    }
+    rows.innerHTML = "";
+    hist.slice(0, 3).forEach(function(hh){
+      var r = document.createElement("div");
+      r.className = "as-row";
+      r.innerHTML = '<span>' + (hh.emoji || "") + " " + hh.name + (hh.clsLabel ? " \u2014 " + hh.clsLabel : "")
+        + '</span><span class="t">' + relTime(hh.t) + '</span>';
+      rows.appendChild(r);
+    });
+  }
+
+  function card(su, meta){
+    var classes = normaliseClasses(su);
+    var accent = su.accent || meta.color || "#c9a84c";
+    var badgeText = classes.length === 0 ? "Tap to start" : classes.length === 1 ? "1 class" : classes.length + " classes";
+    var inner =
+      '<div class="sv3-top"><span class="sv3-emoji">' + su.emoji + '</span>' +
+      '<span class="sv3-name">12 ' + su.name + '</span></div>' +
+      '<span class="sv3-badge">' + badgeText + '</span>';
+
+    function paint(el){
+      el.style.setProperty("--acc", accent);
+      el.style.setProperty("--acc-bg", accent + "1f");
+      el.style.borderColor = accent + "55";
+    }
+
+    // 0 or 1 class: the whole card launches directly. Param uses tab; display uses label.
     if (classes.length <= 1) {
       var only = classes[0] || null;
-      var a = launchLink(su, only ? only.tab : null, "sv2-tile",
-        title + '<div class="sv2-meta">' + (only ? only.label : "Tap to start") + "</div>");
-      a.style.borderColor = accent + "66";
+      var a = launchLink(su, only, "sv3-card",
+        inner + (only ? '<div class="sv3-hint">' + only.label + '</div>' : ''));
+      paint(a);
       return a;
     }
 
-    // 2+ classes: tile expands to a class picker
+    // 2+ classes: card expands to a class picker (pills for 2–4, dropdown for 5+)
     var d = document.createElement("div");
-    d.className = "sv2-tile";
-    d.style.borderColor = accent + "66";
-    d.innerHTML = title + '<div class="sv2-meta">' + classes.length + " classes — tap to choose yours</div>";
-    var open = false, picker = null;
+    d.className = "sv3-card";
+    paint(d);
+    d.innerHTML = inner + '<div class="sv3-hint">tap to choose your class</div>';
+    var open = false, picker = null, pickLabel = null;
     d.addEventListener("click", function(ev){
-      if (ev.target.closest && (ev.target.closest(".sv2-pill") || ev.target.tagName === "SELECT" || ev.target.tagName === "OPTION")) return;
+      if (ev.target.closest && (ev.target.closest(".sv3-pill") || ev.target.tagName === "SELECT" || ev.target.tagName === "OPTION")) return;
       open = !open;
+      d.classList.toggle("open", open);
       if (open && !picker) {
+        pickLabel = document.createElement("div");
+        pickLabel.className = "sv3-picker-label";
+        pickLabel.textContent = "Select your class";
+        d.appendChild(pickLabel);
         if (classes.length <= 4) {
           picker = document.createElement("div");
-          picker.className = "sv2-pills";
+          picker.className = "sv3-pills";
           classes.forEach(function(c){
-            var p = launchLink(su, c.tab, "sv2-pill", su.emoji + " " + c.label);
+            var p = launchLink(su, c, "sv3-pill", su.emoji + " " + c.label);
             p.style.borderColor = accent + "99";
             picker.appendChild(p);
           });
         } else {
           picker = document.createElement("select");
-          picker.className = "sv2-select";
+          picker.className = "sv3-select";
           var o0 = document.createElement("option");
-          o0.value = ""; o0.textContent = "Select your class…";
+          o0.value = ""; o0.textContent = "Select your class\u2026";
           picker.appendChild(o0);
           classes.forEach(function(c){
             var o = document.createElement("option");
@@ -906,14 +960,16 @@ var CUBE_BUILD = "20260708a";
           });
           picker.addEventListener("change", function(){
             if (!picker.value) return;
-            rememberLaunch(su.code, picker.value);
-            window.open(buildHref(su.code, picker.value), "_blank", "noopener");
+            var chosen = classes.filter(function(c){ return c.tab === picker.value; })[0];
+            rememberLaunch(su, chosen.tab, chosen.label);
+            window.open(buildHref(su.code, chosen.tab), "_blank", "noopener");
             picker.value = "";
           });
         }
         d.appendChild(picker);
       } else if (picker) {
         picker.style.display = open ? "" : "none";
+        if (pickLabel) pickLabel.style.display = open ? "" : "none";
       }
       ping();
     });
@@ -961,6 +1017,6 @@ var CUBE_BUILD = "20260708a";
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · schoolConfig v6 (label/tab split + InvSci) · 2026-07-05</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7 facultyPanels (compact hero + faculty browser) · 2026-07-10</div>
 </body>
 </html>
