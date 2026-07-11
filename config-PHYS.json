@@ -1,0 +1,209 @@
+{
+  "subjectCode": "PHYS",
+  "subjectName": "Physics",
+  "subjectShortName": "Phys",
+  "accentColor": "#7986cb",
+  "kla": "Science",
+
+  "dominantMode": "Dual-mode: causal explanation of physical phenomena (named laws, principles and models, correct terminology) AND quantitative analysis (relationship chosen, substitution, units, significant figures) with arithmetic and algebra flagged for teacher verification",
+  "cleanRule": "Physics answers split by question type. Explanation/analysis questions are marked on correct physical reasoning — cause and effect using named laws, principles and models (e.g. Newton's Law of Universal Gravitation, conservation of energy and momentum, Faraday's and Lenz's Laws, the wave and photon models of light, special relativity, the Bohr and quantum mechanical models) and, where stimulus/data is given, its integration. Calculation and derivation questions are marked on METHOD: the correct relationship/formula chosen (as on the NESA formulae sheet), correct substitution or algebraic steps, units and significant figures, and logical working shown — the final numerical or algebraic answer is NOT asserted correct; CUBE flags 'arithmetic not verified — teacher to confirm the value'. Vector directions, sketched graphs and derived expressions are checked on convention and reasoning, flagged for teacher confirmation where uncertain.",
+  "hasMC": true,
+
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 8,
+
+  "sheetTabCube": "PHYS CUBE",
+  "sheetTabFull": "PHYS",
+  "classCodes": ["PHYS-1", "PHYS-2", "PHYS-3", "PHYS-4"],
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=PHYS",
+  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
+  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+
+  "leaderboardTip": "Physics rewards reasoning: explain using named laws and models; for calculations, show the relationship, substitution, units and significant figures — CUBE checks your working, your teacher confirms the final number.",
+
+  "syllabus": {
+    "5": {
+      "title": "Advanced Mechanics",
+      "organisers": {
+        "projectile_motion": {
+          "inquiry": "How can models that are used to explain projectile motion be used to analyse and make predictions?",
+          "keywords": ["projectile motion", "horizontal component", "vertical component", "initial velocity", "launch angle", "maximum height", "time of flight", "range", "acceleration due to gravity", "air resistance", "equations of motion"]
+        },
+        "circular_motion": {
+          "inquiry": "Why do objects move in circles?",
+          "keywords": ["uniform circular motion", "centripetal force", "centripetal acceleration", "period", "angular velocity", "banked track", "mass on a string", "torque", "work done", "total energy"]
+        },
+        "motion_in_gravitational_fields": {
+          "inquiry": "How does the force of gravity determine the motion of planets and satellites?",
+          "keywords": ["Newton's Law of Universal Gravitation", "gravitational field strength", "orbital velocity", "orbital period", "orbital radius", "geostationary orbit", "low Earth orbit", "Kepler's Laws", "escape velocity", "gravitational potential energy", "total energy of orbit", "satellite"]
+        }
+      }
+    },
+    "6": {
+      "title": "Electromagnetism",
+      "organisers": {
+        "charged_particles_conductors_fields": {
+          "inquiry": "What happens to stationary and moving charged particles when they interact with an electric or magnetic field?",
+          "keywords": ["electric field", "parallel charged plates", "work done on a charge", "trajectory", "magnetic field", "force on a moving charge", "perpendicular acceleration", "uniform circular motion", "charged particle", "projectile comparison"]
+        },
+        "motor_effect": {
+          "inquiry": "Under what circumstances is a force produced on a current-carrying conductor in a magnetic field?",
+          "keywords": ["motor effect", "current-carrying conductor", "magnetic field strength", "maximum force", "parallel current-carrying wires", "ampere definition", "Newton's Third Law", "direction of force"]
+        },
+        "electromagnetic_induction": {
+          "inquiry": "How are electric and magnetic fields related?",
+          "keywords": ["magnetic flux", "flux linkage", "Faraday's Law", "Lenz's Law", "electromotive force", "emf", "solenoid", "ideal transformer", "step-up", "step-down", "eddy currents", "incomplete flux linkage", "high-voltage transmission", "energy transformation"]
+        },
+        "applications_of_motor_effect": {
+          "inquiry": "How has knowledge about the Motor Effect been applied to technological advances?",
+          "keywords": ["DC motor", "torque", "back emf", "commutator", "AC generator", "DC generator", "AC induction motor", "magnetic braking", "conservation of energy"]
+        }
+      }
+    },
+    "7": {
+      "title": "The Nature of Light",
+      "organisers": {
+        "electromagnetic_spectrum": {
+          "inquiry": "What is light?",
+          "keywords": ["Maxwell", "unification of electricity and magnetism", "electromagnetic waves", "speed of light", "spectroscopy", "discharge tube", "incandescent filament", "emission spectrum", "absorption spectrum", "stellar spectra", "surface temperature", "chemical composition", "rotational velocity", "translational velocity", "density"]
+        },
+        "light_wave_model": {
+          "inquiry": "What evidence supports the classical wave model of light and what predictions can be made using this model?",
+          "keywords": ["diffraction", "interference", "double slit", "diffraction grating", "Newton", "Huygens", "polarisation", "Malus' Law", "plane polarisation"]
+        },
+        "light_quantum_model": {
+          "inquiry": "What evidence supports the particle model of light and what are the implications of this evidence for the development of the quantum model of light?",
+          "keywords": ["black body radiation", "Wien's Law", "Planck", "photon", "quantum", "photoelectric effect", "work function", "threshold frequency", "maximum kinetic energy", "conservation of energy"]
+        },
+        "light_and_special_relativity": {
+          "inquiry": "How does the behaviour of light affect concepts of time, space and matter?",
+          "keywords": ["Einstein's postulates", "speed of light constant", "inertial frame of reference", "thought experiment", "time dilation", "length contraction", "muons", "Hafele-Keating", "particle accelerator evidence", "relativistic momentum", "mass-energy equivalence", "annihilation"]
+        }
+      }
+    },
+    "8": {
+      "title": "From the Universe to the Atom",
+      "organisers": {
+        "origins_of_the_elements": {
+          "inquiry": "What evidence is there for the origins of the elements?",
+          "keywords": ["Big Bang", "expansion of the Universe", "Hubble", "nucleosynthesis", "emission spectra", "absorption spectra", "black body spectrum", "stellar spectra", "spectral class", "Hertzsprung-Russell diagram", "main sequence", "luminosity", "proton-proton chain", "CNO cycle"]
+        },
+        "structure_of_the_atom": {
+          "inquiry": "How is it known that atoms are made up of protons, neutrons and electrons?",
+          "keywords": ["cathode rays", "Thomson", "charge-to-mass ratio", "Millikan oil drop", "Geiger-Marsden", "Rutherford", "nuclear model", "Chadwick", "neutron", "electron"]
+        },
+        "quantum_mechanical_nature_of_the_atom": {
+          "inquiry": "How is it known that classical physics cannot explain the properties of the atom?",
+          "keywords": ["Bohr model", "Rutherford model limitations", "Balmer series", "line emission spectrum", "quantised energy levels", "Rydberg equation", "de Broglie", "matter waves", "Schrodinger", "electron orbitals"]
+        },
+        "properties_of_the_nucleus": {
+          "inquiry": "How can the energy of the atomic nucleus be harnessed?",
+          "keywords": ["radioactive decay", "alpha", "beta", "gamma", "half-life", "decay constant", "nuclear fission", "controlled chain reaction", "uncontrolled chain reaction", "nuclear fusion", "transmutation", "conservation of mass-energy", "mass defect", "binding energy"]
+        },
+        "deep_inside_the_atom": {
+          "inquiry": "How is it known that human understanding of matter is still incomplete?",
+          "keywords": ["Standard Model", "fundamental particles", "quarks", "hadrons", "leptons", "fundamental forces", "particle accelerator", "subatomic particles"]
+        }
+      }
+    }
+  },
+
+  "bandRules": {
+    "Band6": "Extensive knowledge and understanding of scientific concepts in Physics including complex and abstract ideas; communicates succinctly, logically and consistently using correct and precise scientific terms and application of mathematical techniques across varied contexts; designs investigations for accurate, reliable, valid data, evaluating and mitigating risk and modifying to new evidence; selects, processes and interprets data across formats to derive trends, show relationships, explain phenomena and make predictions; designs solutions using data and scientific evidence; applies knowledge to unfamiliar situations to propose comprehensive solutions/explanations.",
+    "Band5": "Thorough knowledge including complex/abstract ideas; communicates logically and effectively with correct scientific terms and mathematical techniques; designs investigations for reliable/valid data with some modification to evidence; selects, processes and interprets data to derive trends and relationships; designs solutions using data and evidence; applies knowledge to unfamiliar situations to propose explanations.",
+    "Band4": "Sound knowledge of scientific concepts; communicates effectively using scientific terms and mathematical techniques; designs and plans investigations and evaluates risk; processes, interprets and represents data across formats; identifies problems/questions/hypotheses and applies processes to data; applies relevant knowledge to scientific scenarios.",
+    "Band3": "Basic knowledge; communicates with basic scientific terms and mathematical techniques; implements processes to obtain data and identifies risk; processes data using scientific formats; responds to problems/questions/hypotheses; recalls scientific knowledge.",
+    "Band2": "Limited knowledge; communicates with limited scientific terms; partially outlines investigations; provides simple descriptions of phenomena; recalls basic knowledge.",
+    "Band1": "Minimum standard expected was not demonstrated."
+  },
+
+  "directiveTiers": {
+    "explain": {
+      "tier": 3,
+      "subjectNote": "Relate how/why using physical cause and effect — e.g. why a satellite in a lower orbit moves faster, how Lenz's Law follows from conservation of energy, why the photoelectric effect contradicts the wave model — naming the law, principle or model that does the work. Not description."
+    },
+    "analyse": {
+      "tier": 3,
+      "subjectNote": "Draw out components and relationships — forces on a system, trends in data, evidence-to-model links. Includes 'analyses quantitatively' (PH12-12, PH12-13): where a calculation supports the analysis, mark the setup/method/units and flag the arithmetic for teacher verification."
+    },
+    "assess": {
+      "tier": 3,
+      "subjectNote": "Judgement of value with physics evidence — e.g. the limitations of a model (Rutherford, Bohr, ideal transformer), or the validity/reliability of an investigation. Reasons and evidence required."
+    },
+    "evaluate": {
+      "tier": 4,
+      "subjectNote": "Judge with evidence — a model, claim or body of experimental evidence (e.g. PH12-14 'evaluates the implications of this evidence for modern theories of physics'). A criteria-referenced verdict with modality is required."
+    },
+    "predict": {
+      "tier": 3,
+      "subjectNote": "State a likely outcome (e.g. direction of an induced current from Lenz's Law, trajectory of a charge in a field) WITH physical justification — the reasoning is marked, not just the outcome. Any numerical basis is flagged for teacher verification."
+    },
+    "calculate": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Mark the METHOD only: correct relationship/formula chosen (as on the NESA formulae sheet), correct substitution, correct UNITS and SIGNIFICANT FIGURES, logical working shown. Do NOT assert the final number is correct — return 'arithmetic not verified — teacher to confirm the value'."
+    },
+    "determine": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Ascertain a value using a physical method (e.g. orbital velocity, induced emf, maximum kinetic energy of photoelectrons). Mark method, substitution, units and significant figures; flag arithmetic for teacher verification."
+    },
+    "derive": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Obtain a relationship algebraically from stated physical principles (e.g. orbital velocity from gravitational = centripetal force, escape velocity from energy conservation). Mark the starting principle, logical algebraic steps and correct symbols; flag the final expression for teacher verification."
+    },
+    "deduce": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "Reach a conclusion from evidence/data (e.g. a field direction, a spectral classification, a decay product). Mark the reasoning and correct physical convention; flag any numerical result for teacher verification."
+    },
+    "show": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "calculate",
+      "subjectNote": "'Show that' questions print the target value or relationship in the question — ALL marks come from the working. Mark the principle chosen, substitution/algebraic steps, units and logical progression to the stated result; flag arithmetic for teacher verification."
+    },
+    "sketch": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "visual",
+      "subjectNote": "Produce a labelled physics graph or diagram (e.g. flux vs time, field lines, trajectory). Assess on diagram present + axes/labels + correct shape and key features; flag quantitative accuracy for teacher verification."
+    },
+    "draw": {
+      "tier": "procedural",
+      "track": "procedural",
+      "modality": "ignore",
+      "specialCheck": "visual",
+      "subjectNote": "Produce a labelled physics diagram (e.g. force vectors, field lines, ray/wavefront diagram). Assess on diagram present + labels + correct directions and conventions; flag for teacher confirmation where uncertain."
+    },
+    "describe": { "tier": 2 },
+    "outline": { "tier": 2 },
+    "identify": { "tier": 1 },
+    "define": { "tier": 1 }
+  },
+
+  "connectives": {
+    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
+    "accepted": ["since", "thus", "hence", "due to", "leads to", "which shows that", "resulting in"],
+    "contrast": ["however", "whereas", "although", "in contrast", "on the other hand", "despite", "conversely"]
+  },
+
+  "subjectContext": {
+    "examStructure": "HSC written exam (Physics 2017 syllabus): Section I — 20 multiple-choice (often calculation/skills based, formulae sheet and data sheet provided); Section II — short answer and extended response spanning explanation, quantitative analysis, derivation, graphing and evidence-based evaluation of models. Year 12 modules: 5 Advanced Mechanics, 6 Electromagnetism, 7 The Nature of Light, 8 From the Universe to the Atom.",
+    "dualMode": "Physics questions split into (a) explanation/analysis — marked on physical reasoning, named laws/principles/models and correct terminology; and (b) calculation/procedural — marked on method, substitution, units and significant figures, with the numerical answer flagged for teacher verification (LLMs do not reliably verify multi-step arithmetic or algebra).",
+    "calculationNote": "For projectile/circular/orbital motion, fields and forces on charges and conductors, induction and transformers, interference, photoelectric effect, relativity, radioactive decay and mass defect/binding energy: assess whether the correct relationship was chosen, substitution or algebra is set up correctly, and units/significant figures are right. Explicitly return 'arithmetic not verified — teacher to confirm the value' rather than scoring the final number as correct or incorrect.",
+    "physicsNote": "Reward named laws, principles and models (Newton's laws and Law of Universal Gravitation, Kepler's Laws, Faraday's and Lenz's Laws, conservation of energy and momentum, Maxwell's theory, the wave and photon models, Einstein's postulates, Bohr/de Broglie/Schrodinger, the Standard Model), correct vector/scalar distinctions and frames of reference. Flag vector directions, graph values and derived expressions for teacher confirmation where the physics cannot be verified with confidence."
+  }
+}
