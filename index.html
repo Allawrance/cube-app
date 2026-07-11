@@ -406,6 +406,10 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
         <a href="app/?subject=Chem&amp;class=Chem-1" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH1</a>
         <a href="app/?subject=Chem&amp;class=Chem-2" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH2</a>
         <a href="app/?subject=Chem&amp;class=Chem-3" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH3</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-1" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH1</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-2" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH2</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-3" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH3</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-4" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH4</a>
         <div class="fb-kla">HSIE</div>
         <a href="app/?subject=BusS&amp;class=BusS-1" target="_blank" rel="noopener">📊 12 Business Studies — BusS-1</a>
         <a href="app/?subject=BusS&amp;class=BusS-2" target="_blank" rel="noopener">📊 12 Business Studies — BusS-2</a>
@@ -709,8 +713,8 @@ setTimeout(sendHeight, 1500);
 // current build version onto each app/ link so every click fetches the live version.
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
-// build 2026-07-10 · v7 facultyPanels (compact hero + faculty browser)
-var CUBE_BUILD = "20260710a";
+// build 2026-07-12 · v8 physics (Physics PHYS added — 4 classes 12PH1–12PH4 → tabs PHYS-1–PHYS-4; v7 facultyPanels retained)
+var CUBE_BUILD = "20260712a";
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
@@ -727,7 +731,7 @@ var CUBE_BUILD = "20260710a";
 // to load, the static fallback markup above is left untouched (automatic rollback).
 (function(){
   var SCHOOL_FILE = "school-SIHS.json";
-  var VER = "2026-07-10";
+  var VER = "2026-07-12";
   var KLA_META = {
     "Science": { desc: "Earth systems, biology, chemistry & investigation", color: "#69f0ae" },
     "HSIE":    { desc: "Humanities, society, business & law",               color: "#ffcc80" },
