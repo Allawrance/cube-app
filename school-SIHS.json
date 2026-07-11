@@ -81,6 +81,31 @@
       ]
     },
     {
+      "code": "PHYS",
+      "name": "Physics",
+      "emoji": "⚛️",
+      "accent": "#7986cb",
+      "kla": "Science",
+      "classes": [
+        {
+          "label": "12PH1",
+          "tab": "PHYS-1"
+        },
+        {
+          "label": "12PH2",
+          "tab": "PHYS-2"
+        },
+        {
+          "label": "12PH3",
+          "tab": "PHYS-3"
+        },
+        {
+          "label": "12PH4",
+          "tab": "PHYS-4"
+        }
+      ]
+    },
+    {
       "code": "BusS",
       "name": "Business Studies",
       "emoji": "📊",
