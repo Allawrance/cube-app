@@ -276,7 +276,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v2.1 · 2026-07-12 · physics";
+    window.CUBE_BUILD = "v2.2 · 2026-07-12 · modern-history";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -314,7 +314,7 @@ async function _f674dd() {
     const params  = new URLSearchParams(window.location.search);
     const subject = (params.get("subject") || "EES").toUpperCase().replace(/[^A-Z0-9]/g,"");
     // Map short URL codes to config filenames
-    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal", VISART:"config-VisArt", VA:"config-VisArt", ANCH:"config-AncH", ANCHIST:"config-AncH", CHEM:"config-Chem", PHYS:"config-PHYS", PHYSICS:"config-PHYS", GEO:"config-Geo", INVSCI:"config-InvSci", SOR2:"config-SOR2", SOR:"config-SOR2", HOSP:"config-Hosp", MUS1:"config-Music1", MUSIC1:"config-Music1" };
+    const CONFIG_FILES = { EES:"config-EES", BS:"config-BusS", BUSS:"config-BusS", HM:"config-HlthM", HLTHM:"config-HlthM", ES:"config-EngS", ENGS:"config-EngS", CF:"config-ComFam", COMFAM:"config-ComFam", BIO:"config-Bio", BIOLOGY:"config-Bio", LEG:"config-Legal", LEGAL:"config-Legal", VISART:"config-VisArt", VA:"config-VisArt", ANCH:"config-AncH", ANCHIST:"config-AncH", MHIST:"config-MHIST", MODH:"config-MHIST", MODERNHIST:"config-MHIST", MODERNHISTORY:"config-MHIST", CHEM:"config-Chem", PHYS:"config-PHYS", PHYSICS:"config-PHYS", GEO:"config-Geo", INVSCI:"config-InvSci", SOR2:"config-SOR2", SOR:"config-SOR2", HOSP:"config-Hosp", MUS1:"config-Music1", MUSIC1:"config-Music1" };
     const configName  = CONFIG_FILES[subject] || "config-EES";
     const configFile  = "../" + configName + ".json?v=" + Date.now();
     const res = await fetch(configFile);
