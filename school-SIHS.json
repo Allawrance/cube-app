@@ -157,6 +157,27 @@
       ]
     },
     {
+      "code": "MHIST",
+      "name": "Modern History",
+      "emoji": "📜",
+      "accent": "#ef9a9a",
+      "kla": "HSIE",
+      "classes": [
+        {
+          "label": "12HMH1",
+          "tab": "MHIST-1"
+        },
+        {
+          "label": "12HMH2",
+          "tab": "MHIST-2"
+        },
+        {
+          "label": "12HMH3",
+          "tab": "MHIST-3"
+        }
+      ]
+    },
+    {
       "code": "Geo",
       "name": "Geography",
       "emoji": "🗺️",
