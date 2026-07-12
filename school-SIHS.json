@@ -178,6 +178,27 @@
       ]
     },
     {
+      "code": "ECON",
+      "name": "Economics",
+      "emoji": "📈",
+      "accent": "#ffd54f",
+      "kla": "HSIE",
+      "classes": [
+        {
+          "label": "12HEC1",
+          "tab": "ECON-1"
+        },
+        {
+          "label": "12HEC2",
+          "tab": "ECON-2"
+        },
+        {
+          "label": "12HEC3",
+          "tab": "ECON-3"
+        }
+      ]
+    },
+    {
       "code": "Geo",
       "name": "Geography",
       "emoji": "🗺️",
