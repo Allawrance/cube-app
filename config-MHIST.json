@@ -1,0 +1,1877 @@
+{
+  "subjectCode": "MHIST",
+  "subjectName": "Modern History",
+  "subjectShortName": "Mod Hist",
+  "responseModes": [
+    "multiPage"
+  ],
+  "promptVariant": "standard",
+  "responsePagesMax": 10,
+  "dominantMode": "Historical argument + source analysis + historiographical interpretation",
+  "cleanRule": "Modern History = construct an historical argument + analyse and interpret sources (written, visual, official, personal) + evaluate differing historical interpretations + use historical concepts (causation, continuity and change, perspectives, significance, contestability)",
+  "leaderboardTip": "HSC Modern History rewards specific historical evidence — named events with dates (Enabling Act March 1933, Tet Offensive January 1968), named individuals (Goebbels, Gorbachev, Deng Xiaoping), named sources and named historians (Kershaw, Fitzpatrick, Dower, Gaddis). Generic statements about 'the government' or 'the people' without specific evidence cannot reach Band 5. Always link evidence to the historical argument.",
+  "sheetTabCube": "MHIST CUBE",
+  "sheetTabFull": "MHIST",
+  "accentColor": "#ef9a9a",
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=MHIST",
+  "hasMC": false,
+  "kla": "HSIE",
+  "classCodes": [
+    "MHIST-1",
+    "MHIST-2",
+    "MHIST-3"
+  ],
+  "subjectContext": {
+    "examStructure": {
+      "sectionI": "Source-based questions on the Core Study (Power and Authority in the Modern World 1919–1946): analysis, interpretation and evaluation of provided sources, including short answers and a longer source-based response — 25 marks",
+      "sectionII": "Extended response (essay) on ONE National Studies topic — school options: Japan 1904–1937, Australia 1918–1949, Russia and the Soviet Union 1917–1941, USA 1919–1941 — 25 marks",
+      "sectionIII": "Extended response (essay) on ONE Peace and Conflict topic — school options: Conflict in Indochina 1954–1979, Conflict in the Pacific 1937–1951, Conflict in Europe 1935–1945, The Cold War 1945–1991 — 25 marks",
+      "sectionIV": "Extended response (essay) on ONE Change in the Modern World topic — school options: The Cultural Revolution to Tiananmen Square 1966–1989, Civil Rights in the USA 1945–1968, The Changing World Order 1945–2011, The Nuclear Age 1945–2011, Apartheid in South Africa 1960–1994 — 25 marks"
+    },
+    "coreStudy": "Power and Authority in the Modern World 1919–1946 (compulsory, all students; assessed via source-based questions in Section I)",
+    "schoolOptions": {
+      "nationalStudies": [
+        "Option E: Japan 1904–1937",
+        "Option A: Australia 1918–1949",
+        "Option F: Russia and the Soviet Union 1917–1941",
+        "Option G: USA 1919–1941"
+      ],
+      "peaceAndConflict": [
+        "Option A: Conflict in Indochina 1954–1979",
+        "Option B: Conflict in the Pacific 1937–1951",
+        "Option C: Conflict in Europe 1935–1945",
+        "Option D: The Cold War 1945–1991"
+      ],
+      "changeInModernWorld": [
+        "Option B: The Cultural Revolution to Tiananmen Square 1966–1989",
+        "Option C: Civil Rights in the USA 1945–1968",
+        "Option D: The Changing World Order 1945–2011",
+        "Option E: The Nuclear Age 1945–2011",
+        "Option F: Apartheid in South Africa 1960–1994"
+      ]
+    },
+    "historicalConceptsAndSkills": {
+      "causation": "Identifying and analysing the varying causes and effects of events and developments",
+      "continuityAndChange": "Analysing the extent and nature of continuity and change over time",
+      "perspectives": "Analysing the different perspectives of individuals and groups in their historical context",
+      "significance": "Assessing the significance of historical features, people, places, events and developments",
+      "contestability": "Analysing and evaluating contested interpretations and representations of the past"
+    },
+    "sourceTypes": [
+      "Official documents (treaties, legislation, government records, party documents, court records)",
+      "Speeches, broadcasts and propaganda (posters, film, newsreels, cartoons)",
+      "Personal accounts (diaries, letters, memoirs, oral testimony, interviews)",
+      "Press and media (newspapers, photographs, television footage)",
+      "Statistical and economic data (production figures, election results, casualty figures)",
+      "Historiographical accounts (modern historians' interpretations and debates)"
+    ]
+  },
+  "syllabus": {
+    "coreStudy": {
+      "code": "CS",
+      "title": "Core Study: Power and Authority in the Modern World 1919–1946",
+      "contentFocus": "Through a focus on the nature of power and authority 1919–1946, and a broader transnational perspective, students investigate the rise of fascist, totalitarian and militarist movements after World War I; what drew people to these movements; the regimes that emerged and ongoing international efforts to achieve collective security. Through a study of Germany as a key example, students develop an understanding of how a democracy can collapse, the impact of dictatorship on a society, the elimination of individual freedoms, and the threats that dictatorships can pose to peace and security.",
+      "survey": {
+        "dotPoints": [
+          "An overview of the peace treaties which ended World War I and their consequences"
+        ]
+      },
+      "focusOfStudy": [
+        {
+          "title": "The rise of dictatorships after World War I",
+          "dotPoints": [
+            "The conditions that enabled dictators to rise to power in the interwar period",
+            "An overview of the features of the dictatorships that emerged in Russia, Italy, Japan"
+          ]
+        },
+        {
+          "title": "The Nazi regime to 1939",
+          "dotPoints": [
+            "The rise of the Nazi party and Hitler in Germany and the collapse of the Weimar Republic",
+            "The initial consolidation of Nazi power 1933–1934",
+            "The nature of Nazi ideology",
+            "The role of prominent individuals in the Nazi state",
+            "The various methods used by the Nazi regime to exercise control, including laws, censorship, repression, terror, propaganda, cult of personality",
+            "The impact of the Nazi regime on life in Germany, including cultural expression, religion, workers, youth, women, minorities including Jews",
+            "Opposition to the Nazi regime"
+          ]
+        },
+        {
+          "title": "The search for peace and security in the world",
+          "dotPoints": [
+            "An overview of the search for peace and security 1919–1946: the ambitions of Germany in Europe and Japan in the Asia-Pacific",
+            "The intentions and authority of the League of Nations and the UN"
+          ]
+        }
+      ],
+      "keywords": [
+        "Treaty of Versailles",
+        "war guilt clause",
+        "reparations",
+        "League of Nations",
+        "collective security",
+        "Weimar Republic",
+        "Article 48",
+        "hyperinflation",
+        "Great Depression",
+        "Hitler",
+        "NSDAP",
+        "Nazi Party",
+        "Reichstag Fire",
+        "Enabling Act",
+        "Night of the Long Knives",
+        "Gleichschaltung",
+        "Führerprinzip",
+        "Volksgemeinschaft",
+        "Lebensraum",
+        "anti-Semitism",
+        "Nuremberg Laws",
+        "Kristallnacht",
+        "propaganda",
+        "Goebbels",
+        "Himmler",
+        "Göring",
+        "SS",
+        "SA",
+        "Gestapo",
+        "Hitler Youth",
+        "German Labour Front",
+        "terror",
+        "censorship",
+        "cult of personality",
+        "totalitarianism",
+        "dictatorship",
+        "Mussolini",
+        "fascism",
+        "Stalin",
+        "Japanese militarism",
+        "Manchuria",
+        "Abyssinia",
+        "appeasement",
+        "disarmament",
+        "Kellogg-Briand Pact",
+        "Locarno Treaties",
+        "United Nations",
+        "White Rose",
+        "July Bomb Plot",
+        "Confessing Church",
+        "opposition"
+      ]
+    },
+    "nationalStudies": {
+      "optionE_Japan": {
+        "code": "NS-E",
+        "title": "Option E: Japan 1904–1937",
+        "contentFocus": "Students investigate key features in the history of Japan 1904–1937.",
+        "keyFeatures": [
+          "Nature and role of nationalism",
+          "Nature and impact of internationalism",
+          "Successes and failures of democracy",
+          "Changes in society",
+          "Nature, growth and impact of imperialism",
+          "Nature and impact of militarism",
+          "Tensions between tradition and modernisation",
+          "Aims and impact of Japanese foreign policy"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Japan as an emerging power: impact of Japanese expansion — Russo-Japanese War, annexation of Korea",
+            "Status as a great power: 21 Demands, role in World War I, Washington Conference",
+            "Political, social and economic issues in Japan by 1921"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "Challenges to traditional power and authority in the 1920s",
+            "dotPoints": [
+              "The introduction of limited liberal democracy",
+              "Political influence of the zaibatsu",
+              "Impact of the Seiyukai and other political parties on Japanese political systems and governments",
+              "Challenges of the genro, bureaucracy and army to party politics"
+            ]
+          },
+          {
+            "title": "Rise of militarism in the 1930s",
+            "dotPoints": [
+              "Political and economic impact of the Great Depression",
+              "Development and impact of modernisation and urbanisation and rising social tensions",
+              "Role and significance of the army and political divisions within it",
+              "Hostility towards the zaibatsu and the collapse of party politics",
+              "Differing domestic responses to militarism",
+              "The role of Emperor Hirohito"
+            ]
+          },
+          {
+            "title": "Japanese foreign policy",
+            "dotPoints": [
+              "Aims and strategy of Japanese foreign policy to 1937",
+              "Impact of ideology on Japanese foreign policy to 1937"
+            ]
+          }
+        ],
+        "keywords": [
+          "Russo-Japanese War",
+          "Treaty of Portsmouth",
+          "annexation of Korea",
+          "Twenty-One Demands",
+          "Washington Conference",
+          "Taisho democracy",
+          "zaibatsu",
+          "Seiyukai",
+          "Minseito",
+          "genro",
+          "Diet",
+          "universal male suffrage",
+          "Peace Preservation Law",
+          "rice riots",
+          "Great Depression",
+          "rural distress",
+          "Kwantung Army",
+          "Manchurian Incident",
+          "Mukden",
+          "Manchukuo",
+          "League of Nations withdrawal",
+          "May 15 Incident",
+          "February 26 Incident",
+          "ultranationalism",
+          "Kodoha",
+          "Toseiha",
+          "Emperor Hirohito",
+          "State Shinto",
+          "kokutai",
+          "militarism",
+          "Marco Polo Bridge Incident",
+          "Anti-Comintern Pact",
+          "modernisation",
+          "urbanisation",
+          "party politics"
+        ]
+      },
+      "optionA_Australia": {
+        "code": "NS-A",
+        "title": "Option A: Australia 1918–1949",
+        "contentFocus": "Students investigate key features of the history of Australia 1918–1949.",
+        "keyFeatures": [
+          "Nature and role of nationalism",
+          "Experiences of Aboriginal and Torres Strait Islander Peoples",
+          "Changes in society",
+          "The changing role of women",
+          "Postwar economic development",
+          "Impact of communism",
+          "Aims and impacts of foreign policy"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Consequences of World War I for Australia",
+            "The social landscape of Australia following World War I",
+            "Attitudes and policies towards Aboriginal and Torres Strait Islander Peoples immediately after the war"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "Changing face of Australia in the 1920s",
+            "dotPoints": [
+              "Soldier settlement post-World War I",
+              "The tensions between urbanisation, industrialisation and rural development",
+              "The changing role of women",
+              "The nature of exclusion experienced by Aboriginal and Torres Strait Islander Peoples: the treatment of Aboriginal soldiers, further dispossession of land, workers' conditions and rights",
+              "The impact of the Great Depression on different groups within Australian society and the effectiveness of political responses to the crisis"
+            ]
+          },
+          {
+            "title": "Government policy 1918–1949",
+            "dotPoints": [
+              "The changing nature of Australia's foreign policy 1918–1949",
+              "Australia's changing relationship with the USA",
+              "The contribution of John Curtin to the provision of social welfare"
+            ]
+          },
+          {
+            "title": "Post-World War II influences",
+            "dotPoints": [
+              "Postwar reconstruction: industrialisation, immigration and the role of women",
+              "Communism and its influence on the election of Robert Menzies and the Coalition in 1949",
+              "The contrasting economic and social policies offered at the 1949 election"
+            ]
+          }
+        ],
+        "keywords": [
+          "soldier settlement",
+          "repatriation",
+          "Anzac legend",
+          "urbanisation",
+          "industrialisation",
+          "rural development",
+          "changing role of women",
+          "Aboriginal and Torres Strait Islander Peoples",
+          "Aboriginal soldiers",
+          "dispossession",
+          "protection policies",
+          "Great Depression",
+          "unemployment",
+          "Premiers' Plan",
+          "Jack Lang",
+          "Scullin",
+          "Lyons",
+          "foreign policy",
+          "British Empire",
+          "Statute of Westminster",
+          "John Curtin",
+          "looks to America",
+          "fall of Singapore",
+          "US alliance",
+          "social welfare",
+          "widows' pension",
+          "unemployment benefits",
+          "postwar reconstruction",
+          "Chifley",
+          "immigration",
+          "populate or perish",
+          "Calwell",
+          "displaced persons",
+          "Snowy Mountains Scheme",
+          "bank nationalisation",
+          "communism",
+          "Communist Party of Australia",
+          "Menzies",
+          "Coalition",
+          "1949 election",
+          "Cold War"
+        ]
+      },
+      "optionF_Russia": {
+        "code": "NS-F",
+        "title": "Option F: Russia and the Soviet Union 1917–1941",
+        "contentFocus": "Students investigate key features of the history of Russia and the Soviet Union 1917–1941.",
+        "keyFeatures": [
+          "Bolshevik ideology in theory and practice",
+          "Competing visions for the Bolshevik Party and the USSR",
+          "Bolshevik consolidation of power",
+          "Political and economic transformation",
+          "Social and cultural transformation",
+          "Nature and impact of Stalinism",
+          "Aims, nature and effectiveness of Soviet foreign policy"
+        ],
+        "survey": {
+          "dotPoints": [
+            "An overview of Bolshevik ideology, the October coup 1917 and early Soviet government",
+            "The Treaty of Brest-Litovsk, the Civil War and the introduction of the New Economic Policy"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The Bolsheviks and the power struggle following the death of Lenin",
+            "dotPoints": [
+              "The impact of the Bolshevik consolidation of power, including the creation of the USSR",
+              "Power struggle between Stalin, Trotsky and other leading Bolshevik figures in the 1920s",
+              "Reasons for the emergence of Stalin as leader of the USSR by the late 1920s"
+            ]
+          },
+          {
+            "title": "The Soviet State under Stalin",
+            "dotPoints": [
+              "The nature of the USSR under Stalin, including dictatorship and totalitarianism",
+              "Economic transformation under Stalin and its impact on Soviet society, including collectivisation and the five-year plans",
+              "Political transformation under Stalin: growth of the Party, use of terror, show trials, gulags, propaganda and censorship",
+              "Social and cultural change in the USSR under Stalin"
+            ]
+          },
+          {
+            "title": "Soviet foreign policy",
+            "dotPoints": [
+              "The nature of Soviet foreign policy 1917–1941",
+              "The role of ideology in Soviet foreign policy 1917–1941"
+            ]
+          }
+        ],
+        "keywords": [
+          "Bolshevik",
+          "Lenin",
+          "October Revolution",
+          "Marxism-Leninism",
+          "Sovnarkom",
+          "Cheka",
+          "Treaty of Brest-Litovsk",
+          "Civil War",
+          "War Communism",
+          "Reds and Whites",
+          "Kronstadt Rebellion",
+          "New Economic Policy",
+          "NEP",
+          "creation of the USSR",
+          "power struggle",
+          "Stalin",
+          "Trotsky",
+          "Zinoviev",
+          "Kamenev",
+          "Bukharin",
+          "Socialism in One Country",
+          "permanent revolution",
+          "collectivisation",
+          "kulaks",
+          "dekulakisation",
+          "famine",
+          "Five-Year Plans",
+          "Gosplan",
+          "industrialisation",
+          "Stakhanovite",
+          "Great Terror",
+          "purges",
+          "show trials",
+          "NKVD",
+          "gulags",
+          "propaganda",
+          "censorship",
+          "cult of personality",
+          "socialist realism",
+          "Comintern",
+          "Treaty of Rapallo",
+          "collective security",
+          "Litvinov",
+          "Nazi-Soviet Pact",
+          "totalitarianism"
+        ]
+      },
+      "optionG_USA": {
+        "code": "NS-G",
+        "title": "Option G: USA 1919–1941",
+        "contentFocus": "Students investigate key features of the history of the USA 1919–1941.",
+        "keyFeatures": [
+          "Nature and impact of industrialisation",
+          "Nature and impact of consumerism",
+          "The Great Depression",
+          "Racism in American society",
+          "Changes in society",
+          "Influence of conservatism",
+          "American capitalism",
+          "Government intervention",
+          "American foreign policy and extent of isolationism"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Consequences of World War I for the USA",
+            "Republican economic policies",
+            "Long-term causes of the Great Depression",
+            "Reactions to the Great Crash of 1929"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The Great Depression and its impact",
+            "dotPoints": [
+              "Effects of the Depression on different groups in society: workers, women, farmers, African-Americans",
+              "Attempts to halt the Depression: the Hoover Presidency, the FDR years",
+              "Assessment of the New Deal"
+            ]
+          },
+          {
+            "title": "US society 1919–1941",
+            "dotPoints": [
+              "Implications of growing urbanisation and industrialisation",
+              "Mobilisation of the military and war production 1939–1941",
+              "Growth and influence of consumerism including entertainment",
+              "Social tensions, including immigration restrictions, religious fundamentalism, Prohibition, crime, racial conflict, anti-communism and anti-unionism"
+            ]
+          },
+          {
+            "title": "US foreign policy",
+            "dotPoints": [
+              "The nature, aims and strategies of US foreign policy 1919–1941",
+              "Impact of domestic pressures on the USA 1919–1941"
+            ]
+          }
+        ],
+        "keywords": [
+          "Republican ascendancy",
+          "Harding",
+          "Coolidge",
+          "Hoover",
+          "normalcy",
+          "laissez-faire",
+          "tariffs",
+          "consumerism",
+          "mass production",
+          "Henry Ford",
+          "entertainment",
+          "jazz",
+          "Hollywood",
+          "urbanisation",
+          "immigration restriction",
+          "quota acts",
+          "Red Scare",
+          "Palmer Raids",
+          "Ku Klux Klan",
+          "Scopes Trial",
+          "religious fundamentalism",
+          "Prohibition",
+          "speakeasies",
+          "organised crime",
+          "anti-communism",
+          "anti-unionism",
+          "Wall Street Crash",
+          "Great Depression",
+          "Hoovervilles",
+          "Bonus Army",
+          "Franklin D Roosevelt",
+          "New Deal",
+          "fireside chats",
+          "alphabet agencies",
+          "AAA",
+          "CCC",
+          "NRA",
+          "TVA",
+          "WPA",
+          "Social Security Act",
+          "Wagner Act",
+          "court packing",
+          "Dust Bowl",
+          "African-Americans",
+          "isolationism",
+          "Neutrality Acts",
+          "cash and carry",
+          "Lend-Lease",
+          "mobilisation",
+          "war production"
+        ]
+      }
+    },
+    "peaceAndConflict": {
+      "optionA_Indochina": {
+        "code": "PC-A",
+        "title": "Option A: Conflict in Indochina 1954–1979",
+        "contentFocus": "Students investigate key features in the history of the conflict in Indochina 1954–1979.",
+        "keyFeatures": [
+          "Nature and role of nationalism",
+          "Nature and role of communism",
+          "Nature and consequences of US involvement",
+          "Strategies and tactics",
+          "Impact of the war on civilians",
+          "Reasons for communist victories"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Conflict in Vietnam 1946–1954",
+            "The nature of Vietnamese victory against the French in 1954",
+            "The significance of the Geneva Conference for Indochina in 1954"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "Conflict in Vietnam 1954–1964",
+            "dotPoints": [
+              "Political, social, economic and military developments within North and South Vietnam",
+              "The nature and development of US policy towards Indochina to 1964"
+            ]
+          },
+          {
+            "title": "The Second Indochina War",
+            "dotPoints": [
+              "US foreign policy towards Vietnam from 1964",
+              "The nature and effectiveness of the strategy and tactics employed by the North Vietnamese Army, the National Liberation Front, the Army of the Republic of Vietnam and the USA",
+              "Impact of the 1968 Tet Offensive",
+              "Impact of the war on civilians in Vietnam",
+              "The nature and significance of anti-war movements in the USA and Australia",
+              "The reasons for and the nature of the US withdrawal",
+              "The reasons for the Communist victory in Vietnam"
+            ]
+          },
+          {
+            "title": "The spread of the conflict to Cambodia and Laos",
+            "dotPoints": [
+              "Impact of conflict on civilians in Cambodia and Laos",
+              "The reasons for the Communist victories in Cambodia and Laos",
+              "Democratic Kampuchea under Pol Pot and the Khmer Rouge: aims and impact of the regime, foreign policy"
+            ]
+          }
+        ],
+        "keywords": [
+          "First Indochina War",
+          "Dien Bien Phu",
+          "Geneva Conference",
+          "Geneva Accords",
+          "17th parallel",
+          "Ho Chi Minh",
+          "Ngo Dinh Diem",
+          "domino theory",
+          "SEATO",
+          "Viet Minh",
+          "Viet Cong",
+          "National Liberation Front",
+          "NLF",
+          "North Vietnamese Army",
+          "ARVN",
+          "strategic hamlets",
+          "Buddhist crisis",
+          "Gulf of Tonkin",
+          "Operation Rolling Thunder",
+          "escalation",
+          "Westmoreland",
+          "attrition",
+          "search and destroy",
+          "guerrilla warfare",
+          "Ho Chi Minh Trail",
+          "Tet Offensive",
+          "My Lai",
+          "Vietnamisation",
+          "Nixon",
+          "Paris Peace Accords",
+          "fall of Saigon",
+          "anti-war movement",
+          "conscription",
+          "moratorium",
+          "Cambodia",
+          "Laos",
+          "Khmer Rouge",
+          "Pol Pot",
+          "Democratic Kampuchea",
+          "Year Zero",
+          "killing fields",
+          "Pathet Lao",
+          "civilians",
+          "napalm",
+          "Agent Orange"
+        ]
+      },
+      "optionB_Pacific": {
+        "code": "PC-B",
+        "title": "Option B: Conflict in the Pacific 1937–1951",
+        "contentFocus": "Students investigate key features in the history of the conflict in the Pacific 1937–1951.",
+        "keyFeatures": [
+          "Imperialism and responses",
+          "Nature and impact of nationalism",
+          "Japanese and Allied strategies",
+          "Impact of the war on the home fronts of Japan and Australia",
+          "Impact of the war in occupied territories in South-East Asia",
+          "Use of the A-bomb",
+          "Reasons for the Japanese defeat",
+          "Aims and consequences of the Allied occupation of Japan"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Economic and political issues in the Pacific by 1937",
+            "Japanese foreign policy 1937–1941",
+            "US and British policies in the Pacific 1937–1941"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The outbreak and course of the Pacific War",
+            "dotPoints": [
+              "Strategic and political reasons for the bombing of Pearl Harbor, and the US response",
+              "Japanese advance 1941–1942 and the impact of the fall of the Philippines, Singapore, Burma and the Dutch East Indies",
+              "Turning points in the war: Battle of the Coral Sea, Battle of Midway, Battle of Guadalcanal, New Guinea",
+              "Strategies used by Allied forces against Japan 1942–1945"
+            ]
+          },
+          {
+            "title": "Civilians at war",
+            "dotPoints": [
+              "Social, political and economic effects on civilians in occupied territories in South-East Asia",
+              "Life under occupation: collaboration and resistance, the use of slave labour",
+              "The effect of the war on the home fronts in Japan and Australia"
+            ]
+          },
+          {
+            "title": "End of the conflict",
+            "dotPoints": [
+              "Reasons for the use of the A-bomb",
+              "Reasons for the Japanese defeat",
+              "War Crimes Tribunals and the status of the Emperor",
+              "Allied occupation of Japan to 1951"
+            ]
+          }
+        ],
+        "keywords": [
+          "Second Sino-Japanese War",
+          "Nanking",
+          "Greater East Asia Co-Prosperity Sphere",
+          "embargoes",
+          "oil embargo",
+          "Tripartite Pact",
+          "Pearl Harbor",
+          "fall of Singapore",
+          "Philippines",
+          "Burma",
+          "Dutch East Indies",
+          "Battle of the Coral Sea",
+          "Battle of Midway",
+          "Guadalcanal",
+          "Kokoda",
+          "New Guinea",
+          "island hopping",
+          "leapfrogging",
+          "MacArthur",
+          "Nimitz",
+          "submarine warfare",
+          "firebombing",
+          "home front",
+          "austerity",
+          "manpower",
+          "women in the workforce",
+          "prisoners of war",
+          "Burma-Thailand Railway",
+          "slave labour",
+          "collaboration",
+          "resistance",
+          "kamikaze",
+          "Iwo Jima",
+          "Okinawa",
+          "A-bomb",
+          "Hiroshima",
+          "Nagasaki",
+          "surrender",
+          "Emperor Hirohito",
+          "Tokyo War Crimes Tribunal",
+          "SCAP",
+          "Allied occupation",
+          "1947 Constitution",
+          "demilitarisation",
+          "democratisation",
+          "San Francisco Peace Treaty"
+        ]
+      },
+      "optionC_Europe": {
+        "code": "PC-C",
+        "title": "Option C: Conflict in Europe 1935–1945",
+        "contentFocus": "Students investigate key features in the history of the conflict in Europe 1935–1945.",
+        "keyFeatures": [
+          "Causes of the conflict",
+          "Aims and strategies of the Allied and Axis powers",
+          "Turning points of the war",
+          "Impact of the war on civilians",
+          "Impact of the Holocaust in occupied territories",
+          "Reasons for the Allied victory"
+        ],
+        "survey": {
+          "dotPoints": [
+            "The collapse of collective security — Abyssinia, the Spanish Civil War",
+            "Britain, France and the policy of appeasement",
+            "Significance of the Nazi–Soviet Non-Aggression Pact"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "German foreign policy",
+            "dotPoints": [
+              "Aims and strategy of German foreign policy to September 1939",
+              "Impact of Nazi ideology on German foreign policy to September 1939"
+            ]
+          },
+          {
+            "title": "Course of the European war",
+            "dotPoints": [
+              "German advances: the fall of Poland, the Low Countries and France",
+              "The air war and its effects: the Battle of Britain and the Blitz, the bombing of Germany",
+              "Operation Barbarossa, the Battle of Stalingrad and the significance of the Russian campaign",
+              "Battle of El Alamein and the significance of the conflict in North Africa to the European War"
+            ]
+          },
+          {
+            "title": "Civilians at war",
+            "dotPoints": [
+              "Social and economic effects of the war on civilians in Britain, Germany and the Soviet Union",
+              "The nature and effects of the Holocaust in the Nazi-occupied territories"
+            ]
+          },
+          {
+            "title": "End of the conflict",
+            "dotPoints": [
+              "'D' Day and the liberation of France",
+              "Russian counter-offensives 1944",
+              "Final defeat 1944–1945",
+              "Nuremberg War Crimes trials"
+            ]
+          }
+        ],
+        "keywords": [
+          "collective security",
+          "Abyssinia",
+          "Spanish Civil War",
+          "appeasement",
+          "Munich Agreement",
+          "Sudetenland",
+          "Nazi-Soviet Non-Aggression Pact",
+          "Lebensraum",
+          "German foreign policy",
+          "Nazi ideology",
+          "invasion of Poland",
+          "blitzkrieg",
+          "fall of France",
+          "Dunkirk",
+          "Battle of Britain",
+          "the Blitz",
+          "bombing of Germany",
+          "area bombing",
+          "Operation Barbarossa",
+          "Battle of Stalingrad",
+          "Eastern Front",
+          "Russian campaign",
+          "Battle of El Alamein",
+          "North Africa",
+          "home front",
+          "rationing",
+          "evacuation",
+          "total war",
+          "Holocaust",
+          "Final Solution",
+          "Einsatzgruppen",
+          "ghettos",
+          "concentration camps",
+          "extermination camps",
+          "Auschwitz",
+          "Wannsee Conference",
+          "D-Day",
+          "Operation Overlord",
+          "liberation of France",
+          "Russian counter-offensives",
+          "Operation Bagration",
+          "fall of Berlin",
+          "unconditional surrender",
+          "Nuremberg Trials"
+        ]
+      },
+      "optionD_ColdWar": {
+        "code": "PC-D",
+        "title": "Option D: The Cold War 1945–1991",
+        "contentFocus": "Students investigate key features in the history of the Cold War 1945–1991.",
+        "keyFeatures": [
+          "Origins and developments of the Cold War",
+          "Influence of the ideologies of communism and capitalism on the Cold War",
+          "Origins and nature of détente, and its impact on the Cold War",
+          "Changing policies, strategies and responses to the Cold War",
+          "Impact of crises on changing superpower relations",
+          "The arms race and disarmament",
+          "Reasons for the end of the Cold War"
+        ],
+        "survey": {
+          "dotPoints": [
+            "1945 conferences and the emergence of the superpowers",
+            "Emerging differences between the superpowers",
+            "The Truman Doctrine and its consequences",
+            "Impact of the early crises: the Berlin blockade and airlift, China becoming communist in 1949 and the Korean War"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "Development of the Cold War to 1968",
+            "dotPoints": [
+              "Policy of containment, domino theory and the emergence of peaceful coexistence",
+              "Superpower rivalry: the arms race and space race",
+              "The nature and impact of crises: Berlin Wall 1961, Cuba 1962, Czechoslovakia 1968"
+            ]
+          },
+          {
+            "title": "Détente",
+            "dotPoints": [
+              "Economic and political reasons for détente",
+              "Geopolitical developments: Vietnam, Sino-Soviet split, the Middle East",
+              "Features and consequences of détente"
+            ]
+          },
+          {
+            "title": "Renewal and end of the Cold War",
+            "dotPoints": [
+              "Soviet invasion of Afghanistan and its impacts",
+              "US attitudes and policies under Reagan",
+              "Soviet attitudes and policies under Gorbachev",
+              "Disarmament agreements 1978–1991",
+              "Collapse of communism in Eastern Europe and the USSR"
+            ]
+          }
+        ],
+        "keywords": [
+          "Yalta Conference",
+          "Potsdam Conference",
+          "superpowers",
+          "ideology",
+          "communism",
+          "capitalism",
+          "iron curtain",
+          "Truman Doctrine",
+          "Marshall Plan",
+          "containment",
+          "Berlin blockade",
+          "Berlin airlift",
+          "NATO",
+          "Warsaw Pact",
+          "China 1949",
+          "Korean War",
+          "domino theory",
+          "peaceful coexistence",
+          "arms race",
+          "space race",
+          "Sputnik",
+          "Berlin Wall",
+          "Cuban Missile Crisis",
+          "Czechoslovakia 1968",
+          "Prague Spring",
+          "détente",
+          "Sino-Soviet split",
+          "SALT",
+          "Helsinki Accords",
+          "Vietnam",
+          "Middle East",
+          "Soviet invasion of Afghanistan",
+          "Reagan",
+          "Strategic Defense Initiative",
+          "evil empire",
+          "Gorbachev",
+          "glasnost",
+          "perestroika",
+          "INF Treaty",
+          "START",
+          "disarmament",
+          "revolutions of 1989",
+          "fall of the Berlin Wall",
+          "collapse of communism",
+          "dissolution of the USSR"
+        ]
+      }
+    },
+    "changeInModernWorld": {
+      "optionB_CulturalRevolution": {
+        "code": "CMW-B",
+        "title": "Option B: The Cultural Revolution to Tiananmen Square 1966–1989",
+        "contentFocus": "Students investigate key features in the history of China from the Cultural Revolution to Tiananmen Square 1966–1989.",
+        "keyFeatures": [
+          "Permanent Revolution, competing versions of Marxism and anti-revisionism",
+          "Role of leadership",
+          "Modernisation of the economy",
+          "The nature of social change",
+          "The causes of the Tiananmen Square protests",
+          "Reaction of the Chinese Communist Party (CCP) to the pro-democracy movement"
+        ],
+        "survey": {
+          "dotPoints": [
+            "The legacy of the 1949 revolution and the Great Leap Forward",
+            "The state of Sino-Soviet relations",
+            "Tensions between the Chinese Communist Party and its leader, Mao Zedong, that gave rise to the Cultural Revolution"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The Cultural Revolution",
+            "dotPoints": [
+              "The aims and methods of Mao Zedong",
+              "Role of the Gang of Four and the Red Guards; the Destruction of the 'Four Olds'",
+              "Removal of Deng Xiaoping from politics and the flight of Lin Biao",
+              "Impact of the Cultural Revolution on society, the economy, education and culture",
+              "The nature of political disruption and the impact on the Chinese Communist Party"
+            ]
+          },
+          {
+            "title": "Deng Xiaoping and the modernisation of China",
+            "dotPoints": [
+              "Responses to the death of Zhou Enlai: official and unofficial",
+              "Changing political standing of Mao Zedong and Deng Xiaoping",
+              "Death of Mao Zedong and the end of the Cultural Revolution",
+              "Role of Hua Guofeng in the arrest of the Gang of Four",
+              "Rehabilitation of Deng Xiaoping, the nature of his reforms and modernisation of the economy"
+            ]
+          },
+          {
+            "title": "The Tiananmen Square protests",
+            "dotPoints": [
+              "The demand for political, social and economic reform",
+              "Events leading up to the June Fourth Incident, 1989",
+              "Military and political response to the protest, and the rise to power of Jiang Zemin",
+              "The impact of the events of Tiananmen Square in 1989 on China and its standing in the world"
+            ]
+          }
+        ],
+        "keywords": [
+          "Mao Zedong",
+          "Great Leap Forward",
+          "Sino-Soviet relations",
+          "permanent revolution",
+          "anti-revisionism",
+          "Cultural Revolution",
+          "Red Guards",
+          "Little Red Book",
+          "cult of Mao",
+          "Gang of Four",
+          "Jiang Qing",
+          "Four Olds",
+          "struggle sessions",
+          "down to the countryside",
+          "Liu Shaoqi",
+          "Deng Xiaoping",
+          "Lin Biao",
+          "People's Liberation Army",
+          "Zhou Enlai",
+          "Tiananmen Incident 1976",
+          "death of Mao",
+          "Hua Guofeng",
+          "arrest of the Gang of Four",
+          "rehabilitation of Deng",
+          "Four Modernisations",
+          "economic reform",
+          "open door policy",
+          "special economic zones",
+          "Democracy Wall",
+          "Hu Yaobang",
+          "Zhao Ziyang",
+          "Li Peng",
+          "student movement",
+          "pro-democracy movement",
+          "hunger strike",
+          "martial law",
+          "Tiananmen Square 1989",
+          "June Fourth Incident",
+          "Jiang Zemin",
+          "Chinese Communist Party",
+          "international response",
+          "sanctions"
+        ]
+      },
+      "optionC_CivilRightsUSA": {
+        "code": "CMW-C",
+        "title": "Option C: Civil Rights in the USA 1945–1968",
+        "contentFocus": "Students investigate key features in the history of the civil rights movement in the USA 1945–1968.",
+        "keyFeatures": [
+          "Nature and impact of segregation and discrimination",
+          "Role and impact of civil rights groups",
+          "Opposition to civil rights",
+          "Influence of changing social attitudes",
+          "Role of leadership",
+          "Successes of the civil rights movement"
+        ],
+        "survey": {
+          "dotPoints": [
+            "The impact of World War II on the circumstances of African Americans in the United States",
+            "The extent of racial segregation and various forms of discrimination"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "Struggles for civil rights",
+            "dotPoints": [
+              "Formation and role of groups supporting civil rights and their ideas for change",
+              "Efforts of Martin Luther King to achieve change for African Americans",
+              "The methods employed by civil rights movements in the United States across the period: local and national boycotts, direct action and political agitation",
+              "Martin Luther King and Malcolm X: beliefs, aims and methods",
+              "The opposition to civil rights: the Ku Klux Klan, the White Citizens' Council"
+            ]
+          },
+          {
+            "title": "Key events of the civil rights movement",
+            "dotPoints": [
+              "Montgomery Bus Boycott and the role of Rosa Parks",
+              "The desegregation of Little Rock High School",
+              "Freedom Rides",
+              "March on Washington",
+              "'Mississippi Freedom Summer' of 1964",
+              "The assassination of Martin Luther King"
+            ]
+          },
+          {
+            "title": "Achievements of the civil rights movement",
+            "dotPoints": [
+              "The nature of social and political change",
+              "The significance of legislative change, the Civil Rights Act (1964) and the attitudes of US presidents",
+              "The influence of the US civil rights movement beyond the USA"
+            ]
+          }
+        ],
+        "keywords": [
+          "segregation",
+          "Jim Crow",
+          "discrimination",
+          "World War II",
+          "Double V campaign",
+          "desegregation of the military",
+          "NAACP",
+          "Brown v Board of Education",
+          "Little Rock",
+          "Emmett Till",
+          "Montgomery Bus Boycott",
+          "Rosa Parks",
+          "Martin Luther King",
+          "SCLC",
+          "nonviolent direct action",
+          "sit-ins",
+          "SNCC",
+          "Freedom Rides",
+          "CORE",
+          "Birmingham",
+          "March on Washington",
+          "I Have a Dream",
+          "Civil Rights Act 1964",
+          "Freedom Summer",
+          "Selma",
+          "Voting Rights Act 1965",
+          "Malcolm X",
+          "Nation of Islam",
+          "Black Power",
+          "Stokely Carmichael",
+          "Black Panthers",
+          "Ku Klux Klan",
+          "White Citizens' Council",
+          "boycotts",
+          "political agitation",
+          "Truman",
+          "Eisenhower",
+          "Kennedy",
+          "Johnson",
+          "Supreme Court",
+          "assassination of Martin Luther King",
+          "urban riots",
+          "influence beyond the USA"
+        ]
+      },
+      "optionD_ChangingWorldOrder": {
+        "code": "CMW-D",
+        "title": "Option D: The Changing World Order 1945–2011",
+        "contentFocus": "Students investigate key features of the changing world order 1945–2011.",
+        "keyFeatures": [
+          "The 'American Century'",
+          "Collapse of the USSR and its impact on Russia and Eastern Europe",
+          "Nature of post-Soviet Russia and Eastern Europe",
+          "Role of the United States in post-Cold War global history",
+          "Challenges for US foreign policy",
+          "Role of the United Nations"
+        ],
+        "survey": {
+          "dotPoints": [
+            "An overview of the Cold War world and superpower rivalry",
+            "Challenges of the United Nations during the Cold War 1946–1991",
+            "The emergence of the 'American Century'",
+            "The fall of the Berlin Wall"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The collapse of the USSR and the nature of post-Soviet societies",
+            "dotPoints": [
+              "Reasons for the collapse of the Soviet Union and the role of Mikhail Gorbachev",
+              "Political, social and cultural impacts of the dissolution of the USSR in Russia and Eastern Europe",
+              "Nature and role of the Russian Federation under Vladimir Putin to 2011"
+            ]
+          },
+          {
+            "title": "The influence of the USA internationally 1991–2011",
+            "dotPoints": [
+              "The nature of US foreign policy in the post-Cold War world, including the use of 'hard' and 'soft' power",
+              "Supporters and opponents of US foreign policy, focusing on Europe, Asia and the Middle East"
+            ]
+          },
+          {
+            "title": "New centres of global power 1989–2011",
+            "dotPoints": [
+              "The emergence, growth and influence of the European Union",
+              "The rise and influence of BRIC: Brazil, Russia, India and China",
+              "Resurgence of modern nationalisms and the influence of non-state actors"
+            ]
+          },
+          {
+            "title": "The United Nations in post-Cold War history 1991–2011",
+            "dotPoints": [
+              "International challenges to peace and security in the post-Cold War world and debate over the role and influence of the United Nations",
+              "Assessment of the role and impact of the United Nations as international peacekeeper in ONE of: the former Yugoslavia 1991–1992; Cambodia 1992–1993; Somalia 1993; Rwanda 1993–1996; Timor-Leste 1999–2001"
+            ]
+          }
+        ],
+        "keywords": [
+          "world order",
+          "superpower rivalry",
+          "American Century",
+          "United Nations",
+          "Security Council",
+          "fall of the Berlin Wall",
+          "collapse of the USSR",
+          "Gorbachev",
+          "glasnost",
+          "perestroika",
+          "dissolution of the USSR",
+          "Yeltsin",
+          "shock therapy",
+          "oligarchs",
+          "Russian Federation",
+          "Putin",
+          "Eastern Europe",
+          "post-Soviet societies",
+          "unipolar moment",
+          "hard power",
+          "soft power",
+          "US foreign policy",
+          "Gulf War",
+          "9/11",
+          "War on Terror",
+          "Afghanistan",
+          "Iraq",
+          "European Union",
+          "Maastricht Treaty",
+          "enlargement",
+          "BRIC",
+          "rise of China",
+          "globalisation",
+          "nationalism",
+          "non-state actors",
+          "terrorism",
+          "peacekeeping",
+          "former Yugoslavia",
+          "Cambodia",
+          "Somalia",
+          "Rwanda",
+          "Timor-Leste",
+          "humanitarian intervention",
+          "responsibility to protect"
+        ]
+      },
+      "optionE_NuclearAge": {
+        "code": "CMW-E",
+        "title": "Option E: The Nuclear Age 1945–2011",
+        "contentFocus": "Students investigate key features in the history of the Nuclear Age 1945–2011.",
+        "keyFeatures": [
+          "The development and use of the atomic bomb",
+          "The struggle to maintain weapons parity",
+          "The nature of deterrence",
+          "Social, political and environmental impacts of the Nuclear Age",
+          "Proliferation and non-proliferation",
+          "Problems and issues with the use of nuclear energy"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Truman, Stalin and the Potsdam Conference",
+            "The Manhattan Project and Trinity Test"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "The first use of atomic weapons and nuclear deterrence",
+            "dotPoints": [
+              "The dropping of the bombs on Hiroshima and Nagasaki, their impact and legacy",
+              "Truman and the debate on the use of the bomb",
+              "US and Soviet nuclear capacity 1945–2011, and the doctrine of Mutually Assured Destruction (MAD)"
+            ]
+          },
+          {
+            "title": "The nuclear threat and weapons testing",
+            "dotPoints": [
+              "Civilian fears and state programs in the USA to survive the bomb and fallout",
+              "The nature and impact of nuclear tests in the US and Soviet Union",
+              "Selection of Maralinga for British nuclear tests, state secrecy, and impact of the tests on local Aboriginal people and Australian service personnel",
+              "The nature of French nuclear tests in the Pacific, the international response, and the activities of Greenpeace, including the Rainbow Warrior incident"
+            ]
+          },
+          {
+            "title": "Towards nuclear disarmament",
+            "dotPoints": [
+              "Anti-nuclear movements and the role of the United Nations: test ban treaties, arms limitations, non-proliferation",
+              "Nuclear disarmament after the Cold War",
+              "Issues of proliferation 1945–2011: Israel, India, Pakistan, Iran and North Korea"
+            ]
+          },
+          {
+            "title": "The benefits and risks of the Nuclear Age",
+            "dotPoints": [
+              "The contributions of nuclear medicine and energy",
+              "Radioactive waste and issues of storage, safety and security",
+              "Critical incidents at Chernobyl and Fukushima, and their impact",
+              "Ending the nuclear age and the question of expanding or winding back nuclear energy"
+            ]
+          }
+        ],
+        "keywords": [
+          "Manhattan Project",
+          "Oppenheimer",
+          "Trinity Test",
+          "Potsdam Conference",
+          "Truman",
+          "Stalin",
+          "Hiroshima",
+          "Nagasaki",
+          "atomic bomb",
+          "hibakusha",
+          "atomic diplomacy",
+          "deterrence",
+          "Mutually Assured Destruction",
+          "MAD",
+          "arms race",
+          "hydrogen bomb",
+          "ICBM",
+          "nuclear parity",
+          "civil defence",
+          "duck and cover",
+          "fallout shelters",
+          "nuclear testing",
+          "Bikini Atoll",
+          "Nevada Test Site",
+          "Maralinga",
+          "British nuclear tests",
+          "Aboriginal people",
+          "Australian service personnel",
+          "French nuclear tests",
+          "Mururoa",
+          "Greenpeace",
+          "Rainbow Warrior",
+          "anti-nuclear movement",
+          "CND",
+          "United Nations",
+          "Partial Test Ban Treaty",
+          "Non-Proliferation Treaty",
+          "SALT",
+          "START",
+          "INF Treaty",
+          "disarmament",
+          "proliferation",
+          "Israel",
+          "India",
+          "Pakistan",
+          "Iran",
+          "North Korea",
+          "nuclear medicine",
+          "nuclear energy",
+          "radioactive waste",
+          "Chernobyl",
+          "Fukushima"
+        ]
+      },
+      "optionF_Apartheid": {
+        "code": "CMW-F",
+        "title": "Option F: Apartheid in South Africa 1960–1994",
+        "contentFocus": "Students investigate key features of apartheid in South Africa 1960–1994.",
+        "keyFeatures": [
+          "Differing visions of democracy",
+          "Nature and impact of apartheid",
+          "Role and impact of state terror and repression",
+          "Resistance to apartheid",
+          "Changes in society",
+          "Reasons for the collapse of apartheid",
+          "International responses to apartheid"
+        ],
+        "survey": {
+          "dotPoints": [
+            "Political, economic, social and demographic issues in South Africa in 1960",
+            "Apartheid: ideology, policy and practice",
+            "Impact of apartheid on rural and urban communities"
+          ]
+        },
+        "focusOfStudy": [
+          {
+            "title": "National resistance to apartheid",
+            "dotPoints": [
+              "The nature, growth and impact of the African National Congress (ANC) and the Pan Africanist Congress (PAC)",
+              "Significance of the Sharpeville Massacre",
+              "Mandela as head of Umkhonto we Sizwe, 'The Spear of the Nation' (MK)",
+              "Rivonia Trial, imprisonment on Robben Island, 'Free Mandela' campaign",
+              "Role of Mandela's leadership of the ANC",
+              "Significance of Stephen Biko and the Black Consciousness Movement"
+            ]
+          },
+          {
+            "title": "Repression and control by South African governments",
+            "dotPoints": [
+              "The nature, impact and significance of tactics of repression and oppression",
+              "Role of South African security forces",
+              "Role and significance of Bantustans and independent black states",
+              "Relations with neighbouring African countries",
+              "International responses to South African policies"
+            ]
+          },
+          {
+            "title": "End of apartheid",
+            "dotPoints": [
+              "Political, economic and social factors contributing to the end of apartheid",
+              "International factors contributing to the end of apartheid",
+              "Problems facing the National Party and the ANC in the transition to democracy in South Africa"
+            ]
+          }
+        ],
+        "keywords": [
+          "apartheid",
+          "National Party",
+          "Verwoerd",
+          "separate development",
+          "pass laws",
+          "Group Areas Act",
+          "Bantustans",
+          "homelands",
+          "township",
+          "African National Congress",
+          "ANC",
+          "Pan Africanist Congress",
+          "PAC",
+          "Sharpeville Massacre",
+          "banning orders",
+          "Nelson Mandela",
+          "Umkhonto we Sizwe",
+          "MK",
+          "armed struggle",
+          "Rivonia Trial",
+          "Robben Island",
+          "Free Mandela campaign",
+          "Stephen Biko",
+          "Black Consciousness Movement",
+          "Soweto Uprising",
+          "state of emergency",
+          "security forces",
+          "state terror",
+          "repression",
+          "United Democratic Front",
+          "frontline states",
+          "international responses",
+          "sanctions",
+          "sporting boycotts",
+          "divestment",
+          "PW Botha",
+          "total strategy",
+          "FW de Klerk",
+          "unbanning",
+          "release of Mandela",
+          "CODESA",
+          "negotiated settlement",
+          "Inkatha",
+          "political violence",
+          "1994 election",
+          "transition to democracy"
+        ]
+      }
+    }
+  },
+  "historicalConcepts": {
+    "sourceAnalysis": {
+      "description": "Explaining the meaning and value of sources for historical inquiry; analysing sources for different perspectives; analysing and synthesising evidence from different source types; identifying problems relating to sources. In Section I, students analyse, interpret and evaluate PROVIDED sources on the Core Study.",
+      "keyQuestions": [
+        "What type of source is it (official document, speech, propaganda, photograph, cartoon, memoir, historian's account)?",
+        "Who created it, when, and for what purpose and audience?",
+        "What does it reveal about the topic — and what perspective does it present?",
+        "What are its limitations and biases (propaganda purpose, hindsight, self-justification, censorship)?",
+        "How does it compare or corroborate with other available sources?",
+        "How useful and reliable is this source for a historian studying the topic?"
+      ],
+      "keywords": [
+        "source",
+        "official document",
+        "propaganda",
+        "photograph",
+        "cartoon",
+        "speech",
+        "memoir",
+        "primary source",
+        "secondary source",
+        "usefulness",
+        "value",
+        "limitation",
+        "bias",
+        "reliability",
+        "perspective",
+        "purpose",
+        "audience",
+        "corroboration",
+        "cross-reference",
+        "evidence",
+        "interpretation"
+      ]
+    },
+    "historiography": {
+      "description": "Analysing and evaluating differing interpretations and representations of the past made by historians and others",
+      "keyHistorians": {
+        "coreStudy_NaziGermany": [
+          "Ian Kershaw — Hitler biography, 'working towards the Führer', intentionalist-structuralist synthesis",
+          "Richard Evans — The Third Reich trilogy",
+          "Alan Bullock — Hitler: A Study in Tyranny",
+          "Martin Broszat and Hans Mommsen — structuralist/functionalist interpretations",
+          "AJP Taylor — origins of WWII debate",
+          "Detlev Peukert — everyday life and dissent in Nazi Germany"
+        ],
+        "japan": [
+          "WG Beasley — Japanese imperialism and modernisation",
+          "Herbert Bix — Hirohito and the Making of Modern Japan",
+          "Saburo Ienaga — Japanese militarism and the Pacific War",
+          "John Dower — Japan and the war"
+        ],
+        "australia": [
+          "Stuart Macintyre — A Concise History of Australia, the interwar years",
+          "Geoffrey Bolton — Oxford History of Australia",
+          "David Day — John Curtin biography"
+        ],
+        "russia": [
+          "Sheila Fitzpatrick — social history of Stalinism, Everyday Stalinism",
+          "Orlando Figes — A People's Tragedy, revolution and terror",
+          "Robert Service — Lenin, Stalin and Trotsky biographies",
+          "Robert Conquest — The Great Terror",
+          "Isaac Deutscher — Trotsky and Stalin",
+          "Richard Pipes — the Russian Revolution"
+        ],
+        "usa": [
+          "William Leuchtenburg — FDR and the New Deal",
+          "David Kennedy — Freedom from Fear",
+          "Anthony Badger — The New Deal",
+          "Frederick Lewis Allen — Only Yesterday, the 1920s"
+        ],
+        "indochina": [
+          "Stanley Karnow — Vietnam: A History",
+          "Marilyn Young — The Vietnam Wars",
+          "Gabriel Kolko — Anatomy of a War",
+          "Ben Kiernan — the Pol Pot regime"
+        ],
+        "pacific": [
+          "John Dower — War Without Mercy, Embracing Defeat",
+          "Richard Frank — Downfall",
+          "Max Hastings — Nemesis/Retribution",
+          "Paul Ham — Hiroshima Nagasaki, Kokoda"
+        ],
+        "europe": [
+          "Richard Overy — Why the Allies Won",
+          "Antony Beevor — Stalingrad, D-Day, Berlin",
+          "Ian Kershaw — Nazi foreign policy and the road to war",
+          "Raul Hilberg — The Destruction of the European Jews"
+        ],
+        "coldWar_nuclear": [
+          "John Lewis Gaddis — The Cold War, post-revisionist interpretation",
+          "Odd Arne Westad — The Global Cold War",
+          "Richard Rhodes — The Making of the Atomic Bomb",
+          "Gar Alperovitz — atomic diplomacy thesis",
+          "Robert Maddox — critique of atomic diplomacy revisionism",
+          "Lawrence Wittner — the anti-nuclear movement"
+        ],
+        "china": [
+          "Frank Dikötter — The Cultural Revolution: A People's History",
+          "Roderick MacFarquhar — Mao's Last Revolution",
+          "Jonathan Spence — The Search for Modern China",
+          "Ezra Vogel — Deng Xiaoping and the Transformation of China"
+        ],
+        "civilRights": [
+          "Taylor Branch — America in the King Years",
+          "Harvard Sitkoff — The Struggle for Black Equality",
+          "Manning Marable — Malcolm X: A Life of Reinvention",
+          "Clayborne Carson — SNCC and the movement"
+        ],
+        "apartheid": [
+          "Tom Lodge — resistance politics and Mandela",
+          "Nancy Clark and William Worger — South Africa: The Rise and Fall of Apartheid",
+          "Saul Dubow — Apartheid 1948–1994",
+          "Hermann Giliomee — the Afrikaners and the National Party"
+        ]
+      },
+      "keywords": [
+        "historian",
+        "historiography",
+        "interpretation",
+        "representation",
+        "historical debate",
+        "orthodox",
+        "revisionist",
+        "post-revisionist",
+        "intentionalist",
+        "structuralist",
+        "scholarly opinion",
+        "contested",
+        "differing interpretations"
+      ]
+    }
+  },
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Demonstrates extensive knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates comprehensive understanding of continuity and change over time. Demonstrates comprehensive understanding of different perspectives of individuals and groups in the past. Analyses and interprets sources for evidence and synthesises evidence. Evaluates differing interpretations and representations of the past. Demonstrates sophisticated understanding and use of historical concepts and terms. Communicates a high level and sustained argument through well-structured and comprehensive texts.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Extensive knowledge across historical features, people, places, events and developments",
+        "Comprehensive understanding of continuity and change",
+        "Comprehensive understanding of different perspectives",
+        "Analyses AND interprets sources for evidence — AND synthesises evidence across sources",
+        "EVALUATES differing interpretations and representations",
+        "Sophisticated understanding and use of historical concepts and terms",
+        "High level, SUSTAINED argument through well-structured and COMPREHENSIVE texts"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Demonstrates thorough knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates a well-developed understanding of continuity and change over time. Demonstrates a well-developed understanding of different perspectives of individuals and groups in the past. Analyses and interprets sources for evidence. Analyses differing interpretations and representations of the past. Demonstrates thorough understanding and use of historical concepts and terms. Communicates a coherent and sustained argument through well-structured and comprehensive texts.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Thorough knowledge of historical features, people, places, events and developments",
+        "Well-developed understanding of continuity and change",
+        "Well-developed understanding of different perspectives",
+        "Analyses and interprets sources for evidence (synthesises at Band 6 — analyses at Band 5)",
+        "ANALYSES differing interpretations (evaluates at Band 6)",
+        "Thorough understanding and use of historical concepts and terms",
+        "Coherent and sustained argument through well-structured and comprehensive texts"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Demonstrates sound knowledge and understanding of a range of historical features, people, places, events and developments, and their significance. Demonstrates sound understanding of continuity and change over time. Demonstrates sound understanding of different perspectives of individuals and groups in the past. Uses sources for evidence. Discusses interpretations and representations of the past. Demonstrates understanding of historical concepts and terms. Communicates a general argument through well-structured texts.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Sound knowledge of historical features, people, places, events and developments",
+        "Sound understanding of continuity and change",
+        "Sound understanding of different perspectives",
+        "USES sources for evidence (analyses at Band 5)",
+        "DISCUSSES interpretations and representations",
+        "Understanding of historical concepts and terms",
+        "General argument through well-structured texts"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates basic understanding of historical features, people, places, events, and their significance. Identifies features of continuity and change over time. Demonstrates basic understanding of different perspectives of individuals and groups in the past. Makes reference to sources. Identifies interpretations and representations of the past. Uses basic historical concepts and terms. Communicates basic information through descriptive texts.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Basic understanding of historical features",
+        "Identifies continuity and change",
+        "Basic understanding of perspectives",
+        "Makes reference to sources (uses at Band 4)",
+        "Identifies interpretations",
+        "Basic historical concepts and terms",
+        "Basic information through descriptive texts"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Describes historical features, people, places and events. Recognises aspects of continuity and/or change. Demonstrates limited understanding of different perspectives of individuals and groups in the past. Makes reference to sources. Uses limited historical concepts and terms. Provides limited information in narrative style.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Describes historical features",
+        "Recognises continuity or change",
+        "Limited understanding of perspectives",
+        "Makes reference to sources",
+        "Limited historical terms",
+        "Narrative style without argument"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": [
+        "Minimum standard not demonstrated"
+      ]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Section I (Core): assess the usefulness and/or reliability of provided sources for a historian studying power and authority 1919–1946",
+        "Section I (Core): use the source(s) AND own knowledge to explain or account for a feature of the period (e.g. Nazi consolidation of power, methods of control)",
+        "Assess/evaluate the significance of an individual, event or development (e.g. the role of Emperor Hirohito, the significance of the Tet Offensive)",
+        "To what extent... (e.g. To what extent was the New Deal successful? To what extent was Gorbachev responsible for the end of the Cold War?)",
+        "Account for the rise/collapse of... (e.g. account for the rise of militarism in Japan, account for the collapse of apartheid)",
+        "Analyse the impact of the conflict/regime/movement on civilians or specific groups",
+        "Evaluate differing historical interpretations of a key debate (e.g. the decision to drop the A-bomb, the origins of the Cold War)"
+      ],
+      "modern_history_specific_tips": [
+        "ALWAYS anchor claims to specific evidence — named events with dates (Enabling Act March 1933, Sharpeville March 1960), named individuals, named legislation, statistics where relevant. Generic references to 'the government' or 'the war' earn Band 3 at best.",
+        "For Section I: address BOTH usefulness AND reliability where asked — usefulness is about what the source offers a historian for a specific inquiry; reliability is about accuracy, perspective, purpose and provenance. A biased propaganda source can still be highly USEFUL for studying propaganda.",
+        "For Section I: always integrate 'own knowledge' with the source content when the question asks for it — quoting or describing the source alone caps the mark.",
+        "Include historiography in essays — name historians (Kershaw, Fitzpatrick, Gaddis, Dower, Dikötter) and their interpretations, especially where they differ. Evaluating competing interpretations distinguishes Band 6 from Band 5.",
+        "Use historical concepts explicitly — frame arguments around causation, continuity and change, perspectives, significance and contestability. Don't just narrate events chronologically.",
+        "Stay inside the topic's date range — evidence outside the prescribed period (e.g. post-1937 Japan in the National Study, post-1941 USSR) earns no credit.",
+        "For 'account for' and 'to what extent' questions: weigh multiple factors, rank their relative importance, and make an explicit judgement — not just a list of causes."
+      ],
+      "common_errors": [
+        "Narrating events chronologically without constructing an argument ('First Hitler became Chancellor, then...' without evaluating causation or significance).",
+        "Confusing usefulness with reliability in Section I source questions, or asserting a source is 'biased so unreliable' without analysing purpose and audience.",
+        "Describing sources without linking them to the question's specific inquiry focus.",
+        "Ignoring historiography — not naming any historians or their interpretations in extended responses.",
+        "Describing both sides of a debate without making a judgement — Band 5-6 requires evaluation, not just discussion.",
+        "Straying outside the prescribed date range of the topic (e.g. discussing Pearl Harbor in Japan 1904–1937, or post-1968 events in Civil Rights 1945–1968).",
+        "Using general terms ('the people', 'the government', 'sources show') without specific names, dates and evidence."
+      ]
+    },
+    "marking_guidance": {
+      "argument_construction_steps": [
+        "State a clear historical thesis or argument in response to the question.",
+        "Identify the historical period, context, and relevant aspects of the prescribed topic.",
+        "Present specific evidence — named events, dates, individuals, legislation, statistics — to support the argument.",
+        "Where sources are provided (Section I), analyse and evaluate them: what do they reveal, and what are their limitations?",
+        "Integrate at least one historical interpretation (named historian) and assess it in extended responses.",
+        "Apply historical concepts: causation, continuity and change, significance, perspectives, contestability.",
+        "Conclude with a judgement that directly answers the question."
+      ],
+      "source_analysis_steps": [
+        "Identify the source type (official document, speech, propaganda poster, photograph, cartoon, memoir, historian's account).",
+        "Identify the creator, date, purpose and intended audience.",
+        "State what the source reveals about the topic (its usefulness for the historian's specific inquiry).",
+        "Assess reliability: perspective, purpose, propaganda value, hindsight, self-justification, censorship.",
+        "Comment on what the source does NOT reveal or may misrepresent (limitations).",
+        "Cross-reference with other sources and own knowledge where possible.",
+        "Link the source analysis to the historical argument or inquiry question."
+      ],
+      "quality_checks": {
+        "before_output": [
+          "Is a clear historical argument stated and sustained?",
+          "Is specific evidence cited — named events, dates, individuals, legislation?",
+          "Where sources are involved, are they evaluated (usefulness AND reliability/limitations)?",
+          "Is historiography included in extended responses (named historian and their view)?",
+          "Are historical concepts used explicitly (causation, significance, continuity/change, perspectives)?",
+          "Does the response address perspectives (individual, group, national, ideological)?",
+          "Is all evidence inside the prescribed topic and date range?",
+          "Does the conclusion directly address the question with a judgement?"
+        ],
+        "band6_checklist": [
+          "Extensive, specific historical knowledge across multiple aspects of the topic.",
+          "Comprehensive understanding of continuity and change — both identified and assessed.",
+          "Sources analysed, interpreted AND synthesised (with own knowledge in Section I).",
+          "Differing historical interpretations EVALUATED — not just described.",
+          "Sophisticated use of historical concepts and terminology throughout.",
+          "High-level sustained argument — not a narrative or list of facts.",
+          "Comprehensive texts — detailed, well-structured, covering the breadth of the question."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Extensive knowledge, comprehensive continuity/change analysis, synthesis of sources with own knowledge, evaluation of differing historiographical interpretations, sophisticated historical concepts, sustained high-level argument.",
+          "Band5": "Thorough knowledge, well-developed continuity/change, analysis and interpretation of sources, analysis of interpretations (not full evaluation), thorough historical concepts, coherent sustained argument.",
+          "Band4": "Sound knowledge, sound continuity/change, uses sources for evidence (references without deep analysis), discusses interpretations, understands historical concepts, general argument.",
+          "Band3": "Basic knowledge, identifies continuity/change, makes reference to sources, identifies interpretations, basic terms, descriptive text.",
+          "Band2": "Describes events, recognises change, limited terms, narrative style.",
+          "Band1": "Do not generate unless explicitly requested."
+        },
+        "forbidden_behaviours": [
+          "Do not construct a response that only narrates events without building an historical argument.",
+          "Do not use generic evidence references — always name specific events, dates, individuals and legislation.",
+          "Do not ignore historiography in extended responses — always include at least one named historian.",
+          "Do not describe interpretations without evaluating them at Band 5-6.",
+          "Do not confuse the topic period — all evidence must sit inside the prescribed date range of the option being answered.",
+          "Do not mark a response against the wrong option — confirm which National Studies / Peace and Conflict / Change in the Modern World option the question belongs to before marking."
+        ]
+      }
+    }
+  },
+  "directiveTiers": {
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "account for": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "investigate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "to what extent": {
+      "tier": 3,
+      "modality": "required"
+    },
+    "how adequately": {
+      "tier": 3,
+      "modality": "required"
+    },
+    "how far": {
+      "tier": 3,
+      "modality": "required"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "ignore"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which suggests",
+      "this indicates",
+      "this reveals",
+      "leading to",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet",
+      "while",
+      "whereas",
+      "in contrast",
+      "despite",
+      "nevertheless"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas",
+      "notwithstanding",
+      "rather than"
+    ]
+  },
+  "modernHistoryNote": "Modern History CUBE marking has important differences from Science subjects and from Ancient History. The Underline step should identify: named individuals (Hitler, Stalin, Mandela, Deng Xiaoping), named events with dates (Enabling Act 1933, Tet Offensive 1968, Sharpeville 1960), named legislation and treaties, named source types (propaganda posters, cartoons, speeches, official documents, memoirs), named historical concepts (causation, continuity and change, significance, perspectives, contestability), and any directive verbs that trigger source evaluation or historiographical judgement. Section I questions come with PROVIDED sources — the Evaluate/plan step must show how each source will be used AND supplemented with own knowledge. Planning arrows should show: thesis → evidence (named events/individuals/dates) → source analysis (usefulness/reliability where relevant) → historiography (named historian) → judgement. Before marking, confirm which topic option the question belongs to — this subject spans one core plus thirteen school-taught options across three elective sections, each with its own prescribed date range.",
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
