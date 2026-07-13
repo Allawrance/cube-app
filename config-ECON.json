@@ -1,0 +1,693 @@
+{
+  "buildStamp": "v1.0 · 2026-07-12 · initial Economics config",
+  "subjectCode": "ECON",
+  "subjectName": "Economics",
+  "subjectShortName": "Econ",
+  "responseModes": ["multiPage"],
+  "promptVariant": "standard",
+  "responsePagesMax": 10,
+  "dominantMode": "Economic argument + theory and diagrams + contemporary statistics and named policies",
+  "cleanRule": "Economics = economic argument + relevant theory (models, diagrams, equations) + contemporary statistics and named policies/examples + explicit links to economic objectives and the question's directive verb",
+  "leaderboardTip": "HSC Economics questions reward PRECISE, CONTEMPORARY evidence — real statistics (cash rate, inflation %, unemployment %, GDP growth), named policies (a specific Federal Budget, RBA decisions, named trade agreements like CPTPP or ChAFTA) and correctly drawn, labelled diagrams (AD/AS, exchange rate S&D, Lorenz curve). Generic claims like 'the government spends money' cannot reach Band 5. Always apply theory to the contemporary Australian economy and refer to any stimulus provided.",
+  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=ECON",
+  "hasMC": true,
+  "sheetTabCube": "ECON CUBE",
+  "sheetTabFull": "ECON",
+  "accentColor": "#ffd54f",
+  "kla": "HSIE",
+  "classCodes": [
+    "12HEC1",
+    "12HEC2",
+    "12HEC3"
+  ],
+  "activeTopics": [
+    "The Global Economy",
+    "Australia's Place in the Global Economy",
+    "Economic Issues",
+    "Economic Policies and Management"
+  ],
+  "subjectContext": {
+    "examStructure": {
+      "sectionI": "20 marks objective response (Q1–20 multiple choice). May include calculations, diagrams and stimulus.",
+      "sectionII": "40 marks short-answer (Q21–24, 10 marks each, split into parts of 2–5 marks). Parts are frequently stimulus-based — graphs (e.g. foreign exchange market), tables (e.g. hypothetical labour force data) or short extracts. Answer spaces guide expected length (2 marks ≈ 3–4 lines, 5 marks ≈ 12–15 lines).",
+      "sectionIII": "20 marks — ONE stimulus-based extended response chosen from two (e.g. Q25 or Q26). ~35 minutes, ~800–1000 words. Marking criteria explicitly include 'use the information provided' — the stimulus MUST be referenced and integrated.",
+      "sectionIV": "20 marks — ONE extended response chosen from two (e.g. Q27 or Q28). ~35 minutes, ~800–1000 words. No stimulus. Assessed on knowledge and understanding, application of economic terms/concepts/relationships/theory, and a sustained, logical, cohesive response."
+    },
+    "courseStructure": "All FOUR HSC topics are mandatory (25% indicative time each) — there are no options in Economics. Any topic can appear in any section of the paper, and extended responses frequently draw links across topics (e.g. exchange rates × economic objectives × policy responses).",
+    "topics": [
+      "The Global Economy",
+      "Australia's Place in the Global Economy",
+      "Economic Issues",
+      "Economic Policies and Management"
+    ],
+    "economicEvidenceTypes": [
+      "contemporary statistics (GDP growth rate, inflation rate, unemployment rate, participation rate, cash rate, CAD as % of GDP, net foreign debt as % of GDP, Gini coefficient, terms of trade index, exchange rate levels)",
+      "named policies (a specific Federal Budget and its stance/outcome, specific RBA cash rate decisions, named microeconomic reforms, named labour market or environmental policies)",
+      "named institutions and agreements (RBA, WTO, IMF, World Bank, OECD, G20, and trade agreements such as CPTPP, RCEP, ChAFTA, AUSFTA, AANZFTA)",
+      "economic theory and models (AD/AS, the simple multiplier k = 1/(1−MPC), Y = C+I+G+(X−M), supply and demand for currency, Lorenz curve and Gini coefficient, business cycle, NAIRU/Phillips curve reasoning)",
+      "diagrams (accurately drawn, fully labelled — axes, curves, equilibria and shifts identified)",
+      "case study evidence (an economy other than Australia and the globalisation/development strategies used, e.g. China, Indonesia, Brazil)"
+    ],
+    "evidenceRequirementInstruction": "For ALL extended response questions in Economics (explain, analyse, discuss, assess, evaluate), students MUST support their argument with: (1) relevant economic theory correctly applied (models, equations or diagrams), AND (2) contemporary evidence — real statistics with approximate figures (e.g. 'the cash rate of ~3.6%', 'unemployment of ~4%') and named policies, institutions or agreements. Statistics should be contemporary (roughly the last 2–3 years) unless the question asks about longer-run trends, in which case trend data since ~2016 is expected. Generic references to 'the government', 'interest rates changed' or 'trade agreements' without specifics cannot exceed Band 3. Band 5–6 requires theory and contemporary evidence INTEGRATED into the argument — not bolted on.",
+    "stimulusInstruction": "Where a question provides stimulus (graph, table, extract, hypothetical data), the response MUST explicitly use it: quote or cite the figures, describe the trend/movement shown, and connect it to theory. In Section III the marking criteria include 'use the information provided' — a response that ignores the stimulus loses marks regardless of quality. In Section II hypothetical-data questions (e.g. NAIRU tables), calculations and conclusions must be drawn from the data given, not from real-world figures.",
+    "diagramInstruction": "Economics strongly rewards diagrams in short answers and extended responses. Diagrams must be fully labelled (axes, curves, original and new equilibria, direction of shift) and explicitly referred to in the written argument (e.g. 'as shown in the diagram, the demand curve shifts from D to D1, causing an appreciation from P to P1'). An unlabelled or unreferenced diagram earns little credit.",
+    "quantitativeSkills": [
+      "calculate components of the Balance of Payments",
+      "calculate equilibrium using leakages and injections (S+T+M = I+G+X)",
+      "apply the simple multiplier k = 1/(1−MPC) to changes in national income",
+      "calculate unemployment rate and participation rate from labour force data",
+      "interpret a Lorenz curve and Gini coefficient",
+      "interpret exchange rate movements including the Trade Weighted Index (TWI)",
+      "interpret trend data on growth, inflation, unemployment and the current account"
+    ]
+  },
+  "syllabus": {
+    "hscTopics": {
+      "title": "HSC Course — four mandatory topics (25% each)",
+      "topics": [
+        {
+          "code": "T1",
+          "title": "The Global Economy",
+          "principalFocus": "The operation of the global economy and the impact of globalisation on individual economies.",
+          "dotPoints": [
+            {
+              "label": "T1-1",
+              "title": "International economic integration",
+              "content": "The global economy; Gross World Product; globalisation — trade in goods and services, financial flows, investment and transnational corporations, technology transport and communication, international division of labour and migration; the international and regional business cycles",
+              "learnTo": "Examine the effects of globalisation on economic growth, quality of life, unemployment, inflation and external stability; analyse statistics on trade and financial flows to determine the nature and extent of global interdependence"
+            },
+            {
+              "label": "T1-2",
+              "title": "Trade, financial flows and foreign investment",
+              "content": "The basis of free trade — its advantages and disadvantages; role of international organisations — WTO, IMF, World Bank, United Nations, OECD; influence of government economic forums — G20, G7/8; trading blocs, monetary unions and free trade agreements — advantages and disadvantages of multilateral (EU, APEC, NAFTA/USMCA, ASEAN) and bilateral agreements",
+              "learnTo": "Assess the impact on the global economy of international organisations and contemporary trading bloc agreements"
+            },
+            {
+              "label": "T1-3",
+              "title": "Protection",
+              "content": "Reasons for protection — infant industry argument, domestic employment, dumping, defence; methods of protection and the effects of protectionist policies on the domestic and global economy — tariffs, subsidies, quotas, local content rules, export incentives",
+              "learnTo": "Discuss the effects of protectionist policies on the global economy"
+            },
+            {
+              "label": "T1-4",
+              "title": "Globalisation and economic development",
+              "content": "Differences between economic growth and economic development; distribution of income and wealth; income and quality of life indicators; developing, emerging and advanced economies; reasons for differences between nations; effects of globalisation — trade, investment and transnational corporations, environmental sustainability, the international business cycle",
+              "learnTo": "Investigate the global distribution of income and wealth; assess the consequences of an unequal distribution of global income and wealth; assess the potential impact on the environment of continuing world economic development; evaluate the impact of development strategies used in a range of contemporary and hypothetical situations"
+            },
+            {
+              "label": "T1-5",
+              "title": "Case study",
+              "content": "A case study of the influence of globalisation on an economy other than Australia, including an evaluation of the strategies used to promote economic growth and development in that economy",
+              "learnTo": "Evaluate the strategies used to promote economic growth and development in the case study economy"
+            }
+          ],
+          "keywords": [
+            "globalisation",
+            "Gross World Product",
+            "GWP",
+            "international business cycle",
+            "transnational corporation",
+            "TNC",
+            "financial flows",
+            "international division of labour",
+            "free trade",
+            "comparative advantage",
+            "WTO",
+            "IMF",
+            "World Bank",
+            "OECD",
+            "G20",
+            "trading bloc",
+            "monetary union",
+            "free trade agreement",
+            "EU",
+            "APEC",
+            "ASEAN",
+            "protection",
+            "tariff",
+            "subsidy",
+            "quota",
+            "local content rule",
+            "export incentive",
+            "dumping",
+            "infant industry",
+            "economic growth",
+            "economic development",
+            "Human Development Index",
+            "HDI",
+            "developing economy",
+            "emerging economy",
+            "advanced economy",
+            "development strategy"
+          ]
+        },
+        {
+          "code": "T2",
+          "title": "Australia's Place in the Global Economy",
+          "principalFocus": "Australia's place in the global economy and the effect of changes in the global economy on Australia.",
+          "dotPoints": [
+            {
+              "label": "T2-1",
+              "title": "Australia's trade and financial flows",
+              "content": "Value, composition and direction of Australia's trade and financial flows; trends in Australia's trade pattern; trends in financial flows — debt and equity",
+              "learnTo": "Assess the impact of recent changes in the global economy on Australia's trade and financial flows; examine the effects of changes in trade and financial flows on Australia's economic performance"
+            },
+            {
+              "label": "T2-2",
+              "title": "Australia's Balance of Payments",
+              "content": "Structure — Current Account (debits and credits), Capital and Financial Account; links between key Balance of Payments categories; trends in the size and composition of Australia's Balance of Payments — international competitiveness, terms of trade, international borrowing, foreign investment — and the effects of these trends",
+              "learnTo": "Calculate the main components of Australia's balance of payments; analyse the relationship between the capital and financial account balance and the net primary income balance; explain the relationship between the current account balance and the capital and financial account balance"
+            },
+            {
+              "label": "T2-3",
+              "title": "Exchange rates",
+              "content": "Measurement of relative exchange rates — against individual currencies and the Trade Weighted Index; factors affecting the demand for and supply of Australian dollars; appreciation and depreciation; determination of exchange rates — fixed, flexible and managed; the influence of the Reserve Bank of Australia on exchange rates; the effects of fluctuations in exchange rates on the Australian economy",
+              "learnTo": "Use supply and demand diagrams to explain how the value of a currency is determined under different exchange rate systems; analyse the impact of changes in the components of the balance of payments on the value of the Australian dollar; analyse the effects of changes in the value of the Australian dollar on the Australian economy"
+            },
+            {
+              "label": "T2-4",
+              "title": "Free trade and protection",
+              "content": "Australia's policies regarding free trade and protection; Australia's multilateral and bilateral free trade agreements (overview of two examples of each type); implications of Australia's policies for individuals, firms and governments; implications for Australia of protectionist policies of other countries and trading blocs",
+              "learnTo": "Discuss the impact of free trade and protection policies on the quality of life in Australia; propose likely changes to the structure of industry within Australia as a result of current trends in the global economy"
+            }
+          ],
+          "keywords": [
+            "Balance of Payments",
+            "current account",
+            "Capital and Financial Account",
+            "current account deficit",
+            "current account surplus",
+            "CAD",
+            "net primary income",
+            "net goods and services",
+            "terms of trade",
+            "international competitiveness",
+            "net foreign debt",
+            "net foreign liabilities",
+            "foreign investment",
+            "exchange rate",
+            "appreciation",
+            "depreciation",
+            "Trade Weighted Index",
+            "TWI",
+            "fixed exchange rate",
+            "flexible exchange rate",
+            "managed exchange rate",
+            "dirtying the float",
+            "Reserve Bank of Australia",
+            "RBA",
+            "free trade agreement",
+            "CPTPP",
+            "RCEP",
+            "ChAFTA",
+            "AUSFTA",
+            "AANZFTA",
+            "multilateral agreement",
+            "bilateral agreement",
+            "structural change"
+          ]
+        },
+        {
+          "code": "T3",
+          "title": "Economic Issues",
+          "principalFocus": "The nature, causes and consequences of the economic issues and problems that can confront contemporary economies.",
+          "dotPoints": [
+            {
+              "label": "T3-1",
+              "title": "Economic growth",
+              "content": "Aggregate demand and its components: Y = C+I+G+X−M; injections and withdrawals (I+G+X; S+T+M); the simple multiplier k = 1/(1−MPC); measurement of growth through changes in real GDP; sources and effects of economic growth in Australia; increases in aggregate supply — improvements in efficiency and technology; trends in the business cycle",
+              "learnTo": "Examine the arguments for and against increasing economic growth rates; calculate an equilibrium position using leakages and injections; determine the impact of the simple multiplier on national income; explain the implications of the multiplier for fluctuations in economic activity"
+            },
+            {
+              "label": "T3-2",
+              "title": "Unemployment",
+              "content": "Measurement — labour force, participation rate, unemployment rate; trends; types and causes — cyclical, structural, frictional, seasonal, underemployment, hidden, long-term; non-accelerating inflation rate of unemployment (NAIRU); main groups affected by unemployment; effects — economic and social costs",
+              "learnTo": "Investigate the economic and social problems created by unemployment; calculate the unemployment rate and the participation rate using labour force statistics"
+            },
+            {
+              "label": "T3-3",
+              "title": "Inflation",
+              "content": "Measurement — headline and underlying; trends; causes — demand-pull inflation, cost-push inflation, imported inflation, inflationary expectations; positive and negative effects of inflation",
+              "learnTo": "Analyse the effects of inflation on an economy"
+            },
+            {
+              "label": "T3-4",
+              "title": "External stability",
+              "content": "Measurement — CAD as a percentage of GDP, net foreign debt as a percentage of GDP, net foreign liabilities as a percentage of GDP, terms of trade, exchange rate, international competitiveness; trends; positive and negative causes and effects",
+              "learnTo": "Discuss the effect of a continued current account deficit on an economy"
+            },
+            {
+              "label": "T3-5",
+              "title": "Distribution of income and wealth",
+              "content": "Measurement — Lorenz curve and Gini coefficient; sources of income as a percentage of household income; taxation, transfer payments and other assistance; sources of wealth; dimensions and trends according to gender, age, occupation, ethnic background and family structure; economic and social costs and benefits of inequality",
+              "learnTo": "Investigate recent trends in the distribution of income in Australia and identify the impact of specific economic policies on this distribution; analyse the economic and social costs of inequality; interpret a Lorenz curve and a Gini coefficient"
+            },
+            {
+              "label": "T3-6",
+              "title": "Environmental sustainability",
+              "content": "Ecologically sustainable development; private and social costs and benefits — externalities, market failure; public and private goods — free riders; environmental issues — preservation of natural environments, pollution, climate change, depletion of renewable and non-renewable resources",
+              "learnTo": "Examine the economic issues associated with the goal of ecologically sustainable development; use economic concepts to analyse a contemporary environmental issue"
+            }
+          ],
+          "keywords": [
+            "aggregate demand",
+            "aggregate supply",
+            "Y = C+I+G+X-M",
+            "injections",
+            "withdrawals",
+            "leakages",
+            "simple multiplier",
+            "MPC",
+            "MPS",
+            "real GDP",
+            "business cycle",
+            "labour force",
+            "participation rate",
+            "unemployment rate",
+            "cyclical unemployment",
+            "structural unemployment",
+            "frictional unemployment",
+            "seasonal unemployment",
+            "underemployment",
+            "hidden unemployment",
+            "long-term unemployment",
+            "NAIRU",
+            "headline inflation",
+            "underlying inflation",
+            "CPI",
+            "demand-pull inflation",
+            "cost-push inflation",
+            "imported inflation",
+            "inflationary expectations",
+            "external stability",
+            "current account deficit",
+            "net foreign debt",
+            "net foreign liabilities",
+            "Lorenz curve",
+            "Gini coefficient",
+            "transfer payments",
+            "income inequality",
+            "wealth inequality",
+            "ecologically sustainable development",
+            "ESD",
+            "externalities",
+            "market failure",
+            "public goods",
+            "free rider",
+            "intergenerational equity"
+          ]
+        },
+        {
+          "code": "T4",
+          "title": "Economic Policies and Management",
+          "principalFocus": "The aims and operation of economic policies in the Australian economy and hypothetical situations.",
+          "dotPoints": [
+            {
+              "label": "T4-1",
+              "title": "Economic objectives",
+              "content": "Economic objectives in relation to: economic growth and quality of life; full employment; price stability; external stability; environmental sustainability; distribution of income. Potential conflicts among objectives",
+              "learnTo": "Explain how governments are restricted in their ability to simultaneously achieve economic objectives; analyse the opportunity cost of government decisions in addressing specific economic problems or issues"
+            },
+            {
+              "label": "T4-2",
+              "title": "Fiscal policy",
+              "content": "Rationale for macroeconomic policies — stabilisation and shifts in aggregate demand; Federal Government budgets and budget outcomes; effects of budgetary changes on resource use, income distribution and economic activity; methods of financing deficits; use of a surplus",
+              "learnTo": "Analyse alternative ways to finance a budget deficit; use simple multiplier analysis to explain how governments can solve economic problems"
+            },
+            {
+              "label": "T4-3",
+              "title": "Monetary policy",
+              "content": "Purpose of monetary policy; implementation of monetary policy by the Reserve Bank of Australia (cash rate target, domestic market operations); impact of changes in interest rates on economic activity and the exchange rate",
+              "learnTo": "Explain the impact of key economic policies on an economy; explain, using economic theory, the general effects of macroeconomic policies on an economy"
+            },
+            {
+              "label": "T4-4",
+              "title": "Microeconomic and labour market policies",
+              "content": "Rationale for microeconomic policies — shifts in aggregate supply, efficiency; effects on individual product and factor markets, industries and the economy; regulation and deregulation — competition policy. Labour market policies — role of national and state systems; the national system for determining minimum employment standards, minimum wages, awards, enterprise agreements, employment contracts for high income earners; dispute resolution; arguments for and against centralised, decentralised and individualised methods of determining employment contracts; education, training and employment programs",
+              "learnTo": "Investigate structural changes in the Australian economy resulting from microeconomic policies; identify limitations of the effectiveness of economic policies"
+            },
+            {
+              "label": "T4-5",
+              "title": "Environmental management and policy limitations",
+              "content": "National and global context for environmental management — regulations, market-based policies, targets, international agreements. Limitations of economic policies — time lags, global influences, political constraints. Policy responses and their effects in dealing with the economic objectives: economic growth and quality of life, full employment, price stability, external stability, distribution of income, environmental sustainability",
+              "learnTo": "Propose and evaluate alternative policies to address an economic problem in hypothetical and contemporary Australian contexts; select an appropriate policy mix to address a specific economic problem"
+            }
+          ],
+          "keywords": [
+            "economic objectives",
+            "full employment",
+            "price stability",
+            "external stability",
+            "quality of life",
+            "conflicts among objectives",
+            "opportunity cost",
+            "macroeconomic policy",
+            "fiscal policy",
+            "Federal Budget",
+            "budget deficit",
+            "budget surplus",
+            "budget outcome",
+            "fiscal stance",
+            "expansionary",
+            "contractionary",
+            "automatic stabilisers",
+            "discretionary policy",
+            "crowding out",
+            "monetary policy",
+            "cash rate",
+            "domestic market operations",
+            "exchange settlement accounts",
+            "transmission mechanism",
+            "inflation target",
+            "microeconomic policy",
+            "microeconomic reform",
+            "aggregate supply",
+            "efficiency",
+            "deregulation",
+            "competition policy",
+            "labour market policy",
+            "minimum wage",
+            "modern award",
+            "enterprise agreement",
+            "Fair Work Commission",
+            "dispute resolution",
+            "centralised wage determination",
+            "decentralised wage determination",
+            "market-based environmental policy",
+            "emissions target",
+            "time lags",
+            "implementation lag",
+            "impact lag",
+            "political constraints",
+            "policy mix"
+          ]
+        }
+      ]
+    }
+  },
+  "bandRules": {
+    "Band6": {
+      "descriptor": "Demonstrates comprehensive knowledge and understanding of economic terms, concepts, relationships and theory, and synthesises these to construct a sustained, logical and cohesive argument. Integrates relevant economic theory (models, equations, accurately labelled diagrams) with precise contemporary statistics, named policies and trends to evaluate economic problems, issues and policy responses in Australian, global and hypothetical contexts. Interprets and applies stimulus material analytically. Communicates using precise economic terminology throughout.",
+      "scoreRange": "90-100",
+      "keyFeatures": [
+        "Synthesises theory AND contemporary evidence — not just describes",
+        "Precise contemporary statistics with approximate figures (cash rate, inflation %, unemployment %, GDP growth, CAD % of GDP)",
+        "Named policies, institutions and agreements integrated as evidence",
+        "Accurate, fully labelled diagrams explicitly referenced in the argument",
+        "Stimulus material interpreted and woven into the response (where provided)",
+        "Sustained, logical, cohesive structure directly answering the directive verb",
+        "Precise and consistent economic terminology"
+      ]
+    },
+    "Band5": {
+      "descriptor": "Demonstrates detailed knowledge and understanding of economic terms, concepts, relationships and theory. Applies theory to contemporary and hypothetical contexts and supports the argument with relevant statistics, examples and policies. Analyses causes, effects and policy responses with a clear line of argument. Uses diagrams and stimulus material effectively. Communicates using relevant economic terminology.",
+      "scoreRange": "80-89",
+      "keyFeatures": [
+        "Applies theory to the contemporary Australian economy — not just states it",
+        "Relevant statistics and named policies support the argument, slightly less integrated than Band 6",
+        "Clear analysis of causes, effects and policy responses",
+        "Diagrams used and referenced",
+        "Refers to stimulus where provided",
+        "Relevant economic terminology"
+      ]
+    },
+    "Band4": {
+      "descriptor": "Demonstrates sound knowledge and understanding of economic concepts and relationships. Provides some analysis of economic issues and policies with some supporting examples or statistics. Structure is generally clear but the argument may be uneven, with some description in place of analysis. Uses appropriate economic terminology.",
+      "scoreRange": "70-79",
+      "keyFeatures": [
+        "Some analysis — moves beyond pure description",
+        "Some supporting examples or statistics (may lack precision or currency)",
+        "Generally clear structure",
+        "Appropriate economic terminology"
+      ]
+    },
+    "Band3": {
+      "descriptor": "Demonstrates some knowledge and understanding of economic concepts. Responses are largely descriptive, with generalised statements and few specific statistics, policies or examples. Diagrams may be missing, inaccurate or unreferenced. Uses some economic terminology.",
+      "scoreRange": "60-69",
+      "keyFeatures": [
+        "Largely descriptive",
+        "Generalised statements — few or no specific statistics or named policies",
+        "Some economic terminology"
+      ]
+    },
+    "Band2": {
+      "descriptor": "Recognises some economic issues and terms. Demonstrates a limited understanding of economic relationships. Responses are brief, generalised or partially relevant.",
+      "scoreRange": "50-59",
+      "keyFeatures": [
+        "Recognises some economic issues",
+        "Limited understanding of relationships",
+        "Basic economic terms only"
+      ]
+    },
+    "Band1": {
+      "descriptor": "Performance reported as Band 1 indicates that the minimum standard expected was not demonstrated.",
+      "scoreRange": "0-49",
+      "keyFeatures": [
+        "Minimum standard not demonstrated"
+      ]
+    },
+    "subject_specific_guidance": {
+      "dominant_question_types": [
+        "Explain the impacts of a policy change on an economy (e.g. a decrease in the cash rate) — Section II and IV",
+        "Discuss the effects of X on Y (e.g. a depreciation on domestic businesses; economic development on environmental sustainability)",
+        "Stimulus-based: 'In your answer, refer to the information provided' — trends in the Balance of Payments, income inequality data (Section III)",
+        "Analyse the conflicts for government in pursuing economic objectives (Section IV)",
+        "Analyse/assess how policies affect firms, individuals and government (e.g. methods of protection)",
+        "Short-answer calculation and interpretation from hypothetical data (participation rate, NAIRU, multiplier, exchange rate diagrams)"
+      ],
+      "econ_specific_tips": [
+        "MANDATORY — EVIDENCE for ALL extended responses: integrate contemporary statistics with approximate figures AND named policies/institutions/agreements. Examples: 'the RBA's cash rate of ~3.6%', 'inflation returning to the 2–3% target band', 'unemployment of ~4%', 'the 2025–26 Federal Budget', 'CPTPP', 'ChAFTA'. Generic references cannot exceed Band 3.",
+        "THEORY MUST BE APPLIED, not recited: state the model (AD/AS, multiplier, currency S&D), then apply it to the specific scenario in the question with a cause-and-effect chain (so → because → but).",
+        "DIAGRAMS: where a diagram is relevant (exchange rates, AD/AS, Lorenz curve, tariffs), draw it fully labelled and refer to it explicitly in the text. In HSC marking an accurate referenced diagram can substitute for a paragraph of explanation.",
+        "STIMULUS: in Section III the criteria explicitly include 'use the information provided'. Cite the figures and trends from the stimulus (e.g. 'the current account moved from deficit to a surplus peak of ~$19bn in 2021 before returning to deficit by 2024') and connect them to theory.",
+        "DIRECTIVE VERBS matter: 'outline' (2 marks) = brief sketch; 'explain' (3–5 marks) = cause and effect chain; 'discuss' = points for AND against; 'analyse' = components and relationships; 'assess/evaluate' = judgement based on criteria.",
+        "ECONOMIC OBJECTIVES are the spine of Topic 4 answers: growth, full employment, price stability, external stability, distribution of income, environmental sustainability — and their CONFLICTS (e.g. growth vs price stability, growth vs environmental sustainability).",
+        "Distinguish precisely: economic growth vs economic development; headline vs underlying inflation; appreciation vs depreciation effects; cyclical vs structural unemployment; fiscal vs monetary vs microeconomic policy."
+      ],
+      "common_errors": [
+        "Reciting theory without applying it to the contemporary Australian economy or the scenario in the question.",
+        "No statistics, or vague/outdated statistics ('interest rates are high') — Band 5–6 needs approximate current figures.",
+        "Ignoring stimulus material in Section II/III questions that provide it.",
+        "One-sided 'discuss' responses — discuss requires points for and against.",
+        "Confusing the effects of appreciation and depreciation (on exporters, importers, foreign debt servicing, inflation).",
+        "Unlabelled diagrams, or diagrams that are never referenced in the written argument.",
+        "Confusing the budget outcome (deficit/surplus) with the fiscal stance (expansionary/contractionary).",
+        "Using real-world figures in hypothetical-data questions instead of calculating from the data provided."
+      ]
+    },
+    "marking_guidance": {
+      "extended_response_steps": [
+        "Identify the directive verb and the exact economic relationship being asked about.",
+        "Establish the relevant theory briefly (model, equation or diagram) — do not over-describe.",
+        "Apply the theory to the specific context with cause-and-effect chains (so / because / but).",
+        "MANDATORY — EVIDENCE: support each major point with contemporary statistics (approximate figures) and/or named policies, institutions or agreements. Generic references score no higher than Band 3.",
+        "Where stimulus is provided, explicitly cite its figures and trends and integrate them into the argument.",
+        "For discuss/assess/evaluate: present both sides (benefits and costs, strengths and limitations, winners and losers) before making a judgement.",
+        "Link back to economic objectives and the question's exact wording in the conclusion — make the judgement explicit where the directive verb requires it."
+      ],
+      "evidence_integration_rule": "Contemporary evidence MUST appear in all extended responses: statistics with approximate figures (growth, inflation, unemployment, cash rate, CAD % of GDP, Gini), named policies (specific Budgets, RBA decisions, named reforms) and named institutions/agreements (RBA, WTO, IMF, CPTPP, ChAFTA). A response with no specific evidence cannot exceed Band 3. Some evidence = Band 4 threshold; contemporary statistics and named policies integrated analytically with applied theory and diagrams = Band 5–6.",
+      "quality_checks": {
+        "before_output": [
+          "Has the directive verb been answered correctly (explain vs discuss vs analyse vs assess)?",
+          "Is relevant economic theory applied (not just stated) — model, equation or diagram?",
+          "Are contemporary statistics with approximate figures included? Are policies/institutions/agreements named?",
+          "If stimulus was provided, has it been explicitly cited and integrated?",
+          "For discuss/assess/evaluate: are both sides presented, with an explicit judgement where required?",
+          "Are diagrams fully labelled and referenced in the text?",
+          "Are cause-and-effect chains explicit (so, because, but) rather than assertions?",
+          "Are economic objectives and their conflicts addressed where relevant (Topic 4)?",
+          "Is economic terminology precise and consistent (appreciation/depreciation, headline/underlying, stance/outcome)?"
+        ],
+        "band6_checklist": [
+          "Synthesises theory and contemporary evidence into a sustained, cohesive argument.",
+          "Precise contemporary statistics AND named policies woven through the response — not listed.",
+          "Accurate, fully labelled diagram(s) explicitly referenced where relevant.",
+          "Stimulus interpreted analytically (where provided) — figures cited and connected to theory.",
+          "Both sides of the argument with an explicit, evidence-based judgement.",
+          "Cause-and-effect chains throughout — every claim followed by mechanism.",
+          "Precise economic terminology used consistently."
+        ]
+      },
+      "output_controls": {
+        "target_band_selection_rule": {
+          "Band6": "Synthesise applied theory, precise contemporary statistics, named policies and (where relevant) referenced diagrams into a sustained, cohesive, multi-perspective argument that directly answers the directive verb. Judgement must be evidence-based. Terminology exact.",
+          "Band5": "Apply theory to context with relevant statistics and named policies. Clear analysis with both sides where required. Slightly less integrated than Band 6 — evidence supports rather than drives the argument.",
+          "Band4": "Sound understanding with some analysis and some supporting examples or statistics. Clear structure. Appropriate terminology. Evidence lacks precision or currency.",
+          "Band3": "Largely descriptive with generalised statements, few specifics, some terminology.",
+          "Band2": "Recognises issues, minimal evidence, basic economic terms only.",
+          "Band1": "Do not generate unless explicitly requested as a wholly inadequate response."
+        },
+        "forbidden_behaviours": [
+          "Do not generate a response that recites theory without applying it to the question's context.",
+          "Do not use generic references — always include approximate figures and name specific policies, institutions or agreements.",
+          "Do not ignore stimulus material where the question provides it.",
+          "Do not present only one side in discuss/assess/evaluate responses.",
+          "Do not invent implausible statistics — use realistic approximate contemporary figures.",
+          "Do not use real-world figures in hypothetical-data questions — calculate from the data provided."
+        ]
+      }
+    }
+  },
+  "directiveTiers": {
+    "define": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "identify": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "list": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "name": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "state": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recall": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "recognise": {
+      "tier": 1,
+      "modality": "ignore"
+    },
+    "outline": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "describe": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "calculate": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "distinguish": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "compare": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "contrast": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "summarise": {
+      "tier": 2,
+      "modality": "ignore"
+    },
+    "interpret": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "explain": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "examine": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "analyse": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "discuss": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "investigate": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "apply": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "account for": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "propose": {
+      "tier": 3,
+      "modality": "ignore"
+    },
+    "synthesise": {
+      "tier": 3,
+      "modality": "optional"
+    },
+    "assess": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically analyse": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "critically evaluate": {
+      "tier": 4,
+      "modality": "required"
+    },
+    "justify": {
+      "tier": 4,
+      "modality": "ignore"
+    },
+    "recommend": {
+      "tier": 4,
+      "modality": "ignore"
+    }
+  },
+  "connectives": {
+    "preferred": [
+      "so",
+      "because",
+      "but"
+    ],
+    "accepted": [
+      "as a result",
+      "therefore",
+      "thus",
+      "hence",
+      "consequently",
+      "which means",
+      "this leads to",
+      "resulting in",
+      "due to",
+      "since",
+      "however",
+      "although",
+      "yet",
+      "while",
+      "whereas"
+    ],
+    "contrast": [
+      "however",
+      "although",
+      "on the other hand",
+      "despite",
+      "yet",
+      "in contrast",
+      "conversely",
+      "nevertheless",
+      "while",
+      "whereas",
+      "notwithstanding"
+    ]
+  },
+  "econEvidenceNote": "Economics marking requires applied theory plus contemporary evidence. The CUBE Underline step should highlight not just syllabus keywords but also: any statistics, dates or figures in the question or stimulus, any named policies/institutions/agreements, and any directive to 'refer to the information provided' — these define the evidence base the response must use.",
+  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+}
