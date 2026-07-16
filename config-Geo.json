@@ -4,74 +4,166 @@
   "subjectShortName": "Geo",
   "accentColor": "#4db6ac",
   "kla": "HSIE",
-
+  "syllabusVersion": "Geography 11–12 (2022), Year 12 — first HSC examination 2025",
   "dominantMode": "Evaluating responses and management strategies for sustainability, at a range of scales, incorporating multiple perspectives and geographical data",
   "cleanRule": "Geography (2022 syllabus) answers are marked on geographical reasoning about places, environments and change: a high-band evaluate/assess response must judge responses or management strategies for sustainability, at a range of scales, using evidence, geographical concepts (place, space, environment, interconnection, scale, sustainability, change) and — where the directive requires — multiple perspectives. Describing a strategy without judging its effectiveness for sustainability does NOT meet an evaluate/assess directive.",
   "hasMC": true,
-
-  "responseModes": ["multiPage"],
+  "responseModes": [
+    "multiPage"
+  ],
   "promptVariant": "standard",
   "responsePagesMax": 10,
-
   "sheetTabCube": "Geo CUBE",
   "sheetTabFull": "Geo",
-  "classCodes": ["GEO-1", "GEO-2", "GEO-3"],
+  "classCodes": [
+    "GEO-1",
+    "GEO-2",
+    "GEO-3"
+  ],
   "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Geo",
   "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
   "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
-
   "leaderboardTip": "Geography rewards judgement, not description: evaluate/assess management strategies for sustainability AT A RANGE OF SCALES, and bring in different perspectives and geographical data.",
-
   "syllabus": {
-    "5": {
+    "GS": {
+      "code": "GS",
       "title": "Global Sustainability",
       "organisers": {
         "sustainability_contemporary_world": {
+          "code": "GS.1",
           "inquiry": "What is sustainability and how is it evaluated?",
-          "keywords": ["sustainability", "sustainable development", "pillars of sustainability", "social", "economic", "environmental", "cultural", "ecologically sustainable development", "precautionary principle", "intergenerational equity", "ecological integrity"]
+          "keywords": [
+            "sustainability",
+            "sustainable development",
+            "pillars of sustainability",
+            "social",
+            "economic",
+            "environmental",
+            "cultural",
+            "ecologically sustainable development",
+            "precautionary principle",
+            "intergenerational equity",
+            "ecological integrity"
+          ]
         },
         "evaluating_sustainability": {
+          "code": "GS.2",
           "inquiry": "How can sustainability be evaluated at a range of scales?",
-          "keywords": ["indicators", "range of scales", "global forums", "agreements", "Sustainable Development Goals", "SDGs", "IGO", "NGO", "management strategy", "responses"]
+          "keywords": [
+            "indicators",
+            "range of scales",
+            "global forums",
+            "agreements",
+            "Sustainable Development Goals",
+            "SDGs",
+            "IGO",
+            "NGO",
+            "management strategy",
+            "responses"
+          ]
         },
         "global_economic_activity": {
+          "code": "GS.3",
           "inquiry": "How does a global economic activity affect sustainability?",
-          "keywords": ["global economic activity", "supply chain", "transnational corporation", "TNC", "economic integration", "environmental impact", "human wellbeing"]
+          "keywords": [
+            "global economic activity",
+            "supply chain",
+            "transnational corporation",
+            "TNC",
+            "economic integration",
+            "environmental impact",
+            "human wellbeing"
+          ]
         }
       }
     },
-    "6": {
+    "RU": {
+      "code": "RU",
       "title": "Rural and Urban Places",
       "organisers": {
         "rural_urban_settlement": {
+          "code": "RU.1",
           "inquiry": "What are the characteristics and spatial patterns of rural and urban settlement?",
-          "keywords": ["settlement", "spatial distribution", "spatial pattern", "urbanisation", "urban", "rural", "counterurbanisation", "urban decay", "urban renewal", "urban sprawl"]
+          "keywords": [
+            "settlement",
+            "spatial distribution",
+            "spatial pattern",
+            "urbanisation",
+            "urban",
+            "rural",
+            "counterurbanisation",
+            "urban decay",
+            "urban renewal",
+            "urban sprawl"
+          ]
         },
         "investigation_rural_urban_place": {
+          "code": "RU.2",
           "inquiry": "How and why are a rural and an urban place changing?",
-          "keywords": ["change over time", "characteristics", "liveability", "wellbeing", "internal structure", "land use", "perceptions", "responses"]
+          "keywords": [
+            "change over time",
+            "characteristics",
+            "liveability",
+            "wellbeing",
+            "internal structure",
+            "land use",
+            "perceptions",
+            "responses"
+          ]
         },
         "large_city_outside_australia": {
+          "code": "RU.3",
           "inquiry": "What challenges and management strategies shape a large city outside Australia?",
-          "keywords": ["megacity", "world city", "challenges", "informal settlement", "housing", "transport", "management strategy", "sustainability"]
+          "keywords": [
+            "megacity",
+            "world city",
+            "challenges",
+            "informal settlement",
+            "housing",
+            "transport",
+            "management strategy",
+            "sustainability"
+          ]
         }
       }
     },
-    "7": {
+    "EB": {
+      "code": "EB",
       "title": "Ecosystems and Global Biodiversity",
       "organisers": {
         "ecosystems_biodiversity": {
+          "code": "EB.1",
           "inquiry": "How do ecosystems function and why is biodiversity important?",
-          "keywords": ["ecosystem", "biodiversity", "ecosystem functioning", "energy flow", "nutrient cycle", "biological productivity", "resilience", "ecosystem services"]
+          "keywords": [
+            "ecosystem",
+            "biodiversity",
+            "ecosystem functioning",
+            "energy flow",
+            "nutrient cycle",
+            "biological productivity",
+            "resilience",
+            "ecosystem services"
+          ]
         },
         "investigation_of_ecosystems": {
+          "code": "EB.2",
           "inquiry": "What are the threats to, and management strategies for, ecosystems and biodiversity?",
-          "keywords": ["threat", "biodiversity loss", "habitat", "degradation", "conservation", "management strategy", "protected area", "range of scales", "sustainability", "responses"]
+          "keywords": [
+            "threat",
+            "biodiversity loss",
+            "habitat",
+            "degradation",
+            "conservation",
+            "management strategy",
+            "protected area",
+            "range of scales",
+            "sustainability",
+            "responses"
+          ]
         }
       }
     }
   },
-
   "bandRules": {
     "Band6": "Extensive knowledge and understanding of geographical concepts; evaluates responses and management strategies, at a range of scales, for sustainability; synthesises and interprets complex geographical data and information for patterns, trends and relationships and to support investigation; proposes well-developed explanations for and responses to geographical challenges and opportunities in different and unfamiliar contexts; applies an extensive range of geographical skills and tools; plans and conducts sophisticated geographical inquiry including fieldwork; communicates logically and effectively using precise geographical terms in a variety of forms and contexts.",
     "Band5": "Thorough knowledge and understanding; assesses responses and management strategies, at a range of scales, for sustainability; interprets complex geographical data for patterns, trends and relationships; proposes explanations for and responses to challenges and opportunities in different and unfamiliar contexts; applies a range of geographical skills and tools; plans and conducts well-developed geographical inquiry including fieldwork; communicates logically and clearly using appropriate geographical terms.",
@@ -80,7 +172,6 @@
     "Band2": "Limited knowledge and understanding; identifies aspects of management strategies for sustainability; identifies basic geographical data; identifies responses to challenges and/or opportunities; limited use of geographical skills and tools; conducts basic geographical inquiry; communicates using basic geographical terms.",
     "Band1": "Minimum standard expected was not demonstrated."
   },
-
   "directiveTiers": {
     "evaluate": {
       "tier": 4,
@@ -106,22 +197,164 @@
       "tier": 2,
       "subjectNote": "'Compare' requires identifying similarities AND differences between places, environments or strategies — use contrast connectives (whereas, in contrast) and geographical criteria."
     },
-    "describe": { "tier": 2 },
-    "outline": { "tier": 2 },
-    "identify": { "tier": 1 },
-    "define": { "tier": 1 }
+    "describe": {
+      "tier": 2
+    },
+    "outline": {
+      "tier": 2
+    },
+    "identify": {
+      "tier": 1
+    },
+    "define": {
+      "tier": 1
+    }
   },
-
   "connectives": {
-    "preferred": ["because", "so", "therefore", "as a result", "this means that", "consequently"],
-    "accepted": ["since", "thus", "hence", "due to", "leads to", "which shows that", "resulting in"],
-    "contrast": ["however", "whereas", "although", "in contrast", "on the other hand", "despite", "conversely"]
+    "preferred": [
+      "because",
+      "so",
+      "therefore",
+      "as a result",
+      "this means that",
+      "consequently"
+    ],
+    "accepted": [
+      "since",
+      "thus",
+      "hence",
+      "due to",
+      "leads to",
+      "which shows that",
+      "resulting in"
+    ],
+    "contrast": [
+      "however",
+      "whereas",
+      "although",
+      "in contrast",
+      "on the other hand",
+      "despite",
+      "conversely"
+    ]
   },
-
   "subjectContext": {
     "examStructure": "HSC written exam (2022 syllabus, first examined 2025): four sections, 100 marks, all compulsory. Section I — 15 multiple-choice (often stimulus/skills based). Section II — short answer. Sections III & IV — extended response. A minor revision to the Section III rubric applies from the 2026 HSC.",
-    "geographicalConcepts": ["place", "space", "environment", "interconnection", "scale", "sustainability", "change"],
+    "geographicalConcepts": [
+      "place",
+      "space",
+      "environment",
+      "interconnection",
+      "scale",
+      "sustainability",
+      "change"
+    ],
     "markingSpine": "Year 12 outcomes centre on analysing places/environments and change (GE-12-01/02), assessing opportunities, challenges and perspectives (GE-12-03), and evaluating responses and management strategies for sustainability at a range of scales (GE-12-04/05). High-band answers judge strategies for sustainability across scales with data and perspectives — not description.",
     "geographyNote": "Reward use of the seven geographical concepts, explicit reference to a RANGE OF SCALES (local→global), and integration of geographical data/stimulus where provided. Evaluate/assess questions require a judgement about sustainability, not a recount of the strategy."
+  },
+  "geographicalTools": {
+    "note": "Geographical inquiry skills and tools are integrated across all Year 12 focus areas in the 2022 syllabus. In the CUBE MC bank these are coded GT.1–GT.5.",
+    "refs": {
+      "GT.1": {
+        "title": "Maps & topographic maps",
+        "keywords": [
+          "grid reference",
+          "area reference",
+          "distance",
+          "area",
+          "gradient",
+          "aspect",
+          "bearing",
+          "local relief",
+          "cross-section",
+          "intervisibility",
+          "scale",
+          "contour"
+        ]
+      },
+      "GT.2": {
+        "title": "Photographs",
+        "keywords": [
+          "oblique aerial",
+          "vertical aerial",
+          "ground level",
+          "satellite image",
+          "photograph interpretation",
+          "orientation",
+          "sun",
+          "shadow",
+          "bearing of view"
+        ]
+      },
+      "GT.3": {
+        "title": "Graphs & statistics",
+        "keywords": [
+          "climate graph",
+          "ternary graph",
+          "choropleth",
+          "cartogram",
+          "wind rose",
+          "divided graph",
+          "column graph",
+          "line graph",
+          "data calculation",
+          "percentage"
+        ]
+      },
+      "GT.4": {
+        "title": "Weather & synoptic maps",
+        "keywords": [
+          "synoptic chart",
+          "isobar",
+          "pressure system",
+          "high",
+          "low",
+          "front",
+          "cold front",
+          "warm front",
+          "wind direction",
+          "anticyclone"
+        ]
+      },
+      "GT.5": {
+        "title": "Fieldwork & other tools",
+        "keywords": [
+          "fieldwork",
+          "primary data",
+          "secondary data",
+          "reliability",
+          "ethical practices",
+          "spatial technologies",
+          "GIS",
+          "tool selection"
+        ]
+      }
+    }
+  },
+  "outcomes": {
+    "GE-12-01": "analyses rural and urban places, ecosystems, global biodiversity and economic activity, for their characteristics, spatial patterns, interactions, and nature and extent of change over time",
+    "GE-12-02": "analyses geographical processes and influences, at a range of scales, that form and transform places and environments",
+    "GE-12-03": "assesses geographical opportunities and challenges, and the role of varying perspectives and responses in their management",
+    "GE-12-04": "evaluates responses and management strategies, at a range of scales, for sustainability",
+    "GE-12-05": "synthesises and evaluates relevant geographical information from a variety of sources",
+    "GE-12-06": "justifies geographical methods used in geographical inquiry and their relevance in the contemporary world",
+    "GE-12-07": "selects and applies geographical inquiry skills and tools, including spatial technologies, fieldwork, and ethical practices, to investigate places and environments",
+    "GE-12-08": "applies mathematical ideas and techniques to analyse complex geographical data",
+    "GE-12-09": "communicates and applies geographical understanding, using geographical knowledge, concepts, terms and tools, in appropriate forms"
+  },
+  "moduleRefs": {
+    "GT.1": "Geographical tools — Maps & topographic maps",
+    "GT.2": "Geographical tools — Photographs",
+    "GT.3": "Geographical tools — Graphs & statistics",
+    "GT.4": "Geographical tools — Weather & synoptic maps",
+    "GT.5": "Geographical tools — Fieldwork & other tools",
+    "GS.1": "Global Sustainability — Sustainability in the contemporary world",
+    "GS.2": "Global Sustainability — Evaluating sustainability at a range of scales",
+    "GS.3": "Global Sustainability — Global economic activity & sustainability",
+    "RU.1": "Rural & Urban Places — Characteristics & spatial patterns of settlement",
+    "RU.2": "Rural & Urban Places — Investigation of a rural and an urban place",
+    "RU.3": "Rural & Urban Places — A large city outside Australia",
+    "EB.1": "Ecosystems & Global Biodiversity — Ecosystem functioning & biodiversity",
+    "EB.2": "Ecosystems & Global Biodiversity — Threats & management strategies"
   }
 }
