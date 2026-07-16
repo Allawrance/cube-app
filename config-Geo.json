@@ -356,5 +356,44 @@
     "RU.3": "Rural & Urban Places — A large city outside Australia",
     "EB.1": "Ecosystems & Global Biodiversity — Ecosystem functioning & biodiversity",
     "EB.2": "Ecosystems & Global Biodiversity — Threats & management strategies"
+  },
+  "modules": {
+    "M1": {
+      "title": "Global Sustainability",
+      "strand": "GS",
+      "refs": [
+        "GS.1",
+        "GS.2",
+        "GS.3"
+      ]
+    },
+    "M2": {
+      "title": "Geographical Tools",
+      "strand": "GT",
+      "refs": [
+        "GT.1",
+        "GT.2",
+        "GT.3",
+        "GT.4",
+        "GT.5"
+      ]
+    },
+    "M3": {
+      "title": "Rural & Urban Places",
+      "strand": "RU",
+      "refs": [
+        "RU.1",
+        "RU.2",
+        "RU.3"
+      ]
+    },
+    "M4": {
+      "title": "Ecosystems & Global Biodiversity",
+      "strand": "EB",
+      "refs": [
+        "EB.1",
+        "EB.2"
+      ]
+    }
   }
 }
