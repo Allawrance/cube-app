@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" sizes="32x32" href="/cube-app/favicon-Marking-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/cube-app/favicon-Marking-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-CUBE-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-CUBE-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-CUBE-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-CUBE-180.png">
+  <link rel="manifest" href="/cube.webmanifest">
+  <meta name="theme-color" content="#040d18">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CUBE">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script>
@@ -276,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v2.3 · 2026-07-13 · economics";
+    window.CUBE_BUILD = "v2.4 · 2026-07-18 · favicon + web manifest";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
