@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" sizes="32x32" href="/cube-app/favicon-home-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/cube-app/favicon-home-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-CUBE-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-CUBE-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-CUBE-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-CUBE-180.png">
+<link rel="manifest" href="/cube.webmanifest">
+<meta name="theme-color" content="#040d18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CUBE">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <script>
@@ -728,7 +735,7 @@ setTimeout(sendHeight, 1500);
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
 // build 2026-07-12 · v8 physics (Physics PHYS added — 4 classes 12PH1–12PH4 → tabs PHYS-1–PHYS-4; v7 facultyPanels retained)
-var CUBE_BUILD = "20260712a";
+var CUBE_BUILD = "20260718a";
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
@@ -1035,6 +1042,6 @@ var CUBE_BUILD = "20260712a";
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.1 evenMobileSections (uniform collapsed-card rhythm) · 2026-07-17</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.2 favicon + web manifest · 2026-07-18</div>
 </body>
 </html>
