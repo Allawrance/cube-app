@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+// ── CANONICAL HOST (canonical-host-v1.0) ─────────────────────────────────────
+// The dashboard is served from cube.sureview.com.au only. Loads from the
+// legacy allawrance.github.io/cube-app/ project path bounce across, stripping
+// the /cube-app prefix (the custom domain serves from the repo root) and
+// preserving query + hash. NOTE: the dashboard key lives in per-origin
+// localStorage, so the first load on the custom domain re-prompts once.
+(function(){
+  if (location.hostname === 'allawrance.github.io') {
+    location.replace('https://cube.sureview.com.au'
+      + location.pathname.replace(/^\/cube-app(?=\/|$)/, '')
+      + location.search + location.hash);
+  }
+})();
+</script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-analysis-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-analysis-180.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUBE Marking Coach - Effectiveness Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #040d18;
+  --navy-mid: #0a1628;
+  --surface: #0e1e34;
+  --surface2: #141e30;
+  --border: rgba(255,255,255,0.08);
+  --border-gold: rgba(201,168,76,0.3);
+  --text: #e8eaf0;
+  --text-dim: #7a9ab8;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --green: #43d9ad;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* HEADER */
+header {
+  padding: 1.25rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(4,13,24,0.96);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 50;
+}
+.eyebrow {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.3rem;
+}
+h1 {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.6rem; font-weight: 800; line-height: 1.1; color: var(--text);
+}
+h1 span { color: var(--gold); }
+.scope-badge {
+  display:inline-block; margin-top:0.35rem;
+  font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.08em;
+  background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.3);
+  color:var(--gold-light); border-radius:20px; padding:0.18rem 0.65rem;
+}
+.header-right { display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; }
+.btn-refresh, .btn-research {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  border: none; padding: 0.55rem 1.25rem;
+  border-radius: 8px; cursor: pointer; font-weight: 700;
+  transition: opacity 0.2s; text-decoration: none; display: inline-block;
+}
+.btn-refresh { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color:#040d18; box-shadow:0 4px 16px rgba(201,168,76,0.25); }
+.btn-research { background: linear-gradient(135deg, #e8621a, #f0873a); color:#fff; box-shadow:0 4px 16px rgba(232,98,26,0.35); }
+.btn-refresh:hover, .btn-research:hover { opacity: 0.85; }
+.status-line { font-size: 0.7rem; color: var(--text-dim); display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; justify-content:flex-end; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--text-dim); display:inline-block; flex-shrink:0; }
+.dot.live { background:var(--green); box-shadow:0 0 6px var(--green); }
+.dot.err  { background:var(--red); }
+.switch-key { background:none; border:none; color:var(--text-dim); font-size:0.62rem; cursor:pointer; text-decoration:underline; padding:0; font-family:inherit; }
+.switch-key:hover { color:var(--gold); }
+
+/* SCOPE BANNER — subject / faculty keys (pt 9) */
+#scope-banner {
+  display:none; padding: 1.1rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.03));
+}
+.sb-inner { display:flex; align-items:center; justify-content:space-between; gap:1.25rem; flex-wrap:wrap; }
+.sb-eyebrow { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.25rem; }
+.sb-title { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.7rem; font-weight:800; color:#fff; line-height:1.1; }
+.sb-sub { font-size:0.75rem; color:var(--text-dim); margin-top:0.25rem; }
+.sb-stats { display:flex; gap:2rem; flex-wrap:wrap; }
+.sb-stat { text-align:right; }
+.sb-num { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.7rem; font-weight:800; line-height:1; color:#fff; }
+.sb-num .sb-wk { color:var(--gold-light); }
+.sb-num .sb-sep { color:var(--text-dim); font-size:1.2rem; font-weight:400; }
+.sb-label { font-family:'IBM Plex Mono',monospace; font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim); margin-top:0.3rem; }
+
+/* KLA FACULTY PANELS — landing-page style (pts 2, 5, 10) */
+#subject-bar { padding: 1rem 2.5rem; border-bottom: 1px solid var(--border); background: var(--navy-mid); display:none; }
+.bar-label-sm {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.7rem;
+}
+.fac-panel {
+  border: 1.5px solid var(--fac-border, rgba(201,168,76,0.35));
+  background: var(--fac-bg, rgba(201,168,76,0.05));
+  border-radius: 14px; margin-bottom: 0.7rem; overflow:hidden;
+}
+.fac-head {
+  display:flex; align-items:center; justify-content:space-between; gap:0.75rem;
+  padding: 0.8rem 1.2rem; cursor:pointer; user-select:none;
+}
+.fac-name { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:0.95rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color: var(--fac-color, var(--gold)); }
+.fac-name-row { display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+.fac-desc { font-size:0.68rem; color:var(--text-dim); margin-top:0.15rem; }
+.fac-right { display:flex; align-items:center; gap:0.9rem; }
+.fac-counts { font-family:'IBM Plex Mono',monospace; font-size:0.88rem; color:var(--fac-color, #f0c030); font-weight:700; white-space:nowrap; }
+.fac-counts .sc-dim { color:var(--fac-color, #f0c030); opacity:0.55; font-weight:400; }
+.fac-arrow { color:var(--text-dim); transition: transform 0.2s; font-size:0.85rem; }
+.fac-panel.open .fac-arrow { transform: rotate(180deg); }
+.fac-grid { display:none; padding: 0 1rem 1rem; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.6rem; }
+.fac-panel.open .fac-grid { display:grid; }
+.subj-card {
+  background: linear-gradient(135deg, var(--surface), var(--navy-mid));
+  border:1.5px solid var(--border); border-radius: 12px;
+  padding: 0.65rem 0.9rem; cursor:pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.subj-card:hover { border-color: rgba(240,192,48,0.7); }
+.sc-name { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:0.82rem; font-weight:700; color:var(--text); display:flex; align-items:center; gap:0.45rem; }
+.sc-counts { font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:#f0c030; font-weight:700; margin-top:0.35rem; }
+.sc-counts .sc-dim { color:var(--text-dim); font-weight:400; }
+
+/* CLASS PILLS — contrast fixed (pt 8) */
+#class-bar { padding: 0.7rem 2.5rem; border-bottom: 1px solid var(--border); background: rgba(10,22,40,0.6); display:none; }
+.pill-row { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+.class-pill {
+  font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:700; letter-spacing:0.06em;
+  background: rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.3); color:#c8d8e8;
+  border-radius: 18px; padding: 0.35rem 1rem; cursor:pointer; transition: all 0.18s;
+}
+.class-pill:hover { color:#fff; border-color: rgba(255,255,255,0.55); }
+
+/* MAIN */
+main { padding: 1.5rem 2.5rem; }
+#loading-screen { display:none; text-align:center; padding:5rem 2rem; }
+.spinner { width:36px; height:36px; border:2px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#error-screen { display:none; text-align:center; padding:4rem 2rem; }
+.error-box { max-width:520px; margin:0 auto; background:rgba(255,107,107,0.07); border:1px solid rgba(255,107,107,0.25); border-radius:12px; padding:2rem; }
+.error-title { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight:800; font-size:1rem; color:var(--red); margin-bottom:0.75rem; }
+.error-msg { font-size:0.82rem; color:var(--text-dim); line-height:1.7; }
+#dashboard { display:none; }
+
+/* CONTROLS ROW — mode buttons + week nav share one line on desktop; the week
+   nav drops to its own full-width line on mobile (html.mobile-ui) */
+.controls-row{display:flex;align-items:center;gap:0.75rem 1rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+
+/* WEEK NAV */
+.week-nav{display:flex;align-items:center;gap:1rem;flex:1 1 320px;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:0.7rem 1.2rem;}
+.week-nav-btn{background:rgba(201,168,76,0.18);border:2px solid rgba(201,168,76,0.55);color:var(--gold-light);border-radius:8px;padding:0.4rem 1rem;cursor:pointer;font-size:1.1rem;font-weight:900;transition:all 0.15s;line-height:1;letter-spacing:0.05em;}
+.week-nav-btn:hover{background:rgba(201,168,76,0.35);border-color:var(--gold-light);color:#fff;}
+.week-nav-btn:disabled{opacity:0.25;cursor:default;}
+.week-label{font-family:'IBM Plex Mono',monospace;font-size:0.95rem;letter-spacing:0.06em;color:#ffffff;flex:1;text-align:center;font-weight:700;}
+.week-badge{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:20px;padding:0.2rem 0.6rem;}
+
+/* PANELS */
+.panel {
+  background: linear-gradient(135deg, var(--surface), var(--navy-mid));
+  border: 1px solid var(--border-gold); border-radius: 12px; padding: 1.25rem;
+}
+.panel-title {
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size:0.87rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+  color:#f0c030; margin-bottom:1rem; padding-bottom:0.55rem;
+  border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;
+}
+.panel-title span { color:#ffffff; font-weight:600; font-size:0.7rem; letter-spacing:0.05em; text-transform:none; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+.mb { margin-bottom:1.25rem; }
+.no-data { text-align:center; padding:1.5rem; color:var(--text-dim); font-size:0.82rem; font-style:italic; }
+
+/* TROPHIES — plain 1/2/3 rank numerals (no cup/medal emoji), counts in subject
+   colour, weekly/total XP as the big line */
+.trophy-banner{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.35);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;}
+.trophy-title{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;}
+.trophy-row{display:flex;gap:0.75rem;flex-wrap:wrap;}
+.trophy-card{flex:1;min-width:200px;display:flex;align-items:center;gap:0.75rem;background:rgba(0,0,0,0.2);border-radius:8px;padding:0.6rem 0.9rem;border:1px solid rgba(255,255,255,0.07);}
+.trophy-rank{width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:900;font-size:1.15rem;line-height:1;flex-shrink:0;border:2px solid;}
+.trophy-rank.r1{color:#ffd700;border-color:#ffd700;background:rgba(255,215,0,0.12);}
+.trophy-rank.r2{color:#c5cede;border-color:#c5cede;background:rgba(197,206,222,0.12);}
+.trophy-rank.r3{color:#d08a4e;border-color:#d08a4e;background:rgba(208,138,78,0.12);}
+.trophy-line1{display:flex;align-items:baseline;gap:0.55rem;flex-wrap:wrap;min-width:0;}
+.trophy-name{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;font-size:0.85rem;color:#fff;}
+.trophy-counts{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:700;white-space:nowrap;}
+.trophy-counts .tc-dim{opacity:0.55;font-weight:400;}
+.trophy-xp{font-family:'IBM Plex Mono',monospace;font-size:1.05rem;font-weight:800;color:var(--gold);margin-top:0.2rem;line-height:1.2;}
+.trophy-xp .txp-wk{color:var(--gold-light);}
+.trophy-xp .txp-sep{color:var(--text-dim);font-weight:400;font-size:0.8rem;}
+/* (mobile rules for the classes above live in the html.mobile-ui block below) */
+
+/* HERO USAGE TABLE */
+.student-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+/* .compact — usage table hugs its content so columns sit close together */
+.student-table.compact { width:auto; }
+.student-table.compact th, .student-table.compact td { padding:0.45rem 0.65rem; white-space:nowrap; }
+.td-dim { color:var(--text-dim); font-weight:400; }
+.student-table th { font-family:'IBM Plex Mono',monospace; font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8eaf0; text-align:left; padding:0.45rem 0.7rem; border-bottom:1px solid var(--border); font-weight:700; }
+.student-table td { padding:0.5rem 0.7rem; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+.student-table tr:last-child td { border-bottom:none; }
+.student-table tr:hover td { background:rgba(201,168,76,0.04); }
+.usage-foot { font-size:0.7rem; color:var(--text-dim); margin-top:0.75rem; }
+.mono { font-family:'IBM Plex Mono',monospace; }
+
+/* INSIGHT TILES */
+.insight-row { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; }
+.insight-row-4 { grid-template-columns:repeat(4,1fr); }
+.insight-tile {
+  background: linear-gradient(135deg, var(--surface), var(--navy-mid));
+  border: 1px solid var(--border-gold); border-radius: 10px;
+  padding: 0.9rem 1.1rem; position: relative; overflow: hidden;
+}
+.insight-tile::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; background:var(--gold); }
+.tile-label { font-family:'IBM Plex Mono',monospace; font-size:0.54rem; letter-spacing:0.14em; text-transform:uppercase; color:#e8eaf0; margin-bottom:0.4rem; }
+.tile-value { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.5rem; font-weight:800; line-height:1.05; }
+.tile-sub { font-size:0.66rem; color:#c8d8e8; margin-top:0.25rem; line-height:1.35; }
+.clr-green{color:#39ff6e;} .clr-amber{color:#ffb830;} .clr-red{color:#ff4f4f;}
+.detail-toggle {
+  display:block; width:100%; margin-top:0.9rem; text-align:center;
+  background:rgba(255,255,255,0.03); border:1px dashed var(--border-gold); color:var(--gold);
+  border-radius:8px; padding:0.45rem; cursor:pointer;
+  font-family:'IBM Plex Mono',monospace; font-size:0.64rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;
+}
+.detail-toggle:hover { background:rgba(201,168,76,0.08); }
+
+/* ACCORDIONS */
+.accordion { border:1px solid var(--border-gold); border-radius:12px; background:linear-gradient(135deg, var(--surface), var(--navy-mid)); margin-bottom:1.25rem; overflow:hidden; }
+.acc-head {
+  width:100%; display:flex; justify-content:space-between; align-items:center; gap:0.5rem;
+  background:none; border:none; cursor:pointer; padding:0.95rem 1.25rem;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:#f0c030;
+}
+.acc-head .acc-sub { color:#fff; font-weight:600; font-size:0.68rem; letter-spacing:0.05em; text-transform:none; margin-left:auto; margin-right:0.75rem; }
+.acc-chev { color:var(--text-dim); transition: transform 0.2s; font-size:0.8rem; }
+.accordion.open .acc-chev { transform: rotate(180deg); }
+.acc-body { display:none; padding:0 1.25rem 1.25rem; }
+.accordion.open .acc-body { display:block; }
+
+/* BARS */
+.bar-chart { display:flex; flex-direction:column; gap:0.55rem; }
+.bar-row { display:flex; align-items:center; gap:0.7rem; }
+.bar-label { font-size:0.82rem; width:160px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e8eaf0; }
+.bar-track { flex:1; height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:3px; transition:width 0.9s cubic-bezier(0.4,0,0.2,1); }
+.bar-val { font-family:'IBM Plex Mono',monospace; font-size:0.68rem; width:46px; text-align:right; color:#e8eaf0; }
+.mission-freq { display:flex; flex-direction:column; gap:0.5rem; }
+.mission-row { display:flex; align-items:center; gap:0.75rem; }
+.mission-name { font-size:0.78rem; width:180px; flex-shrink:0; color:#e8eaf0; }
+.mission-bar-track { flex:1; height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+.mission-bar-fill { height:100%; border-radius:3px; }
+.mission-count { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; color:#ffffff; width:24px; text-align:right; font-weight:700; }
+
+/* IMPROVEMENT CARDS */
+.example-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:0.75rem; }
+.example-card { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-left:3px solid var(--border); border-radius:10px; padding:0.9rem 1rem; }
+.example-card.fix-causal { border-left-color:#4fc3f7; }
+.example-card.fix-noun   { border-left-color:#a78bfa; }
+.example-card.fix-flow   { border-left-color:#43d9ad; }
+.example-card.fix-mod    { border-left-color:#e8a030; }
+.example-card.fix-other  { border-left-color:#6b7599; }
+.ex-label { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8eaf0; margin-bottom:0.35rem; font-weight:600; }
+.ex-before { font-size:0.77rem; color:var(--red); margin-bottom:0.3rem; }
+.ex-before::before { content:'\2717 '; }
+.ex-after  { font-size:0.77rem; color:var(--green); }
+.ex-after::before  { content:'\2713 '; }
+.ex-kw { font-size:0.72rem; color:#c8d8e8; margin-top:0.3rem; font-style:italic; }
+
+/* PILLS + VIEW TOGGLE */
+.pill { display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.06em; padding:0.15rem 0.5rem; border-radius:20px; border:1px solid var(--border); }
+.pill.high { background:rgba(67,217,173,0.15); color:var(--green);  border-color:rgba(67,217,173,0.3); }
+.pill.mid  { background:rgba(201,168,76,0.15);  color:var(--gold);   border-color:rgba(201,168,76,0.3); }
+.pill.low  { background:rgba(255,107,107,0.15); color:var(--red);    border-color:rgba(255,107,107,0.3); }
+.view-toggle { display:flex; gap:10px; }
+.view-btn {
+  padding:8px 20px; border-radius:8px; border:1.5px solid var(--border); background:transparent; color:var(--text-dim);
+  font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer;
+}
+.view-btn.active { border-color:var(--gold); background:rgba(201,168,76,0.15); color:var(--gold); }
+.show-all-btn {
+  display:block; margin:0.75rem auto 0; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-dim);
+  border-radius:8px; padding:0.4rem 1.2rem; cursor:pointer;
+  font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;
+}
+.show-all-btn:hover { color:var(--gold); border-color:var(--border-gold); }
+
+/* Build stamp — fixed bottom-right on desktop; on mobile it becomes a normal
+   in-flow footer line (override in the mobile block below) so the wrapped
+   text can no longer overlay panel content. */
+#build-stamp{
+  position:fixed; bottom:6px; right:10px; z-index:9999; pointer-events:none;
+  font:11px/1.4 ui-monospace,Menlo,Consolas,monospace; color:#ffffff;
+  opacity:0.65; text-shadow:0 1px 2px rgba(0,0,0,0.6);
+}
+
+/* ── MOBILE ── class-driven, NOT media queries. Plain media queries flip back
+   to the desktop layout whenever innerWidth crosses 768px — phone rotation,
+   the URL bar collapsing, or a webview reporting a desktop width ("sometimes
+   reverts to desktop view"). The detector script in <head> sets html.mobile-ui
+   / html.mobile-xs instead: UA-mobile devices are LATCHED (the class is never
+   removed for them), while desktop browsers still toggle on window resize. */
+html.mobile-ui body{ overflow-x:hidden; }
+html.mobile-ui header{ padding:0.9rem 1rem; }
+html.mobile-ui .btn-refresh, html.mobile-ui .btn-research{ padding:0.45rem 0.8rem; font-size:0.6rem; }
+html.mobile-ui .panel{ padding:1rem; }
+html.mobile-ui .acc-head{ padding:0.8rem 1rem; font-size:0.72rem; }
+html.mobile-ui h1{ font-size:1.25rem; }
+html.mobile-ui .header-right{ align-items:flex-start; width:100%; }
+html.mobile-ui #scope-banner{ padding:0.9rem 1rem; }
+html.mobile-ui .sb-title{ font-size:1.3rem; }
+html.mobile-ui .sb-stats{ gap:1.25rem; }
+html.mobile-ui .sb-num{ font-size:1.3rem; }
+html.mobile-ui .sb-stat{ text-align:left; }
+html.mobile-ui #subject-bar, html.mobile-ui #class-bar{ padding-left:1rem; padding-right:1rem; }
+html.mobile-ui .fac-grid{ grid-template-columns:repeat(2,1fr); }
+html.mobile-ui .fac-counts{ font-size:0.74rem; }
+html.mobile-ui main{ padding:1rem; }
+html.mobile-ui .insight-row, html.mobile-ui .insight-row-4{ grid-template-columns:repeat(2,1fr); gap:0.7rem; }
+html.mobile-ui .grid-2{ grid-template-columns:1fr; }
+html.mobile-ui .controls-row{ flex-direction:column; align-items:stretch; }
+html.mobile-ui .view-toggle .view-btn{ flex:1; }
+/* flex:0 0 auto — the desktop flex-basis (320px) becomes HEIGHT once
+   .controls-row flips to column, producing a ~320px-tall empty box */
+html.mobile-ui .week-nav{ padding:0.55rem 0.7rem; gap:0.5rem; flex:0 0 auto; }
+html.mobile-ui .week-label{ font-size:0.78rem; }
+html.mobile-ui .week-nav-btn{ padding:0.35rem 0.7rem; font-size:0.9rem; }
+html.mobile-ui .trophy-card{ min-width:160px; padding:0.5rem 0.7rem; }
+html.mobile-ui .student-table{ font-size:0.72rem; }
+html.mobile-ui .student-table th, html.mobile-ui .student-table td{ padding:0.4rem 0.45rem; }
+html.mobile-ui .bar-label{ width:110px; font-size:0.72rem; }
+html.mobile-ui .mission-name{ width:120px; font-size:0.72rem; }
+html.mobile-ui #build-stamp{ position:static; display:block; padding:12px 1rem 18px; text-align:left; opacity:0.5; text-shadow:none; }
+
+html.mobile-xs .fac-grid{ grid-template-columns:1fr; }
+html.mobile-xs .example-grid{ grid-template-columns:1fr; }
+html.mobile-xs .tile-value{ font-size:1.25rem; }
+html.mobile-xs .sb-stats{ gap:1rem; }
+html.mobile-xs .fac-desc{ display:none; }
+html.mobile-xs .hide-xs{ display:none; }
+html.mobile-xs .week-badge{ display:none; }
+html.mobile-xs .trophy-row{ flex-direction:column; }
+</style>
+<script>
+// ── MOBILE DETECTOR (mobile-latch-v1) ────────────────────────────────────────
+// Sets html.mobile-ui / html.mobile-xs before first paint. UA-mobile devices
+// are LATCHED: once mobile, always mobile — rotation, URL-bar resizes and
+// webviews reporting desktop innerWidths can no longer flip the layout back
+// to desktop mid-session. Desktop browsers keep normal responsive behaviour
+// (classes toggle with window width on resize).
+(function(){
+  var d = document.documentElement;
+  var ua = navigator.userAgent || '';
+  var uaMobile = /Android|iPhone|iPod|iPad|Mobile|Silk/i.test(ua) ||
+    (/(Macintosh|MacIntel)/.test(ua) && navigator.maxTouchPoints > 1); // iPadOS reports as Mac
+  // Rotation-stable device width: smaller of the two screen dimensions.
+  var devW = 9999;
+  try {
+    if (window.screen && screen.width) devW = Math.min(screen.width, screen.height || screen.width);
+  } catch(_){}
+  function apply(){
+    var iw = window.innerWidth || 9999;
+    if (uaMobile){
+      d.classList.add('mobile-ui');                    // latched — never removed
+      d.classList.toggle('mobile-xs', devW <= 480);    // phone vs tablet, rotation-stable
+    } else {
+      d.classList.toggle('mobile-ui', iw <= 768);      // desktop window resize
+      d.classList.toggle('mobile-xs', iw <= 480);
+    }
+  }
+  apply();
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+})();
+</script>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="eyebrow">CUBE Marking Coach</div>
+    <h1><span>Effectiveness</span> Tracker</h1>
+    <span class="scope-badge" id="scope-badge" style="display:none"></span>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;gap:0.6rem;align-items:center">
+      <button class="btn-refresh" onclick="loadSheets()">&#8635; Refresh Data</button>
+      <a class="btn-research" href="research/index.html">&#128300; Research</a>
+    </div>
+    <div class="status-line">
+      <span class="dot" id="sdot"></span>
+      <span id="stxt">Connecting&hellip;</span>
+      <button class="switch-key" onclick="switchKey()">switch key</button>
+    </div>
+  </div>
+</header>
+
+<!-- Scope banner — big subject/faculty heading + cross-class usage (pt 9) -->
+<div id="scope-banner"></div>
+
+<div id="subject-bar">
+  <div class="bar-label-sm">Your Subjects</div>
+  <div id="fac-root"></div>
+</div>
+<div id="class-bar">
+  <div class="pill-row" id="pill-row"></div>
+</div>
+
+<main>
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <div style="color:var(--text-dim);font-size:0.85rem">Loading CUBE Marking Coach data&hellip;</div>
+  </div>
+  <div id="error-screen">
+    <div class="error-box">
+      <div class="error-title">&#9888; Could not load data</div>
+      <div class="error-msg" id="errmsg"></div>
+    </div>
+  </div>
+  <div id="dashboard">
+    <!-- Mode buttons + week nav — same line on desktop; week nav drops to its
+         own line on mobile (html.mobile-ui .controls-row rules) -->
+    <div class="controls-row">
+      <div class="view-toggle" id="view-toggle" style="display:none">
+        <button id="btn-view-sa" class="view-btn active" onclick="switchView('sa')">&#9997;&#65039; Written Response</button>
+        <button id="btn-view-mc" class="view-btn" onclick="switchView('mc')">&#128203; Multiple Choice</button>
+      </div>
+      <div class="week-nav">
+        <button class="week-nav-btn" id="btn-week-prev" onclick="changeWeek(-1)">&#8592; Prev</button>
+        <span class="week-label" id="week-label">Loading...</span>
+        <span class="week-badge" id="week-badge">This week</span>
+        <button class="week-nav-btn" id="btn-week-next" onclick="changeWeek(1)" disabled>Next &#8594;</button>
+      </div>
+    </div>
+
+    <!-- THIS WEEK HERO — Top 3 + Who's Been Using CUBE (written + MC combined) -->
+    <div id="hero" class="mb"></div>
+
+    <!-- SA DETAIL — natural flow: Coaching Insights → Band Distribution →
+         Writing Improvements (collapsed by default) → Submission Log -->
+    <div id="sa-detail">
+      <div class="mb" id="insights"></div>
+      <div id="acc-band"></div>
+      <div id="improvements"></div>
+      <div id="acc-log"></div>
+    </div>
+
+    <!-- MC DETAIL -->
+    <div id="mc-detail" style="display:none"></div>
+  </div>
+</main>
+
+<script>
+// Tab data comes through the Worker /sheet endpoint (owner-executed Apps
+// Script) — the private spreadsheet's ID is not present in this public file.
+const WORKER_BASE = 'https://cube-proxy.alan-3e2.workers.dev';
+const BUILD = 'v3.4 \u00b7 2026-07-17 \u00b7 mobile week-nav fix \u00b7 in-flow stamp \u00b7 canonical host';
+
+// ── SUBJECT REGISTRY — SINGLE SOURCE OF TRUTH ──────────────────────────────
+// One entry PER SUBJECT, class tabs nested. 'label' = what teachers see on the
+// class pill (student-facing class name, matching school-SIHS.json); 'tab' =
+// the Google Sheet tab (must match the webhook TAB_MAP). hasMC gates both the
+// '<tab>_MC' loads and the SA/MC toggle. Tabs whose sheet doesn't exist yet
+// show '—' on the card (definitive not-found ≠ load failure ≠ zero rows).
+const REGISTRY = [
+  // ── Science ──
+  {subj:'EES',    full:'Earth & Environmental Science', emoji:'\ud83c\udf0f', kla:'Science', color:'#4fc3f7', hasMC:true,
+    classes:[{label:'EES', tab:'EES'}]},
+  {subj:'BIO',    full:'Biology', emoji:'\ud83d\udd2c', kla:'Science', color:'#a5d6a7', hasMC:true,
+    classes:[{label:'12Bio-1',tab:'12Bio-1'},{label:'12Bio-2',tab:'12Bio-2'},{label:'12Bio-3',tab:'12Bio-3'},{label:'12Bio-4',tab:'12Bio-4'}]},
+  {subj:'INVSCI', full:'Investigating Science', emoji:'\ud83d\udd2c', kla:'Science', color:'#69f0ae', hasMC:true,
+    classes:[{label:'12SIS1',tab:'12InvSci-1'},{label:'12SIS2',tab:'12InvSci-2'},{label:'12SIS3',tab:'12InvSci-3'}]},
+  {subj:'CHEM',   full:'Chemistry', emoji:'\u2697\ufe0f', kla:'Science', color:'#4dd0e1', hasMC:true,
+    classes:[{label:'12SCH1',tab:'Chem-1'},{label:'12SCH2',tab:'Chem-2'},{label:'12SCH3',tab:'Chem-3'}]},
+  {subj:'PHYS',   full:'Physics', emoji:'\u269b\ufe0f', kla:'Science', color:'#7986cb', hasMC:true,
+    classes:[{label:'12PH1',tab:'PHYS-1'},{label:'12PH2',tab:'PHYS-2'},{label:'12PH3',tab:'PHYS-3'},{label:'12PH4',tab:'PHYS-4'}]},
+  // ── HSIE ──
+  {subj:'BUSS',   full:'Business Studies', emoji:'\ud83d\udcca', kla:'HSIE', color:'#a78bfa', hasMC:true,
+    classes:[{label:'BusS-1',tab:'BusS-1'},{label:'BusS-2',tab:'BusS-2'},{label:'BusS-3',tab:'BusS-3'}]},
+  {subj:'LEG',    full:'Legal Studies', emoji:'\u2696\ufe0f', kla:'HSIE', color:'#ce93d8', hasMC:true,
+    classes:[{label:'12LS-1',tab:'12LS-1'},{label:'12LS-2',tab:'12LS-2'}]},
+  {subj:'ANCH',   full:'Ancient History', emoji:'\ud83c\udfdb\ufe0f', kla:'HSIE', color:'#ffcc80', hasMC:false,
+    classes:[{label:'12AHis', tab:'12AHis'}]},
+  {subj:'MHIST',  full:'Modern History', emoji:'\ud83d\udcdc', kla:'HSIE', color:'#ef9a9a', hasMC:false,
+    classes:[{label:'12HMH1',tab:'MHIST-1'},{label:'12HMH2',tab:'MHIST-2'},{label:'12HMH3',tab:'MHIST-3'}]},
+  {subj:'ECON',   full:'Economics', emoji:'\ud83d\udcc8', kla:'HSIE', color:'#ffd54f', hasMC:true,
+    classes:[{label:'12HEC1',tab:'ECON-1'},{label:'12HEC2',tab:'ECON-2'},{label:'12HEC3',tab:'ECON-3'}]},
+  {subj:'GEO',    full:'Geography', emoji:'\ud83d\uddfa\ufe0f', kla:'HSIE', color:'#4db6ac', hasMC:true,
+    classes:[{label:'12HGE1',tab:'GEO-1'},{label:'12HGE2',tab:'GEO-2'},{label:'12HGE3',tab:'GEO-3'}]},
+  {subj:'SOR2',   full:'Studies of Religion II', emoji:'\ud83d\udd4a\ufe0f', kla:'HSIE', color:'#b39ddb', hasMC:true,
+    classes:[{label:'12HRS1',tab:'SOR2'}]},
+  // ── PDHPE ──
+  {subj:'HLTM',   full:'Health & Movement Science', emoji:'\ud83c\udfc3', kla:'PDHPE', color:'#43d9ad', hasMC:true,
+    classes:[{label:'12PHS-1',tab:'HlthM-1'},{label:'12PHS-2',tab:'HlthM-2'},{label:'12PHS-3',tab:'HlthM-3'},{label:'12PHS-4',tab:'HlthM-4'}]},
+  {subj:'COMFAM', full:'Community & Family Studies', emoji:'\ud83c\udfe0', kla:'PDHPE', color:'#f472b6', hasMC:true,
+    classes:[{label:'ComFam', tab:'ComFam'}]},
+  // ── TAS ──
+  {subj:'ENGS',   full:'Engineering Studies', emoji:'\u2699\ufe0f', kla:'TAS', color:'#e8a030', hasMC:true,
+    classes:[{label:'EngS', tab:'EngS'}]},
+  // ── CAPA ──
+  {subj:'VISART', full:'Visual Arts', emoji:'\ud83c\udfa8', kla:'CAPA', color:'#f48fb1', hasMC:false,
+    classes:[{label:'12VA-1',tab:'12VA-1'},{label:'12VA-2',tab:'12VA-2'}]},
+  {subj:'MUS1',   full:'Music 1', emoji:'\ud83c\udfb5', kla:'CAPA', color:'#ffe082', hasMC:false,
+    classes:[{label:'MUS1', tab:'MUS1'}]},
+  // ── VET ──
+  {subj:'HOSP',   full:'Hospitality (Kitchen Ops & Cookery)', emoji:'\ud83c\udf7d\ufe0f', kla:'VET', color:'#ff8a65', hasMC:true,
+    classes:[{label:'11THC1',tab:'HOSP-1'},{label:'11THC2',tab:'HOSP-2'},{label:'11THC3',tab:'HOSP-3'}]},
+];
+
+// Faculty panel meta — mirrors the landing page KLA_META
+const KLA_META = {
+  'Science': { desc:'Earth systems, biology, chemistry & investigation', color:'#69f0ae' },
+  'HSIE':    { desc:'Humanities, society, business & law',               color:'#ffcc80' },
+  'PDHPE':   { desc:'Health, movement & personal development',           color:'#b39ddb' },
+  'TAS':     { desc:'Technology & applied studies',                      color:'#64b5f6' },
+  'CAPA':    { desc:'Creative & performing arts',                        color:'#f48fb1' },
+  'VET':     { desc:'Vocational education & training',                   color:'#4dd0e1' }
+};
+const KLA_ORDER = ['Science','HSIE','PDHPE','TAS','CAPA','VET'];
+
+const MCOL = {
+  'Complex Noun Groups':'#a78bfa','Logical Flow & Structure':'#43d9ad',
+  'Modality':'#e8a030','Causal Connectives':'#4fc3f7',
+  'Legibility of handwritten response':'#6b7599','Technical Vocabulary':'#6b7599',
+};
+
+// ── STATE ────────────────────────────────────────────────
+let SCOPE = null;                 // {role, label, tabs|null} from /dashscope
+let VISIBLE = [];                 // registry entries filtered to scope, classes trimmed
+let SHEET_NAMES = [];             // SA tabs to load
+let MC_SHEET_NAMES = [];          // MC tabs to load (hasMC subjects only)
+let tabData = {}, mcData = {};
+let tabStatus = {};               // tab or 'MC:'+tab → 'ok' | 'notab' | 'failed'
+let loadFailed = new Set();       // transient failures only — retried once
+let activeSubj = null;            // subj code
+let activeClassTab = 'ALL';       // 'ALL' or a tab name
+let activeView = 'sa';
+let weekOffset = 0;
+let openKlas = {};                // kla name → bool (panel expanded)
+let insightsExpanded = false;
+let logExpanded = false, mcLogExpanded = false;
+
+// ── ACCESS KEY + SCOPE (dashkeys-v1.0) ───────────────────────────────────────
+// The key is remembered in localStorage (pt 4) so teachers enter it ONCE per
+// browser profile — 'switch key' clears it. Migrates any old sessionStorage key.
+function getDashKey(){
+  let k = '';
+  try { k = localStorage.getItem('cube_dash_key') || ''; } catch(_){}
+  if(!k){
+    try {
+      k = sessionStorage.getItem('cube_dash_key') || '';           // pre-v3 sessions
+      if(k) localStorage.setItem('cube_dash_key', k);
+    } catch(_){}
+  }
+  if(!k){
+    k = (window.prompt('Enter your CUBE dashboard access key\n(e.g. PHYS-XXXX, SCI-XXXX, or your master key).\nIt will be remembered on this computer.') || '').trim();
+    if(k){ try { localStorage.setItem('cube_dash_key', k); } catch(_){} }
+  }
+  return k;
+}
+function storedKey(){
+  try { return localStorage.getItem('cube_dash_key') || sessionStorage.getItem('cube_dash_key') || ''; } catch(_){ return ''; }
+}
+function clearDashKey(){
+  try { localStorage.removeItem('cube_dash_key'); } catch(_){}
+  try { sessionStorage.removeItem('cube_dash_key'); } catch(_){}
+}
+function switchKey(){ clearDashKey(); location.reload(); }
+
+// Last-viewed subject + class (pt 3) — restored on open, landing-page style.
+function saveLast(){
+  try { localStorage.setItem('cube_dash_last', JSON.stringify({subj:activeSubj, classTab:activeClassTab})); } catch(_){}
+}
+function loadLast(){
+  try { return JSON.parse(localStorage.getItem('cube_dash_last') || 'null'); } catch(_){ return null; }
+}
+
+async function fetchScope(){
+  for(let attempt=0; attempt<3; attempt++){
+    const key = getDashKey();
+    if(!key){ continue; }
+    let r;
+    try { r = await fetch(WORKER_BASE+'/dashscope?key='+encodeURIComponent(key), {cache:'no-store'}); }
+    catch(e){ throw new Error('Could not reach the Worker \u2014 '+e.message); }
+    if(r.status === 403){ clearDashKey(); alert('That access key was not recognised. Please try again.'); continue; }
+    if(!r.ok) throw new Error('Scope check failed ('+r.status+')');
+    return await r.json();
+  }
+  throw new Error('No valid access key entered. Reload the page to try again.');
+}
+
+function applyScope(){
+  const allowed = SCOPE.role === 'master' ? null : new Set(SCOPE.tabs || []);
+  VISIBLE = REGISTRY.map(function(s){
+    const classes = allowed ? s.classes.filter(function(c){ return allowed.has(c.tab); }) : s.classes;
+    return Object.assign({}, s, {classes: classes});
+  }).filter(function(s){ return s.classes.length > 0; });
+  SHEET_NAMES = [];
+  MC_SHEET_NAMES = [];
+  VISIBLE.forEach(function(s){
+    s.classes.forEach(function(c){
+      SHEET_NAMES.push(c.tab);
+      if(s.hasMC) MC_SHEET_NAMES.push(c.tab+'_MC');
+    });
+  });
+  const badge = document.getElementById('scope-badge');
+  badge.textContent = SCOPE.role === 'master' ? '\ud83d\udd11 Master \u00b7 all subjects' : '\ud83d\udd11 '+(SCOPE.label||'Subject view');
+  badge.style.display = 'inline-block';
+}
+
+// ── PER-SUBJECT / PER-KLA USAGE COUNTS (pts 1, 5, 6) ─────────────────────────
+function subjStats(s){
+  const st = {saWk:0, saTot:0, mcWk:0, mcTot:0, anyFailed:false, notabCount:0, classCount:s.classes.length};
+  s.classes.forEach(function(c){
+    const rows = tabData[c.tab]||[];
+    st.saTot += rows.length;
+    st.saWk  += filterByWeek(rows, weekOffset).length;
+    if(tabStatus[c.tab]==='failed') st.anyFailed = true;
+    if(tabStatus[c.tab]==='notab') st.notabCount++;
+    if(s.hasMC){
+      const m = mcData[c.tab+'_MC']||[];
+      st.mcTot += m.length;
+      st.mcWk  += filterByWeek(m, weekOffset).length;
+      if(tabStatus['MC:'+c.tab+'_MC']==='failed') st.anyFailed = true;
+    }
+  });
+  st.allNotab = st.notabCount === st.classCount;
+  return st;
+}
+function addStats(a,b){
+  return {saWk:a.saWk+b.saWk, saTot:a.saTot+b.saTot, mcWk:a.mcWk+b.mcWk, mcTot:a.mcTot+b.mcTot,
+          anyFailed:a.anyFailed||b.anyFailed, notabCount:0, classCount:1, allNotab:a.allNotab&&b.allNotab};
+}
+function fmtCounts(st, hasMC){
+  if(st.allNotab && st.saTot===0 && st.mcTot===0) return '<span class="sc-dim" title="Sheet tab(s) not created yet">\u2014</span>';
+  let out = '\u270d '+st.saWk+'<span class="sc-dim">/'+st.saTot+'</span>';
+  if(hasMC) out += ' \u00b7 MC '+st.mcWk+'<span class="sc-dim">/'+st.mcTot+'</span>';
+  if(st.anyFailed) out += ' <span title="Some tabs failed to load \u2014 Refresh Data">\u26a0</span>';
+  return out;
+}
+
+// ── SCOPE BANNER (pt 9) ──────────────────────────────────
+function renderScopeBanner(){
+  const el = document.getElementById('scope-banner');
+  if(!SCOPE || SCOPE.role === 'master'){ el.style.display='none'; return; }
+  let total = {saWk:0,saTot:0,mcWk:0,mcTot:0,anyFailed:false,allNotab:true};
+  let anyMC = false;
+  VISIBLE.forEach(function(s){ total = addStats(total, subjStats(s)); if(s.hasMC) anyMC = true; });
+  const single = VISIBLE.length === 1 ? VISIBLE[0] : null;
+  const title = single ? single.emoji+' '+single.full : (SCOPE.label || 'Your subjects');
+  const sub = single
+    ? 'Your subject \u00b7 all '+single.classes.length+' class'+(single.classes.length!==1?'es':'')+' combined'
+    : VISIBLE.length+' subjects in your faculty combined';
+  const wkTag = weekOffset===0 ? 'this week' : weekOffset===-1 ? 'last week' : Math.abs(weekOffset)+' weeks ago';
+  el.innerHTML =
+    '<div class="sb-inner">'+
+      '<div>'+
+        '<div class="sb-eyebrow">'+(single?'Your Subject':'Your Faculty')+'</div>'+
+        '<div class="sb-title">'+esc(title)+'</div>'+
+        '<div class="sb-sub">'+esc(sub)+'</div>'+
+      '</div>'+
+      '<div class="sb-stats">'+
+        '<div class="sb-stat"><div class="sb-num"><span class="sb-wk">'+total.saWk+'</span><span class="sb-sep"> / </span>'+total.saTot+'</div>'+
+          '<div class="sb-label">\u270d written \u00b7 '+wkTag+' / all time</div></div>'+
+        (anyMC ? '<div class="sb-stat"><div class="sb-num"><span class="sb-wk">'+total.mcWk+'</span><span class="sb-sep"> / </span>'+total.mcTot+'</div>'+
+          '<div class="sb-label">\ud83d\udccb MC \u00b7 '+wkTag+' / all time</div></div>' : '')+
+      '</div>'+
+    '</div>';
+  el.style.display = 'block';
+}
+
+// ── FACULTY PANELS + SUBJECT CARDS (pts 2, 5, 6, 10) ─────────────────────────
+function subjEntry(code){ return VISIBLE.find(function(s){return s.subj===code;}); }
+
+function renderSelector(){
+  const bar = document.getElementById('subject-bar');
+  const root = document.getElementById('fac-root');
+  if(VISIBLE.length <= 1){ bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  const klas = KLA_ORDER.filter(function(k){ return VISIBLE.some(function(s){return s.kla===k;}); });
+  root.innerHTML = klas.map(function(k){
+    const meta = KLA_META[k] || {desc:'', color:'#c9a84c'};
+    const subs = VISIBLE.filter(function(s){return s.kla===k;});
+    let kt = {saWk:0,saTot:0,mcWk:0,mcTot:0,anyFailed:false,allNotab:true};
+    let anyMC = false;
+    subs.forEach(function(s){ kt = addStats(kt, subjStats(s)); if(s.hasMC) anyMC = true; });
+    const cards = subs.map(function(s){
+      const st = subjStats(s);
+      const active = s.subj === activeSubj;
+      const style = active
+        ? 'border-color:'+s.color+';background:'+hexToRgba(s.color,0.14)+';box-shadow:0 0 0 3px '+hexToRgba(s.color,0.15)
+        : '';
+      return '<div class="subj-card" style="'+style+'" onclick="selectSubject(\''+s.subj+'\')">'+
+        '<div class="sc-name"'+(active?' style="color:'+s.color+'"':'')+'>'+s.emoji+' '+esc(s.full)+'</div>'+
+        '<div class="sc-counts">'+fmtCounts(st, s.hasMC)+'</div></div>';
+    }).join('');
+    return '<div class="fac-panel'+(openKlas[k]?' open':'')+'" id="fac-'+esc(k)+'" style="--fac-color:'+meta.color+';--fac-border:'+meta.color+'40;--fac-bg:'+meta.color+'0d">'+
+      '<div class="fac-head" onclick="toggleKla(\''+k+'\')">'+
+        '<div style="min-width:0"><div class="fac-name-row"><span class="fac-name">'+esc(k)+'</span><span class="fac-counts">'+fmtCounts(kt, anyMC)+'</span></div>'+
+        (meta.desc?'<div class="fac-desc">'+esc(meta.desc)+'</div>':'')+'</div>'+
+        '<span class="fac-arrow">\u25be</span>'+
+      '</div>'+
+      '<div class="fac-grid">'+cards+'</div>'+
+    '</div>';
+  }).join('');
+}
+function toggleKla(k){
+  openKlas[k] = !openKlas[k];
+  const panel = document.getElementById('fac-'+k);
+  if(panel) panel.classList.toggle('open', openKlas[k]);
+}
+
+// ── CLASS PILLS ──────────────────────────────────────────
+function buildClassBar(){
+  const bar = document.getElementById('class-bar');
+  const row = document.getElementById('pill-row');
+  const s = subjEntry(activeSubj);
+  if(!s || s.classes.length <= 1){ bar.style.display='none'; return; }
+  bar.style.display = 'block';
+  const pills = [{label:'All classes', tab:'ALL'}].concat(s.classes.map(function(c){return {label:c.label, tab:c.tab};}));
+  row.innerHTML = pills.map(function(p){
+    return '<button class="class-pill" id="pill-'+esc(p.tab)+'" onclick="selectClass(\''+p.tab+'\')">'+esc(p.label)+'</button>';
+  }).join('');
+  stylePills();
+}
+function stylePills(){
+  const s = subjEntry(activeSubj); if(!s) return;
+  document.querySelectorAll('.class-pill').forEach(function(el){
+    const active = el.id === 'pill-'+activeClassTab;
+    // Active = solid subject colour with dark text (pt 8 — contrast fix)
+    el.style.borderColor = active ? s.color : '';
+    el.style.color = active ? '#04101d' : '';
+    el.style.background = active ? s.color : '';
+    el.style.fontWeight = active ? '800' : '';
+  });
+}
+
+function selectSubject(code){
+  activeSubj = code;
+  activeClassTab = 'ALL';
+  const s = subjEntry(code);
+  if(!s) return;
+  if(!s.hasMC) activeView = 'sa';
+  openKlas[s.kla] = true;
+  insightsExpanded = false; logExpanded = false; mcLogExpanded = false;
+  saveLast();
+  renderSelector();
+  buildClassBar();
+  renderAll();
+}
+function selectClass(tab){
+  activeClassTab = tab;
+  saveLast();
+  stylePills();
+  renderAll();
+}
+
+// ── VIEW TOGGLE (detail sections only — the hero always shows both) ─────────
+function switchView(view){
+  activeView = view;
+  document.getElementById('btn-view-sa').classList.toggle('active', view==='sa');
+  document.getElementById('btn-view-mc').classList.toggle('active', view==='mc');
+  document.getElementById('sa-detail').style.display = view==='sa' ? '' : 'none';
+  document.getElementById('mc-detail').style.display = view==='mc' ? '' : 'none';
+  renderAll();
+}
+
+// ── WEEK WINDOW (Friday 3pm AEST boundaries) ─────────────
+function getWeekBounds(offset) {
+  // Week runs from Friday 3pm AEST to the following Friday 3pm AEST.
+  // Find the most recent Friday 3pm AEST as the START of the current week.
+  var now = new Date();
+  var aestNow = new Date(now.getTime() + 10 * 3600 * 1000);
+  var day = aestNow.getUTCDay();         // 0=Sun .. 5=Fri .. 6=Sat
+  var hourFrac = aestNow.getUTCHours() + aestNow.getUTCMinutes()/60;
+  // Days elapsed since the most recent Friday 3pm
+  var daysSince = (day - 5 + 7) % 7;    // days since last Friday (by date)
+  if (day === 5 && hourFrac < 15) daysSince = 7; // Friday before 3pm -> still last week
+  // startMs = most recent Friday 3pm UTC (15:00 AEST = 05:00 UTC)
+  var startMs = Date.UTC(aestNow.getUTCFullYear(), aestNow.getUTCMonth(), aestNow.getUTCDate(), 5, 0, 0, 0)
+                - daysSince * 86400000;
+  var endMs = startMs + 7 * 86400000;   // end = 7 days later (next Friday 3pm)
+  return { start: new Date(startMs + offset * 7 * 86400000), end: new Date(endMs + offset * 7 * 86400000) };
+}
+function filterByWeek(rows, offset) {
+  var b = getWeekBounds(offset);
+  return rows.filter(function(r){
+    if(!r.Timestamp) return false;
+    var ts = new Date(r.Timestamp);
+    return ts >= b.start && ts < b.end;
+  });
+}
+function weekLabel(offset) {
+  var b = getWeekBounds(offset);
+  var fmt = function(d){ return d.toLocaleDateString('en-AU',{day:'numeric',month:'short',timeZone:'Australia/Sydney'}); };
+  return fmt(b.start) + ' \u2013 ' + fmt(new Date(b.end.getTime()-1));
+}
+function changeWeek(delta) {
+  weekOffset += delta;
+  if (weekOffset > 0) weekOffset = 0;
+  var lbl=document.getElementById('week-label');
+  var bdg=document.getElementById('week-badge');
+  var nxt=document.getElementById('btn-week-next');
+  if(lbl) lbl.textContent=weekLabel(weekOffset);
+  if(bdg) bdg.textContent=weekOffset===0?'This week':weekOffset===-1?'Last week':Math.abs(weekOffset)+' weeks ago';
+  if(nxt) nxt.disabled=weekOffset>=0;
+  renderScopeBanner();          // wk/total numbers follow the selected week
+  renderSelector();
+  renderAll();
+}
+
+// ── LOAD ─────────────────────────────────────────────────
+async function loadSheets() {
+  showScreen('loading'); setDot('','Connecting\u2026');
+  tabData = {}; mcData = {}; tabStatus = {};
+  try {
+    // Small batches — a burst of cold-start requests can time out; anything
+    // that TRANSIENTLY fails is flagged in loadFailed and retried once below.
+    // A definitive Apps Script "error: …" (tab doesn't exist) is NOT retried.
+    await runBatched(SHEET_NAMES, loadTab, 5);
+    await runBatched(MC_SHEET_NAMES, loadMCTab, 5);
+    if(loadFailed.size){
+      const retrySA = SHEET_NAMES.filter(function(k){return loadFailed.has(k);});
+      const retryMC = MC_SHEET_NAMES.filter(function(k){return loadFailed.has('MC:'+k);});
+      if(retrySA.length) await runBatched(retrySA, loadTab, 3);
+      if(retryMC.length) await runBatched(retryMC, loadMCTab, 3);
+    }
+    setDot('live','Live \u00b7 '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})+'  \u00b7  build '+BUILD);
+    console.log('[CUBE dashboard] build:', BUILD);
+    showScreen('dashboard');
+    var lbl=document.getElementById('week-label');
+    if(lbl) lbl.textContent=weekLabel(weekOffset);
+    renderScopeBanner();
+
+    // Restore last subject + class (pt 3), else first subject with data
+    const last = loadLast();
+    let target = null, targetClass = 'ALL';
+    if(last && subjEntry(last.subj)){
+      target = last.subj;
+      const s = subjEntry(last.subj);
+      if(last.classTab && (last.classTab==='ALL' || s.classes.some(function(c){return c.tab===last.classTab;}))){
+        targetClass = last.classTab;
+      }
+    }
+    if(!target){
+      const first = VISIBLE.find(function(s){
+        return s.classes.some(function(c){ return (tabData[c.tab]||[]).length>0 || (mcData[c.tab+'_MC']||[]).length>0; });
+      }) || VISIBLE[0];
+      target = first.subj;
+    }
+    selectSubject(target);
+    if(targetClass !== 'ALL'){ activeClassTab = targetClass; saveLast(); stylePills(); renderAll(); }
+  } catch(e) {
+    setDot('err', e.message);
+    document.getElementById('errmsg').textContent = e.message +
+      ' \u2014 Check that the Worker is deployed, your access key is correct, and the ' +
+      'Apps Script getTab deployment is on its latest version, then Refresh.';
+    showScreen('error');
+  }
+}
+
+async function runBatched(items, fn, size){
+  size = size || 5;
+  for(let i=0;i<items.length;i+=size){
+    await Promise.all(items.slice(i,i+size).map(fn));
+  }
+}
+
+// Fetch one tab's CSV through the Worker /sheet endpoint (owner-executed Apps
+// Script, private-sheet safe). Scope is enforced server-side per tab.
+// Returns: CSV text | 'NOTAB' (definitive — tab doesn't exist, don't retry) | null (transient failure).
+async function fetchTabCsv(name){
+  const key = storedKey();
+  const worker = WORKER_BASE+'/sheet?tab='+encodeURIComponent(name)+'&key='+encodeURIComponent(key);
+  for(let attempt=0; attempt<2; attempt++){
+    try {
+      const r = await fetch(worker,{cache:'no-store'});
+      if(r.status === 403){                       // key revoked mid-session — re-prompt next load
+        clearDashKey();
+        if(!window.__dashKeyWarned){ window.__dashKeyWarned = true; alert('Your access key was rejected. Reload the page to re-enter it.'); }
+        return null;
+      }
+      if(r.ok){
+        const t = await r.text();
+        const tt = t.trim();
+        if(tt.toLowerCase().startsWith('error')) return 'NOTAB';   // Apps Script: tab not found — definitive
+        if(tt && !tt.startsWith('<')) return t;
+      }
+    } catch(_){}
+    if(attempt===0) await new Promise(function(res){setTimeout(res,400);});
+  }
+  return null;
+}
+
+async function loadTab(name) {
+  const text = await fetchTabCsv(name);
+  if(text === 'NOTAB'){ tabData[name]=[]; tabStatus[name]='notab'; loadFailed.delete(name); return; }
+  if(!text) { tabData[name]=[]; tabStatus[name]='failed'; loadFailed.add(name); return; }   // transient ≠ empty
+  loadFailed.delete(name); tabStatus[name]='ok';
+  const rows = parseCSV(text);
+  // Recalculate percentages from raw scores — avoids proxy column name/format issues
+  rows.forEach(function(r){
+    const awd = Number(r['Awd Mark']), qm = Number(r['Q Marks']);
+    if(!isNaN(awd) && !isNaN(qm) && qm > 0) r['Mark %'] = awd / qm;
+    const cxp = Number(r['CUBE XP']), cmax = Number(r['CUBE Max']);
+    if(!isNaN(cxp) && !isNaN(cmax) && cmax > 0) r['CUBE %'] = cxp / cmax;
+    const wxp = Number(r['Write XP']), wmax = Number(r['Write Max']);
+    if(!isNaN(wxp) && !isNaN(wmax) && wmax > 0) r['Write %'] = wxp / wmax;
+  });
+  tabData[name] = rows.filter(function(r){return r.Student && String(r.Student)!=='Test Student' && String(r.Student).trim()!=='';});
+}
+
+async function loadMCTab(name) {
+  const text = await fetchTabCsv(name);
+  if(text === 'NOTAB'){ mcData[name]=[]; tabStatus['MC:'+name]='notab'; loadFailed.delete('MC:'+name); return; }
+  if(!text) { mcData[name]=[]; tabStatus['MC:'+name]='failed'; loadFailed.add('MC:'+name); return; }
+  loadFailed.delete('MC:'+name); tabStatus['MC:'+name]='ok';
+  const rows = parseCSV(text);
+  mcData[name] = rows.filter(function(r){return r.Student && String(r.Student).trim()!=='';});
+}
+
+// ── CSV PARSING (unchanged from v1 — layout reconciliation included) ────────
+const COL_ALIAS = {
+  'mark%':'Mark %','mark %':'Mark %',
+  'cube%':'CUBE %','cube %':'CUBE %',
+  'write%':'Write %','write %':'Write %',
+  'cubemax':'CUBE Max','cube max':'CUBE Max',
+  'writemax':'Write Max','write max':'Write Max',
+  'cubeexp':'CUBE XP','cube xp':'CUBE XP',
+  'writeexp':'Write XP','write xp':'Write XP',
+  'annoexp':'Anno XP','anno xp':'Anno XP',
+  'annoideas':'Anno Ideas','anno ideas':'Anno Ideas',
+  'annoused':'Anno Used','anno used':'Anno Used',
+  'awdmark':'Awd Mark','awd mark':'Awd Mark',
+  'qmarks':'Q Marks','q marks':'Q Marks',
+  'indband':'Ind Band','ind band':'Ind Band',
+  'directives':'Directive','directive':'Directive',
+  'w-con':'W-Con','wcon':'W-Con',
+  'w-con max':'W-Con Max','wconmax':'W-Con Max',
+  'w-noun':'W-Noun','wnoun':'W-Noun',
+  'w-noun max':'W-Noun Max','wnounmax':'W-Noun Max',
+  'w-mod':'W-Mod','wmod':'W-Mod',
+  'w-mod max':'W-Mod Max','wmodmax':'W-Mod Max',
+  'w-flow':'W-Flow','wflow':'W-Flow',
+  'w-flow max':'W-Flow Max','wflowmax':'W-Flow Max',
+  'missioncategory':'Mission Category','mission category':'Mission Category',
+  'missionfix':'Mission Fix','mission fix':'Mission Fix',
+  'studentphrase':'Student Phrase','student phrase':'Student Phrase',
+  'improvedversion':'Improved Version','improved version':'Improved Version',
+  'syllabuskw':'Syllabus Kw','syllabus kw':'Syllabus Kw',
+  'syllabuskeywords':'Syllabus Kw',
+  'totalxp':'Total XP','total xp':'Total XP',
+  'wordcount':'Word Count','word count':'Word Count',
+  'illegible?':'Illegible ?','illegible ?':'Illegible ?',
+  'qno':'Q No','q no':'Q No',
+};
+function cleanHeader(h) {
+  const s = h.replace(/^["'\s]+|["'\s]+$/g,'').replace(/\s+/g,' ');
+  return COL_ALIAS[s.toLowerCase()] || s;
+}
+// Layout reconciliation — tabs may mix historically "old-order" and "new-order"
+// rows. Default to the tab header; remap a row only when its own column order
+// (detected by where the model string sits) disagrees with the header.
+const OLD_LAYOUT_KEYS = ['Timestamp','Student','Session','Attempt','Streak','Q No','Module',
+  'Directive','Syllabus Kw','Stage','Model','CUBE XP','CUBE Max','CUBE %','Anno Ideas','Anno Used',
+  'Anno XP','W-Con','W-Noun','W-Mod','W-Flow','W-Con Max','W-Noun Max','W-Mod Max','W-Flow Max',
+  'Write XP','Write Max','Write %','Total XP','Awd Mark','Q Marks','Ind Band','Mark %',
+  'Mission Category','Mission Fix','Student Phrase','Improved Version','Illegible ?','Word Count'];
+const NEW_LAYOUT_KEYS = ['Timestamp','Student','Session','Attempt','Streak','Q No','Module',
+  'Directive','Syllabus Kw','Stage','Sheet Tab','Model','CUBE XP','CUBE Max','Anno Ideas','Anno Used',
+  'Anno XP','W-Con','W-Con Max','W-Noun','W-Noun Max','W-Mod','W-Mod Max','W-Flow','W-Flow Max',
+  'Write XP','Write Max','Total XP','Awd Mark','Q Marks','Ind Band','Mission Category','Mission Fix',
+  'Student Phrase','Improved Version','Illegible ?','Word Count','Mark %','Class'];
+function looksLikeModel(s){ return /claude|sonnet|haiku|gpt/i.test(String(s==null?'':s)); }
+function modelColIndex(vals){ return looksLikeModel(vals[10]) ? 10 : (looksLikeModel(vals[11]) ? 11 : -1); }
+function parseCSV(text) {
+  const lines = text.split('\n').filter(function(l){return l.trim();});
+  if(lines.length<2) return [];
+  const headers = splitRow(lines[0]).map(cleanHeader);
+  const headerModelIdx = headers.findIndex(function(h){return String(h).toLowerCase().replace(/[^a-z]/g,'')==='model';});
+  return lines.slice(1).map(function(line){
+    const vals=splitRow(line);
+    const dataModelIdx = modelColIndex(vals);
+    if(dataModelIdx !== -1 && headerModelIdx !== -1 && dataModelIdx !== headerModelIdx){
+      const keys = (dataModelIdx === 11) ? NEW_LAYOUT_KEYS : OLD_LAYOUT_KEYS;
+      const obj={}; keys.forEach(function(k,i){ obj[k]=coerce(vals[i]); }); return obj;
+    }
+    const obj={}; headers.forEach(function(h,i){ obj[h]=coerce(vals[i]); }); return obj;
+  });
+}
+function splitRow(row) {
+  const out=[]; let inQ=false,cur='';
+  for(let i=0;i<row.length;i++){
+    const c=row[i];
+    if(c==='"'&&!inQ){inQ=true;}
+    else if(c==='"'&&inQ&&row[i+1]==='"'){cur+='"';i++;}
+    else if(c==='"'&&inQ){inQ=false;}
+    else if(c===','&&!inQ){out.push(cur);cur='';}
+    else cur+=c;
+  }
+  out.push(cur); return out;
+}
+function coerce(v) {
+  if(v==null) return null;
+  const s=String(v).replace(/^["'\s]+|["'\s]+$/g,'').trim();
+  if(!s||s==='#N/A'||s==='#VALUE!'||s==='#REF!') return null;
+  const n=Number(s); return isNaN(n)?s:n;
+}
+
+// ── DATA ACCESS (subject + class scoped) ─────────────────
+function scopedTabs(){
+  const s = subjEntry(activeSubj); if(!s) return [];
+  if(activeClassTab === 'ALL') return s.classes.map(function(c){return c.tab;});
+  return s.classes.filter(function(c){return c.tab===activeClassTab;}).map(function(c){return c.tab;});
+}
+function saRowsAll(){  // all-time SA rows for current subject+class
+  return scopedTabs().reduce(function(a,t){ return a.concat(tabData[t]||[]); }, []);
+}
+function mcRowsAll(){  // all-time MC rows for current subject+class
+  const s = subjEntry(activeSubj); if(!s || !s.hasMC) return [];
+  return scopedTabs().reduce(function(a,t){ return a.concat(mcData[t+'_MC']||[]); }, []);
+}
+
+// ── UI helpers ───────────────────────────────────────────
+function showScreen(w) {
+  document.getElementById('loading-screen').style.display = w==='loading' ?'block':'none';
+  document.getElementById('error-screen').style.display   = w==='error'   ?'block':'none';
+  document.getElementById('dashboard').style.display      = w==='dashboard'?'block':'none';
+}
+function setDot(cls,msg) {
+  document.getElementById('sdot').className='dot'+(cls?' '+cls:'');
+  document.getElementById('stxt').textContent=msg;
+}
+function hexToRgba(hex,a){
+  var m=String(hex||'').replace('#','');
+  if(m.length===3) m=m.split('').map(function(c){return c+c;}).join('');
+  var n=parseInt(m,16); if(isNaN(n)) return 'rgba(240,192,48,'+a+')';
+  return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+function esc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function avg(a){return a.length?a.reduce(function(s,v){return s+v;},0)/a.length:0;}
+function pct(v){return Math.round((v||0)*100)+'%';}
+function groupBy(a,fn){return a.reduce(function(acc,i){const k=fn(i);if(!acc[k])acc[k]=[];acc[k].push(i);return acc;},{});}
+function colourCls(val, hi, mid) {
+  if(val==null||isNaN(val)) return '';
+  if(val>=hi) return 'clr-green';
+  if(val>=mid) return 'clr-amber';
+  return 'clr-red';
+}
+function mcIsCorrect(r){
+  var v = r['Correct (Y/N)']; if(v==null) v=r.Correct; if(v==null) v='';
+  v = String(v).trim().toLowerCase();
+  return v==='y' || v==='yes' || v==='true' || v==='1';
+}
+function normM(m){
+  if(!m)return'Other';
+  const map={
+    'complex noun groups':'Complex Noun Groups','complexnoungroups':'Complex Noun Groups',
+    'c \u2014 complex noun groups':'Complex Noun Groups',
+    'logicalflow':'Logical Flow & Structure','logical flow':'Logical Flow & Structure',
+    'l \u2014 logical flow & structure':'Logical Flow & Structure','structure':'Logical Flow & Structure',
+    'modality':'Modality',
+    'm \u2014 modality':'Modality',
+    'causalconnectives':'Causal Connectives','causal connectives':'Causal Connectives',
+    'b \u2014 because/but/so (causal connectives)':'Causal Connectives',
+    'handwriting clarity':'Legibility of handwritten response',
+    'legibility and precision':'Legibility of handwritten response',
+    'legibility':'Legibility of handwritten response',
+    'technical communication':'Technical Vocabulary','technical accuracy':'Technical Vocabulary',
+    'technical detail':'Technical Vocabulary','technical precision':'Technical Vocabulary',
+    'content depth':'Content Depth','content completeness':'Content Completeness','clarity':'Clarity',
+  };
+  const hit = map[String(m).toLowerCase()];
+  if(hit) return hit;
+  const s = String(m);
+  if(/^[a-z]+([A-Z][a-z]+)+$/.test(s))
+    return s.replace(/([A-Z])/g,' $1').replace(/^./,function(c){return c.toUpperCase();}).trim();
+  return s;
+}
+
+// ── RENDER ───────────────────────────────────────────────
+function renderAll(){
+  const s = subjEntry(activeSubj); if(!s) return;
+  const tgl = document.getElementById('view-toggle');
+  tgl.style.display = s.hasMC ? 'flex' : 'none';
+  if(!s.hasMC){ activeView='sa'; document.getElementById('sa-detail').style.display=''; document.getElementById('mc-detail').style.display='none'; }
+  renderHero(s);
+  if(activeView === 'sa'){
+    renderInsights(s);
+    renderBandAccordion(s);
+    renderImprovements(s);
+    renderLogAccordion(s);
+  } else {
+    renderMCDetail(s);
+  }
+}
+
+// 1 · THIS WEEK HERO — combined SA + MC usage --------------------------------
+function renderHero(s){
+  const saAll = saRowsAll(), mcAll = mcRowsAll();
+  const saWk = filterByWeek(saAll, weekOffset), mcWk = filterByWeek(mcAll, weekOffset);
+  const el = document.getElementById('hero');
+  const classLabel = activeClassTab==='ALL'
+    ? (s.classes.length>1 ? 'all classes' : (s.classes[0]&&s.classes[0].label)||'')
+    : ((s.classes.find(function(c){return c.tab===activeClassTab;})||{}).label||activeClassTab);
+
+  // Per-student weekly rollup: written count, MC count, combined XP, last used
+  const stu = {};
+  function ensure(n){ if(!stu[n]) stu[n]={name:n, sa:0, mc:0, xp:0, last:null}; return stu[n]; }
+  saWk.forEach(function(r){
+    if(!r.Student) return;
+    const o=ensure(r.Student); o.sa++;
+    o.xp += Math.round(Number(r['Total XP'])||0);
+    const ts=new Date(r.Timestamp); if(!o.last||ts>o.last) o.last=ts;
+  });
+  mcWk.forEach(function(r){
+    if(!r.Student) return;
+    const o=ensure(r.Student); o.mc++;
+    o.xp += Math.round(Number(r['XP Earned'])||0);
+    const ts=new Date(r.Timestamp); if(!isNaN(ts) && (!o.last||ts>o.last)) o.last=ts;
+  });
+  const active = Object.values(stu).sort(function(a,b){return b.xp-a.xp || (b.sa+b.mc)-(a.sa+a.mc);});
+  const everSeen = new Set(saAll.map(function(r){return r.Student;}).concat(mcAll.map(function(r){return r.Student;})).filter(Boolean));
+  const inactive = Math.max(0, everSeen.size - active.length);
+
+  // Per-student ALL-TIME rollup — the "/total" half of every wk/total figure
+  const allTot = {};
+  function ensureTot(n){ if(!allTot[n]) allTot[n]={sa:0, mc:0, xp:0}; return allTot[n]; }
+  saAll.forEach(function(r){
+    if(!r.Student) return;
+    const o=ensureTot(r.Student); o.sa++;
+    o.xp += Math.round(Number(r['Total XP'])||0);
+  });
+  mcAll.forEach(function(r){
+    if(!r.Student) return;
+    const o=ensureTot(r.Student); o.mc++;
+    o.xp += Math.round(Number(r['XP Earned'])||0);
+  });
+
+  // wk<dim>/total</dim>, or \u2014 when the student has no history at all
+  const wkTot = function(wk, at, dimCls){ return at>0 ? wk+'<span class="'+dimCls+'">/'+at+'</span>' : '\u2014'; };
+
+  // Top 3 by combined weekly XP — plain 1/2/3 ranks (no cup/medal emoji),
+  // \u270d wk/total \u00b7 MC wk/total in the subject colour, weekly/total XP big
+  const top3 = active.slice(0,3);
+  const trophy = top3.length ?
+    '<div class="trophy-banner">'+
+      '<div class="trophy-title">This Week\u2019s Top 3 \u2014 '+esc(s.full)+' ('+esc(classLabel)+') \u00b7 XP from written + MC</div>'+
+      '<div class="trophy-row">'+top3.map(function(t,i){
+        const a = allTot[t.name]||{sa:0,mc:0,xp:0};
+        const counts = '\u270d '+wkTot(t.sa, a.sa, 'tc-dim')+
+          (s.hasMC ? ' \u00b7 MC '+wkTot(t.mc, a.mc, 'tc-dim') : '');
+        return '<div class="trophy-card"><div class="trophy-rank r'+(i+1)+'">'+(i+1)+'</div>'+
+          '<div style="min-width:0">'+
+            '<div class="trophy-line1"><span class="trophy-name">'+esc(t.name)+'</span>'+
+              '<span class="trophy-counts" style="color:'+s.color+'">'+counts+'</span></div>'+
+            '<div class="trophy-xp"><span class="txp-wk">'+t.xp+'</span><span class="txp-sep"> / </span>'+a.xp+' XP</div>'+
+          '</div></div>';
+      }).join('')+'</div>'+
+    '</div>' : '';
+
+  const dayName = function(d){ return d ? d.toLocaleDateString('en-AU',{weekday:'short',timeZone:'Australia/Sydney'}) : '\u2014'; };
+  const mcTH = s.hasMC ? '<th>MC</th>' : '';
+  const table = active.length ? (
+    '<div style="overflow-x:auto"><table class="student-table compact">'+
+      '<thead><tr><th>#</th><th class="hide-xs">Last Used</th><th>Student</th>'+mcTH+'<th>Written</th><th>XP</th></tr></thead>'+
+      '<tbody>'+active.map(function(t,i){
+        const a = allTot[t.name]||{sa:0,mc:0,xp:0};
+        return '<tr><td class="mono" style="color:var(--text-dim)">'+(i+1)+'</td>'+
+          '<td class="hide-xs" style="font-size:0.7rem;color:var(--text-dim)">'+dayName(t.last)+'</td>'+
+          '<td style="font-weight:600">'+esc(t.name)+'</td>'+
+          (s.hasMC ? '<td class="mono">'+wkTot(t.mc, a.mc, 'td-dim')+'</td>' : '')+
+          '<td class="mono">'+wkTot(t.sa, a.sa, 'td-dim')+'</td>'+
+          '<td class="mono" style="color:var(--gold);font-weight:700">'+t.xp+'</td></tr>';
+      }).join('')+'</tbody></table></div>'+
+    '<div class="usage-foot">'+active.length+' student'+(active.length!==1?'s':'')+' active this week \u00b7 '+
+      inactive+' student'+(inactive!==1?'s':'')+' seen previously with no activity this week \u00b7 counts are week/all-time</div>'
+  ) : '<div class="no-data">No activity this week for '+esc(s.full)+' ('+esc(classLabel)+'). Use \u2190 Prev to look at earlier weeks.</div>';
+
+  el.innerHTML =
+    trophy+
+    '<div class="panel">'+
+      '<div class="panel-title">This Week \u00b7 Who\u2019s Been Using CUBE <span>'+esc(s.full)+' \u00b7 '+esc(classLabel)+'</span></div>'+
+      table+
+    '</div>';
+}
+
+// 2 · STUDENT WRITING IMPROVEMENTS (said → recommended) ----------------------
+// Collapsed by default — accordion, matching Band Distribution / Submission Log.
+function renderImprovements(s){
+  const el = document.getElementById('improvements');
+  const pick = function(rows){
+    return rows.filter(function(r){
+      return r['Student Phrase'] && r['Improved Version'] &&
+        !String(r['Student Phrase']).includes('illegible') && r['Mission Category'];
+    }).sort(function(a,b){ return new Date(b.Timestamp)-new Date(a.Timestamp); }).slice(0,6);
+  };
+  let ex = pick(filterByWeek(saRowsAll(), weekOffset));
+  let scopeNote = 'this week';
+  if(!ex.length){ ex = pick(saRowsAll()); scopeNote = 'most recent (all time)'; }
+  if(!ex.length){ el.innerHTML=''; return; }
+  const mCls=function(m){const n=(m||'').toLowerCase();if(n.includes('causal'))return'fix-causal';if(n.includes('noun'))return'fix-noun';if(n.includes('flow'))return'fix-flow';if(n.includes('modal'))return'fix-mod';return'fix-other';};
+  const body =
+    '<div class="example-grid">'+ex.map(function(r){
+      return '<div class="example-card '+mCls(r['Mission Category'])+'">'+
+        '<div class="ex-label">'+esc(normM(r['Mission Category']))+' \u00b7 '+esc(r['Directive']||'')+'</div>'+
+        '<div class="ex-before">'+esc(r['Student Phrase'])+'</div>'+
+        '<div class="ex-after">'+esc(r['Improved Version'])+'</div>'+
+        '<div class="ex-kw">'+esc(r['Syllabus Kw']||'')+'</div>'+
+      '</div>';
+    }).join('')+'</div>';
+  const wasOpen = el.querySelector('.accordion.open') !== null;
+  el.innerHTML = accordion('imp-acc', 'Student Writing Improvements',
+    'what they wrote \u2192 what CUBE recommended \u00b7 '+scopeNote, body, wasOpen);
+}
+
+// 3 · COACHING INSIGHTS — 5 headline tiles + expandable full detail ----------
+function renderInsights(s){
+  const el = document.getElementById('insights');
+  const rows = filterByWeek(saRowsAll(), weekOffset);
+  if(!rows.length){
+    el.innerHTML = '<div class="panel"><div class="panel-title">Coaching Insights <span>this week</span></div>'+
+      '<div class="no-data">No written submissions this week \u2014 insights will appear as students submit.</div></div>';
+    return;
+  }
+  // Avg mark
+  const vm = rows.filter(function(r){return r['Mark %']!=null;});
+  const aM = vm.length ? avg(vm.map(function(r){return r['Mark %'];})) : null;
+  // Weakest directive (lowest avg Mark % — prefer directives with ≥2 samples)
+  const byDir = groupBy(vm, function(r){return r.Directive||'Unknown';});
+  let dirStats = Object.entries(byDir).map(function(e){return {label:e[0], val:avg(e[1].map(function(r){return r['Mark %'];})), count:e[1].length};});
+  const multi = dirStats.filter(function(d){return d.count>=2;});
+  const weakest = (multi.length?multi:dirStats).sort(function(a,b){return a.val-b.val;})[0] || null;
+  // Top literacy focus area (most frequent coaching category, 4 core tools)
+  const FOCUS_ORDER=['Causal Connectives','Complex Noun Groups','Modality','Logical Flow & Structure'];
+  const mc={}; rows.forEach(function(r){const m=normM(r['Mission Category']);mc[m]=(mc[m]||0)+1;});
+  const focus = FOCUS_ORDER.filter(function(k){return mc[k]>0;})
+    .map(function(k){return {name:k,count:mc[k]};})
+    .sort(function(a,b){return b.count-a.count;})[0] || null;
+  // CUBE attempted / annotations used
+  const cubeRows = rows.filter(function(r){return r['CUBE XP']!=null;});
+  const cubeAttempted = cubeRows.filter(function(r){return r['CUBE XP']>0;}).length;
+  const cubePctAttempt = cubeRows.length>0 ? cubeAttempted/cubeRows.length : null;
+  const aR = rows.filter(function(r){return r['Anno Ideas']!=null && r['Anno Used']!=null;});
+  const tI = aR.reduce(function(sum,r){return sum+(r['Anno Ideas']||0);},0);
+  const tU = aR.reduce(function(sum,r){return sum+(r['Anno Used']||0);},0);
+  const ar = tI>0 ? tU/tI : null;
+
+  const tiles =
+    '<div class="insight-row">'+
+      '<div class="insight-tile"><div class="tile-label">Avg Mark</div>'+
+        '<div class="tile-value '+colourCls(aM,0.75,0.5)+'">'+(aM!=null?pct(aM):'\u2014')+'</div>'+
+        '<div class="tile-sub">'+vm.length+' marked submission'+(vm.length!==1?'s':'')+'</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">Weakest Directive</div>'+
+        '<div class="tile-value clr-red" style="font-size:1.05rem;line-height:1.2">'+(weakest?esc(weakest.label):'\u2014')+'</div>'+
+        '<div class="tile-sub">'+(weakest?pct(weakest.val)+' avg \u00b7 teach this verb next':'no marked work yet')+'</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">Top Literacy Focus</div>'+
+        '<div class="tile-value clr-amber" style="font-size:1.05rem;line-height:1.2">'+(focus?esc(focus.name):'\u2014')+'</div>'+
+        '<div class="tile-sub">'+(focus?focus.count+' student'+(focus.count!==1?'s':'')+' coached here':'no coaching data yet')+'</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">CUBE Attempted</div>'+
+        '<div class="tile-value '+colourCls(cubePctAttempt,0.7,0.45)+'">'+(cubePctAttempt!=null?pct(cubePctAttempt):'\u2014')+'</div>'+
+        '<div class="tile-sub">of submissions had CUBE markings</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">Annotations Used</div>'+
+        '<div class="tile-value '+colourCls(ar,0.7,0.45)+'">'+(ar!=null?pct(ar):'\u2014')+'</div>'+
+        '<div class="tile-sub">of annotated ideas made it into the response</div></div>'+
+    '</div>'+
+    '<button class="detail-toggle" onclick="toggleInsights()">'+(insightsExpanded?'Hide detail \u25b4':'Show full detail \u25be')+'</button>'+
+    (insightsExpanded ? renderInsightDetail(rows, s) : '');
+
+  el.innerHTML =
+    '<div class="panel">'+
+      '<div class="panel-title">Coaching Insights <span>this week \u00b7 headline view \u2014 expand for the full breakdown</span></div>'+
+      tiles+
+    '</div>';
+}
+function toggleInsights(){ insightsExpanded = !insightsExpanded; renderAll(); }
+
+// Expanded detail — the former "busy" panels, now opt-in and week-scoped.
+function renderInsightDetail(rows, s){
+  const cfg = {color:s.color};
+  const vm = rows.filter(function(r){return r['Mark %']!=null;});
+  const byDir = groupBy(vm, function(r){return r.Directive||'Unknown';});
+  const dirs = Object.entries(byDir).map(function(e){return {label:e[0], val:avg(e[1].map(function(r){return r['Mark %'];})), count:e[1].length};})
+    .sort(function(a,b){return a.val-b.val;}).slice(0,8);  // weakest first — teach these
+  function compPct(rows, scoreCol, maxCol) {
+    const valid = rows.filter(function(r){ return r[scoreCol] != null && !isNaN(r[scoreCol]); });
+    if (!valid.length) return null;
+    return avg(valid.map(function(r){
+      const mx = (r[maxCol] != null && !isNaN(r[maxCol]) && r[maxCol] > 0) ? r[maxCol] : 5;
+      return Math.min(r[scoreCol], mx) / mx;
+    }));
+  }
+  const wi=[
+    ['Causal Connectives',       compPct(rows,'W-Con','W-Con Max'),   '#4fc3f7'],
+    ['Complex Noun Groups',      compPct(rows,'W-Noun','W-Noun Max'), '#a78bfa'],
+    ['Modality',                 compPct(rows,'W-Mod','W-Mod Max'),   '#e8a030'],
+    ['Logical Flow & Structure', compPct(rows,'W-Flow','W-Flow Max'), '#43d9ad'],
+  ].filter(function(x){return x[1]!=null&&!isNaN(x[1]);});
+  const mcCounts={}; rows.forEach(function(r){const m=normM(r['Mission Category']);mcCounts[m]=(mcCounts[m]||0)+1;});
+  const FOCUS_ORDER=['Causal Connectives','Complex Noun Groups','Modality','Logical Flow & Structure'];
+  const me=FOCUS_ORDER.filter(function(k){return mcCounts[k]>0;}).map(function(k){return [k,mcCounts[k]];});
+  const maxM=me.length>0?Math.max.apply(null,me.map(function(e){return e[1];})):1;
+  const legibilityCount=mcCounts['Legibility of handwritten response']||0;
+  const cubeRows=rows.filter(function(r){return r['CUBE XP']!=null;});
+  const cubeAttempted=cubeRows.filter(function(r){return r['CUBE XP']>0;}).length;
+  const cubePctAttempt=cubeRows.length>0?cubeAttempted/cubeRows.length:0;
+  const cA=avg(rows.filter(function(r){return r['CUBE %']!=null;}).map(function(r){return r['CUBE %'];}));
+  const aR=rows.filter(function(r){return r['Anno Ideas']!=null&&r['Anno Used']!=null;});
+  const tI=aR.reduce(function(sum,r){return sum+(r['Anno Ideas']||0);},0);
+  const tU=aR.reduce(function(sum,r){return sum+(r['Anno Used']||0);},0);
+  const ar=tI>0?tU/tI:0;
+  const annoSubmissions=aR.filter(function(r){return (r['Anno Ideas']||0)>0;}).length;
+  const bigStat = function(label, value, sub, color){
+    return '<div style="margin-bottom:1rem">'+
+      '<div style="font-size:0.66rem;color:var(--text-dim);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.1em;font-family:\'IBM Plex Mono\',monospace">'+label+'</div>'+
+      '<div style="display:flex;align-items:center;gap:0.75rem"><div style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:1.4rem;font-weight:800;color:'+color+'">'+value+'</div>'+
+      '<div style="font-size:0.72rem;color:var(--text-dim);line-height:1.35">'+sub+'</div></div></div>';
+  };
+  return '<div class="grid-2" style="margin-top:1rem;margin-bottom:0">'+
+    '<div>'+
+      '<div class="panel-title" style="font-size:0.72rem">Avg Mark % by Directive <span>weakest first</span></div>'+
+      '<div class="bar-chart" style="margin-bottom:1.25rem">'+dirs.map(function(d){
+        return '<div class="bar-row"><div class="bar-label" title="'+esc(d.label)+'">'+esc(d.label)+'</div>'+
+          '<div class="bar-track"><div class="bar-fill" style="width:'+(d.val*100)+'%;background:'+cfg.color+'"></div></div>'+
+          '<div class="bar-val">'+pct(d.val)+' <span style="color:var(--text-dim);font-size:0.6rem">('+d.count+')</span></div></div>';
+      }).join('')+'</div>'+
+      '<div class="panel-title" style="font-size:0.72rem">Writing Components <span>% of max</span></div>'+
+      '<div class="bar-chart" style="margin-bottom:1.25rem">'+(wi.length?wi.map(function(x){
+        return '<div class="bar-row"><div class="bar-label">'+x[0]+'</div>'+
+          '<div class="bar-track"><div class="bar-fill" style="width:'+(x[1]*100)+'%;background:'+x[2]+'"></div></div>'+
+          '<div class="bar-val">'+pct(x[1])+'</div></div>';
+      }).join(''):'<div class="no-data" style="padding:0.5rem 0">No writing component data this week</div>')+'</div>'+
+      '<div class="panel-title" style="font-size:0.72rem">Literacy Focus Areas <span>higher = more coaching needed</span></div>'+
+      (me.length===0?'<div class="no-data" style="padding:0.5rem 0">No literacy focus data this week</div>':
+      '<div class="mission-freq">'+me.map(function(e){
+        return '<div class="mission-row"><div class="mission-name">'+e[0]+'</div>'+
+          '<div class="mission-bar-track"><div class="mission-bar-fill" style="width:'+((e[1]/maxM)*100)+'%;background:'+(MCOL[e[0]]||'#6b7599')+'"></div></div>'+
+          '<div class="mission-count">'+e[1]+'</div></div>';
+      }).join('')+'</div>')+
+    '</div>'+
+    '<div>'+
+      '<div class="panel-title" style="font-size:0.72rem">Question Deconstruction with CUBE</div>'+
+      bigStat('CUBE attempted', Math.round(cubePctAttempt*100)+'%', 'of submissions had CUBE markings', '#4fc3f7')+
+      bigStat('CUBE effectiveness', pct(cA), 'avg accuracy of CUBE markings', '#4fc3f7')+
+      (aR.length===0?'<div class="no-data" style="padding:0.5rem 0">No annotation data this week</div>':
+        bigStat('Questions annotated', annoSubmissions, 'of '+aR.length+' submissions had planning notes', '#c9a84c')+
+        bigStat('Annotations used', pct(ar), 'of annotated ideas used in the written response', '#c9a84c'))+
+      bigStat('Handwriting clarity', legibilityCount,
+        legibilityCount===0?'of '+rows.length+' submissions flagged \u2014 good handwriting across the class'
+                           :'of '+rows.length+' submissions flagged as priority for improvement',
+        legibilityCount>0?'#ff6b6b':'#43d9ad')+
+    '</div>'+
+  '</div>';
+}
+
+// 4 · ACCORDIONS — band distribution + submission log (default collapsed) ----
+function accordion(id, title, sub, bodyHtml, open){
+  return '<div class="accordion'+(open?' open':'')+'" id="'+id+'">'+
+    '<button class="acc-head" onclick="toggleAccordion(\''+id+'\')">'+title+
+      '<span class="acc-sub">'+sub+'</span><span class="acc-chev">\u25be</span></button>'+
+    '<div class="acc-body">'+bodyHtml+'</div></div>';
+}
+function toggleAccordion(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+
+function renderBandAccordion(s){
+  const el = document.getElementById('acc-band');
+  const rows = saRowsAll();  // cumulative — band attainment is not a weekly metric
+  function bandLabel(v){
+    if(v==null) return null;
+    var str=String(v).trim();
+    if(/^E[1-4]$/i.test(str)) return 'Band '+str.toUpperCase();
+    var n=Number(str);
+    if(!isNaN(n) && Math.abs(n-Math.round(n))<1e-9){ n=Math.round(n); if(n>=1&&n<=6) return 'Band '+n; }
+    return null;
+  }
+  var counts={};
+  rows.forEach(function(r){ var b=bandLabel(r['Ind Band']); if(b) counts[b]=(counts[b]||0)+1; });
+  var labels=Object.keys(counts);
+  if(!labels.length){ el.innerHTML=''; return; }
+  var total=labels.reduce(function(a,k){return a+counts[k];},0);
+  function rank(l){ var m=l.replace('Band ',''); return /^E/i.test(m)?Number(m.slice(1)):Number(m); }
+  labels.sort(function(a,b){return rank(b)-rank(a);});
+  var maxC=Math.max.apply(null,labels.map(function(k){return counts[k];}));
+  const body =
+    '<div class="bar-chart">'+labels.map(function(k){
+      var c=counts[k], p=Math.round(c/total*100);
+      return '<div class="bar-row"><div class="bar-label" title="'+k+'">'+k+'</div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+(c/maxC*100)+'%;background:'+s.color+'"></div></div>'+
+        '<div class="bar-val">'+c+' <span style="color:var(--text-dim)">('+p+'%)</span></div></div>';
+    }).join('')+'</div>'+
+    '<div style="font-size:0.72rem;color:var(--text-dim);line-height:1.4;margin-top:0.85rem">'+
+      'Band-marked responses are assessed holistically against NESA performance-band descriptors, '+
+      'so they are shown as a distribution here and are <strong>not</strong> included in the Mark&nbsp;% averages below.'+
+    '</div>';
+  const wasOpen = el.querySelector('.accordion.open') !== null;
+  el.innerHTML = accordion('band-acc', 'HSC Band Distribution', total+' band-marked response'+(total!==1?'s':'')+' \u00b7 all time', body, wasOpen);
+}
+
+function renderLogAccordion(s){
+  const el = document.getElementById('acc-log');
+  const hasBand=function(r){return r['Ind Band']!=null && String(r['Ind Band']).trim()!=='';};
+  const all = saRowsAll().filter(function(r){return r['Mark %']!=null||hasBand(r);})
+    .sort(function(a,b){return new Date(b.Timestamp)-new Date(a.Timestamp);});
+  if(!all.length){ el.innerHTML=''; return; }
+  const tr = logExpanded ? all.slice(0,100) : all.slice(0,10);
+  const pill=function(p){return p>=0.85?'<span class="pill high">High</span>':p>=0.6?'<span class="pill mid">Mid</span>':'<span class="pill low">Low</span>';};
+  const bandCell=function(r){return hasBand(r)?'<span class="pill">Band '+esc(r['Ind Band'])+'</span>':(r['Mark %']!=null?pill(r['Mark %']):'\u2014');};
+  const body =
+    '<div style="overflow-x:auto"><table class="student-table">'+
+      '<thead><tr><th>Student</th><th class="hide-xs">Q No</th><th>Directive</th><th class="hide-xs">Syllabus Keywords</th><th>Mark</th><th class="hide-xs">CUBE %</th><th class="hide-xs">Write %</th><th class="hide-xs">Literacy Focus</th><th>Band</th></tr></thead>'+
+      '<tbody>'+tr.map(function(r){
+        return '<tr><td style="font-weight:600">'+esc(r.Student)+'</td>'+
+          '<td class="mono hide-xs" style="font-size:0.7rem">'+esc(r['Q No']||'\u2014')+'</td>'+
+          '<td>'+esc(r.Directive||'\u2014')+'</td>'+
+          '<td class="hide-xs" style="font-size:0.7rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc(r['Syllabus Kw']||'')+'">'+esc(r['Syllabus Kw']||'\u2014')+'</td>'+
+          '<td class="mono">'+(r['Awd Mark']!=null?esc(r['Awd Mark']):'\u2014')+'/'+esc(r['Q Marks']||'\u2014')+'</td>'+
+          '<td class="mono hide-xs">'+(r['CUBE %']!=null?pct(r['CUBE %']):'\u2014')+'</td>'+
+          '<td class="mono hide-xs">'+(r['Write %']!=null?pct(r['Write %']):'\u2014')+'</td>'+
+          '<td class="hide-xs" style="font-size:0.72rem">'+esc(normM(r['Mission Category']))+'</td>'+
+          '<td>'+bandCell(r)+'</td></tr>';
+      }).join('')+'</tbody></table></div>'+
+    (all.length>10 ? '<button class="show-all-btn" onclick="toggleLog()">'+(logExpanded?'Show recent 10 only':'Show all '+Math.min(all.length,100)+' entries')+'</button>' : '');
+  const wasOpen = el.querySelector('.accordion.open') !== null;
+  el.innerHTML = accordion('log-acc', 'Submission Log', 'most recent '+tr.length+' of '+all.length+' \u00b7 all time', body, wasOpen);
+}
+function toggleLog(){
+  logExpanded = !logExpanded;
+  const s = subjEntry(activeSubj); if(!s) return;
+  renderLogAccordion(s);
+  const acc=document.getElementById('log-acc'); if(acc) acc.classList.add('open');
+}
+
+// 5 · MC DETAIL (behind the toggle) ------------------------------------------
+function renderMCDetail(s){
+  const panel = document.getElementById('mc-detail');
+  const weekRows = filterByWeek(mcRowsAll(), weekOffset);
+  if(!weekRows.length){
+    panel.innerHTML = '<div class="panel" style="text-align:center;padding:2rem"><div style="color:var(--text-dim);font-size:0.85rem">No MC data this week for '+esc(s.full)+'.<br>Data will appear as students complete MC sessions.</div></div>';
+    return;
+  }
+  var total    = weekRows.length;
+  var correct  = weekRows.filter(function(r){return mcIsCorrect(r);}).length;
+  var accuracy = total ? correct/total : 0;
+  var students = Object.keys(groupBy(weekRows.filter(function(r){return r.Student;}), function(r){return r.Student;})).length;
+  var totalXP  = weekRows.reduce(function(sum,r){return sum+(Number(r['XP Earned'])||0);},0);
+  var byMod = {};
+  weekRows.forEach(function(r){
+    var m = r.Module || r.module || '\u2014';
+    if(!byMod[m]) byMod[m] = {total:0,correct:0};
+    byMod[m].total++;
+    if(mcIsCorrect(r)) byMod[m].correct++;
+  });
+  var modStats = Object.entries(byMod).map(function(e){
+    return {module:e[0],total:e[1].total,correct:e[1].correct,acc:e[1].total?e[1].correct/e[1].total:0};
+  }).sort(function(a,b){return a.acc-b.acc;});
+  var refCounts = {guessed:0,misread:0,noknowledge:0};
+  weekRows.forEach(function(r){
+    var rt = String(r['Reflection Type']||r.reflectionType||'').toLowerCase();
+    if(rt==='guessed') refCounts.guessed++;
+    else if(rt==='misread') refCounts.misread++;
+    else if(rt==='noknowledge') refCounts.noknowledge++;
+  });
+  var wrongTotal = refCounts.guessed + refCounts.misread + refCounts.noknowledge;
+  var qMiss = {};
+  weekRows.forEach(function(r){
+    if(mcIsCorrect(r)) return;
+    var id = r['Question ID']||r.questionId||'\u2014';
+    var txt = r['Question Text']||r.questionText||id;
+    if(!qMiss[id]) qMiss[id]={id:id,text:txt,count:0};
+    qMiss[id].count++;
+  });
+  var missedQ = Object.values(qMiss).sort(function(a,b){return b.count-a.count;}).slice(0,8);
+  var errBar = function(icon,label,count,color){
+    return '<div class="bar-row"><div class="bar-label">'+icon+' '+label+'</div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+(wrongTotal?count/wrongTotal*100:0)+'%;background:'+color+'"></div></div>'+
+      '<div class="bar-val">'+count+'</div></div>';
+  };
+  var logRows = weekRows.slice().reverse();
+  var shown = mcLogExpanded ? logRows.slice(0,100) : logRows.slice(0,10);
+  var logBody =
+    '<div style="overflow-x:auto"><table class="student-table">'+
+      '<thead><tr><th>Student</th><th class="hide-xs">Module</th><th class="hide-xs">Year</th><th>Question</th><th>Ans</th><th>\u2713/\u2717</th><th class="hide-xs">Reflection</th><th>XP</th></tr></thead>'+
+      '<tbody>'+shown.map(function(r){
+        var ok = mcIsCorrect(r);
+        var qt = String(r['Question Text']||'\u2014');
+        return '<tr><td style="font-weight:600">'+esc(r.Student||'\u2014')+'</td>'+
+          '<td class="mono hide-xs" style="font-size:0.7rem">'+esc(r.Module||r.module||'\u2014')+'</td>'+
+          '<td class="hide-xs" style="font-size:0.7rem">'+esc(r.Year||r.year||'\u2014')+'</td>'+
+          '<td style="font-size:0.68rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc(qt)+'">'+esc(qt.slice(0,60))+(qt.length>60?'\u2026':'')+'</td>'+
+          '<td class="mono">'+esc(r['Student Answer']||r.studentAnswer||'\u2014')+'</td>'+
+          '<td style="color:'+(ok?'var(--green)':'var(--red)')+';font-weight:700">'+(ok?'\u2713':'\u2717')+'</td>'+
+          '<td class="hide-xs" style="font-size:0.68rem">'+esc(r['Reflection Type']||r.reflectionType||'\u2014')+'</td>'+
+          '<td class="mono">'+esc(r['XP Earned']||'0')+'</td></tr>';
+      }).join('')+'</tbody></table></div>'+
+    (logRows.length>10 ? '<button class="show-all-btn" onclick="toggleMCLog()">'+(mcLogExpanded?'Show recent 10 only':'Show all '+Math.min(logRows.length,100)+' entries')+'</button>' : '');
+
+  panel.innerHTML =
+    '<div class="insight-row insight-row-4 mb">'+
+      '<div class="insight-tile"><div class="tile-label">MC Attempts</div><div class="tile-value">'+total+'</div>'+
+        '<div class="tile-sub">'+students+' student'+(students!==1?'s':'')+' this week</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">Accuracy</div>'+
+        '<div class="tile-value '+(accuracy>=0.75?'clr-green':accuracy>=0.5?'clr-amber':'clr-red')+'">'+pct(accuracy)+'</div>'+
+        '<div class="tile-sub">'+correct+' of '+total+' correct</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">MC XP Earned</div><div class="tile-value clr-green">'+totalXP+'</div>'+
+        '<div class="tile-sub">this week</div></div>'+
+      '<div class="insight-tile"><div class="tile-label">Guessing Rate</div>'+
+        '<div class="tile-value '+(wrongTotal>0?'clr-amber':'clr-green')+'">'+(wrongTotal>0?pct(refCounts.guessed/wrongTotal):'\u2014')+'</div>'+
+        '<div class="tile-sub">of wrong answers were guesses</div></div>'+
+    '</div>'+
+    '<div class="grid-2 mb">'+
+      '<div class="panel">'+
+        '<div class="panel-title">Accuracy by Module <span>lowest first \u2014 focus teaching here</span></div>'+
+        '<div class="bar-chart">'+modStats.map(function(m){
+          return '<div class="bar-row"><div class="bar-label">'+esc(m.module)+'</div>'+
+            '<div class="bar-track"><div class="bar-fill" style="width:'+(m.acc*100)+'%;background:'+(m.acc<0.5?'#ff6b6b':m.acc<0.75?'#e8a030':s.color)+'"></div></div>'+
+            '<div class="bar-val">'+pct(m.acc)+' <span style="color:var(--text-dim);font-size:0.65rem">('+m.total+')</span></div></div>';
+        }).join('')+'</div>'+
+        '<div class="panel-title" style="font-size:0.72rem;margin-top:1.25rem;margin-bottom:0.75rem">Error patterns (wrong answers only)</div>'+
+        (wrongTotal===0?'<div class="no-data">No wrong answers this week</div>':
+        '<div class="bar-chart">'+
+          errBar('\ud83c\udfb2','Guessing',refCounts.guessed,'#e8a030')+
+          errBar('\ud83d\udcda','Didn\u2019t know',refCounts.noknowledge,'#ff6b6b')+
+          errBar('\ud83d\udc41','Misread',refCounts.misread,'#a78bfa')+
+        '</div>')+
+      '</div>'+
+      '<div class="panel">'+
+        '<div class="panel-title">Most Missed Questions <span>this week</span></div>'+
+        (missedQ.length===0?'<div class="no-data">No missed questions this week</div>':
+        '<div style="display:flex;flex-direction:column;gap:0.5rem">'+missedQ.map(function(q,i){
+          var t = String(q.text);
+          return '<div style="display:flex;gap:0.5rem;align-items:flex-start">'+
+            '<span class="mono" style="font-size:0.6rem;color:var(--text-dim);flex-shrink:0;padding-top:0.15rem">'+(i+1)+'</span>'+
+            '<span style="font-size:0.7rem;line-height:1.4;flex:1" title="'+esc(t)+'">'+esc(t.slice(0,80))+(t.length>80?'\u2026':'')+'</span>'+
+            '<span class="mono" style="font-size:0.68rem;color:#ff6b6b;flex-shrink:0;font-weight:700">'+q.count+' wrong</span></div>';
+        }).join('')+'</div>')+
+      '</div>'+
+    '</div>'+
+    accordion('mc-log-acc','MC Attempt Log','most recent '+shown.length+' of '+logRows.length+' \u00b7 this week',logBody,mcLogExpanded);
+}
+function toggleMCLog(){
+  mcLogExpanded = !mcLogExpanded;
+  const s = subjEntry(activeSubj); if(!s) return;
+  renderMCDetail(s);
+  const acc=document.getElementById('mc-log-acc'); if(acc) acc.classList.add('open');
+}
+
+// ── STARTUP ──────────────────────────────────────────────
+async function boot(){
+  showScreen('loading');
+  try {
+    SCOPE = await fetchScope();
+    applyScope();
+    if(!VISIBLE.length){
+      throw new Error('Your key\u2019s subjects are not in this dashboard\u2019s registry \u2014 contact the CUBE administrator.');
+    }
+    // Open the faculty of the last-used subject (else the first in scope)
+    const last = loadLast();
+    const lastSubj = last && REGISTRY.find(function(s){return s.subj===last.subj;});
+    openKlas[(lastSubj && lastSubj.kla) || VISIBLE[0].kla] = true;
+    await loadSheets();
+  } catch(e){
+    setDot('err', e.message);
+    document.getElementById('errmsg').textContent = e.message;
+    showScreen('error');
+  }
+}
+boot();
+</script>
+<div id="build-stamp">CUBE dashboard &middot; build <span id="bs-build"></span> &middot; <span id="bs-loaded"></span></div>
+<script>
+  (function(){
+    var b = document.getElementById('bs-build');
+    var t = document.getElementById('bs-loaded');
+    if(b) b.textContent = (typeof BUILD !== 'undefined') ? BUILD : '(unknown)';
+    if(t) t.textContent = 'loaded ' + new Date().toLocaleString('en-AU', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+  })();
+</script>
+</body>
+</html>
