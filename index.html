@@ -132,6 +132,14 @@ nav {
 
 /* ── SECTION WRAPPER ── */
 section { padding: 80px 5%; }
+/* Per-section desktop paddings — stylesheet rules, NOT inline !important.
+   Inline !important beat the mobile reset (html.mobile-ui section.collapsed-mobile
+   { padding:0 4% !important }) and produced the uneven 10–58px gaps between
+   collapsed section cards on phones. As id rules they still override the 80px
+   base on desktop but lose to the !important mobile reset as intended. */
+#research { padding: 60px 5%; }
+#how      { padding: 48px 5% 36px; }
+#privacy  { padding: 40px 5%; }
 .section-inner { max-width: 1100px; margin: 0 auto; }
 .section-tag {
   font-size: 11px; font-weight: 700; color: var(--gold);
@@ -325,7 +333,7 @@ html.mobile-ui section.collapsed-mobile {
 }
 html.mobile-ui .sec-toggle {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  width: 100%; max-width: 680px; margin: 0 auto 10px; padding: 16px 18px;
+  width: 100%; max-width: 680px; margin: 0 auto 12px; padding: 16px 18px;  /* 12px = the ONE knob for card rhythm */
   background: linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.03));
   border: 1px solid rgba(201,168,76,0.28); border-left: 4px solid var(--gold);
   border-radius: 12px; color: #f0e6c8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -466,7 +474,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
 </section>
 
 <!-- RESEARCH STRIP -->
-<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);padding:60px 5%;">
+<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);">
   <div style="max-width:1100px;margin:0 auto;">
     <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Supporting Research</div>
     <h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:#f0c030;margin-bottom:20px;">Research supporting timely feedback</h2>
@@ -481,7 +489,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" style="padding-top:48px !important;padding-bottom:36px !important;">
+<section id="how">
   <div class="section-inner">
     <div class="section-tag">How it works</div>
     <h2 class="section-title">Three steps to better HSC answers</h2>
@@ -621,7 +629,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
 
 
 <!-- PRIVACY -->
-<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);padding-top:40px !important;padding-bottom:40px !important;">
+<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
     <h2 class="section-title">Privacy &amp; NSW Department of Education Guidelines</h2>
@@ -1027,6 +1035,6 @@ var CUBE_BUILD = "20260712a";
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7 facultyPanels (compact hero + faculty browser) · 2026-07-10</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.1 evenMobileSections (uniform collapsed-card rhythm) · 2026-07-17</div>
 </body>
 </html>
