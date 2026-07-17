@@ -18,7 +18,14 @@
 })();
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-analysis-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-analysis-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon-analysis-512.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon-analysis-180.png">
+<link rel="manifest" href="analysis.webmanifest">
+<meta name="theme-color" content="#040d18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Analysis">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CUBE Marking Coach - Effectiveness Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -475,7 +482,7 @@ html.mobile-xs .trophy-row{ flex-direction:column; }
 // Tab data comes through the Worker /sheet endpoint (owner-executed Apps
 // Script) — the private spreadsheet's ID is not present in this public file.
 const WORKER_BASE = 'https://cube-proxy.alan-3e2.workers.dev';
-const BUILD = 'v3.4 \u00b7 2026-07-17 \u00b7 mobile week-nav fix \u00b7 in-flow stamp \u00b7 canonical host';
+const BUILD = 'v3.5 · 2026-07-18 · favicon + web manifest';
 
 // ── SUBJECT REGISTRY — SINGLE SOURCE OF TRUTH ──────────────────────────────
 // One entry PER SUBJECT, class tabs nested. 'label' = what teachers see on the
