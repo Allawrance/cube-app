@@ -482,7 +482,7 @@ html.mobile-xs .trophy-row{ flex-direction:column; }
 // Tab data comes through the Worker /sheet endpoint (owner-executed Apps
 // Script) — the private spreadsheet's ID is not present in this public file.
 const WORKER_BASE = 'https://cube-proxy.alan-3e2.workers.dev';
-const BUILD = 'v3.5 · 2026-07-18 · favicon + web manifest';
+const BUILD = 'v3.6 · 2026-07-24 · mCls numeric-cell guard';
 
 // ── SUBJECT REGISTRY — SINGLE SOURCE OF TRUTH ──────────────────────────────
 // One entry PER SUBJECT, class tabs nested. 'label' = what teachers see on the
@@ -1227,7 +1227,7 @@ function renderImprovements(s){
   let scopeNote = 'this week';
   if(!ex.length){ ex = pick(saRowsAll()); scopeNote = 'most recent (all time)'; }
   if(!ex.length){ el.innerHTML=''; return; }
-  const mCls=function(m){const n=(m||'').toLowerCase();if(n.includes('causal'))return'fix-causal';if(n.includes('noun'))return'fix-noun';if(n.includes('flow'))return'fix-flow';if(n.includes('modal'))return'fix-mod';return'fix-other';};
+  const mCls=function(m){const n=String(m==null?'':m).toLowerCase();if(n.includes('causal'))return'fix-causal';if(n.includes('noun'))return'fix-noun';if(n.includes('flow'))return'fix-flow';if(n.includes('modal'))return'fix-mod';return'fix-other';};
   const body =
     '<div class="example-grid">'+ex.map(function(r){
       return '<div class="example-card '+mCls(r['Mission Category'])+'">'+
