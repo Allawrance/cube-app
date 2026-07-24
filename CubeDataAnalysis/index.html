@@ -412,7 +412,7 @@ html.mobile-xs .trophy-row{ flex-direction:column; }
   </div>
   <div class="header-right">
     <div style="display:flex;gap:0.6rem;align-items:center">
-      <button class="btn-refresh" onclick="loadSheets()">&#8635; Refresh Data</button>
+      <button class="btn-refresh" onclick="loadSheets(true)" title="Force a live pull from the sheet &#8212; slower than a normal open, which serves the cache instantly">&#8635; Refresh Data</button>
       <a class="btn-research" href="research/index.html">&#128300; Research</a>
     </div>
     <div class="status-line">
@@ -482,7 +482,7 @@ html.mobile-xs .trophy-row{ flex-direction:column; }
 // Tab data comes through the Worker /sheet endpoint (owner-executed Apps
 // Script) — the private spreadsheet's ID is not present in this public file.
 const WORKER_BASE = 'https://cube-proxy.alan-3e2.workers.dev';
-const BUILD = 'v3.6 · 2026-07-24 · mCls numeric-cell guard';
+const BUILD = 'v3.7 · 2026-07-25 · sheet cache + data-age stamp';
 
 // ── SUBJECT REGISTRY — SINGLE SOURCE OF TRUTH ──────────────────────────────
 // One entry PER SUBJECT, class tabs nested. 'label' = what teachers see on the
@@ -838,22 +838,26 @@ function changeWeek(delta) {
 }
 
 // ── LOAD ─────────────────────────────────────────────────
-async function loadSheets() {
+async function loadSheets(fresh) {
   showScreen('loading'); setDot('','Connecting\u2026');
-  tabData = {}; mcData = {}; tabStatus = {};
+  tabData = {}; mcData = {}; tabStatus = {}; oldestDataMs = null;
   try {
     // Small batches — a burst of cold-start requests can time out; anything
     // that TRANSIENTLY fails is flagged in loadFailed and retried once below.
     // A definitive Apps Script "error: …" (tab doesn't exist) is NOT retried.
-    await runBatched(SHEET_NAMES, loadTab, 5);
-    await runBatched(MC_SHEET_NAMES, loadMCTab, 5);
+    // Callbacks are WRAPPED (never pass loadTab straight to .map — its second
+    // argument is the array index, which would masquerade as `fresh`). Retries
+    // deliberately DROP fresh: after a live pull failed, a cached copy from the
+    // Worker beating a second failure is exactly what we want.
+    await runBatched(SHEET_NAMES,    function(n){ return loadTab(n, fresh); },   5);
+    await runBatched(MC_SHEET_NAMES, function(n){ return loadMCTab(n, fresh); }, 5);
     if(loadFailed.size){
       const retrySA = SHEET_NAMES.filter(function(k){return loadFailed.has(k);});
       const retryMC = MC_SHEET_NAMES.filter(function(k){return loadFailed.has('MC:'+k);});
-      if(retrySA.length) await runBatched(retrySA, loadTab, 3);
-      if(retryMC.length) await runBatched(retryMC, loadMCTab, 3);
+      if(retrySA.length) await runBatched(retrySA, function(n){ return loadTab(n); },   3);
+      if(retryMC.length) await runBatched(retryMC, function(n){ return loadMCTab(n); }, 3);
     }
-    setDot('live','Live \u00b7 '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})+'  \u00b7  build '+BUILD);
+    setDot('live','Live \u00b7 '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})+dataAgeStamp()+'  \u00b7  build '+BUILD);
     console.log('[CUBE dashboard] build:', BUILD);
     showScreen('dashboard');
     var lbl=document.getElementById('week-label');
@@ -894,12 +898,37 @@ async function runBatched(items, fn, size){
   }
 }
 
+// ── Data-age stamp (sheetcache-v1.0, Worker v2.7) ───────────────────────────
+// The Worker's /sheet cache tags every CSV response with X-Cube-Cached-At
+// (epoch ms of the cached copy; = now on a live MISS/FRESH read). The OLDEST
+// value seen across a load drives the "data as of h:mm" note in the status
+// line. While the Worker cache is dormant the header is absent, oldestDataMs
+// stays null, and the status line renders exactly as v3.6.
+let oldestDataMs = null;
+function noteDataAge(r){
+  try {
+    var ca = Number(r.headers.get('X-Cube-Cached-At'));
+    if(ca > 0 && (oldestDataMs === null || ca < oldestDataMs)) oldestDataMs = ca;
+  } catch(_){}
+}
+function dataAgeStamp(){
+  if(oldestDataMs === null) return '';
+  var now = new Date(), then = new Date(oldestDataMs);
+  if(now - then < 90000) return '';                          // ≤90s old — effectively live
+  var t = then.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  var d = (then.toDateString() === now.toDateString()) ? ''
+        : ' ' + then.toLocaleDateString('en-AU',{weekday:'short'});
+  return ' \u00b7 data as of ' + t + d;
+}
+
 // Fetch one tab's CSV through the Worker /sheet endpoint (owner-executed Apps
 // Script, private-sheet safe). Scope is enforced server-side per tab.
+// fresh=true (Refresh Data button) adds &fresh=1 — the Worker bypasses its
+// cache and pulls live, unless the entry is <60s old (server-side tap guard).
 // Returns: CSV text | 'NOTAB' (definitive — tab doesn't exist, don't retry) | null (transient failure).
-async function fetchTabCsv(name){
+async function fetchTabCsv(name, fresh){
   const key = storedKey();
-  const worker = WORKER_BASE+'/sheet?tab='+encodeURIComponent(name)+'&key='+encodeURIComponent(key);
+  const worker = WORKER_BASE+'/sheet?tab='+encodeURIComponent(name)+'&key='+encodeURIComponent(key)+(fresh?'&fresh=1':'');
   for(let attempt=0; attempt<2; attempt++){
     try {
       const r = await fetch(worker,{cache:'no-store'});
@@ -912,7 +941,7 @@ async function fetchTabCsv(name){
         const t = await r.text();
         const tt = t.trim();
         if(tt.toLowerCase().startsWith('error')) return 'NOTAB';   // Apps Script: tab not found — definitive
-        if(tt && !tt.startsWith('<')) return t;
+        if(tt && !tt.startsWith('<')){ noteDataAge(r); return t; }
       }
     } catch(_){}
     if(attempt===0) await new Promise(function(res){setTimeout(res,400);});
@@ -920,8 +949,8 @@ async function fetchTabCsv(name){
   return null;
 }
 
-async function loadTab(name) {
-  const text = await fetchTabCsv(name);
+async function loadTab(name, fresh) {
+  const text = await fetchTabCsv(name, fresh);
   if(text === 'NOTAB'){ tabData[name]=[]; tabStatus[name]='notab'; loadFailed.delete(name); return; }
   if(!text) { tabData[name]=[]; tabStatus[name]='failed'; loadFailed.add(name); return; }   // transient ≠ empty
   loadFailed.delete(name); tabStatus[name]='ok';
@@ -938,8 +967,8 @@ async function loadTab(name) {
   tabData[name] = rows.filter(function(r){return r.Student && String(r.Student)!=='Test Student' && String(r.Student).trim()!=='';});
 }
 
-async function loadMCTab(name) {
-  const text = await fetchTabCsv(name);
+async function loadMCTab(name, fresh) {
+  const text = await fetchTabCsv(name, fresh);
   if(text === 'NOTAB'){ mcData[name]=[]; tabStatus['MC:'+name]='notab'; loadFailed.delete('MC:'+name); return; }
   if(!text) { mcData[name]=[]; tabStatus['MC:'+name]='failed'; loadFailed.add('MC:'+name); return; }
   loadFailed.delete('MC:'+name); tabStatus['MC:'+name]='ok';
