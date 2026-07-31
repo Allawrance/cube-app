@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v2.8 · 2026-07-31 · VA frame naming optional";
+    window.CUBE_BUILD = "v2.9 · 2026-07-31 · VA question selector + calibration";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -1459,7 +1459,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
             {missionsPr.length>0 && (
               <div style={{background:"#fff8f0",border:"2px solid #e65100",borderLeft:"5px solid #e65100",borderRadius:"8px",padding:"14px 16px"}}>
                 <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
-                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next _f3a294`}
+                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next Steps`}
                 </div>
                 {missionsPr.map((ms,idx)=>(
                   <div key={idx} style={{marginBottom:idx<missionsPr.length-1?"14px":0,paddingLeft:missionsPr.length>1?"6px":0,borderLeft:missionsPr.length>1?"3px solid #f0a070":"none"}}>
@@ -1742,7 +1742,8 @@ function _ac863f() {
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
-    if (vaPrompts) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
+    // v2.9: Visual Arts now scans page 1 like every other subject — a stimulus page can carry Q1/Q2/Q3,
+    // and the selected number flows into the prompts, the report header and the logs (Q3 no longer logs as Q1).
     await scanPage1Questions(ingested.b64);
   };
 
@@ -1833,7 +1834,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
       setPageB64(b64);
       // Page 1 was scanned for question labels at upload — a sideways scan is
       // unreliable, so re-scan with the corrected orientation (VA never scans).
-      if (!vaPrompts) { setQuestionNumber(""); setQuestionsOnPage(null); await scanPage1Questions(b64); }
+      setQuestionNumber(""); setQuestionsOnPage(null); await scanPage1Questions(b64); // v2.9: VA re-scans too
     } catch(err) { setError("Could not rotate that page — try re-uploading it."); }
   };
   const rotateResponsePage = async (i) => {
@@ -2704,7 +2705,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             </div>}
 
             {/* Question number selector */}
-            {!vaPrompts&&!auralPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
+            {!auralPrompts&&pageImg&&<div style={{marginBottom:"16px"}}>
               <div style={{fontSize:"15px",color:"#e8eaf0",fontFamily:"sans-serif",fontWeight:700,marginBottom:"4px",letterSpacing:"0.5px"}}>Which question do you want analysed? (one question at a time)</div>
               <div style={{fontSize:"12px",color:"#7a9ab8",fontFamily:"sans-serif",marginBottom:"10px"}}>If a question has parts, pick the exact part — e.g. <strong>23(b)</strong>, not just (b).</div>
               {questionsOnPage !== null && <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
@@ -2737,20 +2738,20 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",lineHeight:"1.6"}}>{vaPrompts?"Tap, drag & drop, or paste (Ctrl+V) each handwritten page in order. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically.":"If your whole answer is on page 1, skip this. Otherwise tap, drag & drop, or paste (Ctrl+V) each following handwritten page IN ORDER. Up to "+respPagesMax+" pages. A multi-page PDF is split into separate pages automatically."}</div>
                 </div>
                 <input ref={respFileRef} type="file" accept="image/*,application/pdf" multiple style={{display:"none"}} onChange={handleRespInput}/>
-                {(responseImgs.length>0||(!vaPrompts&&pageImg))&&<>
+                {(responseImgs.length>0||pageImg)&&<>
                   <div style={{fontSize:"12px",color:"#c8d8e8",fontFamily:"sans-serif",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}}>
                     <span style={{background:gold,color:"#1a1a2e",fontWeight:800,borderRadius:"4px",padding:"3px 9px",fontSize:"11px",letterSpacing:"0.5px"}}>{vaPrompts?"PAGE 1 = FIRST PAGE":"CHECK YOUR PAGES ARE IN ORDER"}</span>
                     <span>Pages are marked in order, left → right. Use ◀ ▶ to reorder — and ↻ to fix a page that shows sideways.</span>
                   </div>
                   <div style={{display:"flex",gap:"12px",flexWrap:"wrap"}}>
-                  {!vaPrompts&&pageImg&&
+                  {pageImg&&
                     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"6px"}}>
                       <div style={{position:"relative"}}>
                         <img src={pageImg} alt="Page 1 — question page" style={{width:"84px",height:"110px",objectFit:"cover",borderRadius:"8px",border:"3px solid "+gold}}/>
-                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:gold,color:"#1a1a2e",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{"★ PAGE 1"+(questionNumber?" — Q"+questionNumber:"")}</div>
+                        <div style={{position:"absolute",bottom:"3px",left:"3px",right:"3px",background:gold,color:"#1a1a2e",fontSize:"10px",padding:"2px 0",borderRadius:"4px",fontFamily:"sans-serif",fontWeight:800,textAlign:"center",letterSpacing:"0.3px"}}>{(vaPrompts?"★ QUESTION":"★ PAGE 1")+(questionNumber?" — Q"+questionNumber:"")}</div>
                       </div>
                       <button onClick={rotatePage1} title="Rotate this page 90° — tap until it is upright" style={{width:"32px",height:"28px",borderRadius:"6px",border:"1px solid rgba(201,168,76,0.5)",background:"rgba(201,168,76,0.18)",color:gold,fontSize:"15px",fontWeight:900,cursor:"pointer",lineHeight:"1",padding:0}}>↻</button>
-                      <div style={{fontSize:"10px",color:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:"1.3",maxWidth:"84px"}}>question page</div>
+                      <div style={{fontSize:"10px",color:"#7a9ab8",fontFamily:"sans-serif",textAlign:"center",lineHeight:"1.3",maxWidth:"84px"}}>{vaPrompts?"question / stimulus page":"question page"}</div>
                     </div>}
                   {responseImgs.map((u,i)=>{
                     const first=i===0, last=i===responseImgs.length-1;
@@ -2787,10 +2788,10 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                     <span className="cube-spinner-dim"></span>
                     Reading your image for available questions...
                   </div>
-                : <button onClick={analyse} disabled={loading||(vaPrompts&&responseB64s.length===0)} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
+                : <button onClick={analyse} disabled={loading||(vaPrompts&&(responseB64s.length===0||!questionNumber.trim()))} style={{width:"100%",padding:"18px",background:loading?"#1a2a3a":`linear-gradient(90deg,${gold},#e8c96a)`,color:loading?"#5a7a9a":"#040d18",border:"none",borderRadius:"14px",fontSize:"17px",fontWeight:900,cursor:loading?"not-allowed":"pointer",letterSpacing:"1px",fontFamily:"sans-serif",transition:"all 0.2s"}}>
                     {loading
                       ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px"}}><span className="cube-spinner-dim"></span>{loadingMsg}</span>
-                      : (vaPrompts ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
+                      : (vaPrompts ? (responseB64s.length===0 ? "⬆️  ADD AT LEAST ONE RESPONSE PAGE" : !questionNumber.trim() ? "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE" : "🔍  APPLY CUBE TO THE QUESTION") : "🔍  SELECT A QUESTION ABOVE  —  THEN CLICK TO ANALYSE")}
                   </button>
             )}
           </div>
