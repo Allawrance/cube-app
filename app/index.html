@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v2.7 · 2026-07-25 · feedback v1.1 — red flag + Q-chip dedupe";
+    window.CUBE_BUILD = "v2.8 · 2026-07-31 · VA frame naming optional";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -315,7 +315,7 @@ let config = {
 };
 
 // Load config.json from same directory — runs once before React mounts
-async function loadConfig() {
+async function _f674dd() {
   try {
     // Read ?subject=EES (or BS/HM/ES) from the URL — default to EES
     const params  = new URLSearchParams(window.location.search);
@@ -339,16 +339,12 @@ async function loadConfig() {
 
 // ─── CONSTANTS (subject-independent) ─────────────────────────────────────────
 const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"],[18,20,"Band 6"]];
-const getBand = (score, maxScore=20) => {
+const _2c7e13 = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
 };
 
-// ── Feedback plan: how many medals & missions to SHOW, driven by marks lost ──
-// Rule (build 2026-07-05): 0 lost → 2 medals + 1 stretch mission; 1 lost → 2 medals + 1 mission;
-// 2 lost → 1 medal + 2 missions; 3+ lost → 1 medal + 3 missions. Always ≥1 medal, ≥1 mission.
-// Only mission[0] shows the change→to pair; later missions render as one-line fixes.
-// marksLost is null when the question has no stated marks (band-estimated) → default to 1 lost.
+// ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
 const getFeedbackPlan = (marksLost) => {
   const lost = (marksLost == null || isNaN(marksLost)) ? 1 : Math.max(0, marksLost);
   if (lost <= 0) return { medals: 2, missions: 1, isPerfect: true };
@@ -356,9 +352,6 @@ const getFeedbackPlan = (marksLost) => {
   if (lost === 2) return { medals: 1, missions: 2, isPerfect: false };
   return { medals: 1, missions: 3, isPerfect: false };
 };
-
-// Normalise mission data across schema versions:
-// new Worker returns missions[] (up to 3); old Worker returns single mission{} → wrap it.
 const normaliseMissions = (a) => {
   if (!a) return [];
   if (Array.isArray(a.missions)) return a.missions.filter(m => m && (m.weakness || m.targetCategory));
@@ -375,11 +368,11 @@ const normaliseMissions = (a) => {
 // is the default), so phone photos were rotated TWICE and reached the model
 // sideways — while the object-URL preview looked upright to the student.
 // DO NOT reintroduce manual EXIF transforms here.
-// toJpeg: decode via <img> (browser orients it), downscale, re-encode JPEG.
+// _c90809: decode via <img> (browser orients it), downscale, re-encode JPEG.
 // The returned dataUrl is used as the preview, so the student sees EXACTLY the
 // pixels the model receives; the ↻ button handles any page with no EXIF tag
 // (screenshots, some PDF exports) that arrives genuinely sideways.
-const toJpeg = (f) => new Promise((res, rej) => {
+const _c90809 = (f) => new Promise((res, rej) => {
   const objectUrl = URL.createObjectURL(f);
   const img = new Image();
   img.onload = () => {
@@ -400,7 +393,7 @@ const toJpeg = (f) => new Promise((res, rej) => {
 });
 
 // Rotate an already-ingested page 90° clockwise. Four taps = full circle.
-const rotateJpeg90 = (b64) => new Promise((res, rej) => {
+const _8c2e35 = (b64) => new Promise((res, rej) => {
   const img = new Image();
   img.onload = () => {
     const canvas = document.createElement("canvas");
@@ -417,13 +410,10 @@ const rotateJpeg90 = (b64) => new Promise((res, rej) => {
   img.src = "data:image/jpeg;base64," + b64;
 });
 
-const sanitiseInput = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
+const _d0c6fa = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
 
-// ── feedback v1 — static help content ────────────────────────────────────────
-// A flat, single-layer list: one tap opens one short answer. Deliberately NOT
-// a chatbot — no branching, no follow-up paths. Edit the wording freely; the
-// last two entries funnel genuine disputes to ⚑ Report a Problem.
-const HELP_ENTRIES = [
+// feedback v1 — static help content (flat single-layer list; teacher-editable)
+const _82400f = [
   { q: "It says it can't find my question",
     a: "Check every page of the question is uploaded — including a later page that only carries part (b) or (c). Pages must be in the paper's order, and the question number you typed must match the printed label exactly (e.g. 23, not 23a)." },
   { q: "It's misreading my handwriting",
@@ -438,7 +428,7 @@ const HELP_ENTRIES = [
     a: "Calculations are marked on METHOD — formula choice, substitution, units and significant figures — not the final number, which your teacher confirms. Show every step of working to earn the marks. If your working IS shown and wasn't credited, report it." },
 ];
 
-const privacyName = (fullName) => {
+const _612d25 = (fullName) => {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "anonymous";
   if (parts.length === 1) return parts[0];
@@ -455,7 +445,7 @@ const CPL = 50;
 
 
 // ─── SVG ANNOTATION ENGINE ────────────────────────────────────────────────────
-function buildLines(text, cplOverride) {
+function _eeaee5(text, cplOverride) {
   const CPL_USE = cplOverride || CPL;
   if (!text) return [];
   const lines = [];
@@ -492,7 +482,7 @@ function buildLines(text, cplOverride) {
   return lines;
 }
 
-function getXY(idx, lines, yOff = 0) {
+function _85c320(idx, lines, yOff = 0) {
   if (!lines.length) return { x: PL, y: PT + yOff, li: 0 };
   for (let i = 0; i < lines.length; i++) {
     const end = lines[i].start + lines[i].text.length;
@@ -505,7 +495,7 @@ function getXY(idx, lines, yOff = 0) {
   return { x: PL, y: PT + yOff, li: 0 };
 }
 
-function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
+function _e701da({ text, directives, syllabusKeywords, constraints, planningArrows, mode,
                               // legacy fallback props
                               directive, syllabusMatch }) {
   if (!text) return null;
@@ -519,7 +509,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   // Responsive CPL — fewer chars per line on narrow mobile screens
   const isMobile = typeof window !== "undefined" && window.innerWidth < 500;
   const effectiveCPL = isMobile ? 28 : CPL;
-  const lines = buildLines(text, effectiveCPL);
+  const lines = _eeaee5(text, effectiveCPL);
   const nLines = Math.max(lines.length, 1);
   const W = PL + effectiveCPL * CW + PL;
   // PLAN_EXTRA: internal coordinate space above text; viewBox crops tight after pill layout
@@ -555,14 +545,14 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
   };
 
   // ── C: red ovals — one per directive verb ────────────────────────────────
-  // s.y from getXY = SVG text baseline (y attr of <text> element)
+  // s.y from _85c320 = SVG text baseline (y attr of <text> element)
   // Cap-height midpoint ≈ baseline - FONT_SIZE*0.36 ≈ baseline - 6px
   // ry should span from descender to ascender: ~FONT_SIZE*0.75
   dirs.forEach((dv, di) => {
     if (dv.startIndex == null || !dv.word) return;
     const exactStart = findExact(dv.word, dv.startIndex);
     cSpans.push({ s: exactStart, e: exactStart + dv.word.length }); // claim directive chars (C)
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     const wPx = dv.word.length * CW;
     const rx = wPx/2 + 10;
     const ry = FONT_SIZE * 0.80;   // compact — spans the letter body
@@ -584,10 +574,10 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     const exactEnd = exactStart + wordStr.length;
     if (overlapsAny(exactStart, exactEnd, cSpans)) return; // C > U: directive is not underlined
     uSpans.push({ s: exactStart, e: exactEnd });           // claim keyword chars (U)
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty segment).
-    const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
+    const eRaw = _85c320(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
     for (let l = s.li; l <= e.li && l < lines.length; l++) {
       const x1 = l === s.li ? s.x : PL;
@@ -614,10 +604,10 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
     const exactStart = findExact(trimmed, ct.startIndex);
     const exactEnd   = exactStart + trimmed.length;
     if (overlapsAny(exactStart, exactEnd, cSpans) || overlapsAny(exactStart, exactEnd, uSpans)) return; // C/U > B: don't box circled or underlined text
-    const s = getXY(exactStart, lines, PLAN_EXTRA);
+    const s = _85c320(exactStart, lines, PLAN_EXTRA);
     // Use exactEnd-1 so the end coord always resolves to the last char's line,
     // not the start of the next line (which caused a phantom empty box).
-    const eRaw = getXY(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
+    const eRaw = _85c320(Math.max(exactStart, exactEnd - 1), lines, PLAN_EXTRA);
     const e = { ...eRaw, x: eRaw.x + CW };
     const drawEnd = e.li;  // use actual end line — allows multi-word constraints to span lines
     for (let l = s.li; l <= drawEnd && l < lines.length; l++) {
@@ -658,7 +648,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
       .filter(a => a.targetStartIndex != null && a.label)
       .map((a, gi) => {
         const idx = a.targetWord ? findExact(a.targetWord, a.targetStartIndex) : a.targetStartIndex;
-        const pos = getXY(idx, lines, PLAN_EXTRA);
+        const pos = _85c320(idx, lines, PLAN_EXTRA);
         const ls  = splitLabel(a.label);
         const bw  = Math.max(Math.max(...ls.map(l=>l.length)) * CH + PAD_X*2, 52);
         const bh  = ls.length * LH_N + PAD_Y * 2;
@@ -779,7 +769,7 @@ function SVGAnnotatedPaper({ text, directives, syllabusKeywords, constraints, pl
 
 // ─── FORMATTED RESPONSE with bold connectives + italic noun groups ────────────
 // Also detects runs of 3+ spaces left by AI for illegible words → converts to [?]
-function normaliseIllegible(text) {
+function _6ec938(text) {
   if (!text) return text;
   // Replace 3+ consecutive spaces with [?] — AI commonly leaves gaps for illegible words
   return text.replace(/ {3,}/g, ' [?] ');
@@ -787,14 +777,14 @@ function normaliseIllegible(text) {
 
 // Post-process formattedResponse: if AI forgot _italic_ markers for noun groups,
 // wrap them based on detectedNounGroups list. Also ensure [?] from studentText carries through.
-function enrichFormattedResponse(formatted, studentText, nounGroups, connectives) {
+function _9eca9d(formatted, studentText, nounGroups, connectives) {
   // Pick best source
   const hasMarkup = t => t && (t.includes('**') || t.includes('_') || t.includes('[?]'));
   let text = hasMarkup(formatted) ? formatted
            : hasMarkup(studentText) ? studentText
            : formatted || studentText || '';
   // Normalise illegible gaps — 3+ spaces → [?]
-  text = normaliseIllegible(text);
+  text = _6ec938(text);
 
   // Always inject bold connectives client-side if not already present
   const allConnectives = [
@@ -819,9 +809,9 @@ function enrichFormattedResponse(formatted, studentText, nounGroups, connectives
   }
   return text;
 }
-function FormattedResponse({ text }) {
+function _35d126({ text }) {
   if (!text) return null;
-  const cleaned = normaliseIllegible(text);
+  const cleaned = _6ec938(text);
   const parts = [];
   const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
   let last = 0, m;
@@ -863,7 +853,7 @@ const Tick = ({ok}) => <span style={{fontSize:"16px"}}>{ok?"✅":"❌"}</span>;
 
 // ─── MOBILE HELPERS ──────────────────────────────────────────────────────────
 // build 2026-07-07 · proceduralTrack-v1.7
-function useIsMobileView() {
+function _7e41ab() {
   const calc = () => typeof window !== "undefined" &&
     (window.CUBE_IS_MOBILE ? window.CUBE_IS_MOBILE() : window.innerWidth <= 640);
   const [mob, setMob] = useState(calc);
@@ -876,7 +866,7 @@ function useIsMobileView() {
 }
 
 // Wraps children in a tap-to-expand accordion when `when` is true; renders children unchanged otherwise.
-function MaybeExpander({when, label, children, defaultOpen=false}) {
+function _2f96cd({when, label, children, defaultOpen=false}) {
   const [open, setOpen] = useState(defaultOpen);
   if (!when) return children;
   return <div style={{marginBottom:"12px"}} onClick={e=>e.stopPropagation()}>
@@ -888,7 +878,7 @@ function MaybeExpander({when, label, children, defaultOpen=false}) {
 }
 
 // Compact ◀ STEP ▶ pager for mobile — replaces the 7-circle step indicator.
-function MobilePager({activeTab, onTabChange, unlocked}) {
+function _9a03be({activeTab, onTabChange, unlocked}) {
   const order = ["cube","plan","script","rubric","feedback","rank"];
   const meta = {
     cube:{n:2,label:"CUBE"}, plan:{n:3,label:"PLAN"}, script:{n:4,label:"SCRIPT"},
@@ -913,20 +903,16 @@ function MobilePager({activeTab, onTabChange, unlocked}) {
 }
 
 // Stacked mobile rubric row — criterion + score always visible, evidence & comment behind a tap.
-// ─── PROCEDURAL TRACK (calculate / determine / deduce) ──────────────────────
-// Four method dimensions mirror the literacy rubric's 4 dimensions, so XP,
-// mark calibration and band mapping are unchanged. Arithmetic is never scored —
-// the final value is always flagged for teacher verification.
-const PROC_DIMS = [
+// procedural track: 4 method dims mirror the literacy rubric — arithmetic never scored
+const _9d41ce = [
   { key:"formulaSelection", label:"Formula / Relationship Chosen" },
   { key:"substitution",     label:"Correct Substitution" },
   { key:"unitsSigFigs",     label:"Units & Significant Figures" },
   { key:"workingLogic",     label:"Logical Working Shown" },
 ];
-const isProceduralResult = (r) => !!(r && r.scoringTrack === "procedural" && r.procedural);
+const _37f8a2 = (r) => !!(r && r.scoringTrack === "procedural" && r.procedural);
 
-// Amber banner shown with every procedural result — the number belongs to the teacher.
-function ArithmeticBanner({ procedural, compact }) {
+function _c5e1b8({ procedural, compact }) {
   if (!procedural) return null;
   return <div style={{background:"rgba(255,167,38,0.1)",border:"1.5px solid rgba(255,167,38,0.5)",borderRadius:"10px",padding:compact?"10px 14px":"12px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
     <div style={{color:"#ffb74d",fontSize:compact?"13px":"14px",fontWeight:800,marginBottom:procedural.statedFinalAnswer?"4px":"0"}}>
@@ -938,7 +924,7 @@ function ArithmeticBanner({ procedural, compact }) {
   </div>;
 }
 
-function RubricCardMobile({label, data, applicable=true, dimMax=5}) {
+function _4c78ef({label, data, applicable=true, dimMax=5}) {
   const [open, setOpen] = useState(false);
   const rawScore = data?.score||0;
   const score = Math.min(rawScore, dimMax);
@@ -961,7 +947,7 @@ function RubricCardMobile({label, data, applicable=true, dimMax=5}) {
   </div>;
 }
 
-function Steps({current, activeTab, onTabChange}) {
+function _f3a294({current, activeTab, onTabChange}) {
   const steps = ["Upload","CUBE","Plan","Script","Rubric","Feedback","🏆"];
   const tabToStep = {cube:1, plan:2, script:3, rubric:4, feedback:5, rank:6};
   const stepToTab = {1:"cube", 2:"plan", 3:"script", 4:"rubric", 5:"feedback", 6:"rank"};
@@ -1000,7 +986,7 @@ function Steps({current, activeTab, onTabChange}) {
 }
 
 // ─── PAPER CARD ──────────────────────────────────────────────────────────────
-function PaperCard({children, subtitle}) {
+function _e3ea66({children, subtitle}) {
   return <div style={{background:"#fffef5",borderRadius:"16px",padding:"20px 24px",boxShadow:"0 4px 24px rgba(0,0,0,0.4)",border:"1px solid #e8e0c8",position:"relative",overflow:"hidden",marginBottom:"16px"}}>
     <div style={{position:"absolute",inset:0,pointerEvents:"none"}}>
       {[...Array(8)].map((_,i)=><div key={i} style={{position:"absolute",left:0,right:0,top:`${48+i*32}px`,height:"1px",background:"rgba(160,180,220,0.3)"}}/>)}
@@ -1012,7 +998,7 @@ function PaperCard({children, subtitle}) {
 }
 
 // ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
-function RubricRow({label, data, applicable=true, dimMax=5}) {
+function _b6a519({label, data, applicable=true, dimMax=5}) {
   // Cap raw Sonnet score at dimMax (scales with question marks value)
   const rawScore = data?.score||0;
   const score    = Math.min(rawScore, dimMax);
@@ -1041,7 +1027,7 @@ function RubricRow({label, data, applicable=true, dimMax=5}) {
 // Renders into a hidden #print-report div. @media print hides everything else.
 // Downloaded as a self-contained HTML file via triggerPrint (works inside Google Sites iframes).
 
-function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
+function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
                        dirs, kwds, c, a, score, maxScore, dimMaxR,
                        causalApplicable, modalityApplicable,
                        stage2Results, connectives,
@@ -1050,7 +1036,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 
   const gold = "#c9a84c";
   const marksKnown = c.marks !== null && c.marks !== undefined;
-  const band = marksKnown ? null : getBand(score, maxScore);
+  const band = marksKnown ? null : _2c7e13(score, maxScore);
   const displayedMark = marksKnown
     ? `${Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)} / ${c.marks} marks`
     : band ? `Indicative ${band}` : "";
@@ -1058,10 +1044,9 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   const dateStr = now.toLocaleDateString("en-AU", {day:"2-digit",month:"short",year:"numeric"});
   const timeStr = now.toLocaleTimeString("en-AU", {hour:"2-digit",minute:"2-digit"});
 
-  // ── Rubric rows — procedural questions print the 4 METHOD criteria instead ──
-  const isProcPr = isProceduralResult(a);
+  const isProcPr = _37f8a2(a);
   const litRows = isProcPr
-    ? PROC_DIMS.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
+    ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
     : [
         { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
         { label:"Complex Noun Groups",   data:a.rubric?.complexNounGroups, applicable:true              },
@@ -1072,7 +1057,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   // ── Response text renderer (print-safe — no React spans with dark bg) ──
   function PrintResponse({ text }) {
     if (!text) return null;
-    const cleaned = normaliseIllegible(text);
+    const cleaned = _6ec938(text);
     const parts = [];
     const regex = /\*\*([^*]+)\*\*|_([^_]+)_|\[\?\]/g;
     let last = 0, m;
@@ -1098,7 +1083,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
   };
 
   // ── Formatted response for print ──
-  const responseText = enrichFormattedResponse(
+  const responseText = _9eca9d(
     a.formattedResponse, a.studentResponseText, a.detectedNounGroups, connectives
   );
 
@@ -1304,7 +1289,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         <div style={{fontFamily:"sans-serif",fontSize:"12px",color:"#555",marginBottom:"10px",lineHeight:"1.6"}}>
           The next step is to annotate the question to provide you with a plan. This will ensure your answer is concise and flows logically. Below is an example of how the question could be annotated.
         </div>
-        <SVGAnnotatedPaper
+        <_e701da
           text={c.questionText}
           directives={dirs}
           syllabusKeywords={kwds}
@@ -1474,7 +1459,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
             {missionsPr.length>0 && (
               <div style={{background:"#fff8f0",border:"2px solid #e65100",borderLeft:"5px solid #e65100",borderRadius:"8px",padding:"14px 16px"}}>
                 <div style={{fontFamily:"sans-serif",fontSize:"11px",fontWeight:800,letterSpacing:"1.5px",color:"#e65100",textTransform:"uppercase",marginBottom:"10px"}}>
-                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next Steps`}
+                  🎯 {planPr.isPerfect ? "Your Stretch Goal" : missionsPr.length===1 ? "Your Next Step" : `Your ${missionsPr.length} Next _f3a294`}
                 </div>
                 {missionsPr.map((ms,idx)=>(
                   <div key={idx} style={{marginBottom:idx<missionsPr.length-1?"14px":0,paddingLeft:missionsPr.length>1?"6px":0,borderLeft:missionsPr.length>1?"3px solid #f0a070":"none"}}>
@@ -1508,7 +1493,7 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
         const cov = a.specialCheck.coverageCheck || [];
         const yn = (b) => <span style={{fontWeight:800,color: b ? "#2e7d32" : "#c62828"}}>{b ? "✓" : "✗"}</span>;
         const rows = [
-          [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame named & applied"],
+          [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame perspective applied"],
           [v.conceptualFrameworkRelational, "Conceptual framework used relationally (artist / artwork / world / audience)"],
           [(v.namedArtworksEvidence||[]).length > 0, "Specific named artists / artworks as evidence"],
           [v.usedStimulusPlates, "Stimulus plates / extracts referenced"],
@@ -1571,8 +1556,8 @@ function PrintReport({ studentName, questionNumber, subjectName, subjectCode,
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function App() {
-  const mobileView = useIsMobileView();
+function _ac863f() {
+  const mobileView = _7e41ab();
   const [studentName, setStudentName] = useState(() => {
     try { return localStorage.getItem("cube_student_name") || ""; } catch { return ""; }
   });
@@ -1615,13 +1600,13 @@ function App() {
   const [lbDirective, setLbDirective]   = useState("all");
   const [annotationIdeas, setAnnotationIdeas] = useState([]); // from stage 1 planningArrows labels
   const [iterCount,  setIterCount]  = useState(1);    // Stage 1 attempt number
-  const [sessionId,  setSessionId]  = useState("");    // shared by Stage1+Stage2 for same attempt
-  // ── feedback v1 — help panel + report-a-marking ──
+  const [sessionId,  setSessionId]  = useState("");
+  // feedback v1 — help panel + report-a-marking
   const [showHelp,   setShowHelp]   = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportCat,  setReportCat]  = useState("");
   const [reportTxt,  setReportTxt]  = useState("");
-  const [reportSent, setReportSent] = useState(false);
+  const [reportSent, setReportSent] = useState(false);    // shared by Stage1+Stage2 for same attempt
 
   // persist streak on submit
   const bumpStreak = () => {
@@ -1687,10 +1672,7 @@ function App() {
   const pVariant = config.promptVariant || (legacyVAConfig ? "visualArts" : "standard");
   const vaPrompts = pVariant === "visualArts";
   const auralPrompts = pVariant === "aural";
-  // universalMultiPage-v1.5: every subject now uses ONE ordered multi-page upload.
-  // Page 1 = the page with the printed question (it may also contain the start of —
-  // or the entire — handwritten answer, and any stimulus). Extra pages are optional
-  // and continue the answer in order. Only ONE question is ever marked at a time.
+  // universalMultiPage-v1.5
   const availableModes = ["multiPage"];
   const [responseMode, setResponseMode] = useState("multiPage");
   const isMulti = responseMode === "multiPage";
@@ -1753,14 +1735,14 @@ function App() {
     const nameValid = p.length >= 2 && p[p.length-1].length === 1;
     if (!nameValid) { setError("Please enter your first name and the first initial of your surname before uploading — e.g. Sue W"); return; }
     let ingested;
-    try { ingested = await toJpeg(f); }
+    try { ingested = await _c90809(f); }
     catch(err) { setError("Could not read that image — try another photo."); return; }
     setPageImg(ingested.dataUrl); // preview shows EXACTLY what the model receives (rotateFix-v2.0)
     setPageB64(ingested.b64);
     setError(null);
     setQuestionsOnPage(null);
     setQuestionNumber("");
-    if (vaPrompts) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // Visual Arts: single essay question per stimulus page; no scan. All other subjects scan page 1 so the student picks the ONE question to mark.
+    if (vaPrompts) { setQuestionsOnPage(["1"]); setQuestionNumber("1"); return; } // multiPage: single extended-response question; no scan
     await scanPage1Questions(ingested.b64);
   };
 
@@ -1770,7 +1752,7 @@ function App() {
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
+        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
         body: JSON.stringify({
           model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
@@ -1821,7 +1803,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     const room = Math.max(0, respPagesMax - responseB64s.length);
     for (const file of imgFiles.slice(0, room)) {
       let ingested;
-      try { ingested = await toJpeg(file); }
+      try { ingested = await _c90809(file); }
       catch(err) { setError("Could not read one of those images — try re-adding it."); continue; }
       setResponseImgs(prev => prev.length>=respPagesMax ? prev : [...prev, ingested.dataUrl]); // preview = model pixels (rotateFix-v2.0)
       setResponseB64s(prev => prev.length>=respPagesMax ? prev : [...prev, ingested.b64]);
@@ -1846,7 +1828,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
   const rotatePage1 = async () => {
     if (!pageB64 || loading) return;
     try {
-      const { b64, dataUrl } = await rotateJpeg90(pageB64);
+      const { b64, dataUrl } = await _8c2e35(pageB64);
       setPageImg(dataUrl);
       setPageB64(b64);
       // Page 1 was scanned for question labels at upload — a sideways scan is
@@ -1856,7 +1838,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
   };
   const rotateResponsePage = async (i) => {
     try {
-      const { b64, dataUrl } = await rotateJpeg90(responseB64s[i]);
+      const { b64, dataUrl } = await _8c2e35(responseB64s[i]);
       setResponseImgs(prev => prev.map((u,j)=>j===i?dataUrl:u));
       setResponseB64s(prev => prev.map((b,j)=>j===i?b64:b));
     } catch(err) { setError("Could not rotate that page — try re-uploading it."); }
@@ -1909,17 +1891,16 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     if (nameParts[nameParts.length - 1].length > 1) { setError("Only provide the first initial of your surname — e.g. Sue W"); return; }
     if (auralPrompts && !examYear) { setError("Please select the exam year first."); return; }
     if (!questionNumber.trim()) { setError("Please select the question number first."); return; }
-    // universalMultiPage-v1.5: zero extra pages is fine — the answer may be entirely on page 1.
     if (vaPrompts && responseB64s.length === 0) { setError("Please add at least one response page before analysing."); return; }
     abortRef.current = new AbortController();
     setLoading(true); setError(null);
     setLoadingMsg("Applying CUBE to your question...");
     // Generate session ID shared between Stage 1 + Stage 2 for this attempt
-    const sid = privacyName(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
+    const sid = _612d25(studentName.trim()||"anon") + "-" + Date.now().toString(36).toUpperCase();
     setSessionId(sid);
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(sanitiseInput(questionNumber))},
+        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
         signal: abortRef.current.signal,
         body: JSON.stringify({
           stage: "stage1",
@@ -1931,13 +1912,13 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
           syllabus: config.syllabus,
           messages:[{ role:"user", content: vaPrompts ? [
             { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pageB64 }},
-            { type:"text", text:`Apply CUBE to Visual Arts Question ${sanitiseInput(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
+            { type:"text", text:`Apply CUBE to Visual Arts Question ${_d0c6fa(questionNumber)} on this stimulus page. Circle the directive verb; underline the required foci (the aspects the question asks about), any frame named, and conceptual-framework/representation terms; box constraints (named artist/artwork, medium, period). Extract requiredAspects and the stimulus plates[]. Then scan the student's own handwritten CUBE marks on the printed question. Return phase1_cube (with requiredAspects and plates) and studentCube as JSON.` }
           ] : [
             ...[pageB64, ...responseB64s].flatMap((pB64, pIdx, allP) => ([
               { type:"text", text:`PAGE ${pIdx+1} of ${allP.length}:` },
               { type:"image", source:{ type:"base64", media_type:"image/jpeg", data:pB64 }}
             ])),
-            { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${sanitiseInput(questionNumber)}. This label may include a parent number and a sub-part, e.g. "23(b)" means parent QUESTION 23, sub-part (b).
+            { type:"text", text:`TASK 1 — CUBE ANALYSIS: The student has selected Question ${_d0c6fa(questionNumber)}. This label may include a parent number and a sub-part, e.g. "23(b)" means parent QUESTION 23, sub-part (b).
 
 THE PAGES: You have been given EVERY page of the submission IN ORDER (PAGE 1, PAGE 2, …). The printed question for the selected label may appear on ANY of these pages — exam papers often print a later sub-part on a later page.
 
@@ -1952,7 +1933,7 @@ LOCK ONTO THE CORRECT QUESTION — CRITICAL:
 SHARED STEM RULE: many parent questions have a shared stem or stimulus (a menu, source, data set, image, scenario) printed ABOVE the sub-parts — possibly on an EARLIER page than the selected sub-part. That shared stem still belongs to the selected sub-part — read and include it as context and constraints. Only IGNORE (a) the specific wording of OTHER sibling sub-parts under the same parent, and (b) entirely different parent questions.
 
 Extract phase1_cube with questionText (the exact wording of the selected sub-part), foundOnPage, directives, syllabusKeywords, constraints (INCLUDE items named in the shared stem), marks etc. Take the marks value printed beside the SELECTED sub-part on its own page — never a sibling's marks. Do NOT read or transcribe the student written answer.` },
-            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Now return to the page where you found the printed question for Question ${sanitiseInput(questionNumber)} (the foundOnPage you are reporting) and look at that printed question again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on that printed question text. Ignore the written answer. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
+            { type:"text", text:`TASK 2 — ANNOTATION SCAN ONLY: Now return to the page where you found the printed question for Question ${_d0c6fa(questionNumber)} (the foundOnPage you are reporting) and look at that printed question again with fresh eyes. Your ONLY job now is to find handwritten marks made directly on that printed question text. Ignore the written answer. Marks may be pen OR pencil (pencil is light grey/faint — look very carefully). Check EVERY word in the question from first to last — do not skip any. For each word: is there a circle/oval around it? a box/rectangle around it? an underline (straight or wavy) beneath it? Words at the END of lines are easy to miss — check them too. Even faint or partial marks count. Return your findings in studentCube with circled[], underlined[], boxed[] arrays and a score. Return BOTH TASK 1 and TASK 2 results together in one JSON object.` }
           ]}]
         })
       });
@@ -1988,7 +1969,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         const found = Array.isArray(parsed.labelsFound) && parsed.labelsFound.length
           ? " Questions found on your pages: " + parsed.labelsFound.slice(0,12).join(", ") + "."
           : "";
-        const nfErr = new Error(`Couldn't find Question ${sanitiseInput(questionNumber)} printed on your uploaded pages — a line like "answer parts (b)–(c)" is only an instruction, not the question itself.${found} Add the page where Question ${sanitiseInput(questionNumber)} is actually printed (or check your page order), then try again.`);
+        const nfErr = new Error(`Couldn't find Question ${_d0c6fa(questionNumber)} printed on your uploaded pages — a line like "answer parts (b)–(c)" is only an instruction, not the question itself.${found} Add the page where Question ${_d0c6fa(questionNumber)} is actually printed (or check your page order), then try again.`);
         nfErr.isPageIssue = true;
         throw nfErr;
       }
@@ -2070,16 +2051,16 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     const pk = kwds2[0] || {};
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(privacyName(studentName.trim()||"anonymous"))},
+        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous"))},
         body: JSON.stringify({
           stage:       "modelAnswer",
           subject:     config.subjectCode,
           subjectName: config.subjectName,
           promptVariant: pVariant,
           examYear:      examYear,
-          questionNumber: sanitiseInput(questionNumber),
+          questionNumber: _d0c6fa(questionNumber),
           bandRules:   config.bandRules,
-          questionText: sanitiseInput(questionText),
+          questionText: _d0c6fa(questionText),
           dirs:        dirs2,
           kwds:        kwds2,
           primaryKwd:  pk,
@@ -2094,12 +2075,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
 
   const reset = () => { setPhase(0); setPageImg(null); setPageB64(null); setResponseImgs([]); setResponseB64s([]); setQuestionNumber(""); setExamYear(""); setQuestionsOnPage(null); setResults(null); setError(null); setModelAnswer(null); setActiveTab("cube"); setCubeXP(null); setAnnoXP(null); setWriteXP(null); setStage1Done(false); setStage2Loading(false); setStage2Error(null); setStage2Results(null); setAnnotationIdeas([]); setIterCount(1); setSessionXP(0); setSessionId(""); setShowReport(false); setReportCat(""); setReportTxt(""); setReportSent(false); };
 
-  // ── feedback v1 — report a problem with this marking ───────────────────────
-  // Fire-and-forget to Worker /log (type:"FEEDBACK"). The sessionId is the join
-  // key back to this attempt's Stage 1/2 rows in the class tab, and the
-  // transcription excerpt (studentResponseText, capped 600 chars) lets the
-  // teacher adjudicate a disputed marking straight from the FEEDBACK tab
-  // without needing the photo. Requires LogWebhook.gs v14.3.
+  // feedback v1 — report a problem with this marking (sessionId joins to the Stage 1/2 rows; transcription excerpt attached). Requires LogWebhook v14.3.
   const submitMarkingReport = () => {
     if (reportSent) return;
     const cat = reportCat, txt = reportTxt.replace(/[`${}\\]/g, "").trim();
@@ -2111,7 +2087,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         body: JSON.stringify({
           type:         "FEEDBACK",
           tool:         "MARKING",
-          student:      privacyName(studentName.trim() || "anonymous"),
+          student:      _612d25(studentName.trim() || "anonymous"),
           studentClass: config.studentClass || "",
           subject:      config.subjectCode,
           ref:          sessionId || "no-session",
@@ -2223,7 +2199,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
       setLeaderboard(data);
       // Sync streak from server for current student (cross-device consistency)
       try {
-        const me = privacyName(studentName.trim()||"anonymous");
+        const me = _612d25(studentName.trim()||"anonymous");
         const myRow = (data.leaderboard||[]).find(p=>p.student===me);
         if (myRow && typeof myRow.streak === "number" && myRow.streak > 0) {
           // Server streak is source of truth for the COUNT — but preserve the
@@ -2257,7 +2233,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(privacyName(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(sanitiseInput(questionNumber))},
+        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))},
         body: JSON.stringify({
           stage:           "stage2",
           subject:         config.subjectCode,
@@ -2265,8 +2241,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           responseMode:    responseMode,
           promptVariant:   pVariant,
           examYear:        examYear,
-          questionText:    sanitiseInput(c1.questionText),
-          questionNumber:  sanitiseInput(questionNumber),
+          questionText:    _d0c6fa(c1.questionText),
+          questionNumber:  _d0c6fa(questionNumber),
           primaryDir:      primaryDir,
           dirs:            dirs,
           kwds:            kwds,
@@ -2335,13 +2311,13 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         const modalApp   = dirFromObj ? (dirFromObj.modality === "required" || dirFromObj.modality === "optional") : parsed.rubric?.modality?.applicable === true;
         // Calculate dimMax FIRST so totalScore can cap per-dimension — prevents AI over-scoring exceeding maxScore
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
-        const isProcT = isProceduralResult(parsed);  // procedural = 4 method dims, always all applicable
+        const isProcT = _37f8a2(parsed);
         const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
         const mx  = isProcT ? dimMax*4 : (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
         // Update session XP using correctly capped score and max
         setWriteXP(Math.min(sc, mx));
         setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
-        const band = getBand(sc, mx);
+        const band = _2c7e13(sc, mx);
         const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
@@ -2354,7 +2330,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             type:             "FULL_ROW",
             webhookUrl:       config.logUrl,
             subject:          config.subjectName,
-            student:          privacyName(studentName.trim()||"anonymous"),
+            student:          _612d25(studentName.trim()||"anonymous"),
             sessionId:        sessionId,
             attempt:          iterCount,
             streak:           streak,
@@ -2370,9 +2346,6 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             annoIdeas:        annoPresXP,
             annoUsed:         annoUsdXP,
             annoXP:           annoTotal,
-            // Procedural track reuses the 4 rubric columns (option a — no header migration):
-            // wConn←formulaSelection, wNoun←substitution, wMod←unitsSigFigs, wFlow←workingLogic.
-            // The directives column (calculate/determine/deduce) identifies the track.
             wConn:            isProcT ? Math.min(parsed.procedural.formulaSelection?.score ?? 0, dimMax) : (causalApp ? Math.min(parsed.rubric?.causalConnectives?.score ?? 0, dimMax) : ""),
             wConnMax:         (isProcT || causalApp) ? dimMax : "",
             wNoun:            isProcT ? Math.min(parsed.procedural.substitution?.score ?? 0, dimMax) : Math.min(parsed.rubric?.complexNounGroups?.score ?? 0, dimMax),
@@ -2408,11 +2381,10 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
 
   const totalScore = (r, causalOverride, modalOverride, dimMax=5) => {
     if (!r) return 0;
-    // Procedural track: sum the four method dimensions — literacy rubric is null
-    if (isProceduralResult(r)) {
-      return PROC_DIMS.reduce((s,d) => s + Math.min(r.procedural[d.key]?.score||0, dimMax), 0);
+    if (_37f8a2(r)) {
+      return _9d41ce.reduce((s,d) => s + Math.min(r.procedural[d.key]?.score||0, dimMax), 0);
     }
-    const rubric = r.rubric || {};  // null-guard: never crash on rubric:null
+    const rubric = r.rubric || {};
     // Use client-side derived applicable values if provided, else fall back to AI value
     const causalAppl  = causalOverride !== undefined ? causalOverride : (rubric.causalConnectives?.applicable !== false);
     const modalAppl   = modalOverride  !== undefined ? modalOverride  : (rubric.modality?.applicable === true);
@@ -2517,7 +2489,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               <div style={{fontSize:"16px",fontWeight:900,color:gold}}>Common problems</div>
               <button onClick={()=>setShowHelp(false)} style={{background:"none",border:"none",color:"#8a93a6",fontSize:"20px",cursor:"pointer",padding:"0 2px"}}>✕</button>
             </div>
-            {HELP_ENTRIES.map((h,i)=>(
+            {_82400f.map((h,i)=>(
               <details key={i} style={{marginBottom:"8px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"9px",padding:"10px 12px"}}>
                 <summary style={{cursor:"pointer",fontSize:"14px",fontWeight:800,color:"#e8eaf0"}}>{h.q}</summary>
                 <div style={{marginTop:"7px",fontSize:"13.5px",lineHeight:"1.55",color:"#c7cddb"}}>{h.a}</div>
@@ -2659,7 +2631,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   <span style={{color:"rgba(255,255,255,0.2)"}}>|</span>
                   <span>🖱️ Drag &amp; drop an image or PDF (page 1 only)</span>
                 </div>}
-                {nameValid&&<MaybeExpander when={mobileView} label={"📌 Photo tips — orientation, iPhone & PDF"}><div style={{marginTop:mobileView?"4px":"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
+                {nameValid&&<_2f96cd when={mobileView} label={"📌 Photo tips — orientation, iPhone & PDF"}><div style={{marginTop:mobileView?"4px":"16px",padding:"14px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:"12px"}}>
                   <div style={{fontSize:"13px",color:"#c8d8e8",fontFamily:"sans-serif",fontWeight:700,marginBottom:"12px",textAlign:"center",letterSpacing:"0.5px"}}>📐 Photo orientation matters — make sure your text is upright</div>
                   <div style={{display:"flex",justifyContent:"center",gap:"24px",alignItems:"flex-start"}}>
                     {/* CORRECT — vertical */}
@@ -2700,7 +2672,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   </div>
                 </div>
                 <div style={{marginTop:"10px",padding:"10px 14px",background:"rgba(100,160,255,0.08)",border:"1px solid rgba(100,160,255,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#90caf9",fontFamily:"sans-serif",lineHeight:"1.6"}}>📱 <strong>iPhone users:</strong> before uploading, go to <strong>Settings → Camera → Formats</strong> and select <strong>Most Compatible</strong>. This ensures your photos can be read by the app.</span></div>
-                <div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div></MaybeExpander>}
+                <div style={{marginTop:"8px",padding:"10px 14px",background:"rgba(165,214,167,0.07)",border:"1px solid rgba(165,214,167,0.25)",borderRadius:"10px",textAlign:"left"}}><span style={{fontSize:"13px",color:"#a5d6a7",fontFamily:"sans-serif",lineHeight:"1.6"}}>📄 <strong>PDF uploads:</strong> only <strong>page 1</strong> will be analysed. If your question is on another page, take a photo or screenshot of that page instead.</span></div></_2f96cd>}
               </div>;
             })()}
             <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{display:"none"}} onChange={handleImg}/>
@@ -2850,24 +2822,23 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           const modalityApplicable = dirObjR ? (dirObjR.modality === "required" || dirObjR.modality === "optional") : ["assess","evaluate","critically evaluate"].includes(verbType) ? true : (a ? a.rubric?.modality?.applicable === true : false);
           // Calculate dimMaxR BEFORE score so totalScore can apply per-dimension caps — prevents score > maxScore
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
-          const isProcR = isProceduralResult(a);  // procedural = 4 method dims, always all applicable
+          const isProcR = _37f8a2(a);
           const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
           const maxScore = isProcR ? dimMaxR*4 : (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
-          // Track-aware rubric rows: procedural questions show the 4 METHOD criteria
           const rubricRowsR = isProcR
-            ? PROC_DIMS.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
+            ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
             : [
                 { label:"Causal Connectives",      data:a?.rubric?.causalConnectives, applicable:causalApplicable },
                 { label:"Complex Noun Groups",     data:a?.rubric?.complexNounGroups, applicable:true },
                 { label:"Modality",                data:a?.rubric?.modality,          applicable:modalityApplicable },
                 { label:"Logical Flow & Cohesion", data:a?.rubric?.logicalFlow,       applicable:true },
               ];
-          const band = marksKnown ? null : getBand(score, maxScore);
+          const band = marksKnown ? null : _2c7e13(score, maxScore);
 
           return <div>
-            {/* ── ORDER: 1) Question bar  2) Steps nav  3) Tab content — DO NOT REORDER ── */}
+            {/* ── ORDER: 1) Question bar  2) _f3a294 nav  3) Tab content — DO NOT REORDER ── */}
             {/* ── Question summary bar — collapsed behind a tap on mobile ── */}
-            <MaybeExpander when={mobileView} label={"Q"+(questionNumber||"?")+(c.marks!=null&&c.marks!==""?(" · "+c.marks+" marks"):"")+" — view question"}>
+            <_2f96cd when={mobileView} label={"Q"+(questionNumber||"?")+(c.marks!=null&&c.marks!==""?(" · "+c.marks+" marks"):"")+" — view question"}>
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"14px 18px",marginBottom:"20px",border:"1px solid rgba(201,168,76,0.2)"}}>
               {/* Metadata row */}
               <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center",marginBottom:"10px"}}>
@@ -2883,7 +2854,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               </div>
               {c.questionText&&<div style={{color:"#ffffff",fontSize:"14px",fontFamily:"'Courier New',monospace",lineHeight:"1.6"}}>{c.questionText}</div>}
             </div>
-            </MaybeExpander>
+            </_2f96cd>
 
             {/* ── Results strip — only shown after Stage 2 marking ── */}
             {stage2Results&&(()=>{
@@ -2945,11 +2916,11 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             })()}
 
             {mobileView
-              ? <MobilePager activeTab={activeTab} unlocked={!!stage2Results} onTabChange={(tab)=>{
+              ? <_9a03be activeTab={activeTab} unlocked={!!stage2Results} onTabChange={(tab)=>{
                   setActiveTab(tab);
                   if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
                 }}/>
-              : <Steps current={4} activeTab={activeTab} onTabChange={(tab)=>{
+              : <_f3a294 current={4} activeTab={activeTab} onTabChange={(tab)=>{
                   setActiveTab(tab);
                   if(tab==="rank") fetchLeaderboard(lbPeriod, lbDirective);
                 }}/>}
@@ -2958,7 +2929,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             {activeTab==="cube"&&<div>
               <SectionTitle>STEP 2 — CUBE ANALYSIS</SectionTitle>
 
-              <SVGAnnotatedPaper
+              <_e701da
                 text={c.questionText}
                 directives={dirs}
                 syllabusKeywords={kwds}
@@ -3008,7 +2979,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               </Card>;
               })()}
 
-              <MaybeExpander when={mobileView} label="Full CUBE detail — C · U · B · E">
+              <_2f96cd when={mobileView} label="Full CUBE detail — C · U · B · E">
               {/* Legend */}
               <div style={{display:"flex",gap:"16px",flexWrap:"wrap",marginBottom:"16px",padding:"10px 14px",background:"rgba(255,255,255,0.04)",borderRadius:"10px",border:"1px solid rgba(255,255,255,0.08)"}}>
                 {[
@@ -3189,7 +3160,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   </div>;
                 })()}
               </Card>}
-              </MaybeExpander>
+              </_2f96cd>
 
               {/* ── Now ready button at bottom of CUBE tab ── */}
               {results&&!stage1Done&&<div style={{fontFamily:"sans-serif",marginTop:"8px"}}>
@@ -3227,7 +3198,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 <span style={{fontSize:"24px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+(annoXP||0)} XP</span>
               </div>}
               {/* SVG plan paper — uses AI planning arrows from Stage 1 phase2_plan */}
-              <SVGAnnotatedPaper
+              <_e701da
                 text={c.questionText}
                 directives={dirs}
                 syllabusKeywords={kwds}
@@ -3236,7 +3207,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 mode="plan"
               />
 
-              <MaybeExpander when={mobileView} label="Points detail & writing scaffold">
+              <_2f96cd when={mobileView} label="Points detail & writing scaffold">
               {/* ── Annotation XP + Stage 1 total (combined) ── */}
               {(()=>{
                 const maxCubeXP = (()=>{
@@ -3371,7 +3342,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   </div>
                 ))}
               </Card>}
-              </MaybeExpander>
+              </_2f96cd>
 
               </div>}{/* end stage2Results gate */}
 
@@ -3392,18 +3363,18 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               </div>}
               {(stage1Done||stage2Results)&&<div>
               <SectionTitle>{mobileView?"STEP 4 — YOUR RESPONSE":"STEP 4 — YOUR RESPONSE (FORMATTED)"}</SectionTitle>
-              <MaybeExpander when={mobileView} label="Legend — bold · underline · ?">
+              <_2f96cd when={mobileView} label="Legend — bold · underline · ?">
               <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"6px 12px",marginBottom:"12px",border:"1px solid rgba(255,255,255,0.08)",display:"flex",gap:"16px",flexWrap:"wrap",alignItems:"center"}}>
                 <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><strong style={{color:"#d580ff",background:"rgba(180,80,255,0.18)",padding:"0 4px",borderRadius:"3px",fontFamily:"sans-serif"}}>bold</strong> = causal connective</span>
                 <span style={{fontSize:"13px",color:"#e8eaf0",fontFamily:"sans-serif"}}><em style={{color:"#64b5f6",textDecoration:"underline",textDecorationStyle:"dotted"}}>italic underline</em> = complex noun group</span>
                 <span style={{fontSize:"13px",fontFamily:"sans-serif",color:"#e8eaf0"}}><span style={{background:"#ff6d00",color:"white",borderRadius:"4px",padding:"1px 6px",fontWeight:900,fontSize:"11px"}}>?</span> = illegible word — check your photo</span>
               </div>
-              </MaybeExpander>
-              <PaperCard subtitle="STUDENT RESPONSE — VERBATIM">
+              </_2f96cd>
+              <_e3ea66 subtitle="STUDENT RESPONSE — VERBATIM">
                 <div style={{fontSize:"16px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>
-                  <FormattedResponse text={enrichFormattedResponse(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
+                  <_35d126 text={_9eca9d(a.formattedResponse, a.studentResponseText, a.detectedNounGroups, config.connectives)}/>
                 </div>
-              </PaperCard>
+              </_e3ea66>
 
               {/* Photo below the typed response — annotation detail moved to Plan tab.
                   allPagesShown-v1.0: show PAGE 1 (question page + start of the answer) PLUS
@@ -3445,10 +3416,10 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               {stage2Results&&<div>
               <SectionTitle>{mobileView?"STEP 5 — YOUR MARKS":"STEP 5 — WRITTEN ANALYSIS"}</SectionTitle>
 
-              {isProcR&&<ArithmeticBanner procedural={a.procedural} compact={mobileView}/>}
+              {isProcR&&<_c5e1b8 procedural={a.procedural} compact={mobileView}/>}
 
               {mobileView&&<div style={{marginBottom:"14px"}}>
-                {rubricRowsR.map((row,i)=><RubricCardMobile key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
+                {rubricRowsR.map((row,i)=><_4c78ef key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
                 <div style={{fontSize:"11px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"4px",textAlign:"center"}}>Tap a criterion to see the evidence &amp; full comment</div>
               </div>}
 
@@ -3463,7 +3434,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                     </tr>
                   </thead>
                   <tbody>
-                    {rubricRowsR.map((row,i)=><RubricRow key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
+                    {rubricRowsR.map((row,i)=><_b6a519 key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
                   </tbody>
                 </table>
               </Card>}
@@ -3480,7 +3451,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               </div>
 
               {/* Detected features */}
-              <MaybeExpander when={mobileView} label="Connectives & noun groups found">
+              <_2f96cd when={mobileView} label="Connectives & noun groups found">
               <div style={{display:"grid",gridTemplateColumns:mobileView?"1fr":`${causalApplicable?"1fr ":""}1fr`,gap:"12px",marginTop:"4px"}}>
                 {causalApplicable&&<Card bg="rgba(123,31,162,0.08)" border="rgba(123,31,162,0.3)">
                   <SectionTitle color="#ce93d8">CONNECTIVES FOUND</SectionTitle>
@@ -3508,7 +3479,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   :<div style={{color:"#e8eaf0",fontSize:"13px",fontFamily:"sans-serif",fontStyle:"italic"}}>None detected</div>}
                 </Card>
               </div>
-              </MaybeExpander>
+              </_2f96cd>
 
 
             </div>}
@@ -3545,7 +3516,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   { emoji:"🥈", cat:"#c0c0c0", quote:"#d0d0d0" },
                 ];
                 return <Card bg="rgba(255,255,255,0.03)" border="rgba(255,255,255,0.1)">
-                  {medals.length>0&&<MaybeExpander when={mobileView} label="🥇 Your medals — what you did well">
+                  {medals.length>0&&<_2f96cd when={mobileView} label="🥇 Your medals — what you did well">
                   {medals.map((md,mi)=>(
                     <div key={mi} style={{display:"flex",gap:"12px",alignItems:"flex-start",marginBottom:(mi<medals.length-1||missions.length)?"12px":0,paddingTop:mi>0?"10px":0,borderTop:mi>0?"1px solid rgba(255,255,255,0.07)":"none"}}>
                       <div style={{fontSize:"26px",flexShrink:0}}>{medalMeta[mi]?.emoji||"🏅"}</div>
@@ -3555,7 +3526,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                       </div>
                     </div>
                   ))}
-                  </MaybeExpander>}
+                  </_2f96cd>}
                   {missions.length>0&&<div style={{paddingTop:medals.length&&!mobileView?"10px":0,borderTop:medals.length&&!mobileView?"1px solid rgba(255,255,255,0.07)":"none"}}>
                     <div style={{fontWeight:800,color:"#ff8a80",fontSize:"14px",marginBottom:"10px",fontFamily:"sans-serif",display:"flex",alignItems:"center",gap:"8px"}}>
                       <span style={{fontSize:"22px"}}>🎯</span>
@@ -3586,7 +3557,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               })()}
 
               {/* ── 4. Band 6 Model Answer (model sentence starter + generated) ── */}
-              {a.specialCheck?.modelSentenceStarter&&<MaybeExpander when={mobileView} label="💡 How to structure your answer">
+              {a.specialCheck?.modelSentenceStarter&&<_2f96cd when={mobileView} label="💡 How to structure your answer">
               <Card bg="rgba(201,168,76,0.06)" border="rgba(201,168,76,0.3)">
 
                 {/* ── STEP 1: Structure Pattern ── */}
@@ -3608,7 +3579,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 </div>
 
               </Card>
-              </MaybeExpander>}
+              </_2f96cd>}
 
 
               {/* ── Visual Arts interpretive check ── */}
@@ -3616,7 +3587,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 const v = a.specialCheck.visualArtsCheck;
                 const cov = a.specialCheck.coverageCheck || [];
                 const rows = [
-                  [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame named & applied"],
+                  [v.frameApplied, v.frameNamed ? ("Frame applied: " + v.frameNamed) : "Frame perspective applied"],
                   [v.conceptualFrameworkRelational, "Conceptual framework used relationally (artist \u21c4 artwork \u21c4 world \u21c4 audience)"],
                   [(v.namedArtworksEvidence||[]).length>0, "Specific named artists / artworks as evidence"],
                   [v.usedStimulusPlates, "Stimulus plates / extracts referenced accurately"],
@@ -3773,9 +3744,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                   <div style={{marginBottom:"8px",fontSize:"11px",color:"#c9a84c",fontWeight:800,letterSpacing:"1px",fontFamily:"sans-serif"}}>
                     ✨ INDICATIVE BAND 6 EXAMPLE ANSWER
                   </div>
-                  <PaperCard subtitle="">
+                  <_e3ea66 subtitle="">
                     <div style={{fontSize:"15px",lineHeight:"1.9",color:"#1a1a2e",fontFamily:"'Georgia',serif"}}>{modelAnswer}</div>
-                  </PaperCard>
+                  </_e3ea66>
                   <div style={{fontSize:"12px",color:"#9ab",fontFamily:"sans-serif",fontStyle:"italic",marginTop:"6px"}}>This is an AI-generated example — use it to understand Band 6 depth and structure, not to copy.</div>
                 </>}
               </div>
@@ -3839,7 +3810,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 const board = lbPeriod==="improved"
                   ? (leaderboard.leaderboard||[])
                   : (leaderboard.leaderboard||[]);
-                const me = privacyName(studentName.trim()||"");
+                const me = _612d25(studentName.trim()||"");
 
                 return <div>
                   {/* Podium — top 3 */}
@@ -3953,7 +3924,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         const prContainer = document.getElementById("print-report");
         if (!prContainer) return null;
         return ReactDOM.createPortal(
-          <PrintReport
+          <_e1663c
             studentName={studentName.trim()||"Student"}
             questionNumber={questionNumber}
             subjectName={config.subjectName}
@@ -3985,8 +3956,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
 // ─── ERROR BOUNDARY ───────────────────────────────────────────────────────────
 // Catches any render-time exception so a bad marking payload (e.g. a Chemistry
 // procedural-track result the display doesn't yet handle) shows a readable card
-// instead of a silent blank white screen. The full error is logged to console
-// for diagnosis. This is the permanent fix for the "screen went blank" failure.
+// instead of a silent blank white screen. Permanent fix for "screen went blank".
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, message: "" }; }
   static getDerivedStateFromError(err) {
@@ -4015,12 +3985,12 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-function AppShell() {
+function _eed5f4() {
   const [configReady, setConfigReady] = useState(false);
   const [configError, setConfigError] = useState(null);
 
   useEffect(() => {
-    loadConfig().then(() => {
+    _f674dd().then(() => {
       if (!config.subjectCode) {
         setConfigError("Config file loaded but missing subjectCode — check your config JSON.");
       }
@@ -4052,11 +4022,11 @@ function AppShell() {
     );
   }
 
-  return <App />;
+  return <_ac863f />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  React.createElement(ErrorBoundary, null, React.createElement(AppShell))
+  React.createElement(ErrorBoundary, null, React.createElement(_eed5f4))
 );
   </script>
 <div id="cube-build-tag" title="Build version — tap to enlarge / confirm you are on the latest deploy"
