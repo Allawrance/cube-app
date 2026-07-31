@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v2.9 · 2026-07-31 · VA question selector + calibration";
+    window.CUBE_BUILD = "v3.0 · 2026-07-31 · VA calibration 2 + Q-label normalise";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -1775,7 +1775,9 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
       const raw = scanData.content?.[0]?.text?.trim() || "[]";
       const clean = raw.replace(/```json|```/g,"").trim();
       const arr = JSON.parse(clean);
-      setQuestionsOnPage(Array.isArray(arr) && arr.length > 0 ? arr : ["1","2","3","4","5","6"]);
+      const norm = a => a.map(x => String(x).replace(/^\s*Q(?:uestion)?\.?\s*/i,"").trim()).filter(Boolean); // v3.0: "Question 3" → "3" (report header, filename, log)
+      const arrN = norm(Array.isArray(arr) ? arr : []);
+      setQuestionsOnPage(arrN.length > 0 ? arrN : ["1","2","3","4","5","6"]);
     } catch(err) {
       console.error("Scan catch:", err);
       setQuestionsOnPage(["1","2","3","4","5","6"]);
@@ -2092,7 +2094,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           studentClass: config.studentClass || "",
           subject:      config.subjectCode,
           ref:          sessionId || "no-session",
-          question:     questionNumber || "—",
+          question:     (questionNumber||"").replace(/^\s*Q(?:uestion)?\.?\s*/i,"") || "—",
           year:         examYear || "—",
           module:       "—",
           category:     cat,
@@ -2136,7 +2138,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     } catch(e) {}
 
     const safeName = (studentName||'Student').trim().replace(/\s+/g,'_');
-    const safeQ    = (questionNumber||'Q').trim().replace(/\s+/g,'_');
+    const safeQ    = (questionNumber||'Q').trim().replace(/^Q(?:uestion)?\.?\s*/i,"").replace(/\s+/g,'_'); // v3.0: no more QQuestion_3
     const filename = `CUBE_Report_${safeName}_${safeQ}.html`;
 
     const html = `<!DOCTYPE html>
