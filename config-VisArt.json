@@ -11,6 +11,7 @@
   "dominantMode": "Art criticism + interpretive frameworks + informed point of view",
   "cleanRule": "Visual Arts = adopt a frame (subjective/cultural/structural/postmodern) + apply the conceptual framework (artist/artwork/world/audience) + develop a sustained, evidence-based interpretive point of view about practice, representation and meaning",
   "leaderboardTip": "HSC Visual Arts written responses reward an INFORMED POINT OF VIEW — answer through the frame the question gives you (you don't need to state it by name), use that perspective to interpret relationships in the conceptual framework, and support your interpretation with specific named artworks and artists. Generic description with no interpretive perspective earns Band 3 at best.",
+  "noticeBanner": "📢 UPDATED FOR VISUAL ARTS — 1 August 2026 · The CUBE Marking Coach has been specifically recalibrated for Visual Arts against official NESA marking guidelines and NESA top-scoring student responses. Marks awarded before this date were often lower than they should have been — that was the marking, not your work. The same response now receives an accurate, HSC-standard mark, so it is worth re-submitting anything you checked earlier.",
   "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=VISART",
   "hasMC": false,
   "sheetTabCube": "VISART CUBE",
@@ -548,15 +549,15 @@
     },
     "discuss": {
       "tier": 3,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "investigate": {
       "tier": 4,
-      "modality": "required"
+      "modality": "ignore"
     },
     "interpret": {
       "tier": 3,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "apply": {
       "tier": 3,
@@ -564,7 +565,7 @@
     },
     "synthesise": {
       "tier": 3,
-      "modality": "optional"
+      "modality": "ignore"
     },
     "assess": {
       "tier": 4,
@@ -576,7 +577,7 @@
     },
     "critically analyse": {
       "tier": 4,
-      "modality": "required"
+      "modality": "ignore"
     },
     "justify": {
       "tier": 4,
@@ -588,7 +589,7 @@
     },
     "appreciate": {
       "tier": 4,
-      "modality": "required"
+      "modality": "ignore"
     }
   },
   "connectives": {
