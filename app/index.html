@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.2 · 2026-08-02 · VA coverage-gate mark cap + stimulus N/A";
+    window.CUBE_BUILD = "v3.3 · 2026-08-27 · wallet-v1.0 · 2026-08-27 · access-code wallet + call-site wiring";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -291,7 +291,337 @@
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
   </script>
-  <script type="text/babel">
+  <script>
+/* ── CUBE access-code wallet · wallet-v1.0 ─────────────────────── */
+/* CUBE access-code wallet · wallet-v1.0 · 2026-08-27
+   Self-contained. Only global is window.CUBEAccess.
+   Stores MULTIPLE codes (one per subject) so a student taking several
+   subjects enters each code once per device and never again.
+   While ACCESS_GATE is off the modal offers "Continue without a code";
+   that escape hatch disappears by itself the moment the gate is turned on,
+   with no redeploy needed. */
+window.CUBEAccess = (function () {
+  "use strict";
+
+  var STORE = "cubeAccessCodes";
+  var STORE_V = 1;
+  var GATE_CACHE = "cubeGateStatus";
+  var WORKER = "https://cube-proxy.alan-3e2.workers.dev";
+
+  /* Subject aliasing — the landing page, the coaches and CUBE_ACCESS do NOT
+     all spell subjects the same way (BusS vs BS, HlthM vs HM, ComFam vs CF,
+     EngS vs ES, Geo vs GEO ...). Mirrors KV_SUBJECT_MAP in the Worker. */
+  var ALIAS = {
+    EES: "EES",
+    BIO: "BIO", BIOLOGY: "BIO",
+    INVSCI: "INVSCI", INVESTIGATINGSCIENCE: "INVSCI",
+    CHEM: "CHEM", CHEMISTRY: "CHEM",
+    PHYS: "PHYS", PHYSICS: "PHYS",
+    BS: "BS", BUSS: "BS", BUSINESSSTUDIES: "BS",
+    HM: "HM", HLTHM: "HM",
+    ES: "ES", ENGS: "ES",
+    CF: "CF", COMFAM: "CF",
+    LEG: "LEG", LEGAL: "LEG", LS: "LEG",
+    VISART: "VISART", VA: "VISART", VISARTS: "VISART",
+    ANCH: "ANCH", ANCHIST: "ANCH", AHIS: "ANCH", AHIST: "ANCH",
+    MHIST: "MHIST", MODH: "MHIST", MODERNHIST: "MHIST", MODERNHISTORY: "MHIST",
+    HOSP: "HOSP", HOSPITALITY: "HOSP",
+    SOR2: "SOR2", SOR: "SOR2",
+    ECON: "ECON", ECONOMICS: "ECON",
+    GEO: "GEO", GEOGRAPHY: "GEO",
+    MUS1: "MUS1", MUSIC1: "MUS1"
+  };
+
+  function canon(s) {
+    var k = String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    return ALIAS[k] || k;
+  }
+
+  function normCode(s) {
+    return String(s || "").toUpperCase().replace(/\s+/g, "").trim();
+  }
+
+  /* ── storage ─────────────────────────────────────────────────────────── */
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE);
+      if (!raw) return [];
+      var o = JSON.parse(raw);
+      if (Array.isArray(o)) return o;                 // pre-v1 tolerance
+      if (o && Array.isArray(o.codes)) return o.codes;
+      return [];
+    } catch (e) { return []; }
+  }
+
+  function save(list) {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({ v: STORE_V, codes: list }));
+    } catch (e) { /* private mode / quota — wallet degrades to per-session */ }
+  }
+
+  function all() { return load().slice(); }
+
+  function codeFor(subject) {
+    var want = canon(subject);
+    if (!want) return "";
+    var list = load();
+    for (var i = 0; i < list.length; i++) {
+      if (canon(list[i].subject) === want) return list[i].code || "";
+    }
+    return "";
+  }
+
+  function recordFor(subject) {
+    var want = canon(subject);
+    var list = load();
+    for (var i = 0; i < list.length; i++) {
+      if (canon(list[i].subject) === want) return list[i];
+    }
+    return null;
+  }
+
+  function put(rec) {
+    if (!rec || !rec.code) return;
+    var list = load();
+    var code = normCode(rec.code);
+    var subj = canon(rec.subject);
+    // one code per subject, and never the same code twice
+    list = list.filter(function (r) {
+      return normCode(r.code) !== code && canon(r.subject) !== subj;
+    });
+    list.push({
+      code: code,
+      subject: subj,
+      cls: rec.cls || "",
+      label: rec.label || "",
+      t: Date.now()
+    });
+    save(list);
+  }
+
+  function forget(code) {
+    var c = normCode(code);
+    save(load().filter(function (r) { return normCode(r.code) !== c; }));
+  }
+
+  function clearAll() { save([]); }
+
+  /* ── gate status (cached per tab) ─────────────────────────────────────── */
+
+  function gateStatus() {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(GATE_CACHE) || "null"); } catch (e) {}
+    if (cached && typeof cached.gate === "string") return Promise.resolve(cached);
+    return fetch(WORKER + "/access")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        try { sessionStorage.setItem(GATE_CACHE, JSON.stringify(d)); } catch (e) {}
+        return d;
+      })
+      .catch(function () { return { gate: "off", accessBound: false, usageBound: false }; });
+  }
+
+  function gateIsOn() {
+    return gateStatus().then(function (d) { return d && d.gate === "on"; });
+  }
+
+  /* ── validation against the Worker ────────────────────────────────────── */
+
+  function validate(code) {
+    var c = normCode(code);
+    if (!c) return Promise.resolve({ ok: false, reason: "empty" });
+    return fetch(WORKER + "/access?code=" + encodeURIComponent(c))
+      .then(function (r) { return r.json().then(function (d) { return { status: r.status, body: d }; }); })
+      .then(function (x) {
+        var d = x.body || {};
+        if (x.status === 200 && d.ok) {
+          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", cls: d.class || "", label: d.label || "" };
+        }
+        return { ok: false, reason: d.error || "invalid" };
+      })
+      .catch(function () { return { ok: false, reason: "offline" }; });
+  }
+
+  /* ── modal ───────────────────────────────────────────────────────────── */
+
+  var CSS_ID = "cube-access-css";
+  var CSS = [
+    '.cubeac-ov{position:fixed;inset:0;background:rgba(6,8,12,.82);backdrop-filter:blur(3px);',
+    'z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px;}',
+    '.cubeac-bx{background:#14171d;color:#e8eaf0;border:1px solid rgba(255,255,255,.14);border-radius:14px;',
+    'max-width:420px;width:100%;padding:22px 22px 18px;box-shadow:0 18px 60px rgba(0,0,0,.6);',
+    'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}',
+    '.cubeac-h{font-size:17px;font-weight:800;margin:0 0 6px;color:#f0c14b;letter-spacing:.2px;}',
+    '.cubeac-p{font-size:13.5px;line-height:1.5;margin:0 0 14px;color:#aeb4c0;}',
+    '.cubeac-in{width:100%;box-sizing:border-box;padding:12px 13px;font-size:16px;letter-spacing:1.5px;',
+    'text-transform:uppercase;background:#0d1015;color:#fff;border:1.5px solid rgba(255,255,255,.18);',
+    'border-radius:9px;outline:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}',
+    '.cubeac-in:focus{border-color:#f0c14b;}',
+    '.cubeac-in.bad{border-color:#e0553f;}',
+    '.cubeac-msg{font-size:12.5px;min-height:17px;margin:8px 2px 0;color:#e0553f;line-height:1.4;}',
+    '.cubeac-msg.ok{color:#5fd08a;}',
+    '.cubeac-row{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;}',
+    '.cubeac-b{flex:1;min-width:120px;padding:11px 14px;font-size:14px;font-weight:700;border-radius:9px;',
+    'border:0;cursor:pointer;font-family:inherit;}',
+    '.cubeac-b.go{background:#f0c14b;color:#1a1a1a;}',
+    '.cubeac-b.go:disabled{opacity:.45;cursor:default;}',
+    '.cubeac-b.sk{background:transparent;color:#8b93a1;border:1.5px solid rgba(255,255,255,.16);}',
+    '.cubeac-sm{font-size:11.5px;color:#767d8b;margin-top:12px;line-height:1.45;}'
+  ].join("");
+
+  function injectCss() {
+    if (document.getElementById(CSS_ID)) return;
+    var s = document.createElement("style");
+    s.id = CSS_ID;
+    s.textContent = CSS;
+    (document.head || document.documentElement).appendChild(s);
+  }
+
+  /* Shows the code prompt. Resolves with the code string, or "" if the
+     student chose to continue without one (only offered while gate is off). */
+  function promptFor(subject, opts) {
+    opts = opts || {};
+    var subjLabel = opts.subjectName || canon(subject) || "this subject";
+
+    return gateIsOn().then(function (on) {
+      injectCss();
+      return new Promise(function (resolve) {
+        var ov = document.createElement("div");
+        ov.className = "cubeac-ov";
+        ov.innerHTML =
+          '<div class="cubeac-bx" role="dialog" aria-modal="true">' +
+            '<div class="cubeac-h">Enter your class code</div>' +
+            '<div class="cubeac-p">Your teacher has given your class a code for <b>' +
+              esc(subjLabel) + '</b>. Enter it once — this device will remember it.</div>' +
+            '<input class="cubeac-in" type="text" autocomplete="off" autocapitalize="characters" ' +
+              'spellcheck="false" placeholder="e.g. BS1-XTVG" maxlength="24">' +
+            '<div class="cubeac-msg"></div>' +
+            '<div class="cubeac-row">' +
+              '<button class="cubeac-b go" disabled>Check code</button>' +
+              (on ? "" : '<button class="cubeac-b sk">Continue without</button>') +
+            '</div>' +
+            '<div class="cubeac-sm">Taking more than one subject? Each subject has its own code — ' +
+              'you will be asked once for each.</div>' +
+          '</div>';
+        document.body.appendChild(ov);
+
+        var input = ov.querySelector(".cubeac-in");
+        var msg   = ov.querySelector(".cubeac-msg");
+        var go    = ov.querySelector(".cubeac-b.go");
+        var skip  = ov.querySelector(".cubeac-b.sk");
+
+        function done(val) { try { ov.remove(); } catch (e) {} resolve(val); }
+
+        input.addEventListener("input", function () {
+          input.classList.remove("bad");
+          msg.textContent = "";
+          msg.className = "cubeac-msg";
+          go.disabled = normCode(input.value).length < 4;
+        });
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !go.disabled) go.click();
+        });
+
+        go.addEventListener("click", function () {
+          var c = normCode(input.value);
+          go.disabled = true;
+          msg.className = "cubeac-msg";
+          msg.textContent = "Checking…";
+          validate(c).then(function (res) {
+            if (res.ok) {
+              put({ code: res.code, subject: res.subject || subject, cls: res.cls, label: res.label });
+              msg.className = "cubeac-msg ok";
+              msg.textContent = "✓ " + (res.label || res.cls || res.subject || "Code accepted");
+              setTimeout(function () { done(res.code); }, 620);
+            } else {
+              input.classList.add("bad");
+              go.disabled = false;
+              msg.className = "cubeac-msg";
+              msg.textContent = res.reason === "offline"
+                ? "Could not reach the server — check your connection and try again."
+                : "That code was not recognised. Check it with your teacher.";
+            }
+          });
+        });
+
+        if (skip) skip.addEventListener("click", function () { done(""); });
+
+        setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
+      });
+    });
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  /* Returns a code for the subject, prompting only if none is held.
+     Always resolves — "" means "no code, proceed anyway" (gate off). */
+  function ensure(subject, opts) {
+    var have = codeFor(subject);
+    if (have) return Promise.resolve(have);
+    return promptFor(subject, opts);
+  }
+
+  /* Convenience for GET URLs: returns "&code=XXX" or "". */
+  function qs(subject) {
+    var c = codeFor(subject);
+    return c ? "&code=" + encodeURIComponent(c) : "";
+  }
+
+  /* Convenience for fetch headers. */
+  function headers(subject) {
+    var c = codeFor(subject);
+    return c ? { "X-Access-Code": c } : {};
+  }
+
+  return {
+    version: "wallet-v1.0",
+    canon: canon,
+    all: all,
+    codeFor: codeFor,
+    recordFor: recordFor,
+    put: put,
+    forget: forget,
+    clearAll: clearAll,
+    validate: validate,
+    gateStatus: gateStatus,
+    gateIsOn: gateIsOn,
+    prompt: promptFor,
+    ensure: ensure,
+    qs: qs,
+    headers: headers
+  };
+})();
+</script>
+<script type="text/babel">
+// ── wallet-v1.0 ────────────────────────────────────────────────────────
+// Attaches this subject's class code to every gated request. Returns {}
+// when no code is held, which is harmless while ACCESS_GATE is off.
+function cubeAccessHeaders(){
+  try {
+    var subj = (window.config && config.subjectCode) ||
+               new URLSearchParams(window.location.search).get("subject") || "";
+    return (window.CUBEAccess && window.CUBEAccess.headers(subj)) || {};
+  } catch(e){ return {}; }
+}
+// Students can deep-link or bookmark straight into the coach, bypassing the
+// landing page, so the prompt has to exist here too.
+(function(){
+  try {
+    var p = new URLSearchParams(window.location.search);
+    var subj = p.get("subject") || "";
+    if (!subj || !window.CUBEAccess) return;
+    if (window.CUBEAccess.codeFor(subj)) return;
+    window.addEventListener("load", function(){
+      setTimeout(function(){ window.CUBEAccess.ensure(subj); }, 400);
+    });
+  } catch(e){}
+})();
+
 const { useState, useRef, useEffect } = React;
 console.log("CUBE Marking Coach — build " + window.CUBE_BUILD + " · rotateFix");
 
@@ -1788,7 +2118,7 @@ function _ac863f() {
     try {
       const scanRes = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
+        headers:Object.assign({"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))}, cubeAccessHeaders()),
         body: JSON.stringify({
           model:"claude-haiku-4-5-20251001", max_tokens:200,
           messages:[{ role:"user", content:[
@@ -1938,7 +2268,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     setSessionId(sid);
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))},
+        method:"POST", headers:Object.assign({"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number": encodeURIComponent(_d0c6fa(questionNumber))}, cubeAccessHeaders()),
         signal: abortRef.current.signal,
         body: JSON.stringify({
           stage: "stage1",
@@ -2089,7 +2419,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     const pk = kwds2[0] || {};
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
-        method:"POST", headers:{"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous"))},
+        method:"POST", headers:Object.assign({"Content-Type":"application/json","X-Student-Name": encodeURIComponent(_612d25(studentName.trim()||"anonymous"))}, cubeAccessHeaders()),
         body: JSON.stringify({
           stage:       "modelAnswer",
           subject:     config.subjectCode,
@@ -2271,7 +2601,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     try {
       const res = await fetch("https://cube-proxy.alan-3e2.workers.dev/", {
         method:"POST",
-        headers:{"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))},
+        headers:Object.assign({"Content-Type":"application/json","X-Student-Name":encodeURIComponent(_612d25(studentName.trim()||"anonymous")),"X-Question-Number":encodeURIComponent(_d0c6fa(questionNumber))}, cubeAccessHeaders()),
         body: JSON.stringify({
           stage:           "stage2",
           subject:         config.subjectCode,
