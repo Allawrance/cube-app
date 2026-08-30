@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.3 · 2026-08-27 · wallet-v1.0 · 2026-08-27 · access-code wallet + call-site wiring";
+    window.CUBE_BUILD = "v3.4 · 2026-08-30 · investigation-v1.0 · experimental-design track + DV gate · paired with worker investigation-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -675,6 +675,33 @@ const _2c7e13 = (score, maxScore=20) => {
 };
 
 // ── covgate-v1.0 (VA only): cap = round(marks × addressedFraction, floor 1) when any coverage row is unaddressed; withEvidence never gates; fail-soft ──
+// investigation-v1.0 - EXPERIMENTAL-DESIGN GATE (parallels vaCoverageGate). NESA's procedure
+// ladder REQUIRES both "how the IV is changed" AND "how the DV is measured" to score above the
+// "features of a relevant investigation" band; a fluent procedure with no measurable DV still
+// averages high across the 5 design dimensions, so a hard cap is needed. Fires ONLY on a
+// genuinely ABSENT IV-change or DV-measurement (score <= 1) - an imprecise-but-present method
+// (score 2) is left to the rubric average, to avoid under-marking real answers. Cap = features
+// band ~ round(marks * FEATURES_BAND_FRACTION), floored at 1. Only ever LOWERS. FAIL-SOFT.
+const FEATURES_BAND_FRACTION = 0.5;   // TUNABLE: features band as a fraction of the question marks
+const investigationGate = (isInv, a, marks, rawAwarded) => {
+  try {
+    if (!isInv || rawAwarded === null || rawAwarded === undefined) return null;
+    if (!marks || marks <= 0) return null;
+    const inv = a && a.investigation;
+    if (!inv) return null;
+    const iv = inv.ivManipulation && typeof inv.ivManipulation.score === "number" ? inv.ivManipulation.score : null;
+    const dv = inv.dvMeasurement  && typeof inv.dvMeasurement.score  === "number" ? inv.dvMeasurement.score  : null;
+    if (iv === null || dv === null) return null;   // can't judge -> don't cap
+    const missing = [];
+    if (iv <= 1) missing.push("how the independent variable is changed");
+    if (dv <= 1) missing.push("how the dependent variable is measured");
+    if (missing.length === 0) return null;         // both present -> no cap
+    const cap = Math.max(1, Math.round(marks * FEATURES_BAND_FRACTION));
+    if (cap >= rawAwarded) return null;            // the gate only ever LOWERS a mark
+    return { cap, missing, kind:"investigation" };
+  } catch (_) { return null; }
+};
+
 const vaCoverageGate = (isVA, a, marks, rawAwarded) => {
   try {
     if (!isVA || rawAwarded === null || rawAwarded === undefined) return null;
@@ -1258,6 +1285,16 @@ const _9d41ce = [
 ];
 const _37f8a2 = (r) => !!(r && r.scoringTrack === "procedural" && r.procedural);
 
+// investigation-v1.0 - EXPERIMENTAL-DESIGN TRACK (science "design a procedure/investigation" questions)
+const INV_DIMS = [
+  { key:"ivManipulation",      label:"Independent Variable Changed" },
+  { key:"dvMeasurement",       label:"Dependent Variable Measured" },
+  { key:"controlledVariables", label:"Controlled Variables" },
+  { key:"repetition",          label:"Repetition / Reliability" },
+  { key:"logicalSequence",     label:"Logical Sequence" },
+];
+const isInvestigationResult = (r) => !!(r && r.scoringTrack === "investigation" && r.investigation);
+
 function _c5e1b8({ procedural, compact }) {
   if (!procedural) return null;
   return <div style={{background:"rgba(255,167,38,0.1)",border:"1.5px solid rgba(255,167,38,0.5)",borderRadius:"10px",padding:compact?"10px 14px":"12px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
@@ -1388,7 +1425,8 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
     ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks)
     : null;
   const covGate = vaCoverageGate(String(subjectCode||"").toUpperCase()==="VISART", a, c.marks, rawAwarded);
-  const awardedFinal = covGate ? covGate.cap : rawAwarded;
+  const invGate = investigationGate(isInvestigationResult(a), a, c.marks, rawAwarded);
+  const awardedFinal = covGate ? covGate.cap : (invGate ? invGate.cap : rawAwarded);
   const displayedMark = marksKnown
     ? `${awardedFinal} / ${c.marks} marks`
     : band ? `Indicative ${band}` : "";
@@ -1397,7 +1435,10 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
   const timeStr = now.toLocaleTimeString("en-AU", {hour:"2-digit",minute:"2-digit"});
 
   const isProcPr = _37f8a2(a);
-  const litRows = isProcPr
+  const isInvPr  = isInvestigationResult(a);
+  const litRows = isInvPr
+    ? INV_DIMS.map(d => ({ label:d.label, data:a.investigation[d.key], applicable:true }))
+    : isProcPr
     ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
     : [
         { label:"Causal Connectives",    data:a.rubric?.causalConnectives, applicable:causalApplicable  },
@@ -1529,6 +1570,14 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Why this mark is capped</div>
           <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6"}}>
             The question names {covGate.aspectsTotal} required aspect{covGate.aspectsTotal===1?"":"s"} and this response addresses {covGate.aspectsAddressed} of them, so under NESA marking guidelines the mark is capped at <strong>{covGate.cap} / {c.marks}</strong> even though the writing quality scores below are higher. Not addressed: <strong>{covGate.missing.join("; ")}</strong>. Covering every nominated aspect is the fastest way to lift this mark.
+          </div>
+        </div>
+      )}
+      {invGate && (
+        <div className="pr-no-break" style={{margin:"-8px 0 18px 0",background:"#fff7ed",border:"2px solid #b45309",borderLeft:"6px solid #b45309",borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"}}>
+          <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Why this mark is capped</div>
+          <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6"}}>
+            Under NESA marking guidelines a procedure cannot score above "features of a relevant investigation" unless it states both how the independent variable is changed AND how the dependent variable is measured, so this response is capped at <strong>{invGate.cap} / {c.marks}</strong> even though the design scores below are higher. Missing: <strong>{invGate.missing.join("; ")}</strong>. Stating a measurable method for the dependent variable is the fastest way to lift this mark.
           </div>
         </div>
       )}
@@ -2617,6 +2666,7 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           constraints:     c1.constraints||[],
           marks:           c1.marks||"not stated",
           evidenceRequired: c1.evidenceRequired||false,
+          taskType:        c1.taskType || (results.scoringTrack === "investigation" ? "experimentalDesign" : "standard"),
           // payload shape follows the session's response mode
           ...(isMulti
             ? { questionImage: pageB64, responseImages: responseB64s,
@@ -2680,8 +2730,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         // Calculate dimMax FIRST so totalScore can cap per-dimension — prevents AI over-scoring exceeding maxScore
         const dimMax = (c1.marks != null && c1.marks !== "") ? (c1.marks <= 2 ? 2 : c1.marks <= 4 ? 3 : c1.marks <= 6 ? 4 : 5) : 3;
         const isProcT = _37f8a2(parsed);
+        const isInvT = isInvestigationResult(parsed);
         const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
-        const mx  = isProcT ? dimMax*4 : (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
+        const mx  = isInvT ? dimMax*5 : isProcT ? dimMax*4 : (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
         // Update session XP using correctly capped score and max
         setWriteXP(Math.min(sc, mx));
         setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
@@ -2691,7 +2742,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
         const annoUsdXP  = annoItems.filter(a=>a.used).length;
         const annoTotal  = annoPresXP + annoUsdXP;
         const scCapped  = Math.min(sc, mx);  // cap raw score at scaled max
-        const awdMark    = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((scCapped/mx)*c1.marks), c1.marks) : "";
+        let awdMark      = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((scCapped/mx)*c1.marks), c1.marks) : "";
+        const invGateLog = investigationGate(isInvT, parsed, c1.marks, (typeof awdMark === "number" ? awdMark : null));
+        if (invGateLog) awdMark = invGateLog.cap;
         const indBand    = (c1.marks == null || c1.marks === "") ? band.replace("Band ","") : "";
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
@@ -2714,13 +2767,13 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             annoIdeas:        annoPresXP,
             annoUsed:         annoUsdXP,
             annoXP:           annoTotal,
-            wConn:            isProcT ? Math.min(parsed.procedural.formulaSelection?.score ?? 0, dimMax) : (causalApp ? Math.min(parsed.rubric?.causalConnectives?.score ?? 0, dimMax) : ""),
-            wConnMax:         (isProcT || causalApp) ? dimMax : "",
-            wNoun:            isProcT ? Math.min(parsed.procedural.substitution?.score ?? 0, dimMax) : Math.min(parsed.rubric?.complexNounGroups?.score ?? 0, dimMax),
+            wConn:            isInvT ? Math.min(parsed.investigation.ivManipulation?.score ?? 0, dimMax) : isProcT ? Math.min(parsed.procedural.formulaSelection?.score ?? 0, dimMax) : (causalApp ? Math.min(parsed.rubric?.causalConnectives?.score ?? 0, dimMax) : ""),
+            wConnMax:         (isInvT || isProcT || causalApp) ? dimMax : "",
+            wNoun:            isInvT ? Math.min(parsed.investigation.dvMeasurement?.score ?? 0, dimMax) : isProcT ? Math.min(parsed.procedural.substitution?.score ?? 0, dimMax) : Math.min(parsed.rubric?.complexNounGroups?.score ?? 0, dimMax),
             wNounMax:         dimMax,
-            wMod:             isProcT ? Math.min(parsed.procedural.unitsSigFigs?.score ?? 0, dimMax) : (modalApp ? Math.min(parsed.rubric?.modality?.score ?? 0, dimMax) : ""),
-            wModMax:          (isProcT || modalApp) ? dimMax : "",
-            wFlow:            isProcT ? Math.min(parsed.procedural.workingLogic?.score ?? 0, dimMax) : Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
+            wMod:             isInvT ? Math.min(parsed.investigation.controlledVariables?.score ?? 0, dimMax) : isProcT ? Math.min(parsed.procedural.unitsSigFigs?.score ?? 0, dimMax) : (modalApp ? Math.min(parsed.rubric?.modality?.score ?? 0, dimMax) : ""),
+            wModMax:          (isInvT || isProcT || modalApp) ? dimMax : "",
+            wFlow:            isInvT ? Math.min(parsed.investigation.logicalSequence?.score ?? 0, dimMax) : isProcT ? Math.min(parsed.procedural.workingLogic?.score ?? 0, dimMax) : Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
             wFlowMax:         dimMax,
             writeXP:          Math.min(sc, mx),
             writeMax:         mx,
@@ -2751,6 +2804,9 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
     if (!r) return 0;
     if (_37f8a2(r)) {
       return _9d41ce.reduce((s,d) => s + Math.min(r.procedural[d.key]?.score||0, dimMax), 0);
+    }
+    if (isInvestigationResult(r)) {
+      return INV_DIMS.reduce((s,d) => s + Math.min(r.investigation[d.key]?.score||0, dimMax), 0);
     }
     const rubric = r.rubric || {};
     // Use client-side derived applicable values if provided, else fall back to AI value
@@ -3197,9 +3253,12 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
           // Calculate dimMaxR BEFORE score so totalScore can apply per-dimension caps — prevents score > maxScore
           const dimMaxR = (c.marks != null && c.marks !== "") ? (c.marks <= 2 ? 2 : c.marks <= 4 ? 3 : c.marks <= 6 ? 4 : 5) : 3;
           const isProcR = _37f8a2(a);
+          const isInvR = isInvestigationResult(a);
           const score = a ? totalScore(a, causalApplicable, modalityApplicable, dimMaxR) : 0;
-          const maxScore = isProcR ? dimMaxR*4 : (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
-          const rubricRowsR = isProcR
+          const maxScore = isInvR ? dimMaxR*5 : isProcR ? dimMaxR*4 : (dimMaxR*2) + (causalApplicable ? dimMaxR : 0) + (modalityApplicable ? dimMaxR : 0);
+          const rubricRowsR = isInvR
+            ? INV_DIMS.map(d => ({ label:d.label, data:a.investigation[d.key], applicable:true }))
+            : isProcR
             ? _9d41ce.map(d => ({ label:d.label, data:a.procedural[d.key], applicable:true }))
             : [
                 { label:"Causal Connectives",      data:a?.rubric?.causalConnectives, applicable:causalApplicable },
@@ -3237,7 +3296,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                 : null;
               // covgate-v1.0: VA-only coverage cap
               const covGate = vaCoverageGate(isVisualArts, a, c.marks, rawAwd);
-              const awardedMark = covGate ? covGate.cap : rawAwd;
+              const invGate = investigationGate(isInvR, a, c.marks, rawAwd);
+              const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : rawAwd);
               const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
               const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
               const markColour = pct>=80 ? "#4caf50" : pct>=50 ? "#ff9800" : "#f44336";
@@ -3296,6 +3356,14 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
                     <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Why this mark is capped</div>
                     <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6"}}>
                       The question names {covGate.aspectsTotal} required aspect{covGate.aspectsTotal===1?"":"s"} and this response addresses {covGate.aspectsAddressed}, so under NESA guidelines the mark is capped at <strong>{covGate.cap} / {c.marks}</strong> even though the writing-quality scores are higher. Not addressed: <strong>{covGate.missing.join("; ")}</strong>.
+                    </div>
+                  </div>
+                )}
+                {invGate && (
+                  <div style={{margin:"-10px 0 20px 0",background:"rgba(180,83,9,0.14)",border:"1.5px solid rgba(251,146,60,0.55)",borderLeft:"5px solid #fb923c",borderRadius:"10px",padding:"11px 16px",fontFamily:"sans-serif"}}>
+                    <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Why this mark is capped</div>
+                    <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6"}}>
+                      A procedure cannot score above "features of a relevant investigation" unless it states both how the independent variable is changed AND how the dependent variable is measured, so this is capped at <strong>{invGate.cap} / {c.marks}</strong> even though the design scores are higher. Missing: <strong>{invGate.missing.join("; ")}</strong>.
                     </div>
                   </div>
                 )}
