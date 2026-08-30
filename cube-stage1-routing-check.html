@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CUBE · Stage 1 Routing Check</title>
+<!--
+  CUBE Stage 1 Routing Check · routingcheck-v1.0 · 2026-08-30
+  Purpose: sweep experimental-design ROUTING (taskType) across many questions cheaply,
+  WITHOUT writing or photographing answers. Sends the same stage:"stage1" call the
+  Marking Coach makes, but with the question as TEXT (no image) so a wrong result is the
+  classifier's decision, not OCR/camera noise.
+
+  WHAT IT TESTS:   Stage 1 classification only — taskType "experimentalDesign" vs "standard"
+                   and the top-level scoringTrack.
+  WHAT IT DOESN'T: the gate, the cap, or the report. Those need a real Stage 2 image run —
+                   after routing looks right, do a small photo round on the design questions
+                   to confirm the gate fires and caps correctly (the 27b photo already does one).
+
+  MUST be SERVED FROM AN ALLOWED ORIGIN (the worker rejects foreign/empty origins):
+    https://allawrance.github.io/...   or   https://cube.sureview.com.au/...
+  Drop it in the cube-app repo (same place as the coach files) and open it there.
+  Opening it as a local file:// will 403 ("Forbidden origin").
+
+  The access-code gate (if ACCESS_GATE is on) also guards POST / — paste a STAFF/MASTER
+  dashboard key. Stage 1 does NOT count against student daily caps.
+-->
+<style>
+  :root{ --gold:#c9a84c; --bg:#0f141b; --panel:#161d27; --line:rgba(255,255,255,.09);
+         --ink:#e8eaf0; --dim:#9aa7b6; --ok:#2f9e57; --bad:#c0392b; --warn:#c98a2c; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; line-height:1.5; }
+  .wrap{ max-width:1040px; margin:0 auto; padding:22px 18px 60px; }
+  header{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .badge{ background:var(--gold); color:#1a1205; font-weight:900; letter-spacing:3px; padding:8px 12px; border-radius:8px; font-size:15px; }
+  h1{ font-size:19px; margin:0; font-weight:800; }
+  .sub{ color:var(--dim); font-size:13px; margin:2px 0 18px; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:16px; }
+  label{ display:block; font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--dim); margin:0 0 5px; }
+  input[type=text], textarea{ width:100%; background:#0c1118; border:1px solid var(--line); color:var(--ink);
+         border-radius:8px; padding:9px 11px; font-size:13.5px; font-family:ui-monospace,Menlo,Consolas,monospace; }
+  textarea{ min-height:150px; resize:vertical; line-height:1.55; }
+  .row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .row > div{ flex:1 1 220px; }
+  .hint{ color:var(--dim); font-size:12px; margin-top:5px; }
+  button{ background:var(--gold); color:#1a1205; border:0; border-radius:9px; padding:11px 20px;
+          font-weight:800; font-size:14px; cursor:pointer; }
+  button:disabled{ opacity:.5; cursor:default; }
+  .ghost{ background:transparent; color:var(--dim); border:1px solid var(--line); }
+  .status{ font-size:13px; color:var(--dim); margin-left:12px; }
+  table{ width:100%; border-collapse:collapse; margin-top:6px; font-size:13px; }
+  th,td{ text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--dim); }
+  tr.pass td:first-child{ box-shadow:inset 3px 0 0 var(--ok); }
+  tr.fail td:first-child{ box-shadow:inset 3px 0 0 var(--bad); }
+  tr.err  td:first-child{ box-shadow:inset 3px 0 0 var(--warn); }
+  .tag{ display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:800; }
+  .t-des{ background:rgba(47,158,87,.16); color:#7fd3a1; }
+  .t-std{ background:rgba(122,140,160,.16); color:#b9c6d4; }
+  .v-ok{ color:var(--ok); font-weight:800; }
+  .v-bad{ color:var(--bad); font-weight:800; }
+  .v-na{ color:var(--dim); }
+  .q{ color:var(--ink); }
+  details{ margin-top:3px; }
+  summary{ cursor:pointer; color:var(--dim); font-size:11.5px; }
+  pre{ background:#0c1118; border:1px solid var(--line); border-radius:8px; padding:9px; overflow:auto; font-size:11.5px; color:#cdd6e0; }
+  .note{ font-size:12.5px; color:var(--dim); background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.25);
+         border-radius:9px; padding:10px 13px; margin-bottom:16px; }
+  .summ{ font-size:13px; margin:10px 0 2px; }
+  code{ background:#0c1118; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="badge">CUBE</div><h1>Stage&nbsp;1 Routing Check</h1></header>
+  <div class="sub">Sweeps experimental-design routing (<code>taskType</code>) across many questions as text — no answers, no photos. Tests the classifier only, not the gate.</div>
+
+  <div class="note">
+    Serve this from the repo (<b>allawrance.github.io</b> or <b>cube.sureview.com.au</b>) — a local <code>file://</code> is rejected by the worker's origin check.
+    Paste a <b>staff/master key</b> so the access gate lets it through. Each line is one cheap Haiku call; Stage 1 doesn't touch student caps.
+    Routing looking right here isn't the whole story — confirm the <b>gate/cap</b> with a small photo round on the design questions afterwards.
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div>
+        <label>Worker endpoint</label>
+        <input id="worker" type="text" value="https://cube-proxy.alan-3e2.workers.dev/">
+      </div>
+      <div>
+        <label>Config file (same origin, relative)</label>
+        <input id="cfgpath" type="text" value="config-Bio.json">
+        <div class="hint">Loads <code>.syllabus</code> + <code>.subjectCode</code>. Swap to another <code>config-*.json</code> to test a different subject.</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div style="flex:2 1 320px">
+        <label>Staff / master access code</label>
+        <input id="code" type="text" placeholder="e.g. PHYS-76S9 or your master key" autocomplete="off">
+        <div class="hint"><label style="display:inline;text-transform:none;letter-spacing:0;font-weight:600;color:var(--dim)"><input id="remember" type="checkbox" style="width:auto"> remember on this device</label> · only needed if the access gate is on.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <label>Questions — one per line. Optional expectation before a <code>|</code> to get a verdict.</label>
+    <textarea id="questions">standard | Outline the process of meiosis.
+experimentalDesign | A student wanted to find out whether fertiliser concentration affects plant growth. Describe how they could do this.
+standard | Assess the validity of the method described above.
+standard | Analyse the data in the table to identify a trend in enzyme activity.
+experimentalDesign | Design an investigation to measure how light intensity affects the rate of photosynthesis.
+experimentalDesign | Outline a procedure that could be used to test the effect of temperature on reproduction in yeast.</textarea>
+    <div class="hint">Expectation is <code>standard</code> or <code>experimentalDesign</code>. No <code>|</code> → runs without a verdict. Negatives (rows 1, 3, 4) must stay <b>standard</b>; positives (2, 5, 6) must route to <b>experimentalDesign</b>.</div>
+    <div style="margin-top:14px; display:flex; align-items:center;">
+      <button id="run">Run routing check</button>
+      <button id="clear" class="ghost" style="margin-left:8px">Clear results</button>
+      <span id="status" class="status"></span>
+    </div>
+  </div>
+
+  <div id="summary" class="summ"></div>
+  <div class="panel" id="resultsPanel" style="display:none">
+    <table id="results">
+      <thead><tr><th>#</th><th>Expected</th><th>taskType</th><th>scoringTrack</th><th>Directive</th><th>Verdict</th><th>Question (echoed)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var LS = "cube_routingcheck_v1";
+
+  // restore remembered fields
+  try{
+    var saved = JSON.parse(localStorage.getItem(LS) || "{}");
+    if(saved.worker) $("worker").value = saved.worker;
+    if(saved.cfgpath) $("cfgpath").value = saved.cfgpath;
+    if(saved.remember){ $("remember").checked = true; if(saved.code) $("code").value = saved.code; }
+  }catch(e){}
+
+  function persist(){
+    var rem = $("remember").checked;
+    var obj = { worker:$("worker").value.trim(), cfgpath:$("cfgpath").value.trim(), remember:rem, code: rem ? $("code").value.trim() : "" };
+    try{ localStorage.setItem(LS, JSON.stringify(obj)); }catch(e){}
+  }
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+
+  async function loadConfig(path){
+    var res = await fetch(path, { cache:"no-store" });
+    if(!res.ok) throw new Error("Could not load config '"+path+"' ("+res.status+"). Serve this file from the same repo as your config-*.json.");
+    var cfg = await res.json();
+    if(!cfg.syllabus || !cfg.subjectCode) throw new Error("Config '"+path+"' has no .syllabus / .subjectCode.");
+    return cfg;
+  }
+
+  async function classify(qText, cfg, worker, code){
+    var body = {
+      stage: "stage1",
+      subject: cfg.subjectCode,
+      markingMode: cfg.markingMode || "standard",
+      responseMode: "singlePage",
+      promptVariant: cfg.promptVariant || "standard",
+      examYear: "",
+      syllabus: cfg.syllabus,
+      messages: [{ role:"user", content:[
+        { type:"text", text:
+          "ROUTING TEST — TEXT ONLY, NO IMAGE. Below is the exact printed text of an HSC " +
+          (cfg.subjectName || cfg.subjectCode) + " question. Treat it as the selected question that you have already located — do NOT return questionNotFound, and there is no image to scan.\n\n" +
+          "QUESTION:\n" + qText + "\n\n" +
+          "Classify it from this text. Return phase1_cube with questionText (echo it), directives, syllabusKeywords, constraints, marks (null if none), and taskType per your EXPERIMENTAL-DESIGN DETECTION rules; also set the top-level scoringTrack. There is no handwriting: return studentCube with empty arrays and score 0. Return JSON only." }
+      ]}]
+    };
+    var headers = { "Content-Type":"application/json", "X-Student-Name":"harness", "X-Question-Number":"routing-test" };
+    if(code) headers["X-Access-Code"] = code;
+    var res = await fetch(worker, { method:"POST", headers:headers, body:JSON.stringify(body) });
+    var data = null; try{ data = await res.json(); }catch(e){}
+    if(!res.ok || !data || data.error){
+      var msg = (data && data.error) ? data.error : ("HTTP " + res.status);
+      if(res.status === 403 && /origin/i.test(msg)) msg = "Forbidden origin — serve this file from allawrance.github.io or cube.sureview.com.au, not a local file.";
+      if(res.status === 403 && /access/i.test(String(data && data.error))) msg = "Access code rejected — paste a valid staff/master key.";
+      throw new Error(msg);
+    }
+    var txt = (data.content || []).filter(function(b){ return b.type === "text"; }).map(function(b){ return b.text; }).join("\n");
+    var clean = txt.replace(/```json|```/g, "").trim();
+    var parsed;
+    try{ parsed = JSON.parse(clean); }
+    catch(e){ throw new Error("Model did not return parseable JSON: " + clean.slice(0,140)); }
+    return parsed;
+  }
+
+  function parseLine(line){
+    var i = line.indexOf("|");
+    if(i === -1) return { expected:null, q:line.trim() };
+    var exp = line.slice(0,i).trim().toLowerCase();
+    var expected = exp === "experimentaldesign" || exp === "design" || exp === "d" ? "experimentalDesign"
+                 : exp === "standard" || exp === "s" ? "standard" : null;
+    return { expected:expected, q:line.slice(i+1).trim() };
+  }
+
+  function row(idx, item, parsed, err){
+    var tr = document.createElement("tr");
+    var expected = item.expected;
+    var got = parsed && parsed.phase1_cube ? (parsed.phase1_cube.taskType || "standard") : null;
+    var track = parsed ? (parsed.scoringTrack || "") : "";
+    var dirs = parsed && parsed.phase1_cube && parsed.phase1_cube.directives
+             ? parsed.phase1_cube.directives.map(function(d){ return d.word; }).filter(Boolean).join(", ") : "";
+    var qEcho = parsed && parsed.phase1_cube ? (parsed.phase1_cube.questionText || item.q) : item.q;
+
+    var verdict, cls;
+    if(err){ verdict = '<span class="v-bad">ERROR</span>'; cls = "err"; }
+    else if(expected == null){ verdict = '<span class="v-na">—</span>'; cls = ""; }
+    else if(got === expected){ verdict = '<span class="v-ok">&#10003; PASS</span>'; cls = "pass"; }
+    else { verdict = '<span class="v-bad">&#10007; FAIL</span>'; cls = "fail"; }
+    tr.className = cls;
+
+    var tt = got === "experimentalDesign" ? '<span class="tag t-des">experimentalDesign</span>'
+           : got === "standard" ? '<span class="tag t-std">standard</span>'
+           : (err ? '<span class="v-bad">'+esc(err)+'</span>' : '');
+
+    var raw = parsed ? '<details><summary>raw</summary><pre>'+esc(JSON.stringify(parsed.phase1_cube||parsed,null,1))+'</pre></details>' : '';
+
+    tr.innerHTML =
+      '<td>'+idx+'</td>'+
+      '<td>'+(expected? esc(expected):'<span class="v-na">—</span>')+'</td>'+
+      '<td>'+tt+'</td>'+
+      '<td>'+esc(track)+'</td>'+
+      '<td>'+esc(dirs)+'</td>'+
+      '<td>'+verdict+'</td>'+
+      '<td class="q">'+esc(String(qEcho).slice(0,120))+ (String(qEcho).length>120?'…':'') + raw + '</td>';
+    return tr;
+  }
+
+  async function run(){
+    persist();
+    var worker = $("worker").value.trim();
+    var code = $("code").value.trim();
+    var lines = $("questions").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+    if(!lines.length){ $("status").textContent = "Add some questions first."; return; }
+
+    $("run").disabled = true; $("clear").disabled = true;
+    var tbody = $("results").querySelector("tbody");
+    tbody.innerHTML = ""; $("resultsPanel").style.display = ""; $("summary").textContent = "";
+
+    var cfg;
+    try{ $("status").textContent = "Loading config…"; cfg = await loadConfig($("cfgpath").value.trim()); }
+    catch(e){ $("status").innerHTML = '<span class="v-bad">'+esc(e.message)+'</span>'; $("run").disabled=false; $("clear").disabled=false; return; }
+
+    var pass=0, fail=0, errs=0, judged=0;
+    for(var i=0;i<lines.length;i++){
+      var item = parseLine(lines[i]);
+      if(!item.q) continue;
+      $("status").textContent = "Classifying "+(i+1)+" / "+lines.length+" …";
+      var parsed=null, err=null;
+      try{ parsed = await classify(item.q, cfg, worker, code); }
+      catch(e){ err = e.message; }
+      tbody.appendChild(row(i+1, item, parsed, err));
+      if(err) errs++;
+      else if(item.expected != null){ judged++; if((parsed.phase1_cube&&parsed.phase1_cube.taskType||"standard")===item.expected) pass++; else fail++; }
+    }
+    var bits = [];
+    if(judged) bits.push('<b>'+pass+'/'+judged+'</b> routed as expected');
+    if(fail)   bits.push('<span class="v-bad">'+fail+' misrouted</span>');
+    if(errs)   bits.push('<span class="v-bad">'+errs+' error'+(errs>1?'s':'')+'</span>');
+    $("summary").innerHTML = bits.length ? bits.join(" · ") : "Done.";
+    $("status").textContent = "";
+    $("run").disabled=false; $("clear").disabled=false;
+  }
+
+  $("run").addEventListener("click", run);
+  $("clear").addEventListener("click", function(){
+    $("results").querySelector("tbody").innerHTML=""; $("resultsPanel").style.display="none"; $("summary").textContent=""; $("status").textContent="";
+  });
+  ["worker","cfgpath","code","remember"].forEach(function(id){ $(id).addEventListener("change", persist); });
+})();
+</script>
+</body>
+</html>
