@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.4 · 2026-08-30 · investigation-v1.0 · experimental-design track + DV gate · paired with worker investigation-v1.0";
+    window.CUBE_BUILD = "v3.5 · 2026-08-31 · subjectgate-v1.0 · wrong-subject codes refused at the code-entry door + mc-icon 404 removed · paired with worker subjectgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -436,7 +436,7 @@ window.CUBEAccess = (function () {
       .then(function (x) {
         var d = x.body || {};
         if (x.status === 200 && d.ok) {
-          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", cls: d.class || "", label: d.label || "" };
+          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", subjectName: d.subjectName || "", cls: d.class || "", label: d.label || "" };
         }
         return { ok: false, reason: d.error || "invalid" };
       })
@@ -530,6 +530,16 @@ window.CUBEAccess = (function () {
           msg.textContent = "Checking…";
           validate(c).then(function (res) {
             if (res.ok) {
+              // subjectgate-v1.0 — a class code must match THIS page's subject.
+              // Staff/master passes carry an empty subject and stay exempt.
+              if (res.kind === "class" && res.subject && canon(res.subject) !== canon(subject)) {
+                input.classList.add("bad");
+                go.disabled = false;
+                msg.className = "cubeac-msg";
+                msg.textContent = "That code is for " + (res.subjectName || res.subject) +
+                  ", not " + subjLabel + " — ask your teacher for your " + subjLabel + " code.";
+                return;
+              }
               put({ code: res.code, subject: res.subject || subject, cls: res.cls, label: res.label });
               msg.className = "cubeac-msg ok";
               msg.textContent = "✓ " + (res.label || res.cls || res.subject || "Code accepted");
@@ -2882,7 +2892,6 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
               style={{display:"flex",alignItems:"center",gap:"7px",padding:"6px 13px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"10px",color:"#a89fff",fontSize:"13px",fontWeight:800,fontFamily:"sans-serif",textDecoration:"none",whiteSpace:"nowrap",cursor:"pointer",transition:"all 0.15s",flexShrink:0}}
               onMouseOver={e=>{e.currentTarget.style.borderColor="rgba(108,99,255,0.95)";e.currentTarget.style.color="#c9c2ff";e.currentTarget.style.background="rgba(108,99,255,0.22)";}}
               onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(108,99,255,0.5)";e.currentTarget.style.color="#a89fff";e.currentTarget.style.background="rgba(108,99,255,0.14)";}}>
-              <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="MC" style={{width:"22px",height:"22px",borderRadius:"4px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
               <span className="hide-mobile">🎯 Multiple Choice</span>
             </a>
             )}
@@ -2985,7 +2994,6 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
             {mobileView&&!pageImg&&config.hasMC!==false&&(
               <a href={`https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`} target="_blank" rel="noopener noreferrer"
                 style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px",width:"100%",padding:"13px 16px",marginBottom:"18px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.5)",borderRadius:"12px",color:"#a89fff",fontSize:"15px",fontWeight:900,fontFamily:"sans-serif",textDecoration:"none",letterSpacing:"0.5px",boxSizing:"border-box"}}>
-                <img src="https://allawrance.github.io/cube-app/mc-icon.png" alt="" style={{width:"24px",height:"24px",borderRadius:"5px",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
                 🎯 Multiple Choice Coach
               </a>
             )}
