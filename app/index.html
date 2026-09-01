@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.5 · 2026-08-31 · subjectgate-v1.0 · wrong-subject codes refused at the code-entry door + mc-icon 404 removed · paired with worker subjectgate-v1.0";
+    window.CUBE_BUILD = "v3.6 · 2026-08-31 · classgate-v1.0 · per-class codes enforced at the door when CLASS_GATE on (+ X-Class header) · paired with worker classgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -436,7 +436,7 @@ window.CUBEAccess = (function () {
       .then(function (x) {
         var d = x.body || {};
         if (x.status === 200 && d.ok) {
-          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", subjectName: d.subjectName || "", cls: d.class || "", label: d.label || "" };
+          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", subjectName: d.subjectName || "", classGate: d.classGate || false, cls: d.class || "", label: d.label || "" };
         }
         return { ok: false, reason: d.error || "invalid" };
       })
@@ -540,6 +540,18 @@ window.CUBEAccess = (function () {
                   ", not " + subjLabel + " — ask your teacher for your " + subjLabel + " code.";
                 return;
               }
+              // classgate-v1.0 — a class code must match THIS page's class, but only when
+              // the worker reports the class gate is on (res.classGate). Whole-cohort codes
+              // (empty cls) and pages with no class are exempt.
+              var pageClass = (window.config && config.studentClass) || new URLSearchParams(location.search).get("class") || "";
+              if (res.classGate && res.kind === "class" && res.cls && pageClass &&
+                  String(res.cls).trim().toUpperCase() !== String(pageClass).trim().toUpperCase()) {
+                input.classList.add("bad");
+                go.disabled = false;
+                msg.className = "cubeac-msg";
+                msg.textContent = "That code is for " + res.cls + ", not " + pageClass + " — use your own class's code.";
+                return;
+              }
               put({ code: res.code, subject: res.subject || subject, cls: res.cls, label: res.label });
               msg.className = "cubeac-msg ok";
               msg.textContent = "✓ " + (res.label || res.cls || res.subject || "Code accepted");
@@ -615,7 +627,11 @@ function cubeAccessHeaders(){
   try {
     var subj = (window.config && config.subjectCode) ||
                new URLSearchParams(window.location.search).get("subject") || "";
-    return (window.CUBEAccess && window.CUBEAccess.headers(subj)) || {};
+    var h = (window.CUBEAccess && window.CUBEAccess.headers(subj)) || {};
+    var cls = (window.config && config.studentClass) ||
+              new URLSearchParams(window.location.search).get("class") || "";
+    if (cls) h["X-Class"] = cls;   // classgate-v1.0 — page class for the server-side class check
+    return h;
   } catch(e){ return {}; }
 }
 // Students can deep-link or bookmark straight into the coach, bypassing the
