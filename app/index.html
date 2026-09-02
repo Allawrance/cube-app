@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.7 · 2026-08-31 · wallet-v1.1 · each class is its own credential — a sibling-class code no longer skips the prompt when CLASS_GATE on · paired with worker classgate-v1.0";
+    window.CUBE_BUILD = "v3.8 · 2026-09-02 · parse-repair-v1.0 · Stage 1 & Stage 2 tolerate stray quotes / raw newlines / trailing commas in model JSON (strict parse first, repair only on failure) · wallet-v1.1 · classgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -854,6 +854,75 @@ const _8c2e35 = (b64) => new Promise((res, rej) => {
 });
 
 const _d0c6fa = (str) => String(str || "").replace(/[`${}\\]/g, "").trim().slice(0, 200);
+
+// ── safeParseJSON (parse-repair-v1.0) ────────────────────────────────────────
+// Model JSON (Stage 1 Haiku, Stage 2 Sonnet) sometimes arrives malformed: a
+// stray unescaped double-quote inside a string value (feedback quoting a phrase
+// like "role of state sovereignty"), a raw newline/tab inside a value, or a
+// trailing comma. Each throws e.g. "Expected ',' or '}' after property value".
+// We try a STRICT parse first — so every valid payload is untouched and this
+// path stays behaviour-identical — and only on failure run a state-machine
+// repair, then parse again. If it still fails (e.g. a truncated response →
+// "Unterminated string"), we log the raw text and re-throw so the caller's
+// catch shows its user-facing message. A truncation means max_tokens, not this.
+function safeParseJSON(text, label) {
+  try {
+    return JSON.parse(text);
+  } catch (firstErr) {
+    const repaired = repairJSON(text);
+    try {
+      const parsed = JSON.parse(repaired);
+      console.warn((label || "JSON") + ": strict parse failed, recovered after repair — " + firstErr.message);
+      return parsed;
+    } catch (secondErr) {
+      console.error((label || "JSON") + " parse failed — raw response follows:", secondErr.message);
+      console.error(text);
+      throw secondErr;
+    }
+  }
+}
+
+// String-aware repair for the breakages above. Walks char by char tracking
+// whether we are inside a string; only edits inside-string content, so
+// structural JSON and legitimate commas/braces inside strings are preserved.
+function repairJSON(s) {
+  let out = "";
+  let inStr = false;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (!inStr) {
+      if (ch === ",") {                        // drop a trailing comma before } or ]
+        let j = i + 1;
+        while (j < s.length && (s[j] === " " || s[j] === "\t" || s[j] === "\n" || s[j] === "\r")) j++;
+        if (s[j] === "}" || s[j] === "]") continue;
+      }
+      out += ch;
+      if (ch === '"') inStr = true;
+      continue;
+    }
+    if (ch === "\\") {                          // preserve an existing escape verbatim
+      out += ch;
+      if (i + 1 < s.length) { out += s[i + 1]; i++; }
+      continue;
+    }
+    if (ch === '"') {                          // real terminator, or stray inner quote?
+      let j = i + 1;
+      while (j < s.length && (s[j] === " " || s[j] === "\t" || s[j] === "\n" || s[j] === "\r")) j++;
+      const next = j < s.length ? s[j] : "";
+      if (next === "" || next === "," || next === "}" || next === "]" || next === ":") {
+        out += ch; inStr = false;              // genuine close
+      } else {
+        out += '\\"';                          // inner quote — escape it
+      }
+      continue;
+    }
+    if (ch === "\n") { out += "\\n"; continue; }  // raw control chars → escaped
+    if (ch === "\r") { out += "\\r"; continue; }
+    if (ch === "\t") { out += "\\t"; continue; }
+    out += ch;
+  }
+  return out;
+}
 
 // feedback v1 — static help content (flat single-layer list; teacher-editable)
 const _82400f = [
@@ -2446,9 +2515,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
       const clean = raw.slice(firstBrace, lastBrace + 1);
       let parsed;
       try {
-        parsed = JSON.parse(clean);
+        parsed = safeParseJSON(clean, "Stage 1");   // parse-repair-v1.0: strict first, repair on throw
       } catch(jsonErr) {
-        console.error("Stage 1 JSON parse failed:", jsonErr.message, "\nRaw:", clean.slice(0,500));
         throw new Error("Could not read AI response — please try again.");
       }
       // ── questionNotFound (stage1AllPages-v1.9): selected label is not printed on any uploaded page ──
@@ -2764,9 +2832,8 @@ Extract phase1_cube with questionText (the exact wording of the selected sub-par
       const clean = raw.slice(firstBrace, lastBrace + 1);
       let parsed;
       try {
-        parsed = JSON.parse(clean);
+        parsed = safeParseJSON(clean, "Stage 2");   // parse-repair-v1.0: strict first, repair on throw
       } catch(jsonErr) {
-        console.error("Stage 2 JSON parse failed:", jsonErr.message);
         throw new Error("Could not read marking response — please try again.");
       }
       setStage2Results(parsed);
