@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc · 2026-09-04 · directivecoverage-v1.0 (BusS, advisory) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
+    window.CUBE_BUILD = "v3.9-dc2 · 2026-09-04 · directivecoverage-v1.1 (BusS, advisory + causal-fix) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -742,6 +742,28 @@ const BAND_MAP = [[0,5,"Band 2"],[6,9,"Band 3"],[10,13,"Band 4"],[14,17,"Band 5"
 const _2c7e13 = (score, maxScore=20) => {
   const scaled = maxScore > 0 ? Math.round((score / maxScore) * 20) : 0;
   return BAND_MAP.find(([lo,hi])=>scaled>=lo&&scaled<=hi)?.[2] || "Band 2";
+};
+
+// ── directivecoverage-v1.1: causal applicability for MULTI-DIRECTIVE questions ──
+// Causal applicability was keyed to the PRIMARY directive only. A BusS report question
+// (describe … justify … recommend …) has a tier-2 primary (describe) → causal marked N/A,
+// which ignored the reasoning that justify & recommend (tier 4) live on — the report even
+// awarded a causal-reasoning medal while scoring the dimension N/A. This widens the test:
+// causal is applicable if ANY directive is tier 3/4. RAISE-ONLY (never narrows), BusS-ONLY,
+// and only for >=2 distinct directives — single-directive and every non-BusS question keep
+// the exact primary-directive value. FAIL-SOFT: no config tiers → the passed-in fallback.
+const causalAppFromAllDirs = (dirs, subjectCode, config, primaryVal) => {
+  try {
+    if (String(subjectCode||"").toUpperCase() !== "BUSS") return primaryVal;
+    const words = (Array.isArray(dirs)?dirs:[]).map(d => String(d&&d.word||"").toLowerCase().trim()).filter(Boolean);
+    const distinct = [...new Set(words)];
+    if (distinct.length < 2) return primaryVal;
+    for (const wd of distinct) {
+      const o = (config.directiveTiers||{})[wd] || (config.directiveTiers||{})[wd.replace("critically ","")];
+      if (o && (o.tier === 3 || o.tier === 4)) return true;
+    }
+    return primaryVal;
+  } catch(_) { return primaryVal; }
 };
 
 // ── covgate-v1.0 (VA only): cap = round(marks × addressedFraction, floor 1) when any coverage row is unaddressed; withEvidence never gates; fail-soft ──
@@ -2954,7 +2976,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
         // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
         const causalDirWord = (primaryDir.word||"").toLowerCase().trim();
         const causalDirObj  = config.directiveTiers[causalDirWord] || config.directiveTiers[causalDirWord.replace("critically ","")];
-        const causalApp     = causalDirObj ? (causalDirObj.tier === 3 || causalDirObj.tier === 4) : parsed.rubric?.causalConnectives?.applicable !== false;
+        const causalApp     = causalAppFromAllDirs(dirs, config.subjectCode, config, causalDirObj ? (causalDirObj.tier === 3 || causalDirObj.tier === 4) : parsed.rubric?.causalConnectives?.applicable !== false);
         // Derive modality applicable client-side from directive — do NOT trust Sonnet's value
         const dirWord    = (primaryDir.word||"").toLowerCase().trim();
         const dirFromObj = config.directiveTiers[dirWord] || config.directiveTiers[dirWord.replace("critically ","")];
@@ -3475,7 +3497,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
           // Derive causal applicable client-side from directive tier — do NOT trust Sonnet's value
           const causalDirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const causalDirObjR  = config.directiveTiers[causalDirWordR] || config.directiveTiers[causalDirWordR.replace("critically ","")];
-          const causalApplicable = causalDirObjR ? (causalDirObjR.tier === 3 || causalDirObjR.tier === 4) : (a ? (a.rubric?.causalConnectives?.applicable !== false) : true);
+          const causalApplicable = causalAppFromAllDirs(dirs, config.subjectCode, config, causalDirObjR ? (causalDirObjR.tier === 3 || causalDirObjR.tier === 4) : (a ? (a.rubric?.causalConnectives?.applicable !== false) : true));
           // Derive modality applicable from directive — do not trust Sonnet's value
           const dirWordR = dirs.length ? (dirs.find(d=>d.isPrimary)||dirs[0])?.word?.toLowerCase().trim()||"" : "";
           const dirObjR  = config.directiveTiers[dirWordR] || config.directiveTiers[dirWordR.replace("critically ","")] || config.directiveTiers[verbType] || config.directiveTiers[verbType?.replace("critically ","")];
@@ -4606,7 +4628,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
         const verbTypePr = primaryDirPr.verbType||"other";
         const causalDirWordPr = dirsPr.length ? (dirsPr.find(d=>d.isPrimary)||dirsPr[0])?.word?.toLowerCase().trim()||"" : "";
         const causalDirObjPr  = config.directiveTiers[causalDirWordPr]||config.directiveTiers[causalDirWordPr.replace("critically ","")];
-        const causalApplicablePr = causalDirObjPr ? (causalDirObjPr.tier===3||causalDirObjPr.tier===4) : (aPr?(aPr.rubric?.causalConnectives?.applicable!==false):true);
+        const causalApplicablePr = causalAppFromAllDirs(dirsPr, config.subjectCode, config, causalDirObjPr ? (causalDirObjPr.tier===3||causalDirObjPr.tier===4) : (aPr?(aPr.rubric?.causalConnectives?.applicable!==false):true));
         const dirWordPr = causalDirWordPr;
         const dirObjPr  = config.directiveTiers[dirWordPr]||config.directiveTiers[dirWordPr.replace("critically ","")]||config.directiveTiers[verbTypePr]||config.directiveTiers[verbTypePr?.replace("critically ","")];
         const modalityApplicablePr = dirObjPr ? (dirObjPr.modality==="required"||dirObjPr.modality==="optional") : ["assess","evaluate","critically evaluate"].includes(verbTypePr)?true:(aPr?aPr.rubric?.modality?.applicable===true:false);
