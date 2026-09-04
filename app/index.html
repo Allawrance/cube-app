@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9 · 2026-09-04 · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
+    window.CUBE_BUILD = "v3.9-dc · 2026-09-04 · directivecoverage-v1.0 (BusS, advisory) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -785,6 +785,35 @@ const vaCoverageGate = (isVA, a, marks, rawAwarded) => {
     if (cap >= rawAwarded) return null;
     return { cap, missing, aspectsTotal: cov.length, aspectsAddressed: cov.length - missing.length };
   } catch (_) { return null; }
+};
+
+// ── directivecoverage-v1.0 (BusS multi-directive report questions) ───────────
+// WHY: a describe-primary report question (describe … justify … recommend …) marks
+// on 2 literacy dims only (causal + modality go N/A for tier-2 primary), so a strong
+// report and a well-written-but-unargued one both top out — the mark cannot see that
+// justify/recommend were thin. The Worker now emits specialCheck.directiveCoverage[]:
+// one deterministic row per directive verb the question contains, each judged
+// addressed/depth. This gate reads those rows. ADVISORY BY DEFAULT: it computes what
+// the coverage cap WOULD be and surfaces a panel, but does NOT move the mark until
+// DIRECTIVE_COVERAGE_HARD_CAP is flipped to true — so shipping it is byte-identical to
+// the current mark. Only depth:"absent" / addressed:false gates (mirrors VA: thin
+// "sketched" coverage is the rubric's job, not the gate's). FAIL-SOFT: no rows → null.
+const DIRECTIVE_COVERAGE_HARD_CAP = false;   // flip to true to let the gate lower marks
+const directiveCoverageGate = (a, marks, rawAwarded) => {
+  try {
+    const rows = a?.specialCheck?.directiveCoverage;
+    if (!Array.isArray(rows) || rows.length === 0) return null;
+    if (rawAwarded === null || rawAwarded === undefined) return null;
+    if (!marks || marks <= 0) return null;
+    const clean = rows.filter(r => r && (r.directive || r.requirement));
+    if (clean.length === 0) return null;
+    const isMissing = r => r.addressed === false || String(r.depth||"").toLowerCase() === "absent";
+    const missing = clean.filter(isMissing).map(r => String(r.directive || r.requirement || "").trim()).filter(Boolean);
+    const addressed = clean.length - missing.length;
+    const cap = Math.max(1, Math.round(marks * addressed / clean.length));
+    const wouldCap = cap < rawAwarded && missing.length > 0;
+    return { rows: clean, total: clean.length, addressed, missing, cap, wouldCap };
+  } catch (_) { return null; }   // report rendering must never crash on odd JSON
 };
 
 // ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
@@ -1565,7 +1594,8 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
     : null;
   const covGate = vaCoverageGate(String(subjectCode||"").toUpperCase()==="VISART", a, c.marks, rawAwarded);
   const invGate = investigationGate(isInvestigationResult(a), a, c.marks, rawAwarded);
-  const awardedFinal = covGate ? covGate.cap : (invGate ? invGate.cap : rawAwarded);
+  const dirGate = directiveCoverageGate(a, c.marks, rawAwarded);
+  const awardedFinal = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : rawAwarded));
   const displayedMark = marksKnown
     ? `${awardedFinal} / ${c.marks} marks`
     : band ? `Indicative ${band}` : "";
@@ -1710,6 +1740,38 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6"}}>
             The question names {covGate.aspectsTotal} required aspect{covGate.aspectsTotal===1?"":"s"} and this response addresses {covGate.aspectsAddressed} of them, so under NESA marking guidelines the mark is capped at <strong>{covGate.cap} / {c.marks}</strong> even though the writing quality scores below are higher. Not addressed: <strong>{covGate.missing.join("; ")}</strong>. Covering every nominated aspect is the fastest way to lift this mark.
           </div>
+        </div>
+      )}
+      {/* directivecoverage-v1.0: per-directive coverage for multi-directive report questions.
+           Renders whenever the Worker returned directiveCoverage rows, regardless of the
+           primary directive (a describe-primary question still shows justify/recommend here).
+           ADVISORY: when the gate would cap but HARD_CAP is off, it says so without moving the mark. */}
+      {dirGate && (
+        <div className="pr-no-break" style={{margin:"-8px 0 18px 0",background: dirGate.wouldCap ? "#fff7ed" : "#f0f7f0",border:"2px solid "+(dirGate.wouldCap?"#b45309":"#3a7d34"),borderLeft:"6px solid "+(dirGate.wouldCap?"#b45309":"#3a7d34"),borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"}}>
+          <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color: dirGate.wouldCap?"#b45309":"#2f6b2a",textTransform:"uppercase",marginBottom:"6px"}}>Directive coverage — did the response do every task?</div>
+          <div style={{display:"flex",flexDirection:"column",gap:"4px",marginBottom: dirGate.wouldCap?"8px":"0"}}>
+            {dirGate.rows.map((r,i)=>{
+              const absent = r.addressed===false || String(r.depth||"").toLowerCase()==="absent";
+              const thin   = !absent && String(r.depth||"").toLowerCase()==="sketched";
+              const icon   = absent ? "✗" : thin ? "⚠" : "✓";
+              const col    = absent ? "#b45309" : thin ? "#b9770a" : "#2f6b2a";
+              return (
+                <div key={i} style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.5"}}>
+                  <strong style={{color:col}}>{icon} {String(r.directive||"").toUpperCase()}</strong>
+                  {r.requirement ? <span style={{color:"#5a5a5a"}}> — {r.requirement}</span> : null}
+                  {thin ? <span style={{color:"#b9770a",fontStyle:"italic"}}> (thin — develop with the scenario)</span> : null}
+                  {r.note ? <span style={{color:"#7a6a55"}}> · {r.note}</span> : null}
+                </div>
+              );
+            })}
+          </div>
+          {dirGate.wouldCap && (
+            <div style={{fontSize:"12px",color:"#3a2a12",lineHeight:"1.6"}}>
+              {DIRECTIVE_COVERAGE_HARD_CAP
+                ? <span>NESA's top bands require every directive task to be done, so the mark is capped at <strong>{dirGate.cap} / {c.marks}</strong>. Not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>.</span>
+                : <span><strong>Advisory:</strong> {dirGate.addressed} of {dirGate.total} directive tasks are fulfilled. Under NESA marking this would place the response at about <strong>{dirGate.cap} / {c.marks}</strong>; the awarded mark above is unchanged for now. Not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>.</span>}
+            </div>
+          )}
         </div>
       )}
       {invGate && (
@@ -3465,7 +3527,8 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
               // covgate-v1.0: VA-only coverage cap
               const covGate = vaCoverageGate(isVisualArts, a, c.marks, rawAwd);
               const invGate = investigationGate(isInvR, a, c.marks, rawAwd);
-              const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : rawAwd);
+              const dirGate = directiveCoverageGate(a, c.marks, rawAwd);
+              const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : rawAwd));
               const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
               const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
               const markColour = pct>=80 ? "#4caf50" : pct>=50 ? "#ff9800" : "#f44336";
