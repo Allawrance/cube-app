@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc2 · 2026-09-04 · directivecoverage-v1.1 (BusS, advisory + causal-fix) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
+    window.CUBE_BUILD = "v3.9-dc3 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -821,7 +821,7 @@ const vaCoverageGate = (isVA, a, marks, rawAwarded) => {
 // the current mark. Only depth:"absent" / addressed:false gates (mirrors VA: thin
 // "sketched" coverage is the rubric's job, not the gate's). FAIL-SOFT: no rows → null.
 const DIRECTIVE_COVERAGE_HARD_CAP = false;   // flip to true to let the gate lower marks
-const directiveCoverageGate = (a, marks, rawAwarded) => {
+const directiveCoverageGate = (a, marks, rawAwarded, config) => {
   try {
     const rows = a?.specialCheck?.directiveCoverage;
     if (!Array.isArray(rows) || rows.length === 0) return null;
@@ -832,9 +832,39 @@ const directiveCoverageGate = (a, marks, rawAwarded) => {
     const isMissing = r => r.addressed === false || String(r.depth||"").toLowerCase() === "absent";
     const missing = clean.filter(isMissing).map(r => String(r.directive || r.requirement || "").trim()).filter(Boolean);
     const addressed = clean.length - missing.length;
-    const cap = Math.max(1, Math.round(marks * addressed / clean.length));
-    const wouldCap = cap < rawAwarded && missing.length > 0;
-    return { rows: clean, total: clean.length, addressed, missing, cap, wouldCap };
+    // structural cap: unchanged — proportional to fully-missing directives
+    const structuralCap = missing.length > 0 ? Math.max(1, Math.round(marks * addressed / clean.length)) : marks;
+    // directivecoverage-v1.2: SOFT cap on a THIN (depth:"sketched") tier-3/4 directive.
+    // "Thin" alone never used to move the mark — only a fully-missing directive did. But a
+    // justify/recommend that is PRESENT yet thin ("explains what X does" rather than "argues
+    // why X is best") is exactly the boundary NESA's own bands draw: 17–20 requires the
+    // response "clearly provides an argument" / "detailed reasons"; 13–16 only requires it
+    // "provides an argument" / "reasons". A thin tier-3/4 directive means the top band's own
+    // wording is not met, so it ceilings the mark at the second-band boundary rather than
+    // leaving it entirely to the literacy sub-scores (which measure writing craft, not
+    // argument strength). Ceiling = 80% of marks, rounded down — calibrated against the
+    // standard 20-mark Section III band structure (17-20 / 13-16 / 9-12); review this ratio
+    // if the gate is ever used on a different mark allocation. Combined with the structural
+    // cap via Math.min so a genuinely MISSING directive still caps harder than a merely thin
+    // one. BusS-only in practice (only BusS emits directiveCoverage rows).
+    const tiers = (config && config.directiveTiers) || {};
+    const tierOf = (w) => {
+      const word = String(w||"").toLowerCase().trim();
+      const o = tiers[word] || tiers[word.replace("critically ","")];
+      return o ? o.tier : null;
+    };
+    const isThinHighTier = r => {
+      if (isMissing(r)) return false;
+      if (String(r.depth||"").toLowerCase() !== "sketched") return false;
+      const t = tierOf(r.directive);
+      return t === 3 || t === 4;
+    };
+    const thin = clean.filter(isThinHighTier).map(r => String(r.directive || r.requirement || "").trim()).filter(Boolean);
+    const softCeiling = Math.max(1, Math.floor(marks * 0.8));
+    const softCap = thin.length > 0 ? softCeiling : marks;
+    const cap = Math.min(structuralCap, softCap);
+    const wouldCap = cap < rawAwarded && (missing.length > 0 || thin.length > 0);
+    return { rows: clean, total: clean.length, addressed, missing, thin, cap, wouldCap };
   } catch (_) { return null; }   // report rendering must never crash on odd JSON
 };
 
@@ -1616,7 +1646,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
     : null;
   const covGate = vaCoverageGate(String(subjectCode||"").toUpperCase()==="VISART", a, c.marks, rawAwarded);
   const invGate = investigationGate(isInvestigationResult(a), a, c.marks, rawAwarded);
-  const dirGate = directiveCoverageGate(a, c.marks, rawAwarded);
+  const dirGate = directiveCoverageGate(a, c.marks, rawAwarded, config);
   const awardedFinal = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : rawAwarded));
   const displayedMark = marksKnown
     ? `${awardedFinal} / ${c.marks} marks`
@@ -1789,9 +1819,19 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           </div>
           {dirGate.wouldCap && (
             <div style={{fontSize:"12px",color:"#3a2a12",lineHeight:"1.6"}}>
-              {DIRECTIVE_COVERAGE_HARD_CAP
-                ? <span>NESA's top bands require every directive task to be done, so the mark is capped at <strong>{dirGate.cap} / {c.marks}</strong>. Not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>.</span>
-                : <span><strong>Advisory:</strong> {dirGate.addressed} of {dirGate.total} directive tasks are fulfilled. Under NESA marking this would place the response at about <strong>{dirGate.cap} / {c.marks}</strong>; the awarded mark above is unchanged for now. Not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>.</span>}
+              {DIRECTIVE_COVERAGE_HARD_CAP ? (
+                <span>
+                  {dirGate.missing.length>0 && <>NESA's top bands require every directive task to be done, so the mark is capped at <strong>{dirGate.cap} / {c.marks}</strong>. Not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>. </>}
+                  {dirGate.thin.length>0 && <>NESA distinguishes "clearly provides an argument / detailed reasons" (top band) from "provides an argument / reasons" (second band) — <strong>{dirGate.thin.join("; ")}</strong> {dirGate.thin.length===1?"is":"are"} present but thin, so the mark is capped at <strong>{dirGate.cap} / {c.marks}</strong>.</>}
+                </span>
+              ) : (
+                <span>
+                  <strong>Advisory:</strong>{" "}
+                  {dirGate.missing.length>0 && <>{dirGate.missing.length} directive task(s) not fulfilled: <strong>{dirGate.missing.join("; ")}</strong>. </>}
+                  {dirGate.thin.length>0 && <><strong>{dirGate.thin.join("; ")}</strong> {dirGate.thin.length===1?"is":"are"} present but thin — NESA's top band needs the argument/reasons to be "clear"/"detailed", not just present. </>}
+                  Under NESA marking this would place the response at about <strong>{dirGate.cap} / {c.marks}</strong>; the awarded mark above is unchanged for now.
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -3549,7 +3589,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
               // covgate-v1.0: VA-only coverage cap
               const covGate = vaCoverageGate(isVisualArts, a, c.marks, rawAwd);
               const invGate = investigationGate(isInvR, a, c.marks, rawAwd);
-              const dirGate = directiveCoverageGate(a, c.marks, rawAwd);
+              const dirGate = directiveCoverageGate(a, c.marks, rawAwd, config);
               const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : rawAwd));
               const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
               const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
