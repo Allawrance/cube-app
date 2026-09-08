@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc3 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0";
+    window.CUBE_BUILD = "v3.9-dc3 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -1005,7 +1005,7 @@ function repairJSON(s) {
   return out;
 }
 
-// ── extractLastJsonObject (json-multiobject-v1.0) ────────────────────────────
+// ── extractLastJsonObject (json-multiobject-v1.0 · stage2-stream-v1.0) ────────────────────────────
 // A model (esp. Haiku at Stage 1) sometimes emits TWO JSON objects in one
 // response: it writes an initial answer, reasons out loud that it was wrong,
 // then prints a corrected object. The old first-{ … last-} span captured BOTH
@@ -2674,7 +2674,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
           throw new Error(`API error: ${msg}`);
         }
         const raw = (data.content||[]).map(b=>b.text||"").join("");
-        // ── Robust JSON extraction (json-multiobject-v1.0): a model may emit an
+        // ── Robust JSON extraction (json-multiobject-v1.0 · stage2-stream-v1.0): a model may emit an
         //    initial object, reason aloud, then a corrected object. Take the LAST
         //    complete balanced object — the model's final answer. ──
         const clean = extractLastJsonObject(raw);
@@ -3004,14 +3004,58 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
             : {}),
         })
       });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error?.message || "Stage 2 API error");
-      if (!res.ok || data.error) {
-        const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
-        throw new Error(`API error: ${msg}`);
+      // ── stage2-stream-v1.0 — 524 TIMEOUT FIX ────────────────────────────────
+      // A 25-mark multi-page essay can take >100s to generate. Non-streamed, the
+      // Worker holds the connection silently and Cloudflare's edge kills it with
+      // HTTP 524 before a single byte returns (observed twice on MHIST 13(a)).
+      // Streaming makes bytes flow within ~1s, so the edge timer never fires.
+      // The Worker signals a streamed reply with Content-Type: text/event-stream.
+      // Anything else (short questions, errors, older Worker) takes the ORIGINAL
+      // buffered path below unchanged — so this is additive, never a regression.
+      let data, raw;
+      const ctype = (res.headers.get("content-type") || "").toLowerCase();
+      if (res.ok && ctype.includes("text/event-stream")) {
+        // Reassemble Anthropic SSE deltas into the same string the buffered
+        // path produces, then hand off to the EXISTING parser untouched.
+        const reader  = res.body.getReader();
+        const decoder = new TextDecoder();
+        let sse = "", text = "", streamErr = null;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          sse += decoder.decode(value, { stream:true });
+          const lines = sse.split("\n");
+          sse = lines.pop();                       // keep the partial tail
+          for (const line of lines) {
+            if (!line.startsWith("data:")) continue;
+            const payload = line.slice(5).trim();
+            if (!payload || payload === "[DONE]") continue;
+            try {
+              const ev = JSON.parse(payload);
+              if (ev.type === "content_block_delta" && ev.delta?.text) text += ev.delta.text;
+              else if (ev.type === "error")  streamErr = ev.error?.message || "stream error";
+              // stop_reason arrives on message_delta — a truncated essay must not
+              // masquerade as a parse failure, so surface it in plain language.
+              else if (ev.type === "message_delta" && ev.delta?.stop_reason === "max_tokens") {
+                streamErr = "the response was too long to mark in full — please split the upload or try again";
+              }
+            } catch (_) { /* ignore keep-alives and partial frames */ }
+          }
+        }
+        if (streamErr) throw new Error(streamErr);
+        raw  = text;
+        data = { content:[{ text }] };
+        if (!raw.trim()) throw new Error("Stage 2 returned an empty response — please try again.");
+      } else {
+        data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error?.message || "Stage 2 API error");
+        if (!res.ok || data.error) {
+          const msg = data.error?.message || data.error?.type || `HTTP ${res.status}`;
+          throw new Error(`API error: ${msg}`);
+        }
+        raw = (data.content||[]).map(b=>b.text||"").join("");
       }
-      const raw = (data.content||[]).map(b=>b.text||"").join("");
-      // ── Robust JSON extraction (json-multiobject-v1.0): take the LAST complete
+      // ── Robust JSON extraction (json-multiobject-v1.0 · stage2-stream-v1.0): take the LAST complete
       //    balanced object — the model's final answer if it self-corrected. ──
       const clean = extractLastJsonObject(raw);
       if (clean === null) {
