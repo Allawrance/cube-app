@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc4 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1";
+    window.CUBE_BUILD = "v3.9-dc5 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -834,10 +834,18 @@ const vaCoverageGate = (isVA, a, marks, rawAwarded) => {
 // FAIL-SOFT: field absent (non-MHIST, older worker) → null → mark unchanged.
 const ARGSTRUCT_CLAMP_DIMS = ["modality", "logicalFlow"];
 const ARGSTRUCT_CLAMP_MAX  = 4;
+// mhist-argnet-v1.1: text-only comparative-ranking net (see gate below). Reads the student's
+// OWN writing, not the model's noisy argumentStructure label; if explicit ranking language is
+// present the clamp is suppressed. One-directional — only ever PREVENTS a downward clamp.
+// Validated: 13(a) matches ("prioritisation") -> 25; all four 9(b) runs miss -> deterministic 23.
+const ARGSTRUCT_RANK_MARKERS = /\b(?:most|least)\s+(?:significant|important|decisive|effective|successful|influential|responsible)\b|\b(?:more|less)\s+(?:significant|important|decisive|effective|successful|influential)\s+than\b|\bsecondary\s+to\b|\boutweigh(?:s|ed|ing)?\b|\bpriorit(?:is|iz)(?:e|es|ed|ing|ation)\b|\bnot\s+of\s+absolute\b|\b(?:primary|chief|decisive)\s+(?:factor|cause|driver|reason)s?\b/i;
 const mhistStructureGate = (isMhist, a, marks, rawAwarded) => {
   try {
     if (!isMhist) return null;
     if (String(a?.argumentStructure || "").toLowerCase() !== "additive") return null;
+    // mhist-argnet-v1.1: comparative-ranking net — suppress the clamp when the student's
+    // own writing carries explicit ranking language (the model under-called "additive").
+    if (ARGSTRUCT_RANK_MARKERS.test(String(a?.studentResponseText || ""))) return null;
     if (rawAwarded === null || rawAwarded === undefined) return null;
     if (!marks || marks <= 0) return null;
     const r = a?.rubric;
@@ -4918,7 +4926,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     var t = document.getElementById("cube-build-tag");
     if (!t) return;
     var full  = "CUBE · " + (window.CUBE_BUILD || "version unknown");
-    // Short label = the leading version token, e.g. "CUBE · v3.9-dc4".
+    // Short label = the leading version token, e.g. "CUBE · v3.9-dc5".
     var short = "CUBE · " + String(window.CUBE_BUILD || "version unknown").split(" · ")[0];
     t.dataset.full  = full;
     t.dataset.short = short;
