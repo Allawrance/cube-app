@@ -9,7 +9,7 @@
   "responsePagesMax": 10,
   "dominantMode": "Historical argument + source analysis + historiographical interpretation",
   "cleanRule": "Modern History = construct an historical argument + analyse and interpret sources (written, visual, official, personal) + evaluate differing historical interpretations + use historical concepts (causation, continuity and change, perspectives, significance, contestability)",
-  "leaderboardTip": "HSC Modern History rewards specific historical evidence — named events with dates (Enabling Act March 1933, Tet Offensive January 1968), named individuals (Goebbels, Gorbachev, Deng Xiaoping), named sources and named historians (Kershaw, Fitzpatrick, Dower, Gaddis). Generic statements about 'the government' or 'the people' without specific evidence cannot reach Band 5. Always link evidence to the historical argument.",
+  "leaderboardTip": "HSC Modern History rewards specific historical evidence — named events with dates (Enabling Act March 1933, Tet Offensive January 1968), named individuals (Goebbels, Gorbachev, Deng Xiaoping), named sources and, optionally, named historians (Kershaw, Fitzpatrick, Dower, Gaddis — not required by NESA). Generic statements about 'the government' or 'the people' without specific evidence cannot reach Band 5. Always link evidence to the historical argument.",
   "sheetTabCube": "MHIST CUBE",
   "sheetTabFull": "MHIST",
   "accentColor": "#ef9a9a",
@@ -1648,7 +1648,7 @@
         "ALWAYS anchor claims to specific evidence — named events with dates (Enabling Act March 1933, Sharpeville March 1960), named individuals, named legislation, statistics where relevant. Generic references to 'the government' or 'the war' earn Band 3 at best.",
         "For Section I: address BOTH usefulness AND reliability where asked — usefulness is about what the source offers a historian for a specific inquiry; reliability is about accuracy, perspective, purpose and provenance. A biased propaganda source can still be highly USEFUL for studying propaganda.",
         "For Section I: always integrate 'own knowledge' with the source content when the question asks for it — quoting or describing the source alone caps the mark.",
-        "Include historiography in essays — name historians (Kershaw, Fitzpatrick, Gaddis, Dower, Dikötter) and their interpretations, especially where they differ. Evaluating competing interpretations distinguishes Band 6 from Band 5.",
+        "Evaluating competing interpretations of an event or its significance is a top-band feature — met through your own reasoned weighing of competing judgements. Naming a historian (Kershaw, Fitzpatrick, Gaddis, Dower, Dikötter) is one optional way to do this, not a requirement, and its absence is never a band limiter.",
         "Use historical concepts explicitly — frame arguments around causation, continuity and change, perspectives, significance and contestability. Don't just narrate events chronologically.",
         "Stay inside the topic's date range — evidence outside the prescribed period (e.g. post-1937 Japan in the National Study, post-1941 USSR) earns no credit.",
         "For 'account for' and 'to what extent' questions: weigh multiple factors, rank their relative importance, and make an explicit judgement — not just a list of causes."
@@ -1657,7 +1657,7 @@
         "Narrating events chronologically without constructing an argument ('First Hitler became Chancellor, then...' without evaluating causation or significance).",
         "Confusing usefulness with reliability in Section I source questions, or asserting a source is 'biased so unreliable' without analysing purpose and audience.",
         "Describing sources without linking them to the question's specific inquiry focus.",
-        "Ignoring historiography — not naming any historians or their interpretations in extended responses.",
+        "Describing competing interpretations of an event or its significance without evaluating them where the question invites it (naming an academic historian is optional, not required).",
         "Describing both sides of a debate without making a judgement — Band 5-6 requires evaluation, not just discussion.",
         "Straying outside the prescribed date range of the topic (e.g. discussing Pearl Harbor in Japan 1904–1937, or post-1968 events in Civil Rights 1945–1968).",
         "Using general terms ('the people', 'the government', 'sources show') without specific names, dates and evidence."
@@ -1669,7 +1669,7 @@
         "Identify the historical period, context, and relevant aspects of the prescribed topic.",
         "Present specific evidence — named events, dates, individuals, legislation, statistics — to support the argument.",
         "Where sources are provided (Section I), analyse and evaluate them: what do they reveal, and what are their limitations?",
-        "Integrate at least one historical interpretation (named historian) and assess it in extended responses.",
+        "Where relevant, weigh differing interpretations of the event or its significance through your own reasoned judgement (a named historian is optional, not required).",
         "Apply historical concepts: causation, continuity and change, significance, perspectives, contestability.",
         "Conclude with a judgement that directly answers the question."
       ],
@@ -1687,7 +1687,7 @@
           "Is a clear historical argument stated and sustained?",
           "Is specific evidence cited — named events, dates, individuals, legislation?",
           "Where sources are involved, are they evaluated (usefulness AND reliability/limitations)?",
-          "Is historiography included in extended responses (named historian and their view)?",
+          "Where the question invites it, are differing interpretations evaluated rather than just described? (A named historian is optional, never required.)",
           "Are historical concepts used explicitly (causation, significance, continuity/change, perspectives)?",
           "Does the response address perspectives (individual, group, national, ideological)?",
           "Is all evidence inside the prescribed topic and date range?",
@@ -1705,7 +1705,7 @@
       },
       "output_controls": {
         "target_band_selection_rule": {
-          "Band6": "Extensive knowledge, comprehensive continuity/change analysis, synthesis of sources with own knowledge, evaluation of differing historiographical interpretations, sophisticated historical concepts, sustained high-level argument.",
+          "Band6": "Extensive knowledge, comprehensive continuity/change analysis, synthesis of sources with own knowledge, evaluation of differing interpretations of the past (contestability), sophisticated historical concepts, sustained high-level argument.",
           "Band5": "Thorough knowledge, well-developed continuity/change, analysis and interpretation of sources, analysis of interpretations (not full evaluation), thorough historical concepts, coherent sustained argument.",
           "Band4": "Sound knowledge, sound continuity/change, uses sources for evidence (references without deep analysis), discusses interpretations, understands historical concepts, general argument.",
           "Band3": "Basic knowledge, identifies continuity/change, makes reference to sources, identifies interpretations, basic terms, descriptive text.",
@@ -1715,7 +1715,7 @@
         "forbidden_behaviours": [
           "Do not construct a response that only narrates events without building an historical argument.",
           "Do not use generic evidence references — always name specific events, dates, individuals and legislation.",
-          "Do not ignore historiography in extended responses — always include at least one named historian.",
+          "Do NOT treat the absence of a named historian as a weakness or a band limiter — the NSW syllabus does not require historians' views (NESA National Studies marking feedback) and full-mark responses often contain none; never recommend adding a historian as a route to a higher band.",
           "Do not describe interpretations without evaluating them at Band 5-6.",
           "Do not confuse the topic period — all evidence must sit inside the prescribed date range of the option being answered.",
           "Do not mark a response against the wrong option — confirm which National Studies / Peace and Conflict / Change in the Modern World option the question belongs to before marking."
@@ -1871,7 +1871,7 @@
       "rather than"
     ]
   },
-  "modernHistoryNote": "Modern History CUBE marking has important differences from Science subjects and from Ancient History. The Underline step should identify: named individuals (Hitler, Stalin, Mandela, Deng Xiaoping), named events with dates (Enabling Act 1933, Tet Offensive 1968, Sharpeville 1960), named legislation and treaties, named source types (propaganda posters, cartoons, speeches, official documents, memoirs), named historical concepts (causation, continuity and change, significance, perspectives, contestability), and any directive verbs that trigger source evaluation or historiographical judgement. Section I questions come with PROVIDED sources — the Evaluate/plan step must show how each source will be used AND supplemented with own knowledge. Planning arrows should show: thesis → evidence (named events/individuals/dates) → source analysis (usefulness/reliability where relevant) → historiography (named historian) → judgement. Before marking, confirm which topic option the question belongs to — this subject spans one core plus thirteen school-taught options across three elective sections, each with its own prescribed date range.",
+  "modernHistoryNote": "Modern History CUBE marking has important differences from Science subjects and from Ancient History. The Underline step should identify: named individuals (Hitler, Stalin, Mandela, Deng Xiaoping), named events with dates (Enabling Act 1933, Tet Offensive 1968, Sharpeville 1960), named legislation and treaties, named source types (propaganda posters, cartoons, speeches, official documents, memoirs), named historical concepts (causation, continuity and change, significance, perspectives, contestability), and any directive verbs that trigger source evaluation or historiographical judgement. Section I questions come with PROVIDED sources — the Evaluate/plan step must show how each source will be used AND supplemented with own knowledge. Planning arrows should show: thesis → evidence (named events/individuals/dates) → source analysis (usefulness/reliability where relevant) → (optional) differing interpretations → judgement. Before marking, confirm which topic option the question belongs to — this subject spans one core plus thirteen school-taught options across three elective sections, each with its own prescribed date range.",
   "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
   "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
 }
