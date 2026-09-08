@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc3 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0";
+    window.CUBE_BUILD = "v3.9-dc4 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -3710,7 +3710,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
               const invGate = investigationGate(isInvR, a, c.marks, rawAwd);
               const dirGate = directiveCoverageGate(a, c.marks, rawAwd, config);
               // mhist-argstructure-v1.0: same clamp as the report, same order.
-              const argGate = mhistStructureGate(String(subjectCode||"").toUpperCase()==="MHIST", a, c.marks, rawAwd);
+              const argGate = mhistStructureGate(String(config.subjectCode||"").toUpperCase()==="MHIST", a, c.marks, rawAwd);
               const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : (argGate ? argGate.cap : rawAwd)));
               const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
               const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
@@ -4918,7 +4918,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     var t = document.getElementById("cube-build-tag");
     if (!t) return;
     var full  = "CUBE · " + (window.CUBE_BUILD || "version unknown");
-    // Short label = the leading version token, e.g. "CUBE · v3.9-dc3".
+    // Short label = the leading version token, e.g. "CUBE · v3.9-dc4".
     var short = "CUBE · " + String(window.CUBE_BUILD || "version unknown").split(" · ")[0];
     t.dataset.full  = full;
     t.dataset.short = short;
