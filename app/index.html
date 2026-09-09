@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.9-dc5 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1";
+    window.CUBE_BUILD = "v3.9-dc6 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -832,6 +832,11 @@ const vaCoverageGate = (isVA, a, marks, rawAwarded) => {
 // "ranked" applies NO clamp, so a genuinely comparative response to the same question
 // can still reach 25 — this is why a flat per-question cap would be wrong.
 // FAIL-SOFT: field absent (non-MHIST, older worker) → null → mark unchanged.
+// mhist-argscope-v1.1: the additive->floor rule is calibrated for the 25-mark Section II/III
+// evaluate essays (9(b), 13(a)) where a ranked argument IS the Band 6 ceiling. It must NOT
+// touch the shorter Section IV parts — NESA verifiably awarded the 12-mark source question
+// 20(c) FULL marks on an additive structure. Scope the clamp to extended responses only.
+const ARGSTRUCT_MIN_MARKS  = 20;
 const ARGSTRUCT_CLAMP_DIMS = ["modality", "logicalFlow"];
 const ARGSTRUCT_CLAMP_MAX  = 4;
 // mhist-argnet-v1.1: text-only comparative-ranking net (see gate below). Reads the student's
@@ -843,6 +848,9 @@ const mhistStructureGate = (isMhist, a, marks, rawAwarded) => {
   try {
     if (!isMhist) return null;
     if (String(a?.argumentStructure || "").toLowerCase() !== "additive") return null;
+    // mhist-argscope-v1.1: only extended-response essays carry the ranked-argument ceiling.
+    // Short/source parts (e.g. 20(c) 12-mark, 20(a) 5-mark) are never clamped.
+    if (!(marks >= ARGSTRUCT_MIN_MARKS)) return null;
     // mhist-argnet-v1.1: comparative-ranking net — suppress the clamp when the student's
     // own writing carries explicit ranking language (the model under-called "additive").
     if (ARGSTRUCT_RANK_MARKERS.test(String(a?.studentResponseText || ""))) return null;
@@ -4926,7 +4934,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     var t = document.getElementById("cube-build-tag");
     if (!t) return;
     var full  = "CUBE · " + (window.CUBE_BUILD || "version unknown");
-    // Short label = the leading version token, e.g. "CUBE · v3.9-dc5".
+    // Short label = the leading version token, e.g. "CUBE · v3.9-dc6".
     var short = "CUBE · " + String(window.CUBE_BUILD || "version unknown").split(" · ")[0];
     t.dataset.full  = full;
     t.dataset.short = short;
