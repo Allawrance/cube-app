@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v4.0 · 2026-09-19 · studentLockdown-v1.0 (student access withdrawn — withdrawal screen + feedback box + MC link + master/demo pass) · v3.9-dc6 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
+    window.CUBE_BUILD = "v4.2 · 2026-09-19 · studentLockdown-v1.2 (student access withdrawn — compact: notice + comment box + Submit/MC on one line in one card; MC auto-sends unsent comment; name/year/subject fields removed, subject auto-stored; master/demo pass) · v3.9-dc6 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -4934,59 +4934,63 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// ─── studentLockdown-v1.0 · 2026-09-19 — WITHDRAWAL SCREEN + STUDENT FEEDBACK ─
+// ─── studentLockdown-v1.2 · 2026-09-19 — WITHDRAWAL SCREEN + STUDENT FEEDBACK ─
+// v1.2: compact — notice, comment box and buttons in ONE card; smaller box;
+// Submit and MC on one line (wraps on narrow phones).
 // Replaces the whole coach for students while the Worker reports markingLockdown.
+// v1.1: name / year / subject fields removed (Year 12 only; subject + class come
+// from the page config automatically). Order: notice → comment → Submit → MC.
+// The MC button auto-sends any unsent comment (keepalive fetch, fired in the same
+// click that opens the MC tab — no waiting, no popup blocking).
 // Comments go to Worker /log as type:"FEEDBACK", tool:"WITHDRAWN" → the existing
-// FEEDBACK tab + email notification (no Apps Script change). Draft autosaves on
-// the device; after sending, the student can edit and resend (new row, same ref,
-// category marked "edited vN").
+// FEEDBACK tab + email notification. Draft autosaves on the device; editing after
+// a send and sending again adds a new row with the same ref ("edited vN").
 const WITHDRAWN_MESSAGE = "Unfortunately because the DoE has not approved the use of Anthropic (Claude) and because the CUBE Marking Coach uses Anthropic then access has been withdrawn from students. If you have found CUBE useful for your studies please let me know by adding in the comments below and I will pass this on to try and have the restriction removed.";
-const WITHDRAWN_PLACEHOLDER = "Write as much as you like — full paragraphs are the most helpful when your comments are passed on. You might talk about:\n\n• which subject(s) you used CUBE for, and how often\n• how it changed the way you plan and write your responses\n• any change in your marks or your confidence\n• what you will miss now that it has been withdrawn";
+const WITHDRAWN_PLACEHOLDER = "Write your comment here — full paragraphs help most. How did CUBE help your planning, writing, marks or confidence? What will you miss?";
 
 function WithdrawnScreen({ onUnlock }) {
   const draftKey = "cubeWithdrawnDraft:" + String(config.subjectCode || "");
   const d0 = useRef((() => { try { return JSON.parse(localStorage.getItem(draftKey) || "null") || {}; } catch (e) { return {}; } })()).current;
-  const [name, setName]         = useState(d0.name || "");
-  const [yearGrp, setYearGrp]   = useState(d0.yearGrp || "");
-  const [subjects, setSubjects] = useState(d0.subjects || config.subjectShortName || config.subjectCode || "");
   const [text, setText]         = useState(d0.text || "");
+  const [sentText, setSentText] = useState(d0.sentText || "");
   const [ref]                   = useState(() => d0.ref || ("WD-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).slice(2, 6).toUpperCase()));
   const [sends, setSends]       = useState(d0.sends || 0);
-  const [status, setStatus]     = useState("editing");   // editing | sending | sent | error
+  const [status, setStatus]     = useState("idle");   // idle | sending | sent | error
   const [showPass, setShowPass] = useState(false);
   const [passCode, setPassCode] = useState("");
   const [passMsg, setPassMsg]   = useState("");
   const [passBusy, setPassBusy] = useState(false);
 
   useEffect(() => {
-    try { localStorage.setItem(draftKey, JSON.stringify({ name, yearGrp, subjects, text, ref, sends })); } catch (e) {}
-  }, [name, yearGrp, subjects, text, ref, sends]);
+    try { localStorage.setItem(draftKey, JSON.stringify({ text, sentText, ref, sends })); } catch (e) {}
+  }, [text, sentText, ref, sends]);
 
-  const words  = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const hasMC  = config.hasMC !== false;
-  const mcHref = `https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`;
-  const locked = status === "sending" || status === "sent";
+  const clean   = text.replace(/[`${}\\]/g, "").trim();
+  const unsent  = !!clean && clean !== sentText;
+  const words   = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const hasMC   = config.hasMC !== false;
+  const mcHref  = `https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`;
 
   const send = async () => {
-    const clean = text.replace(/[`${}\\]/g, "").trim();
-    if (!clean || status === "sending") return;
-    setStatus("sending");
+    if (!unsent || status === "sending") return;
+    const body = clean;
     const version = sends + 1;
+    setStatus("sending");
     try {
       const res = await fetch(CUBE_LOCK_WORKER + "/log", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", keepalive: true, headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type:         "FEEDBACK",
           tool:         "WITHDRAWN",
-          student:      _612d25(name.trim() || "anonymous"),
+          student:      "anonymous",
           studentClass: config.studentClass || "",
           subject:      config.subjectCode,
           ref:          ref,
           question:     "—",
-          year:         yearGrp || "—",
-          module:       _d0c6fa(subjects) || "—",
+          year:         "Year 12",
+          module:       config.subjectShortName || config.subjectCode || "—",
           category:     "Withdrawal support" + (version > 1 ? " (edited v" + version + ")" : ""),
-          detail:       clean.slice(0, 4000),
+          detail:       body.slice(0, 4000),
           excerpt:      "",
           build:        window.CUBE_BUILD || "",
         })
@@ -4994,6 +4998,7 @@ function WithdrawnScreen({ onUnlock }) {
       const j = await res.json().catch(() => ({}));
       if (!res.ok || j.ok === false) throw new Error(j.error || ("HTTP " + res.status));
       setSends(version);
+      setSentText(body);
       setStatus("sent");
     } catch (e) {
       console.warn("Withdrawal feedback send failed:", e.message);
@@ -5016,83 +5021,47 @@ function WithdrawnScreen({ onUnlock }) {
     }
   };
 
-  const card = { background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.10)", borderRadius:"14px", padding:"22px", marginBottom:"18px", boxSizing:"border-box" };
-  const lab  = { display:"block", fontSize:"13px", fontWeight:700, color:"#c9a84c", margin:"14px 0 6px" };
-  const hint = { fontWeight:400, color:"#7a8a9a" };
+  const card = { background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.10)", borderRadius:"14px", padding:"18px 20px", marginBottom:"12px", boxSizing:"border-box" };
+  const lab  = { display:"block", fontSize:"13px", fontWeight:700, color:"#c9a84c", margin:"0 0 8px" };
   const inp  = { width:"100%", boxSizing:"border-box", padding:"11px 12px", fontSize:"15px", background:"#0a1624", color:"#e8eaf0",
-                 border:"1.5px solid rgba(255,255,255,0.16)", borderRadius:"9px", outline:"none", fontFamily:"inherit", opacity: locked ? 0.7 : 1 };
-  const btn  = (on) => ({ padding:"12px 20px", fontSize:"15px", fontWeight:800, borderRadius:"10px", border:"0", fontFamily:"inherit",
+                 border:"1.5px solid rgba(255,255,255,0.16)", borderRadius:"9px", outline:"none", fontFamily:"inherit" };
+  const btn  = (on) => ({ padding:"10px 22px", fontSize:"15px", fontWeight:800, borderRadius:"10px", border:"0", fontFamily:"inherit",
                  cursor: on ? "pointer" : "default", background: on ? "#c9a84c" : "rgba(201,168,76,0.3)", color:"#1a1205" });
+  const canSend = unsent && status !== "sending";
 
   return (
-    <div style={{minHeight:"100vh",background:"#040d18",color:"#e8eaf0",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",padding:"28px 16px 70px",boxSizing:"border-box"}}>
+    <div style={{minHeight:"100vh",background:"#040d18",color:"#e8eaf0",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",padding:"18px 14px 60px",boxSizing:"border-box"}}>
       <div style={{maxWidth:"680px",margin:"0 auto"}}>
 
-        <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"18px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
           <div style={{background:"#c9a84c",color:"#1a1205",fontWeight:900,fontSize:"14px",letterSpacing:"1px",padding:"5px 10px",borderRadius:"8px"}}>CUBE</div>
           <div style={{fontSize:"17px",fontWeight:800}}>Marking Coach · {config.subjectShortName || config.subjectCode}</div>
         </div>
 
         <div style={{...card, background:"rgba(201,168,76,0.08)", border:"1.5px solid rgba(201,168,76,0.55)"}}>
-          <div style={{fontSize:"19px",fontWeight:800,color:"#e9d9a3",marginBottom:"12px"}}>Student access has been withdrawn</div>
-          <p style={{fontSize:"15.5px",lineHeight:1.65,margin:"0 0 14px"}}>{WITHDRAWN_MESSAGE}</p>
-          <div style={{fontSize:"15px",fontWeight:700,color:"#e9d9a3"}}>Mr Lawrance</div>
-        </div>
+          <div style={{fontSize:"18px",fontWeight:800,color:"#e9d9a3",marginBottom:"8px"}}>Student access has been withdrawn</div>
+          <p style={{fontSize:"15px",lineHeight:1.55,margin:"0 0 6px"}}>{WITHDRAWN_MESSAGE}</p>
+          <div style={{fontSize:"14.5px",fontWeight:700,color:"#e9d9a3",marginBottom:"12px"}}>Mr Lawrance</div>
 
-        {hasMC && (
-          <div style={{...card, display:"flex", alignItems:"center", justifyContent:"space-between", gap:"14px", flexWrap:"wrap"}}>
-            <div style={{fontSize:"15px",fontWeight:700}}>Multiple Choice practice is still available</div>
-            <a href={mcHref} target="_blank" rel="noopener noreferrer"
-              style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"11px 18px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.6)",borderRadius:"10px",color:"#c9c2ff",fontSize:"15px",fontWeight:800,textDecoration:"none"}}>
-              🎯 Multiple Choice Coach
-            </a>
-          </div>
-        )}
+          <textarea style={{...inp, minHeight:"110px", height:"110px", lineHeight:1.5, resize:"vertical"}} value={text} rows={4}
+            aria-label="Your comment"
+            onChange={e => { setText(e.target.value); if (status !== "sending") setStatus("idle"); }} placeholder={WITHDRAWN_PLACEHOLDER} />
 
-        <div style={card}>
-          <div style={{fontSize:"17px",fontWeight:800,marginBottom:"6px"}}>Your comments</div>
-          <div style={{fontSize:"13.5px",color:"#9aabb8",lineHeight:1.55}}>
-            Your comment goes to Mr Lawrance only — it is not shown to other students. Take your time and write in full paragraphs; the more detail you give, the more useful it is when it is passed on.
-          </div>
-
-          <label style={lab}>Your name <span style={hint}>(optional — only your first name and surname initial are kept)</span></label>
-          <input style={inp} value={name} readOnly={locked} maxLength={60} onChange={e => setName(e.target.value)} placeholder="e.g. Sam Taylor" />
-
-          <label style={lab}>Year</label>
-          <select style={inp} value={yearGrp} disabled={locked} onChange={e => setYearGrp(e.target.value)}>
-            <option value="">Choose…</option>
-            <option>Year 11</option>
-            <option>Year 12</option>
-            <option>Other</option>
-          </select>
-
-          <label style={lab}>Subject(s) you used CUBE for</label>
-          <input style={inp} value={subjects} readOnly={locked} maxLength={200} onChange={e => setSubjects(e.target.value)} />
-
-          <label style={lab}>Your comment</label>
-          <textarea style={{...inp, minHeight:"230px", lineHeight:1.6, resize:"vertical"}} value={text} readOnly={locked}
-            onChange={e => setText(e.target.value)} placeholder={WITHDRAWN_PLACEHOLDER} />
-          <div style={{fontSize:"12.5px",color:"#7a8a9a",marginTop:"6px"}}>
-            {words} {words === 1 ? "word" : "words"} · saved on this device as you type
-          </div>
-
-          {status === "sent" && (
-            <div style={{marginTop:"14px",padding:"12px 14px",background:"rgba(95,208,138,0.10)",border:"1px solid rgba(95,208,138,0.45)",borderRadius:"10px",color:"#8fe0ad",fontSize:"14px",lineHeight:1.5}}>
-              ✓ Thank you — your comment has been sent to Mr Lawrance. You can edit it and send an updated version at any time.
-            </div>
-          )}
-          {status === "error" && (
-            <div style={{marginTop:"14px",padding:"12px 14px",background:"rgba(244,67,54,0.10)",border:"1px solid rgba(244,67,54,0.45)",borderRadius:"10px",color:"#ff8a80",fontSize:"14px",lineHeight:1.5}}>
-              Your comment could not be sent just now. It is still saved on this device — please try again.
-            </div>
-          )}
-
-          <div style={{display:"flex",gap:"10px",marginTop:"16px",flexWrap:"wrap"}}>
-            {status === "sent"
-              ? <button style={btn(true)} onClick={() => setStatus("editing")}>Edit and resend</button>
-              : <button style={btn(!!text.trim() && status !== "sending")} disabled={!text.trim() || status === "sending"} onClick={send}>
-                  {status === "sending" ? "Sending…" : (sends > 0 ? "Send my updated comment" : "Send my comment")}
-                </button>}
+          <div style={{display:"flex",alignItems:"center",gap:"10px",marginTop:"10px",flexWrap:"wrap"}}>
+            <button style={btn(canSend)} disabled={!canSend} onClick={send}>
+              {status === "sending" ? "Sending…" : (sends > 0 && unsent ? "Send updated comment" : (sends > 0 ? "Sent ✓" : "Submit"))}
+            </button>
+            {hasMC && (
+              <a href={mcHref} target="_blank" rel="noopener noreferrer" onClick={() => { if (unsent) send(); }}
+                style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"10px 16px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.6)",borderRadius:"10px",color:"#c9c2ff",fontSize:"15px",fontWeight:800,textDecoration:"none"}}>
+                🎯 Multiple Choice Coach — still available
+              </a>
+            )}
+            <span style={{fontSize:"12px",color: status === "error" ? "#ff8a80" : (status === "sent" && !unsent ? "#8fe0ad" : "#7a8a9a"),marginLeft:"auto"}}>
+              {status === "error" ? "Not sent — saved on this device, please try again"
+                : (status === "sent" && !unsent ? "✓ Sent to Mr Lawrance — thank you"
+                : (words + (words === 1 ? " word" : " words")))}
+            </span>
           </div>
         </div>
 
@@ -5100,8 +5069,8 @@ function WithdrawnScreen({ onUnlock }) {
           {!showPass
             ? <button onClick={() => setShowPass(true)} style={{background:"none",border:"none",color:"#6f7f8f",fontSize:"12.5px",textDecoration:"underline",cursor:"pointer",fontFamily:"inherit"}}>Teacher / demonstration access</button>
             : <div style={{...card, maxWidth:"420px", margin:"0 auto", textAlign:"left"}}>
-                <label style={{...lab, marginTop:0}}>Teacher or demonstration code</label>
-                <input style={{...inp, opacity:1, textTransform:"uppercase", letterSpacing:"1.5px", fontFamily:"ui-monospace,SFMono-Regular,Menlo,monospace"}}
+                <label style={lab}>Teacher or demonstration code</label>
+                <input style={{...inp, textTransform:"uppercase", letterSpacing:"1.5px", fontFamily:"ui-monospace,SFMono-Regular,Menlo,monospace"}}
                   value={passCode} autoComplete="off" spellCheck={false} maxLength={40}
                   onChange={e => { setPassCode(e.target.value); setPassMsg(""); }}
                   onKeyDown={e => { if (e.key === "Enter" && passCode.trim().length >= 4) tryPass(); }} />
