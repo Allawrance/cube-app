@@ -1380,7 +1380,15 @@ function cubeCodeQS(subj){
     // wallet-v1.1 — always defer to ensure() on load; it awaits the gate status
     // and re-prompts when the held code is for a DIFFERENT class than this page.
     window.addEventListener("load", function(){
-      setTimeout(function(){ window.CUBEAccess.ensure(subj); }, 400);
+      setTimeout(function(){
+        // mcopen-v1.0 · 2026-09-19 — no class-code prompt while the Worker reports
+        // mcOpen (env MC_OPEN="on"): the banks are served without a code. Fresh fetch,
+        // not the per-tab cache, so flipping the var takes effect on the next load.
+        fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
+          .then(function(r){ return r.json(); })
+          .then(function(d){ if (!(d && d.mcOpen === true)) window.CUBEAccess.ensure(subj); })
+          .catch(function(){ window.CUBEAccess.ensure(subj); });
+      }, 400);
     });
   } catch(e){}
 })();
@@ -1424,6 +1432,6 @@ const WORKER_URL="https://cube-proxy.alan-3e2.workers.dev",MC_LOG_WEBHOOK_URL="h
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE MC · ees-years-fix v2 · 2026-09-05</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE MC · mcopen-v1.0 · 2026-09-19 · ees-years-fix v2</div>
 </body>
 </html>
