@@ -1041,7 +1041,16 @@ setTimeout(sendHeight, 1500);
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
 // build 2026-07-12 · v8 physics (Physics PHYS added — 4 classes 12PH1–12PH4 → tabs PHYS-1–PHYS-4; v7 facultyPanels retained)
-var CUBE_BUILD = "20260827a";
+var CUBE_BUILD = "20260919a";   // bumped for studentLockdown v4.2 + mcopen-v1.0 so every app link fetches the new build
+// mcopen-v1.0 · 2026-09-19 — while the Marking Coach is withdrawn (Worker MARKING_LOCKDOWN on)
+// the landing page no longer asks for a class code: the Marking Coach shows only the notice +
+// comment box, and the MC Coach needs no code while Worker MC_OPEN is on. Fresh status fetch
+// (not the per-tab cache). If a click beats this fetch, the old prompt simply appears.
+window.CUBE_MARKING_NOCODE = false;
+fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
+  .then(function(r){ return r.json(); })
+  .then(function(d){ window.CUBE_MARKING_NOCODE = !!(d && d.markingLockdown === true); })
+  .catch(function(){});
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
@@ -1114,6 +1123,7 @@ var CUBE_BUILD = "20260827a";
     // while ACCESS_GATE is off, so nothing changes for them until go-live.
     a.addEventListener("click", function(ev){
       rememberLaunch(subj, clsObj ? clsObj.tab : null, clsObj ? clsObj.label : null);
+      if (window.CUBE_MARKING_NOCODE) return;               // mcopen-v1.0 — Marking Coach withdrawn → straight through
       if (!window.CUBEAccess) return;                       // wallet absent → old behaviour
       if (window.CUBEAccess.codeFor(subj.code)) return;     // already held → straight through
       ev.preventDefault();
@@ -1359,6 +1369,6 @@ var CUBE_BUILD = "20260827a";
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.2 favicon + web manifest · 2026-07-18</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.3 mcopen-v1.0 · 2026-09-19</div>
 </body>
 </html>
