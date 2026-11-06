@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v4.2 · 2026-09-19 · studentLockdown-v1.2 (student access withdrawn — compact: notice + comment box + Submit/MC on one line in one card; MC auto-sends unsent comment; name/year/subject fields removed, subject auto-stored; master/demo pass) · v3.9-dc6 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
+    window.CUBE_BUILD = "v3.9-dc6 · 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -666,63 +666,8 @@ window.CUBEAccess = (function () {
 // ── wallet-v1.0 ────────────────────────────────────────────────────────
 // Attaches this subject's class code to every gated request. Returns {}
 // when no code is held, which is harmless while ACCESS_GATE is off.
-// ── studentLockdown-v1.0 · 2026-09-19 ───────────────────────────────────────
-// Student access withdrawn (DEL advice: Anthropic not DoE-approved). The Worker
-// is the real lock — POST / refuses everything except a master key or DEMO_CODE
-// while MARKING_LOCKDOWN is on. This page only decides what to SHOW. One fresh
-// status check per page load (NOT the wallet's sessionStorage cache), so flipping
-// the Worker var takes effect on the next reload. The staff/demo pass is kept
-// apart from the student wallet, in localStorage "cubeMarkingPass".
-var CUBE_LOCK_WORKER = "https://cube-proxy.alan-3e2.workers.dev";
-var CUBE_PASS_KEY = "cubeMarkingPass";
-window.CUBE_MARKING_LOCKDOWN = false;
-function cubeReadPass(){
-  try { var p = JSON.parse(localStorage.getItem(CUBE_PASS_KEY) || "null"); return (p && p.code) ? p : null; }
-  catch(e){ return null; }
-}
-function cubeSavePass(p){
-  try { localStorage.setItem(CUBE_PASS_KEY, JSON.stringify({ code:p.code, kind:p.kind||"", label:p.label||"", t:Date.now() })); } catch(e){}
-}
-function cubeClearPass(){ try { localStorage.removeItem(CUBE_PASS_KEY); } catch(e){} }
-function cubeValidatePass(code){
-  var c = String(code || "").toUpperCase().replace(/\s+/g, "").trim();
-  if (!c) return Promise.resolve({ ok:false, reason:"empty" });
-  return fetch(CUBE_LOCK_WORKER + "/access?tool=marking&code=" + encodeURIComponent(c))
-    .then(function(r){ return r.json().then(function(d){ return { status:r.status, d:d || {} }; }); })
-    .then(function(x){
-      return (x.status === 200 && x.d.ok)
-        ? { ok:true, code:c, kind:x.d.kind || "", label:x.d.label || "" }
-        : { ok:false, reason:x.d.error || "invalid" };
-    })
-    .catch(function(){ return { ok:false, reason:"offline" }; });
-}
-var _cubeLockP = null;
-// → "open" (no lockdown) | "pass" (lockdown + valid staff/demo pass) | "locked"
-function cubeLockdownCheck(){
-  if (_cubeLockP) return _cubeLockP;
-  _cubeLockP = fetch(CUBE_LOCK_WORKER + "/access?v=" + Date.now())
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (!d || d.markingLockdown !== true) return "open";
-      window.CUBE_MARKING_LOCKDOWN = true;
-      var p = cubeReadPass();
-      if (!p) return "locked";
-      return cubeValidatePass(p.code).then(function(v){
-        if (v.ok) return "pass";
-        if (v.reason !== "offline") cubeClearPass();   // rotated/revoked demo code → forget it
-        return "locked";
-      });
-    })
-    // Fail CLOSED: an unreachable Worker could not mark anyway, and the Worker enforces regardless.
-    .catch(function(){ window.CUBE_MARKING_LOCKDOWN = true; return "locked"; });
-  return _cubeLockP;
-}
 function cubeAccessHeaders(){
   try {
-    if (window.CUBE_MARKING_LOCKDOWN) {   // studentLockdown-v1.0 — send the staff/demo pass, never a class code
-      var lp = cubeReadPass();
-      return lp ? { "X-Access-Code": lp.code } : {};
-    }
     var subj = (window.config && config.subjectCode) ||
                new URLSearchParams(window.location.search).get("subject") || "";
     var h = (window.CUBEAccess && window.CUBEAccess.headers(subj)) || {};
@@ -742,10 +687,7 @@ function cubeAccessHeaders(){
     // wallet-v1.1 — always defer to ensure() on load; it awaits the gate status
     // and re-prompts when the held code is for a DIFFERENT class than this page.
     window.addEventListener("load", function(){
-      setTimeout(function(){
-        // studentLockdown-v1.0 — no class-code prompt while the Marking Coach is withdrawn
-        cubeLockdownCheck().then(function(st){ if (st === "open") window.CUBEAccess.ensure(subj); });
-      }, 400);
+      setTimeout(function(){ window.CUBEAccess.ensure(subj); }, 400);
     });
   } catch(e){}
 })();
@@ -2944,7 +2886,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     const excerpt = ((stage2Results && stage2Results.studentResponseText) || "").slice(0, 600);
     try {
       fetch("https://cube-proxy.alan-3e2.workers.dev/log", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cubeAccessHeaders()),
         body: JSON.stringify({
           type:         "FEEDBACK",
           tool:         "MARKING",
@@ -3233,7 +3175,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
         const invGateLog = investigationGate(isInvT, parsed, c1.marks, (typeof awdMark === "number" ? awdMark : null));
         if (invGateLog) awdMark = invGateLog.cap;
         const indBand    = (c1.marks == null || c1.marks === "") ? band.replace("Band ","") : "";
-        fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:{"Content-Type":"application/json"},
+        fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:Object.assign({"Content-Type":"application/json"}, cubeAccessHeaders()),
           body: JSON.stringify({
             type:             "FULL_ROW",
             webhookUrl:       config.logUrl,
@@ -4934,175 +4876,9 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// ─── studentLockdown-v1.2 · 2026-09-19 — WITHDRAWAL SCREEN + STUDENT FEEDBACK ─
-// v1.2: compact — notice, comment box and buttons in ONE card; smaller box;
-// Submit and MC on one line (wraps on narrow phones).
-// Replaces the whole coach for students while the Worker reports markingLockdown.
-// v1.1: name / year / subject fields removed (Year 12 only; subject + class come
-// from the page config automatically). Order: notice → comment → Submit → MC.
-// The MC button auto-sends any unsent comment (keepalive fetch, fired in the same
-// click that opens the MC tab — no waiting, no popup blocking).
-// Comments go to Worker /log as type:"FEEDBACK", tool:"WITHDRAWN" → the existing
-// FEEDBACK tab + email notification. Draft autosaves on the device; editing after
-// a send and sending again adds a new row with the same ref ("edited vN").
-const WITHDRAWN_MESSAGE = "Unfortunately because the DoE has not approved the use of Anthropic (Claude) and because the CUBE Marking Coach uses Anthropic then access has been withdrawn from students. If you have found CUBE useful for your studies please let me know by adding in the comments below and I will pass this on to try and have the restriction removed.";
-const WITHDRAWN_PLACEHOLDER = "Write your comment here — full paragraphs help most. How did CUBE help your planning, writing, marks or confidence? What will you miss?";
-
-function WithdrawnScreen({ onUnlock }) {
-  const draftKey = "cubeWithdrawnDraft:" + String(config.subjectCode || "");
-  const d0 = useRef((() => { try { return JSON.parse(localStorage.getItem(draftKey) || "null") || {}; } catch (e) { return {}; } })()).current;
-  const [text, setText]         = useState(d0.text || "");
-  const [sentText, setSentText] = useState(d0.sentText || "");
-  const [ref]                   = useState(() => d0.ref || ("WD-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).slice(2, 6).toUpperCase()));
-  const [sends, setSends]       = useState(d0.sends || 0);
-  const [status, setStatus]     = useState("idle");   // idle | sending | sent | error
-  const [showPass, setShowPass] = useState(false);
-  const [passCode, setPassCode] = useState("");
-  const [passMsg, setPassMsg]   = useState("");
-  const [passBusy, setPassBusy] = useState(false);
-
-  useEffect(() => {
-    try { localStorage.setItem(draftKey, JSON.stringify({ text, sentText, ref, sends })); } catch (e) {}
-  }, [text, sentText, ref, sends]);
-
-  const clean   = text.replace(/[`${}\\]/g, "").trim();
-  const unsent  = !!clean && clean !== sentText;
-  const words   = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const hasMC   = config.hasMC !== false;
-  const mcHref  = `https://allawrance.github.io/cube-app/app/mc-sa-coach.html?subject=${config.subjectCode}${config.studentClass ? '&class=' + config.studentClass : ''}`;
-
-  const send = async () => {
-    if (!unsent || status === "sending") return;
-    const body = clean;
-    const version = sends + 1;
-    setStatus("sending");
-    try {
-      const res = await fetch(CUBE_LOCK_WORKER + "/log", {
-        method: "POST", keepalive: true, headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type:         "FEEDBACK",
-          tool:         "WITHDRAWN",
-          student:      "anonymous",
-          studentClass: config.studentClass || "",
-          subject:      config.subjectCode,
-          ref:          ref,
-          question:     "—",
-          year:         "Year 12",
-          module:       config.subjectShortName || config.subjectCode || "—",
-          category:     "Withdrawal support" + (version > 1 ? " (edited v" + version + ")" : ""),
-          detail:       body.slice(0, 4000),
-          excerpt:      "",
-          build:        window.CUBE_BUILD || "",
-        })
-      });
-      const j = await res.json().catch(() => ({}));
-      if (!res.ok || j.ok === false) throw new Error(j.error || ("HTTP " + res.status));
-      setSends(version);
-      setSentText(body);
-      setStatus("sent");
-    } catch (e) {
-      console.warn("Withdrawal feedback send failed:", e.message);
-      setStatus("error");
-    }
-  };
-
-  const tryPass = async () => {
-    if (passBusy) return;
-    setPassBusy(true); setPassMsg("Checking…");
-    const v = await cubeValidatePass(passCode);
-    setPassBusy(false);
-    if (v.ok) {
-      cubeSavePass(v);
-      setPassMsg("✓ " + (v.label || "Access granted"));
-      setTimeout(() => onUnlock(), 500);
-    } else {
-      setPassMsg(v.reason === "offline" ? "Could not reach the server — check your connection and try again."
-                                        : "That code does not unlock the Marking Coach.");
-    }
-  };
-
-  const card = { background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.10)", borderRadius:"14px", padding:"18px 20px", marginBottom:"12px", boxSizing:"border-box" };
-  const lab  = { display:"block", fontSize:"13px", fontWeight:700, color:"#c9a84c", margin:"0 0 8px" };
-  const inp  = { width:"100%", boxSizing:"border-box", padding:"11px 12px", fontSize:"15px", background:"#0a1624", color:"#e8eaf0",
-                 border:"1.5px solid rgba(255,255,255,0.16)", borderRadius:"9px", outline:"none", fontFamily:"inherit" };
-  const btn  = (on) => ({ padding:"10px 22px", fontSize:"15px", fontWeight:800, borderRadius:"10px", border:"0", fontFamily:"inherit",
-                 cursor: on ? "pointer" : "default", background: on ? "#c9a84c" : "rgba(201,168,76,0.3)", color:"#1a1205" });
-  const canSend = unsent && status !== "sending";
-
-  return (
-    <div style={{minHeight:"100vh",background:"#040d18",color:"#e8eaf0",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",padding:"18px 14px 60px",boxSizing:"border-box"}}>
-      <div style={{maxWidth:"680px",margin:"0 auto"}}>
-
-        <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
-          <div style={{background:"#c9a84c",color:"#1a1205",fontWeight:900,fontSize:"14px",letterSpacing:"1px",padding:"5px 10px",borderRadius:"8px"}}>CUBE</div>
-          <div style={{fontSize:"17px",fontWeight:800}}>Marking Coach · {config.subjectShortName || config.subjectCode}</div>
-        </div>
-
-        <div style={{...card, background:"rgba(201,168,76,0.08)", border:"1.5px solid rgba(201,168,76,0.55)"}}>
-          <div style={{fontSize:"18px",fontWeight:800,color:"#e9d9a3",marginBottom:"8px"}}>Student access has been withdrawn</div>
-          <p style={{fontSize:"15px",lineHeight:1.55,margin:"0 0 6px"}}>{WITHDRAWN_MESSAGE}</p>
-          <div style={{fontSize:"14.5px",fontWeight:700,color:"#e9d9a3",marginBottom:"12px"}}>Mr Lawrance</div>
-
-          <textarea style={{...inp, minHeight:"110px", height:"110px", lineHeight:1.5, resize:"vertical"}} value={text} rows={4}
-            aria-label="Your comment"
-            onChange={e => { setText(e.target.value); if (status !== "sending") setStatus("idle"); }} placeholder={WITHDRAWN_PLACEHOLDER} />
-
-          <div style={{display:"flex",alignItems:"center",gap:"10px",marginTop:"10px",flexWrap:"wrap"}}>
-            <button style={btn(canSend)} disabled={!canSend} onClick={send}>
-              {status === "sending" ? "Sending…" : (sends > 0 && unsent ? "Send updated comment" : (sends > 0 ? "Sent ✓" : "Submit"))}
-            </button>
-            {hasMC && (
-              <a href={mcHref} target="_blank" rel="noopener noreferrer" onClick={() => { if (unsent) send(); }}
-                style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"10px 16px",background:"rgba(108,99,255,0.14)",border:"1.5px solid rgba(108,99,255,0.6)",borderRadius:"10px",color:"#c9c2ff",fontSize:"15px",fontWeight:800,textDecoration:"none"}}>
-                🎯 Multiple Choice Coach — still available
-              </a>
-            )}
-            <span style={{fontSize:"12px",color: status === "error" ? "#ff8a80" : (status === "sent" && !unsent ? "#8fe0ad" : "#7a8a9a"),marginLeft:"auto"}}>
-              {status === "error" ? "Not sent — saved on this device, please try again"
-                : (status === "sent" && !unsent ? "✓ Sent to Mr Lawrance — thank you"
-                : (words + (words === 1 ? " word" : " words")))}
-            </span>
-          </div>
-        </div>
-
-        <div style={{textAlign:"center"}}>
-          {!showPass
-            ? <button onClick={() => setShowPass(true)} style={{background:"none",border:"none",color:"#6f7f8f",fontSize:"12.5px",textDecoration:"underline",cursor:"pointer",fontFamily:"inherit"}}>Teacher / demonstration access</button>
-            : <div style={{...card, maxWidth:"420px", margin:"0 auto", textAlign:"left"}}>
-                <label style={lab}>Teacher or demonstration code</label>
-                <input style={{...inp, textTransform:"uppercase", letterSpacing:"1.5px", fontFamily:"ui-monospace,SFMono-Regular,Menlo,monospace"}}
-                  value={passCode} autoComplete="off" spellCheck={false} maxLength={40}
-                  onChange={e => { setPassCode(e.target.value); setPassMsg(""); }}
-                  onKeyDown={e => { if (e.key === "Enter" && passCode.trim().length >= 4) tryPass(); }} />
-                <div style={{fontSize:"12.5px",minHeight:"17px",margin:"8px 2px 10px",color: passMsg.startsWith("✓") ? "#5fd08a" : "#e0553f"}}>{passMsg}</div>
-                <button style={btn(!passBusy && passCode.trim().length >= 4)} disabled={passBusy || passCode.trim().length < 4} onClick={tryPass}>Unlock</button>
-              </div>}
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-// Small corner pill while a staff/demo pass is active, so a demo on someone
-// else's device can be cleared before walking away.
-function PassPill() {
-  const p = cubeReadPass();
-  if (!p) return null;
-  const label = p.kind === "demo" ? "Demonstration access" : "Teacher access";
-  return (
-    <div style={{position:"fixed",right:"8px",bottom:"8px",zIndex:99998,fontFamily:"sans-serif",fontSize:"11.5px",color:"#e9d9a3",background:"rgba(0,0,0,0.6)",border:"1px solid rgba(201,168,76,0.45)",borderRadius:"8px",padding:"4px 8px",display:"flex",alignItems:"center",gap:"8px"}}>
-      <span>🔓 {label}</span>
-      <button onClick={() => { if (window.confirm("Remove the access code from this device? The Marking Coach will go back to the student notice.")) { cubeClearPass(); window.location.reload(); } }}
-        style={{background:"none",border:"none",color:"#c9a84c",textDecoration:"underline",cursor:"pointer",fontSize:"11.5px",padding:0}}>Remove from this device</button>
-    </div>
-  );
-}
-
 function _eed5f4() {
   const [configReady, setConfigReady] = useState(false);
   const [configError, setConfigError] = useState(null);
-  const [lockState, setLockState]     = useState(null);   // studentLockdown-v1.0: null | "open" | "pass" | "locked"
 
   useEffect(() => {
     _f674dd().then(() => {
@@ -5115,14 +4891,6 @@ function _eed5f4() {
       setConfigReady(true); // still render with defaults
     });
   }, []);
-
-  // studentLockdown-v1.0 — decide coach vs withdrawal screen once config is in.
-  useEffect(() => {
-    if (!configReady || configError) return;
-    let live = true;
-    cubeLockdownCheck().then(s => { if (live) setLockState(s); });
-    return () => { live = false; };
-  }, [configReady, configError]);
 
   if (!configReady) {
     return (
@@ -5145,18 +4913,6 @@ function _eed5f4() {
     );
   }
 
-  // studentLockdown-v1.0
-  if (lockState === null) {
-    return (
-      <div style={{minHeight:"100vh",background:"#040d18",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:"16px"}}>
-        <div style={{width:"32px",height:"32px",border:"3px solid rgba(201,168,76,0.25)",borderTopColor:"#c9a84c",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}></div>
-        <div style={{color:"#c9a84c",fontFamily:"sans-serif",fontSize:"14px"}}>Checking access...</div>
-        <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-      </div>
-    );
-  }
-  if (lockState === "locked") return <WithdrawnScreen onUnlock={() => setLockState("pass")} />;
-  if (lockState === "pass")   return <React.Fragment><_ac863f /><PassPill /></React.Fragment>;
   return <_ac863f />;
 }
 
