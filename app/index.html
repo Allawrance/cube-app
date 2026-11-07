@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
+    window.CUBE_BUILD = "v3.12 · 2026-11-08 · eestask-v1.0 (EES answer-the-question gate: mark + Write XP capped from eesTaskCheck rows; needs Worker v4.8) · gatelog-v1.0 (Sheet/leaderboard mark now uses the same gate chain as the report — fixes VA coverage + MHIST structure caps not reaching the Sheet) · was v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -934,6 +934,55 @@ const directiveCoverageGate = (a, marks, rawAwarded, config) => {
   } catch (_) { return null; }   // report rendering must never crash on odd JSON
 };
 
+// ── eestask-v1.0 (EES only): cap = round-half-up(marks × credit ÷ rows) from specialCheck.eesTaskCheck (met 1 / partial 0.5 / absent 0); lowers only; no floor; fail-soft ──
+const EES_TASK_PARTIAL_CREDIT = 0.5;
+const EES_TASK_STATUSES = ["met", "partial", "absent"];
+const roundHalfUp = (x) => Math.round(x + 1e-9);
+const eesTaskGate = (isEES, a, marks, rawAwarded) => {
+  try {
+    if (!isEES || rawAwarded === null || rawAwarded === undefined) return null;
+    if (!(typeof rawAwarded === "number" && isFinite(rawAwarded))) return null;
+    if (!marks || marks <= 0) return null;
+    if (_37f8a2(a) || isInvestigationResult(a)) return null;
+    const tc = a && a.specialCheck && a.specialCheck.eesTaskCheck;
+    const rows = tc && Array.isArray(tc.rows) ? tc.rows.filter(r => r && typeof r === "object") : [];
+    if (rows.length === 0) return null;
+    const st = r => String(r.status || "").toLowerCase().trim();
+    if (rows.some(r => !EES_TASK_STATUSES.includes(st(r)))) return null;
+    const credit = rows.reduce((t, r) => t + (st(r) === "met" ? 1 : st(r) === "partial" ? EES_TASK_PARTIAL_CREDIT : 0), 0);
+    const cap = Math.min(marks, roundHalfUp(marks * credit / rows.length));
+    if (cap >= rawAwarded) return null;
+    return {
+      cap, credit, total: rows.length,
+      focus: String((tc && tc.focus) || "").trim(),
+      rows: rows.map(r => ({ key: String(r.key || ""), requirement: String(r.requirement || "").trim(),
+                             status: st(r), evidence: String(r.evidence || "").trim(), note: String(r.note || "").trim() })),
+      xpScale: cap / rawAwarded,
+    };
+  } catch (_) { return null; }
+};
+// eestask-v1.0: per-row XP scaled by cap ÷ raw mark; Write XP = sum of the rows
+const eesRowXP = (score, xpScale) => (xpScale === null || xpScale === undefined) ? score : roundHalfUp(score * xpScale);
+const eesGatedWriteXP = (r, causalAppl, modalAppl, dimMax, xpScale) => {
+  const rb = (r && r.rubric) || {};
+  const dims = [];
+  if (causalAppl) dims.push(rb.causalConnectives);
+  dims.push(rb.complexNounGroups);
+  if (modalAppl) dims.push(rb.modality);
+  dims.push(rb.logicalFlow);
+  return dims.reduce((t, d) => t + eesRowXP(Math.min((d && d.score) || 0, dimMax), xpScale), 0);
+};
+// gatelog-v1.0: one gate chain for every mark shown or logged
+const finalMarkFromGates = (g, raw) =>
+  g.cov ? g.cov.cap
+  : g.inv ? g.inv.cap
+  : (g.dir && g.dir.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? g.dir.cap
+  : g.arg ? g.arg.cap
+  : g.ees ? g.ees.cap
+  : raw;
+const EES_TASK_ICON = { met: "✓", partial: "~", absent: "✗" };
+const EES_TASK_WORD = { met: "Done", partial: "Partly", absent: "Missing" };
+
 // ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
 const getFeedbackPlan = (marksLost) => {
   const lost = (marksLost == null || isNaN(marksLost)) ? 1 : Math.max(0, marksLost);
@@ -1476,6 +1525,22 @@ function _9eca9d(formatted, studentText, nounGroups, connectives) {
   // Normalise illegible gaps — 3+ spaces → [?]
   text = _6ec938(text);
 
+  // eestask-v1.0 (EES only): un-bold **…** spans that contain no listed connective
+  if (String((typeof config !== "undefined" && config && config.subjectCode) || "").toUpperCase() === "EES") {
+    const listed = [ ...(connectives?.preferred || []), ...(connectives?.accepted || []), ...(connectives?.contrast || []) ]
+      .map(x => String(x || "").toLowerCase().trim()).filter(Boolean);
+    if (listed.length) {
+      text = text.replace(/\*\*([^*]+)\*\*/g, (whole, inner) => {
+        const norm = String(inner).toLowerCase().replace(/[^a-z\s]/g, " ").replace(/\s+/g, " ").trim();
+        const ok = listed.some(conn => {
+          const esc = conn.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          return new RegExp("(^|\\s)" + esc + "(\\s|$)").test(norm);
+        });
+        return ok ? whole : inner;
+      });
+    }
+  }
+
   // Always inject bold connectives client-side if not already present
   const allConnectives = [
     ...(connectives?.preferred || ["so","because","but"]),
@@ -1624,10 +1689,11 @@ function _c5e1b8({ procedural, compact }) {
   </div>;
 }
 
-function _4c78ef({label, data, applicable=true, dimMax=5}) {
+function _4c78ef({label, data, applicable=true, dimMax=5, xpScale=null}) {
   const [open, setOpen] = useState(false);
   const rawScore = data?.score||0;
   const score = Math.min(rawScore, dimMax);
+  const xpShown = eesRowXP(score, xpScale);   // eestask-v1.0: lowered XP when the EES gate caps; else = score
   if (!applicable) return <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:"10px",padding:"10px 14px",marginBottom:"8px",fontFamily:"sans-serif",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
     <span style={{color:"#8899aa",fontSize:"13px"}}>{label}</span>
     <span style={{color:"#555",fontSize:"12px",fontStyle:"italic"}}>N/A</span>
@@ -1637,7 +1703,7 @@ function _4c78ef({label, data, applicable=true, dimMax=5}) {
     <div onClick={()=>setOpen(o=>!o)} style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",gap:"10px"}}>
       <span style={{color:"#e8eaf0",fontSize:"13px",fontWeight:600,flex:1}}>{label}</span>
       <ScoreDot score={score} max={dimMax}/>
-      <span style={{fontWeight:900,fontSize:"15px",color:col,flexShrink:0}}>+{score}<span style={{fontSize:"9px",color:"#888",marginLeft:"2px"}}>XP</span></span>
+      <span style={{fontWeight:900,fontSize:"15px",color:col,flexShrink:0}}>+{xpShown}<span style={{fontSize:"9px",color:"#888",marginLeft:"2px"}}>XP</span></span>
       <span style={{color:"#c9a84c",fontSize:"12px",flexShrink:0}}>{open?"▲":"▼"}</span>
     </div>
     {open&&<div style={{padding:"0 14px 12px",fontSize:"12px",color:"#e8eaf0",lineHeight:"1.5"}}>
@@ -1698,11 +1764,11 @@ function _e3ea66({children, subtitle}) {
 }
 
 // ─── RUBRIC ROW ──────────────────────────────────────────────────────────────
-function _b6a519({label, data, applicable=true, dimMax=5}) {
+function _b6a519({label, data, applicable=true, dimMax=5, xpScale=null}) {
   // Cap raw Sonnet score at dimMax (scales with question marks value)
   const rawScore = data?.score||0;
   const score    = Math.min(rawScore, dimMax);
-  const xpEarned = !applicable ? null : score;
+  const xpEarned = !applicable ? null : eesRowXP(score, xpScale);   // eestask-v1.0: = score unless the EES gate capped
   if (!applicable) return <tr>
     <td style={{padding:"10px 14px",color:"#c8d8e8",fontSize:"13px",fontFamily:"sans-serif"}}>{label}</td>
     <td style={{padding:"10px 14px",textAlign:"center"}}><span style={{color:"#555",fontSize:"12px",fontStyle:"italic"}}>N/A</span></td>
@@ -1746,7 +1812,9 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
   const dirGate = directiveCoverageGate(a, c.marks, rawAwarded, config);
   // mhist-argstructure-v1.0: applied last so it can only ever hold the mark down.
   const argGate = mhistStructureGate(String(subjectCode||"").toUpperCase()==="MHIST", a, c.marks, rawAwarded);
-  const awardedFinal = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : (argGate ? argGate.cap : rawAwarded)));
+  // eestask-v1.0: EES answer-the-question gate (null for every other subject).
+  const eesGate = eesTaskGate(String(subjectCode||"").toUpperCase()==="EES", a, c.marks, rawAwarded);
+  const awardedFinal = finalMarkFromGates({ cov:covGate, inv:invGate, dir:dirGate, arg:argGate, ees:eesGate }, rawAwarded);
   const displayedMark = marksKnown
     ? `${awardedFinal} / ${c.marks} marks`
     : band ? `Indicative ${band}` : "";
@@ -1940,6 +2008,29 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
           <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Why this mark is capped</div>
           <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6"}}>
             Under NESA marking guidelines a procedure cannot score above "features of a relevant investigation" unless it states both how the independent variable is changed AND how the dependent variable is measured, so this response is capped at <strong>{invGate.cap} / {c.marks}</strong> even though the design scores below are higher. Missing: <strong>{invGate.missing.join("; ")}</strong>. Stating a measurable method for the dependent variable is the fastest way to lift this mark.
+          </div>
+        </div>
+      )}
+
+      {/* eestask-v1.0: EES answer-the-question cap — shown ONLY when the gate lowered the mark. */}
+      {eesGate && (
+        <div className="pr-no-break" style={{margin:"-8px 0 18px 0",background:"#fff7ed",border:"2px solid #b45309",borderLeft:"6px solid #b45309",borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"}}>
+          <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Answer the question first — why this mark is capped</div>
+          <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6",marginBottom:"6px"}}>
+            {eesGate.focus ? <>This question asks you to show <strong>{eesGate.focus.replace(/\.$/,"")}</strong>. </> : null}
+            Your response does not yet do all of that, so the mark is capped at <strong>{eesGate.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores below still show the writing skills you used — aim them at the question next time.
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
+            {eesGate.rows.map((r,i)=>{
+              const col = r.status==="met" ? "#2f6b2a" : r.status==="partial" ? "#b9770a" : "#b45309";
+              return (
+                <div key={i} style={{fontSize:"12px",color:"#3a2a12",lineHeight:"1.5"}}>
+                  <strong style={{color:col}}>{EES_TASK_ICON[r.status]} {EES_TASK_WORD[r.status]}</strong>
+                  {r.requirement ? <span style={{color:"#5a5a5a"}}> — {r.requirement}</span> : null}
+                  {r.status!=="met" && r.note ? <span style={{color:"#7a6a55"}}> · {r.note}</span> : null}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -3172,9 +3263,14 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
         const isInvT = isInvestigationResult(parsed);
         const sc  = totalScore(parsed, causalApp, modalApp, dimMax);
         const mx  = isInvT ? dimMax*5 : isProcT ? dimMax*4 : (dimMax*2) + (causalApp?dimMax:0) + (modalApp?dimMax:0);
+        // eestask-v1.0: EES gate decided before XP is set — banner, report, Sheet, leaderboard share the lowered Write XP
+        const rawAwdSub   = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((Math.min(sc, mx)/mx)*c1.marks), c1.marks) : null;
+        const eesGateSub  = eesTaskGate(String(config.subjectCode||"").toUpperCase()==="EES", parsed, c1.marks, rawAwdSub);
+        const writeXpFinal = eesGateSub ? Math.min(eesGatedWriteXP(parsed, causalApp, modalApp, dimMax, eesGateSub.xpScale), mx) : Math.min(sc, mx);
+        if (eesGateSub) console.log("CUBE eestask-v1.0 cap", rawAwdSub, "→", eesGateSub.cap, "/", c1.marks, "| Write XP", Math.min(sc, mx), "→", writeXpFinal);
         // Update session XP using correctly capped score and max
-        setWriteXP(Math.min(sc, mx));
-        setSessionXP(cxpStage2 + annoXpVal + Math.min(sc, mx));
+        setWriteXP(writeXpFinal);
+        setSessionXP(cxpStage2 + annoXpVal + writeXpFinal);
         const band = _2c7e13(sc, mx);
         const annoItems  = (parsed.annotationCheck||[]).filter(a=>a&&a.idea&&a.idea.trim()).slice(0,6);
         const annoPresXP = Math.min(annoItems.length, 6);
@@ -3182,8 +3278,14 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
         const annoTotal  = annoPresXP + annoUsdXP;
         const scCapped  = Math.min(sc, mx);  // cap raw score at scaled max
         let awdMark      = (c1.marks != null && c1.marks !== "") ? Math.min(Math.round((scCapped/mx)*c1.marks), c1.marks) : "";
-        const invGateLog = investigationGate(isInvT, parsed, c1.marks, (typeof awdMark === "number" ? awdMark : null));
-        if (invGateLog) awdMark = invGateLog.cap;
+        // gatelog-v1.0: Sheet/leaderboard mark uses the same gate chain as the report
+        const rawAwdLog  = (typeof awdMark === "number" ? awdMark : null);
+        const subjLog    = String(config.subjectCode||"").toUpperCase();
+        const covGateLog = vaCoverageGate(subjLog==="VISART", parsed, c1.marks, rawAwdLog);
+        const invGateLog = investigationGate(isInvT, parsed, c1.marks, rawAwdLog);
+        const dirGateLog = directiveCoverageGate(parsed, c1.marks, rawAwdLog, config);
+        const argGateLog = mhistStructureGate(subjLog==="MHIST", parsed, c1.marks, rawAwdLog);
+        if (rawAwdLog !== null) awdMark = finalMarkFromGates({ cov:covGateLog, inv:invGateLog, dir:dirGateLog, arg:argGateLog, ees:eesGateSub }, rawAwdLog);
         const indBand    = (c1.marks == null || c1.marks === "") ? band.replace("Band ","") : "";
         fetch("https://cube-proxy.alan-3e2.workers.dev/log", { method:"POST", headers:Object.assign({"Content-Type":"application/json"}, cubeAccessHeaders()),
           body: JSON.stringify({
@@ -3214,9 +3316,9 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
             wModMax:          (isInvT || isProcT || modalApp) ? dimMax : "",
             wFlow:            isInvT ? Math.min(parsed.investigation.logicalSequence?.score ?? 0, dimMax) : isProcT ? Math.min(parsed.procedural.workingLogic?.score ?? 0, dimMax) : Math.min(parsed.rubric?.logicalFlow?.score ?? 0, dimMax),
             wFlowMax:         dimMax,
-            writeXP:          Math.min(sc, mx),
+            writeXP:          writeXpFinal,   // eestask-v1.0: lowered when the EES gate caps
             writeMax:         mx,
-            totalXP:          cxpStage2 + annoTotal + Math.min(sc, mx),
+            totalXP:          cxpStage2 + annoTotal + writeXpFinal,
             awdMark:          awdMark,
             questionMarks:    c1.marks ?? "",
             indBand:          indBand,
@@ -3703,6 +3805,10 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
                 { label:"Modality",                data:a?.rubric?.modality,          applicable:modalityApplicable },
                 { label:"Logical Flow & Cohesion", data:a?.rubric?.logicalFlow,       applicable:true },
               ];
+          // eestask-v1.0: EES gate once — strip, rubric XP column, feedback count (null off-EES)
+          const rawAwdEES = marksKnown ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks) : null;
+          const eesGateR  = eesTaskGate(String(config.subjectCode||"").toUpperCase()==="EES", a, c.marks, rawAwdEES);
+          const xpScaleR  = eesGateR ? eesGateR.xpScale : null;
           const band = marksKnown ? null : _2c7e13(score, maxScore);
 
           return <div>
@@ -3737,7 +3843,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
               const dirGate = directiveCoverageGate(a, c.marks, rawAwd, config);
               // mhist-argstructure-v1.0: same clamp as the report, same order.
               const argGate = mhistStructureGate(String(config.subjectCode||"").toUpperCase()==="MHIST", a, c.marks, rawAwd);
-              const awardedMark = covGate ? covGate.cap : (invGate ? invGate.cap : ((dirGate && dirGate.wouldCap && DIRECTIVE_COVERAGE_HARD_CAP) ? dirGate.cap : (argGate ? argGate.cap : rawAwd)));
+              const awardedMark = finalMarkFromGates({ cov:covGate, inv:invGate, dir:dirGate, arg:argGate, ees:eesGateR }, rawAwd);
               const totalXP = (cubeXP||0) + (annoXP||0) + (writeXP||0);
               const pct = marksKnown && c.marks > 0 ? Math.round((awardedMark/c.marks)*100) : null;
               const markColour = pct>=80 ? "#4caf50" : pct>=50 ? "#ff9800" : "#f44336";
@@ -3804,6 +3910,28 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
                     <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Why this mark is capped</div>
                     <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6"}}>
                       A procedure cannot score above "features of a relevant investigation" unless it states both how the independent variable is changed AND how the dependent variable is measured, so this is capped at <strong>{invGate.cap} / {c.marks}</strong> even though the design scores are higher. Missing: <strong>{invGate.missing.join("; ")}</strong>.
+                    </div>
+                  </div>
+                )}
+                {/* eestask-v1.0: EES answer-the-question cap — on screen, ONLY when the gate lowered the mark */}
+                {eesGateR && (
+                  <div style={{margin:"-10px 0 20px 0",background:"rgba(180,83,9,0.14)",border:"1.5px solid rgba(251,146,60,0.55)",borderLeft:"5px solid #fb923c",borderRadius:"10px",padding:"11px 16px",fontFamily:"sans-serif"}}>
+                    <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Answer the question first — why this mark is capped</div>
+                    <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6",marginBottom:"6px"}}>
+                      {eesGateR.focus ? <>This question asks you to show <strong>{eesGateR.focus.replace(/\.$/,"")}</strong>. </> : null}
+                      Your response does not yet do all of that, so the mark is capped at <strong>{eesGateR.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores are still shown so you can see the writing skills you used — aim them at the question in your rewrite.
+                    </div>
+                    <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
+                      {eesGateR.rows.map((r,i)=>{
+                        const col = r.status==="met" ? "#81c784" : r.status==="partial" ? "#ffd27a" : "#fdba74";
+                        return (
+                          <div key={i} style={{fontSize:"12.5px",color:"#fde8d0",lineHeight:"1.5"}}>
+                            <strong style={{color:col}}>{EES_TASK_ICON[r.status]} {EES_TASK_WORD[r.status]}</strong>
+                            {r.requirement ? <span style={{color:"#e8d5bf"}}> — {r.requirement}</span> : null}
+                            {r.status!=="met" && r.note ? <span style={{color:"#d9b99a"}}> · {r.note}</span> : null}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -4315,7 +4443,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
               {isProcR&&<_c5e1b8 procedural={a.procedural} compact={mobileView}/>}
 
               {mobileView&&<div style={{marginBottom:"14px"}}>
-                {rubricRowsR.map((row,i)=><_4c78ef key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
+                {rubricRowsR.map((row,i)=><_4c78ef key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR} xpScale={xpScaleR}/>)}
                 <div style={{fontSize:"11px",color:"#7a9ab8",fontFamily:"sans-serif",marginTop:"4px",textAlign:"center"}}>Tap a criterion to see the evidence &amp; full comment</div>
               </div>}
 
@@ -4330,19 +4458,24 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
                     </tr>
                   </thead>
                   <tbody>
-                    {rubricRowsR.map((row,i)=><_b6a519 key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR}/>)}
+                    {rubricRowsR.map((row,i)=><_b6a519 key={i} label={row.label} data={row.data} applicable={row.applicable} dimMax={dimMaxR} xpScale={xpScaleR}/>)}
                   </tbody>
                 </table>
               </Card>}
 
+              {/* eestask-v1.0: why the XP column is lower than the scores (EES gate only) */}
+              {eesGateR && <div style={{background:"rgba(180,83,9,0.12)",border:"1px solid rgba(251,146,60,0.45)",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px",fontFamily:"sans-serif",fontSize:"12.5px",color:"#fde8d0",lineHeight:"1.55"}}>
+                Your literacy <strong>scores</strong> are shown as marked. Your <strong>XP</strong> is reduced because the response does not yet answer the question — answer the question first, then these writing skills earn full XP.
+              </div>}
+
               {/* ── XP summary strip ── */}
               <div style={{background:"rgba(108,99,255,0.08)",border:"1px solid #6c63ff33",borderRadius:"12px",padding:"14px 18px",marginBottom:"14px",fontFamily:"sans-serif"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"6px"}}>
-                  <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{Math.min(score,maxScore)}</span> / {maxScore} XP{c.marks&&c.marks<=4?<span style={{fontSize:"11px",color:"#9aabb8",marginLeft:"8px",fontWeight:400}}>({c.marks}-mark question)</span>:null}</div>
+                  <div style={{fontSize:"15px",fontWeight:800,color:"#69f0ae"}}>⚡ Written analysis &nbsp;&nbsp;<span style={{fontSize:"22px"}}>{eesGateR ? (writeXP||0) : Math.min(score,maxScore)}</span> / {maxScore} XP{c.marks&&c.marks<=4?<span style={{fontSize:"11px",color:"#9aabb8",marginLeft:"8px",fontWeight:400}}>({c.marks}-mark question)</span>:null}</div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <div style={{fontSize:"13px",color:"#aaa"}}>Total points CUBE + Annotation + Written</div>
-                  <div style={{fontSize:"28px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+(annoXP||0)+score} XP</div>
+                  <div style={{fontSize:"28px",fontWeight:900,color:"#a89fff"}}>{(cubeXP||0)+(annoXP||0)+(eesGateR ? (writeXP||0) : score)} XP</div>
                 </div>
               </div>
 
@@ -4399,7 +4532,9 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
 
               {/* ── 1. MEDALS + MISSION(S) — count driven by marks lost (build 2026-07-05) ── */}
               {(()=>{
-                const awdMark  = marksKnown ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks) : null;
+                const awdMarkRaw = marksKnown ? Math.min(Math.round((Math.min(score,maxScore)/maxScore)*c.marks), c.marks) : null;
+                // eestask-v1.0: an EES-capped response shows the missions its REAL mark earns (EES only).
+                const awdMark  = (eesGateR && awdMarkRaw !== null) ? eesGateR.cap : awdMarkRaw;
                 const marksLost = marksKnown ? (c.marks - awdMark) : null;
                 const plan     = getFeedbackPlan(marksLost);
                 const allMedals   = [a.medals?.medal1, a.medals?.medal2].filter(m=>m&&(m.category||m.quote));
