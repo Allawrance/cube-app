@@ -1,998 +1,723 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-CUBE-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-CUBE-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-CUBE-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-CUBE-180.png">
+<link rel="manifest" href="/cube.webmanifest">
+<meta name="theme-color" content="#040d18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CUBE">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <script>
-/* build 2026-09-05 · ees-years-fix v2 — v1 (below) added mcYears back to EES but only listed 2025…2013, so the picker still had no pills for the 24 curated 2011/2012 old-syllabus questions added to CUBE_QUESTIONS_EES afterwards (211→235 total in KV). Extended EES mcYears to [2025…2013,2012,2011]; both years fall below syllabusFrom(2019) so they render under the existing "Relevant questions selected from previous syllabus" group automatically — no other logic change. No worker or KV change needed, front-end year-picker only. Prior: build 2026-09-05 · ees-years-fix v1 — EES SUBJECT_CONFIG was missing an explicit mcYears list, so subjectYears() fell back to the contiguous syllabusFrom(2019)…LATEST_HSC_YEAR(2025) range and silently hid the 71 curated 2013–2018 old-syllabus questions that were added to the CUBE_QUESTIONS_EES bank (211 total in the KV source file, only 140 selectable in the year picker). Added mcYears:[2025…2013] to EES (mirrors the ES/CF/HOSP/GEO pattern above) so all 13 years are selectable and 2013–2018 render under the "Relevant questions selected from previous syllabus" group per activeYearSet()'s existing sf-based split. No worker or KV change needed — this was a front-end year-picker bug only. Prior: build 2026-08-31 · wallet-v1.1 — each class is treated as its own credential. The wallet keyed one code per SUBJECT, so once any class code for a subject was held, ensure()/the deep-link auto-prompt found it via codeFor() and skipped the code prompt on a DIFFERENT class of the same subject — the class door-check never fired and the mismatch only surfaced later as a worker 403. Now codeFor()/recordFor() require the held code's class to match the page's ?class= when CLASS_GATE is on (fail-open when the page carries no class, so browse/whole-cohort are unaffected), put() keeps one entry per (subject,class) so sibling classes coexist, ensure() awaits the gate status before deciding, and the deep-link IIFE always defers to ensure() instead of the sync codeFor() short-circuit. Byte-identical when CLASS_GATE is off. Prior: build 2026-08-31 · classgate-v1.3 — per-class codes enforced at the code-entry door: validate() reads classGate from GET /access, and promptFor() refuses a class code whose class != the page's ?class= (only when the worker reports CLASS_GATE on; whole-cohort codes and pages with no class are exempt), showing "That code is for <CodeClass>, not <PageClass> — use your own class's code". The MC question bank is shared per subject, so class is gated at the door here rather than on /questions. Paired with worker classgate-v1.0 + Marking Coach v3.6. Prior: build 2026-08-31 · subjectgate-v1.2 — wrong-subject codes refused at the code-entry door (mirrors Marking Coach): validate() reads subjectName from GET /access; promptFor() rejects a class code whose canon(subject) != the page subject (staff/master exempt). ALSO countOnly prefetch distinguishes a 403 (access_code_wrong_subject / access_code_required) from an empty bank instead of showing "No questions yet". Paired with worker subjectgate-v1.0 + Marking Coach v3.5. Prior: build 2026-07-25 · feedback v1 — ⚑ Report-an-issue on every question card (visible while answering AND after reveal — answer-key disputes only surface after reveal): inline panel, never a modal, with a category dropdown (Wrong module allocation / Image wrong-missing-unreadable / Table lost its formatting — rows run together / Answer key wrong / Typo in question text / Duplicate question / Other) + optional 200-char note → POST WORKER_URL/log type:"FEEDBACK" tool:"MC" with questionId, subject logCode, year, source, currently-allocated module, student, class and build auto-attached, so the FEEDBACK-tab row + email identify the exact KV-bank entry with zero guesswork. Fire-and-forget (a failed send never interrupts practice); one report per question per page session via state.reportedQs (flag renders solid "Reported ✓" and locks). REQUIRES LogWebhook.gs v14.3 (FEEDBACK branch — tab auto-creates on first report). Prior: geo-modules v1 — GEO module pills set to the four Year-12 strands, numbered M1–M4 to match other subjects (M1 Global Sustainability / M2 Geographical Tools / M3 Rural & Urban Places / M4 Ecosystems & Global Biodiversity); replaces the incorrect 3-pill T1–T3 set. KV bank module field remapped GS.*→M1, GT.*→M2, RU.*→M3, EB.*→M4 (granular ref kept in syllabusRef). Prior: geo-syllabus-fix v1 — GEO syllabusFrom 2024→2025 (new Geography syllabus first examined HSC 2025, NOT 2024) + mcYears:[2025,2024,2023] added so the 2023/2024 bank years stay selectable and are flagged 'Previous syllabus' (2025 = current). Prior: geo v1 — Geography (GEO) added as MC-capable HSIE subject (SUBJECT_CONFIG hasMC:true, logCode Geo, syllabusFrom 2024 — new Geography syllabus first examined HSC 2024; modules T1 Ecosystems & Global Biodiversity / T2 Rural & Urban Places / T3 Global Sustainability; SUBJ_NORMALISE GEO/GEOGRAPHY; LB_SUBJ_MAP GEO→GEO). NOTE: MC tab shows empty until a CUBE_QUESTIONS_GEO KV bank exists AND the Worker maps GEO→CUBE_QUESTIONS_GEO (worker geo-mc-v1.0). sor2-fix v1 — SOR2 syllabusFrom 2019→2011 (SOR II 2009 syllabus, unchanged, first HSC 2011; 2019 wrongly flagged 2011-2018 as previous-syllabus). econ v1 — Economics (ECON) added as MC-capable HSIE subject (SUBJECT_CONFIG hasMC:true, logCode ECON, syllabusFrom 2011, modules T1 The Global Economy / T2 Australia's Place / T3 Economic Issues / T4 Economic Policies & Management; LB_SUBJ_MAP ECON→ECON; SUBJ_NORMALISE ECON/ECONOMICS). NOTE: MC tab shows empty until a CUBE_QUESTIONS_ECON KV bank exists. modh v1 — Modern History (MHIST) added as no-MC subject (SUBJECT_CONFIG hasMC:false, filtered out of MC dropdown like ANCH; SUBJ_NORMALISE MHIST/MODH/MODERNHIST/MODERNHISTORY). physics v1 — Physics (PHYS) added: SUBJECT_CONFIG entry (M5 Advanced Mechanics … M8 From the Universe to the Atom, hasMC, syllabusFrom 2019), SUBJ_NORMALISE PHYS/PHYSICS. class-leaderboard v1 retained (per-class board + webhook drift console line) */
 (function(){
   var UA_MOBILE = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
-  function isMob(){ return UA_MOBILE || window.innerWidth <= 640; }
+  function isMob(){ return UA_MOBILE || window.innerWidth <= 768; }
   function apply(){ document.documentElement.classList.toggle("mobile-ui", isMob()); }
   apply();
   window.addEventListener("resize", apply);
+  window.CUBE_IS_MOBILE = isMob;
 })();
 </script>
-<title>MC & Short Answer Coach — CUBE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono&display=swap" rel="stylesheet">
+<title>CUBE Marking Coach — HSC Learning Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg:        #080d18;
-  --surface:   #0d1520;
-  --surface2:  #111b2a;
-  --border:    rgba(255,255,255,0.08);
-  --text:      #e8eaf0;
-  --muted:     #f5e6a3;
-  --accent:    #c9a84c;
-  --accent2:   #4ecdc4;
-  --correct:   #2ecc71;
-  --wrong:     #e74c3c;
-  --purple:    #a89fff;
-  --orange:    #ff6d00;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --navy: #040d18;
+  --navy-mid: #0a1628;
+  --navy-light: #0e1e34;
+  --blue-accent: #1565c0;
+  --purple: #6c63ff;
+  --green: #2e7d32;
+  --text: #e8eaf0;
+  --text-dim: #7a9ab8;
+  --border: rgba(255,255,255,0.08);
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ─────────────────────────────── MODE SELECT SCREEN ─────────────────────── */
-.mode-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding: 40px 20px 60px;
-}
-
-.mode-title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.mode-headline {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(32px, 6vw, 52px);
-  color: var(--text);
-  text-align: center;
-  line-height: 1.1;
-  margin-bottom: 32px;
-}
-.mode-headline span { color: var(--accent); }
-
-/* Selectors row */
-.selectors-row {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  max-width: 580px;
-  margin-bottom: 20px;
-}
-.selector-group { flex: 1; }
-.selector-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.mode-select {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  background: var(--navy);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 15px;
-  font-weight: 600;
-  padding: 11px 14px 11px 40px;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.15s;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left 12px center;
-}
-.mode-select:focus { border-color: var(--accent); }
-
-/* Module pills */
-.module-pills-wrap {
-  width: 100%;
-  max-width: 580px;
-  margin-bottom: 28px;
-}
-.module-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-.module-pill {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.module-pill:hover { border-color: var(--accent); color: var(--accent); }
-.module-pill.active {
-  background: rgba(201,168,76,0.15);
-  border-color: var(--accent);
-  color: var(--accent);
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
-/* Year pills — teal colour to distinguish from module pills */
-.year-pills-wrap {
-  width: 100%;
-  max-width: 580px;
-  margin-bottom: 20px;
-}
-.year-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.year-pill {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent2);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.year-pill:hover { border-color: var(--accent2); }
-.year-pill.active {
-  background: rgba(78,205,196,0.12);
-  border-color: var(--accent2);
-  color: var(--accent2);
-}
-/* Previous-syllabus year pills — amber + dashed to signal older syllabus */
-.year-pill.prev {
-  border-style: dashed;
-  border-color: rgba(201,140,58,0.7);
-  color: #c98c3a;
-}
-.year-pill.prev:hover { border-color: #e6a040; color: #e6a040; }
-.year-pill.prev.active {
-  background: #c98c3a;
-  border-color: #c98c3a;
-  border-style: solid;
-  color: #1a1a2e;
-  font-weight: 700;
-}
+h1,h2,h3,h4 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
-.year-group-label {
-  width: 100%;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 10px 0 2px;
-}
-.year-note {
-  width: 100%;
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.4;
-}
-/* "Previous syllabus" chip on the question card */
-.q-chip-prev {
-  background: rgba(201,140,58,0.14);
-  color: #c98c3a;
-  border: 1px solid rgba(201,140,58,0.5);
-}
-
-/* Subject pills (multi-select, shown when no ?subject= param) */
-.subject-pills-wrap {
-  width: 100%;
-  max-width: 580px;
-  margin-bottom: 20px;
-}
-.subject-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.subject-pill {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #b8a4ff;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.subject-pill:hover { border-color: #b8a4ff; }
-.subject-pill.active {
-  background: rgba(184,164,255,0.12);
-  border-color: #b8a4ff;
-  color: #b8a4ff;
-}
-
-/* Filter mode cards */
-.filter-mode-wrap {
-  width: 100%;
-  max-width: 580px;
-  margin-bottom: 24px;
-}
-.filter-mode-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 8px;
-}
-.filter-mode-card {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 10px;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-}
-.filter-mode-card:hover { border-color: var(--accent); }
-.filter-mode-card.active {
-  background: rgba(201,168,76,0.12);
-  border-color: var(--accent);
-}
-.filter-mode-icon { font-size: 20px; margin-bottom: 5px; }
-.filter-mode-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.3;
-}
-.filter-mode-desc {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 3px;
-  line-height: 1.3;
-}
-.filter-mode-card.active .filter-mode-label { color: var(--accent); }
-.filter-mode-slow-notice {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--muted);
-  padding: 6px 10px;
-  background: rgba(201,168,76,0.06);
-  border: 1px solid rgba(201,168,76,0.15);
-  border-radius: 8px;
-  display: none;
-}
-.filter-mode-slow-notice.show { display: block; }
-
-/* Count hint */
-.count-hint {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 20px;
-  min-height: 20px;
-  text-align: center;
-}
-
-/* Start button */
-.btn-start {
-  background: linear-gradient(135deg, var(--accent), #e8c96a);
-  color: #040d18;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  padding: 14px 48px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: opacity 0.15s, transform 0.1s;
-}
-.btn-start:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-start:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-.loading-msg {
-  margin-top: 14px;
-  font-size: 13px;
-  color: var(--muted);
-  min-height: 20px;
-  text-align: center;
-}
-
-/* ─────────────────────────────── SESSION HEADER ─────────────────────────── */
-.session-screen { display: none; flex-direction: column; min-height: 100vh; }
-
-.topbar {
-  background: var(--surface);
-  border-bottom: 2px solid var(--accent);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.topbar-left { display: flex; align-items: center; gap: 14px; }
-.logo-badge {
-  background: var(--accent);
-  color: #040d18;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 900;
-  font-size: 13px;
-  letter-spacing: 3px;
-  padding: 4px 10px;
-  border-radius: 5px;
-}
-.topbar-title { font-size: 14px; font-weight: 700; color: var(--text); }
-.topbar-title small {
-  display: block;
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--muted);
-}
-
-.topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.chip {
-  font-size: 12px;
-  font-weight: 800;
-  border-radius: 20px;
-  padding: 4px 12px;
-}
-.chip-streak { color: var(--orange); background: rgba(255,109,0,0.12); border: 1px solid rgba(255,109,0,0.3); }
-.chip-xp     { color: var(--purple); background: rgba(168,159,255,0.12); border: 1px solid rgba(168,159,255,0.3); }
-.chip-module { color: var(--accent2); background: rgba(78,205,196,0.1); border: 1px solid rgba(78,205,196,0.3); font-family: 'DM Mono', monospace; font-size: 11px; }
-
-.btn-exit {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px;
-  color: var(--muted);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-exit:hover { border-color: var(--wrong); color: var(--wrong); }
-
-/* ─────────────────────────────── MAIN LAYOUT ────────────────────────────── */
-.main-layout {
-  display: grid;
-  grid-template-columns: 1fr 240px;
-  gap: 20px;
-  padding: 20px;
-  flex: 1;
-}
-@media (max-width: 860px) {
-  .main-layout { grid-template-columns: 1fr; }
-  .side-panel { display: none; }
-}
-
-/* ─────────────────────────────── QUESTION CARD ─────────────────────────── */
-.q-card {
-  background: var(--surface);
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-.q-header {
-  background: var(--surface2);
-  padding: 12px 18px;
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(4,13,24,0.95);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
+  padding: 0 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
 }
-.q-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.q-chip {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-family: 'DM Mono', monospace;
-}
-.q-chip-num  { background: rgba(201,168,76,0.15); color: var(--accent); border: 1px solid rgba(201,168,76,0.3); }
-.q-chip-mod  { background: rgba(78,205,196,0.1); color: var(--accent2); border: 1px solid rgba(78,205,196,0.25); }
-.q-chip-topic { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
-.q-source { font-size: 11px; color: var(--muted); }
-
-.q-body { padding: 20px 18px; }
-
-/* Stimulus */
-.stimulus-box {
-  background: rgba(78,205,196,0.05);
-  border: 1px solid rgba(78,205,196,0.2);
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  line-height: 1.6;
-  text-align: center;
-}
-.stimulus-label {
-  font-size: 10px;
-  font-weight: 700;
+.nav-logo { display: flex; align-items: center; gap: 12px; }
+.nav-badge {
+  background: var(--gold); color: var(--navy);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 800;
+  font-size: 13px; padding: 4px 12px; border-radius: 6px;
   letter-spacing: 1px;
-  color: var(--accent2);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  text-align: left;
 }
-.stimulus-img {
-  max-width: 100%;
-  max-height: 300px;
-  width: auto;
-  height: auto;
-  display: block;
-  margin: 8px auto 0;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  object-fit: contain;
+.nav-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px; color: var(--text); }
+.nav-sub { font-size: 11px; color: var(--text-dim); }
+.nav-links { display: flex; gap: 16px; }
+.nav-links a { color: var(--text-dim); text-decoration: none; font-size: 12px; transition: color 0.2s; white-space: nowrap; }
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  background: var(--gold); color: var(--navy);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700;
+  font-size: 13px; padding: 8px 18px; border-radius: 8px;
+  text-decoration: none; transition: background 0.2s;
 }
-.stimulus-img {
-  max-width: 100%;
-  max-height: 320px;
-  width: auto;
-  display: block;
-  margin: 8px auto 0;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  object-fit: contain;
-}
+.nav-cta:hover { background: var(--gold-light); }
 
-/* ── Selector summary buttons (mobile dropdown-style sheets) ──────────────── */
-.selector-summary-btn { display: none; }
-.filter-summary {
-  width: 100%; max-width: 580px; margin: 2px 0 6px;
-  font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace;
-  text-align: center; letter-spacing: 0.3px; word-break: break-word;
+/* ── HERO (compact) ──
+   v7 2026-07-10: the large marking-demo panel (hero-visual / steps / cube-card / xp)
+   that previously filled the hero's right column was REMOVED BY DESIGN — the hero is
+   now a compact intro with a "Continue where you left off" card. Do not reintroduce. */
+.hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 90% 80%, rgba(108,99,255,0.08) 0%, transparent 50%),
+    var(--navy);
+  padding: 28px 5% 22px;
+  position: relative; overflow: hidden;
 }
-.start-bar { width: 100%; max-width: 580px; text-align: center; }
-
-/* ── Mobile UI — applied via html.mobile-ui class (UA + width detection),
-     because inside the Google Sites iframe the window width is desktop-sized
-     on phones and width media queries never fire. ─────────────────────── */
-
-  /* Selector sheets: summary button visible; pill panel collapses like a dropdown */
-html.mobile-ui .selector-summary-btn {
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    width: 100%; box-sizing: border-box; margin-top: 8px;
-    background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px;
-    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    padding: 12px 14px; cursor: pointer; text-align: left;
-  }
-/* Touch devices keep :hover stuck after a tap, which made a de-selected pill still
-   look selected. Kill hover accents whenever the mobile UI is active. build mc-mobile v3 */
-html.mobile-ui .module-pill:hover,
-html.mobile-ui .year-pill:hover,
-html.mobile-ui .year-pill.prev:hover,
-html.mobile-ui .subject-pill:hover { border-color: var(--border); color: inherit; }
-html.mobile-ui .filter-mode-card:hover { border-color: var(--border); }
-html.mobile-ui .module-pill.active:hover { border-color: var(--accent); color: var(--accent); }
-html.mobile-ui .year-pill.active:hover { border-color: var(--accent2); }
-html.mobile-ui .year-pill.prev.active:hover { border-color: #c98c3a; background: #c98c3a; }
-html.mobile-ui .subject-pill.active:hover { border-color: #b8a4ff; }
-html.mobile-ui .selector-summary-btn .sel-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-html.mobile-ui .selector-summary-btn .arrow { color: var(--accent); font-size: 11px; flex-shrink: 0; }
-html.mobile-ui .sheet-wrap .module-pills, html.mobile-ui .sheet-wrap .year-pills, html.mobile-ui .sheet-wrap .subject-pills { display: none; }
-html.mobile-ui .sheet-wrap.open .module-pills, html.mobile-ui .sheet-wrap.open .year-pills, html.mobile-ui .sheet-wrap.open .subject-pills {
-    display: block; margin-top: 8px; background: var(--surface2);
-    border: 1px solid var(--border); border-radius: 10px; padding: 8px;
-    max-height: 300px; overflow-y: auto;
-  }
-  /* Pills become full-width checklist rows inside the sheet */
-html.mobile-ui .sheet-wrap .module-pill, html.mobile-ui .sheet-wrap .year-pill, html.mobile-ui .sheet-wrap .subject-pill {
-    display: flex; width: 100%; box-sizing: border-box; justify-content: space-between;
-    align-items: center; border-radius: 8px; padding: 11px 12px; font-size: 14px;
-    margin: 0 0 6px 0; white-space: normal; text-align: left;
-  }
-html.mobile-ui .sheet-wrap .module-pill::after, html.mobile-ui .sheet-wrap .year-pill::after, html.mobile-ui .sheet-wrap .subject-pill::after {
-    content: "○"; color: var(--muted); font-size: 14px; margin-left: 8px; flex-shrink: 0;
-  }
-html.mobile-ui .sheet-wrap .module-pill.active::after, html.mobile-ui .sheet-wrap .year-pill.active::after, html.mobile-ui .sheet-wrap .subject-pill.active::after {
-    content: "✓"; color: var(--accent); font-weight: 900;
-  }
-  /* Compact mode cards — icon + label only */
-html.mobile-ui .filter-mode-desc { display: none; }
-html.mobile-ui .filter-mode-cards { display: flex; gap: 8px; }
-html.mobile-ui .filter-mode-card { flex: 1; padding: 10px 4px; text-align: center; }
-html.mobile-ui .filter-mode-icon { font-size: 18px; margin-bottom: 2px; }
-html.mobile-ui .filter-mode-label { font-size: 12px; }
-  /* Sticky start bar */
-html.mobile-ui .start-bar {
-    position: sticky; bottom: 0; padding: 10px 0 14px; margin-top: 4px;
-    background: linear-gradient(180deg, transparent, var(--bg, #0d1117) 30%);
-    z-index: 50;
-  }
-html.mobile-ui .start-bar .btn-start { width: 100%; margin-top: 6px; }
-html.mobile-ui .topbar { padding: 8px 12px; }
-html.mobile-ui .topbar-title { font-size: 12px; }
-html.mobile-ui .topbar-title small { display: none; }
-html.mobile-ui .chip-module { display: none; }
-html.mobile-ui .logo-badge { font-size: 11px; padding: 3px 7px; }
-html.mobile-ui .btn-exit { padding: 4px 8px; font-size: 11px; }
-html.mobile-ui .main-layout { padding: 10px; gap: 10px; }
-html.mobile-ui .side-panel { display: none; }
-html.mobile-ui .q-body { padding: 14px 12px; }
-html.mobile-ui .q-stem { font-size: 15px; margin-bottom: 14px; }
-html.mobile-ui .option-btn { font-size: 14px; padding: 10px 12px; gap: 8px; }
-html.mobile-ui .option-label { font-size: 13px; }
-html.mobile-ui .stimulus-img { max-height: 220px; }
-html.mobile-ui .stimulus-box { padding: 10px; }
-html.mobile-ui .reflection-btns { flex-direction: column; }
-html.mobile-ui .ref-btn { width: 100%; text-align: center; padding: 10px; }
-html.mobile-ui .feedback-panel { font-size: 13px; }
-html.mobile-ui .mode-screen { padding: 24px 16px 40px; }
-html.mobile-ui .mode-headline { font-size: 28px; margin-bottom: 20px; }
-html.mobile-ui .module-pills { gap: 6px; }
-html.mobile-ui .module-pill { padding: 6px 10px; font-size: 12px; }
-html.mobile-ui .year-pills { gap: 6px; }
-html.mobile-ui .year-pill { padding: 5px 10px; font-size: 12px; }
-html.mobile-ui .btn-start { font-size: 15px; padding: 14px 24px; }
-html.mobile-ui .complete-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-
-
-.q-stem {
-  font-size: 17px;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  color: var(--text);
-}
-
-/* Options */
-.options { display: flex; flex-direction: column; gap: 10px; }
-.option-btn {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: var(--surface2);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  cursor: pointer;
-  text-align: left;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  color: var(--text);
-  transition: all 0.12s;
-  width: 100%;
-}
-.option-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(201,168,76,0.06); }
-.option-btn:disabled { cursor: default; }
-.option-btn.correct { border-color: var(--correct); background: rgba(46,204,113,0.08); color: var(--text); }
-.option-btn.wrong   { border-color: var(--wrong);   background: rgba(231,76,60,0.08);  color: var(--text); }
-.option-label {
-  font-weight: 800;
-  font-size: 14px;
-  min-width: 22px;
-  color: var(--accent);
-  margin-top: 1px;
-}
-.option-text { flex: 1; line-height: 1.4; }
-
-/* Feedback panel */
-.feedback-panel {
-  display: none;
-  margin-top: 20px;
-  border-radius: 10px;
-  padding: 16px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-.feedback-panel.correct {
-  display: block;
-  background: rgba(46,204,113,0.07);
-  border: 1px solid rgba(46,204,113,0.25);
-}
-.feedback-panel.wrong {
-  display: block;
-  background: rgba(231,76,60,0.07);
-  border: 1px solid rgba(231,76,60,0.25);
-}
-.feedback-result {
-  font-size: 16px;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-.feedback-result.correct { color: var(--correct); }
-.feedback-result.wrong   { color: var(--wrong); }
-.feedback-section { margin-top: 10px; }
-.feedback-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-/* Reflection buttons (Coach Mode wrong answer) */
-.reflection-wrap {
-  display: none;
-  margin-top: 16px;
-}
-.reflection-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-.reflection-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.ref-btn {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 13px;
-  color: var(--text);
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: border-color 0.12s;
-}
-.ref-btn:hover { border-color: var(--accent2); }
-
-/* Next button */
-.btn-next {
-  margin-top: 18px;
-  background: linear-gradient(135deg, var(--accent), #e8c96a);
-  color: #040d18;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  padding: 12px 32px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  display: none;
-}
-.btn-next:hover { opacity: 0.9; }
-
-/* XP pop animation */
-.xp-pop {
-  position: fixed;
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  color: var(--purple);
-  animation: floatUp 1.2s ease-out forwards;
-  z-index: 9999;
 }
-@keyframes floatUp {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
+.hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: center; position: relative; }
+.hero h1 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 800; line-height: 1.15;
+  color: var(--text); margin-bottom: 10px;
 }
+.hero h1 span { color: var(--gold); }
+.hero-desc { font-size: 14px; color: #c8daea; line-height: 1.65; max-width: 460px; }
 
-/* ─────────────────────────────── SIDE PANEL ─────────────────────────────── */
-.side-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+/* Continue / get-started card (hero right) */
+.hero-side { display: flex; justify-content: flex-end; }
+.cw-card {
+  width: 100%; max-width: 380px;
+  background: linear-gradient(135deg, #0e1e34, #101a2c);
+  border: 1px solid rgba(201,168,76,0.35); border-radius: 16px;
+  padding: 18px 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.35);
 }
-.panel-card {
-  background: var(--surface);
+.cw-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.cw-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.cw-emoji { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(201,168,76,0.5); background: rgba(201,168,76,0.08); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cw-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px; line-height: 1.25; color: var(--text); }
+.cw-class { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.cw-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-bottom: 12px; font-size: 11px; color: var(--text-dim); }
+.cw-resume {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 800; font-size: 14px;
+  padding: 11px 0; border-radius: 10px; text-decoration: none;
+  box-shadow: 0 4px 18px rgba(201,168,76,0.3); transition: transform .2s, box-shadow .2s;
+  border: none; cursor: pointer; box-sizing: border-box;
+}
+.cw-resume:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(201,168,76,0.4); }
+/* First-visit variant: quick steps instead of a resume target */
+.cw-steps { list-style: none; margin: 0 0 6px; padding: 0; }
+.cw-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #dce8f0; margin-bottom: 8px; line-height: 1.45; }
+.cw-steps .n { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 20px; height: 20px; border-radius: 50%; background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.45); color: var(--gold); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* ── SECTION WRAPPER ── */
+section { padding: 80px 5%; }
+/* Per-section desktop paddings — stylesheet rules, NOT inline !important.
+   Inline !important beat the mobile reset (html.mobile-ui section.collapsed-mobile
+   { padding:0 4% !important }) and produced the uneven 10–58px gaps between
+   collapsed section cards on phones. As id rules they still override the 80px
+   base on desktop but lose to the !important mobile reset as intended. */
+#research { padding: 60px 5%; }
+#how      { padding: 48px 5% 36px; }
+#privacy  { padding: 40px 5%; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-tag {
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+}
+.section-title { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 16px; color: #f0c030; }
+.section-desc { color: #dce8f0; font-size: 16px; max-width: 560px; line-height: 1.7; }
+
+/* ── HOW IT WORKS ── */
+.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 28px; }
+.how-card {
+  background: linear-gradient(135deg, #0e1e34, #0a1628);
+  border: 1.5px solid rgba(201,168,76,0.4); border-radius: 16px; padding: 28px 24px;
+  position: relative; transition: border-color 0.3s, transform 0.3s;
+}
+.how-card:hover { border-color: rgba(201,168,76,0.8); transform: translateY(-3px); }
+.how-num {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800;
+  color: var(--gold); position: absolute; top: 14px; right: 18px;
+  line-height: 1; opacity: 0.9;
+}
+.how-icon { font-size: 32px; margin-bottom: 16px; }
+.how-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 8px; color: #f0c030; }
+.how-desc { font-size: 15px; color: #dce8f0; line-height: 1.6; }
+
+/* ── PHOTO GUIDE ── */
+.photo-section { background: linear-gradient(135deg, #080f1c, #0a1220); padding-top: 48px !important; }
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+.photo-col h3 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.photo-col h3.good { color: #69f0ae; }
+.photo-col h3.bad { color: #ff5252; }
+.photo-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 10px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
 }
-.panel-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
-.stat-row:last-child { border-bottom: none; }
-.stat-val { font-weight: 700; font-family: 'DM Mono', monospace; }
-.stat-val.good    { color: var(--correct); }
-.stat-val.neutral { color: var(--purple); }
+.photo-item.good { border-left: 3px solid #69f0ae; }
+.photo-item.bad { border-left: 3px solid #ff5252; }
+.photo-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.photo-text { font-size: 15px; color: #dce8f0; line-height: 1.5; }
+.photo-text strong { color: #f0c030; display: block; margin-bottom: 2px; font-size: 17px; }
 
-.error-item { font-size: 12px; padding: 4px 0; color: var(--muted); }
-.error-bar {
-  height: 4px;
-  background: var(--surface2);
-  border-radius: 2px;
-  margin-top: 3px;
+/* Mock photo examples */
+.mock-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.mock-photo {
+  border-radius: 12px; overflow: hidden; position: relative;
+  aspect-ratio: 4/3;
 }
-.error-fill {
-  height: 4px;
-  background: var(--wrong);
-  border-radius: 2px;
-  transition: width 0.4s ease;
+.mock-photo .overlay {
+  position: absolute; inset: 0; display: flex; align-items: flex-end;
+  padding: 12px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+}
+.mock-photo-label { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.mock-photo-label.good { color: #69f0ae; }
+.mock-photo-label.bad { color: #ff5252; }
+
+/* Illustrated worksheet previews */
+.ws-good { background: #f5f0e8; border-radius: 8px; padding: 12px; }
+.ws-bad { background: #f5f0e8; border-radius: 8px; padding: 12px; transform: rotate(90deg) scale(0.7); }
+.ws-line { height: 2px; background: #ccc; margin: 4px 0; border-radius: 1px; }
+.ws-dot-line { border-bottom: 2px dotted #bbb; margin: 4px 0; }
+.ws-q { font-family: 'Courier New'; font-size: 9px; color: #333; font-weight: 700; margin-bottom: 4px; }
+.ws-text { font-size: 8px; color: #555; line-height: 1.4; }
+
+/* ── LIMITATIONS ── */
+.limits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; }
+.limit-card {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; display: flex; gap: 14px;
+}
+.limit-icon { font-size: 22px; flex-shrink: 0; }
+.limit-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 4px; color: #f0c030; }
+.limit-desc { font-size: 15px; color: #dce8f0; line-height: 1.6; }
+
+/* ── SUBJECT BROWSER v3 — faculty panels (v7 facultyPanels · 2026-07-10) ──
+   Rendered by JS from school-SIHS.json into full-width faculty panels: faculty
+   header (name + description, NO icon), subject cards (emoji + name + class-count
+   badge), 2+ classes expand to a class picker inside the card. If the fetch fails,
+   the static fallback list below remains untouched (automatic rollback). */
+.choose-section { padding: 34px 5% 30px; background: linear-gradient(180deg, var(--navy) 0%, #071120 100%); }
+.choose-inner { max-width: 1100px; margin: 0 auto; }
+.choose-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: clamp(1.4rem, 2.4vw, 1.9rem); font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.choose-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
+
+#subjects.subjects-v3 { display: flex; flex-wrap: wrap; gap: 14px; }
+.fac-panel {
+  border-radius: 16px; box-sizing: border-box; min-width: 240px;
+  border: 1px solid var(--fac-border, rgba(255,255,255,0.1));
+  background: var(--fac-bg, rgba(255,255,255,0.02));
+  padding: 16px 16px 14px;
+}
+.fac-head { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fac-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--fac-color, var(--gold)); }
+.fac-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.fac-arrow { display: none; }
+.fac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 10px; align-items: start; }
+
+.sv3-card {
+  background: linear-gradient(135deg, #0e1e34, #0a1628);
+  border: 1.5px solid rgba(255,255,255,0.12); border-radius: 12px;
+  padding: 12px 14px; text-align: left; cursor: pointer; text-decoration: none;
+  color: var(--text); transition: transform .2s, box-shadow .2s, border-color .2s;
+  display: block; box-sizing: border-box;
+}
+.sv3-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.sv3-top { display: flex; align-items: flex-start; gap: 9px; }
+.sv3-emoji { font-size: 20px; line-height: 1.2; flex-shrink: 0; }
+.sv3-name { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+.sv3-badge { display: inline-block; margin-top: 9px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: var(--acc-bg, rgba(255,255,255,0.06)); color: var(--acc, var(--text-dim)); }
+.sv3-hint { font-size: 10px; color: var(--text-dim); margin-top: 8px; font-family: monospace; }
+.sv3-picker-label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 6px; border-top: 1px solid var(--border); padding-top: 10px; }
+.sv3-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.sv3-pill { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.25); text-decoration: none; color: var(--text); background: rgba(255,255,255,0.05); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.sv3-pill:hover { background: rgba(255,255,255,0.12); }
+.sv3-select { width: 100%; margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #0a1628; color: var(--text); border: 1.5px solid rgba(255,255,255,0.25); font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+/* Static fallback (shown only if school-SIHS.json fails to load / JS fails) */
+.subj-fallback { display: flex; flex-direction: column; gap: 6px; }
+.subj-fallback .fb-kla { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-top: 8px; }
+.subj-fallback a { color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.03); }
+.subj-fallback a:hover { border-color: rgba(201,168,76,0.5); }
+
+/* Activity strip under the browser (desktop only; real localStorage data only) */
+.activity-strip { max-width: 1100px; margin: 22px auto 0; display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+.as-panel { border: 1px solid var(--border); border-radius: 14px; background: rgba(255,255,255,0.02); padding: 14px 16px; }
+.as-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.as-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); margin-bottom: 6px; }
+.as-row .t { color: var(--text-dim); font-size: 11px; flex-shrink: 0; }
+.as-empty { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+.as-research { display: flex; gap: 12px; align-items: flex-start; }
+.as-research .icon { font-size: 24px; }
+.as-research .rt { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 3px; }
+.as-research .rd { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }
+.as-research a { color: var(--gold); font-size: 12.5px; font-weight: 700; text-decoration: none; }
+
+/* ── STAFF CALLOUT ── */
+.staff-callout {
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
+  border: 1px solid rgba(201,168,76,0.2); border-radius: 16px;
+  padding: 32px; margin-top: 48px;
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.staff-icon { font-size: 32px; flex-shrink: 0; }
+.staff-title { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 16px; color: var(--gold); margin-bottom: 8px; }
+.staff-desc { font-size: 15px; color: #dce8f0; line-height: 1.6; }
+.staff-desc a { color: var(--gold); text-decoration: none; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); padding: 32px 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text-dim);
 }
 
-/* Progress bar */
-.progress-wrap { margin-bottom: 12px; }
-.progress-bg {
-  height: 5px;
-  background: var(--surface2);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 5px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-.progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 5px;
-}
+/* ── RESPONSIVE / MOBILE — driven by html.mobile-ui (UA + width detection) because
+     inside the Google Sites iframe the window width is desktop-sized on phones,
+     so width-only media queries never fire. build 2026-07-13 · v9 economics (3 HSIE links: 12HEC1-3 → subject=ECON class=ECON-1..3) ── */
+html.mobile-ui .hero { padding: 14px 4% 12px; }
+html.mobile-ui .hero-inner { grid-template-columns: 1fr; gap: 14px; }
+/* Students land here to pick a subject — hide the headline, keep the continue card */
+html.mobile-ui .hero h1, html.mobile-ui .hero-desc { display: none; }
+html.mobile-ui .hero-side { justify-content: stretch; }
+html.mobile-ui .cw-card { max-width: none; padding: 14px 16px; }
 
-/* ─────────────────────────────── SESSION COMPLETE ───────────────────────── */
-/* When showing complete screen, collapse grid to centred single column */
-.session-screen.complete-mode .main-layout {
-  grid-template-columns: 1fr;
-  max-width: 620px;
-  margin: 0 auto;
-  width: 100%;
-}
-.session-screen.complete-mode .side-panel { display: none; }
-.session-screen.complete-mode .progress-wrap { display: none; }
+html.mobile-ui .choose-section { padding: 18px 4% 22px; }
+html.mobile-ui .choose-sub { margin-bottom: 14px; }
+/* Faculty panels become tap-to-expand accordions */
+html.mobile-ui #subjects.subjects-v3 { flex-direction: column; gap: 12px; }
+html.mobile-ui .fac-panel { flex-basis: auto !important; min-width: 0; width: 100%; padding: 0; overflow: hidden; }
+html.mobile-ui .fac-head { padding: 14px 16px; margin: 0; cursor: pointer; }
+html.mobile-ui .fac-arrow { display: inline-block; color: var(--fac-color, var(--gold)); font-size: 13px; flex-shrink: 0; transition: transform .2s; }
+html.mobile-ui .fac-grid { display: none; grid-template-columns: 1fr 1fr; gap: 9px; padding: 0 12px 12px; }
+html.mobile-ui .fac-panel.open .fac-grid { display: grid; }
+html.mobile-ui .fac-panel.open .fac-arrow { transform: rotate(180deg); }
+/* An expanded class picker gets the full row so pills have room */
+html.mobile-ui .sv3-card.open { grid-column: 1 / -1; }
+html.mobile-ui .sv3-name { font-size: 13px; }
+html.mobile-ui .activity-strip { display: none !important; }
 
-.complete-screen {
-  text-align: center;
-  padding: 60px 20px;
+html.mobile-ui .how-grid { grid-template-columns: 1fr; }
+html.mobile-ui .photo-grid { grid-template-columns: 1fr; }
+html.mobile-ui .limits-grid { grid-template-columns: 1fr; }
+html.mobile-ui .nav-links { display: none; }
+html.mobile-ui .staff-callout { flex-direction: column; }
+
+/* Collapsible info sections — even spacing, clear headings */
+.sec-toggle { display: none; }
+html.mobile-ui section.collapsed-mobile {
+  padding: 0 4% !important; margin: 0 !important; border: none !important; background: none !important;
 }
-.complete-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 52px;
-  color: var(--accent);
-  margin-bottom: 8px;
+html.mobile-ui .sec-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; max-width: 680px; margin: 0 auto 12px; padding: 16px 18px;  /* 12px = the ONE knob for card rhythm */
+  background: linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.03));
+  border: 1px solid rgba(201,168,76,0.28); border-left: 4px solid var(--gold);
+  border-radius: 12px; color: #f0e6c8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px; font-weight: 800; letter-spacing: 0.2px; text-align: left; cursor: pointer;
 }
-.complete-stats {
-  font-size: 16px;
-  color: var(--muted);
-  margin-bottom: 30px;
-}
-.complete-grid {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
-}
-.complete-stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 24px;
-  min-width: 110px;
-}
-.complete-stat-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px;
-  color: var(--accent);
-}
-.complete-stat-label {
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-/* ── feedback v1 — ⚑ report-an-issue flag + inline panel ──────────────────── */
-.q-report-row{ display:flex; justify-content:flex-end; margin:0 0 6px; }
-.q-report-btn{
-  background:none; border:1px solid var(--border); color:var(--muted);
-  font-size:11px; font-weight:700; letter-spacing:0.4px; padding:3px 10px;
-  border-radius:14px; cursor:pointer; white-space:nowrap; transition:all 0.15s;
-}
-.q-report-btn:hover{ color:var(--accent); border-color:rgba(201,168,76,0.5); }
-.q-report-btn.reported{ color:#7ddc9c; border-color:rgba(125,220,156,0.45); cursor:default; }
-.q-report-panel{ display:none; margin:0 0 12px; padding:12px 14px;
-  background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; }
-.q-report-panel.open{ display:block; }
-.q-report-title{ font-size:11px; font-weight:700; color:var(--muted);
-  letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
-.q-report-select, .q-report-note{ width:100%; box-sizing:border-box; background:var(--bg);
-  border:1px solid var(--border); border-radius:8px; color:var(--text);
-  font-size:13px; padding:8px 10px; font-family:inherit; }
-.q-report-select{ margin-bottom:8px; }
-.q-report-note{ resize:vertical; min-height:52px; margin-bottom:10px; }
-.q-report-actions{ display:flex; gap:8px; justify-content:flex-end; }
-.q-report-cancel{ background:none; border:1px solid var(--border); color:var(--muted);
-  font-size:12px; font-weight:700; padding:6px 14px; border-radius:8px; cursor:pointer; }
-.q-report-send{ background:var(--accent); border:none; color:#040d18;
-  font-size:12px; font-weight:800; padding:6px 14px; border-radius:8px; cursor:pointer; }
+html.mobile-ui .sec-toggle:active { background: linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.06)); }
+html.mobile-ui .sec-toggle .arrow { color: var(--gold); font-size: 14px; flex-shrink: 0; }
+/* Expanded section body sits directly under its toggle with tidy padding */
+html.mobile-ui section.collapsed-mobile > div:last-child { padding: 4px 2px 18px !important; }
+/* First toggle gets a divider above it to separate from the subject picker */
+html.mobile-ui #research { margin-top: 14px !important; padding-top: 14px !important; border-top: 1px solid rgba(255,255,255,0.08) !important; }
+html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; padding: 22px 5% 26px; margin-top: 8px; }
+
 </style>
 </head>
-<body>
+<body id="top">
 
-<!-- ══════════════════════════════ MODE SELECT SCREEN ══════════════════════ -->
-<div class="mode-screen" id="modeScreen">
-  <div class="mode-title">CUBE MARKING COACH</div>
-  <div class="mode-headline">MC &amp; SHORT <span>ANSWER COACH</span></div>
-
-  <!-- Student name -->
-  <div style="width:100%;max-width:580px;margin-bottom:20px;">
-    <div class="selector-label">Your Name</div>
-    <input type="text" id="studentNameInput" placeholder="First name + initial  e.g. Sue W"
-      value=""
-      oninput="state.studentName=this.value.trim();localStorage.setItem('cube_student_name',this.value.trim())"
-      style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;padding:11px 14px;outline:none;"/>
-    <div style="font-size:11px;color:var(--muted);margin-top:5px;">Used for the class leaderboard — first name + surname initial only</div>
-  </div>
-
-  <!-- Subject: locked label (from landing page) OR multi-select pills (direct access) -->
-  <div style="width:100%;max-width:580px;margin-bottom:20px;">
-    <div class="selector-label">Subject
-      <span id="subjectHint" style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);"> (select one or more)</span>
-    </div>
-    <!-- Locked: single subject from URL param -->
-    <div id="subjectLocked" style="display:none;background:var(--surface2);border:1px solid var(--border);
-         border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;
-         font-weight:600;padding:11px 16px;"></div>
-    <!-- Free: multi-select pills -->
-    <div id="subjectDropdown" class="sheet-wrap">
-      <button type="button" class="selector-summary-btn" onclick="toggleSelectorSheet(this)">
-        <span class="sel-text" id="subjectSummary">Earth &amp; Environmental Science</span><span class="arrow">▼</span>
-      </button>
-      <div class="subject-pills" id="subjectPills">
-        <!-- Populated by JS -->
-      </div>
-      <select id="subjectSelect" style="display:none;" onchange="onSubjectChange()">
-        <option value="EES">Earth &amp; Environmental Science</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="module-pills-wrap sheet-wrap">
-    <div class="selector-label">Module / Topic <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
-    <button type="button" class="selector-summary-btn" onclick="toggleSelectorSheet(this)">
-      <span class="sel-text" id="moduleSummary">All Modules</span><span class="arrow">▼</span>
-    </button>
-    <div class="module-pills" id="modulePills">
-      <!-- Populated by JS on subject change -->
-    </div>
-  </div>
-
-  <div class="year-pills-wrap sheet-wrap">
-    <div class="selector-label">Year <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);">(select one or more)</span></div>
-    <button type="button" class="selector-summary-btn" onclick="toggleSelectorSheet(this)">
-      <span class="sel-text" id="yearSummary">All Years</span><span class="arrow">▼</span>
-    </button>
-    <div class="year-pills" id="yearPills">
-      <!-- Populated by JS on subject change -->
-    </div>
-  </div>
-
-  <!-- Question filter mode -->
-  <div class="filter-mode-wrap">
-    <div class="selector-label">Question Selection Mode</div>
-    <div class="filter-mode-cards" id="filterModeCards">
-      <div class="filter-mode-card active" data-mode="random" onclick="selectFilterMode(this)">
-        <div class="filter-mode-icon">🎲</div>
-        <div class="filter-mode-label">Random</div>
-        <div class="filter-mode-desc">Shuffle from selected filters</div>
-      </div>
-      <div class="filter-mode-card" data-mode="wrong" onclick="selectFilterMode(this)">
-        <div class="filter-mode-icon">❌</div>
-        <div class="filter-mode-label">Got Wrong</div>
-        <div class="filter-mode-desc">Questions you previously got wrong (last attempt)</div>
-      </div>
-      <div class="filter-mode-card" data-mode="notattempted" onclick="selectFilterMode(this)">
-        <div class="filter-mode-icon">🆕</div>
-        <div class="filter-mode-label">Not Attempted</div>
-        <div class="filter-mode-desc">Questions you've never tried before</div>
-      </div>
-    </div>
-    <div class="filter-mode-slow-notice" id="filterModeSlowNotice">
-      ⏳ This mode checks your history in the spreadsheet — may take a few extra seconds to start.
-      Requires your name to be entered above.
-    </div>
-  </div>
-
-  <div class="filter-summary" id="filterSummary"></div>
-  <div class="start-bar">
-    <div class="count-hint" id="countHint">Loading…</div>
-    <button class="btn-start" id="btnStart" onclick="startSession()" disabled>START SESSION</button>
-  </div>
-  <div class="loading-msg" id="loadingMsg"></div>
-  <!-- Debug button — only shown when ?debug=1 is in the URL -->
-  <button id="btnDebug" onclick="runDebug()"
-    style="display:none;margin-top:14px;background:transparent;border:1px solid rgba(78,205,196,0.35);
-           border-radius:20px;color:var(--accent2);font-family:'DM Sans',sans-serif;
-           font-size:11px;font-weight:600;padding:5px 16px;cursor:pointer;">
-    🔍 Debug: Test History Fetch
-  </button>
-  <pre id="debugOut"
-    style="display:none;margin-top:10px;width:100%;max-width:580px;
-           background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-           padding:12px;font-size:10px;color:var(--accent2);white-space:pre-wrap;
-           word-break:break-all;font-family:monospace;text-align:left;"></pre>
-
-</div>
-
-<!-- ══════════════════════════════ SESSION SCREEN ══════════════════════════ -->
-<div class="session-screen" id="sessionScreen">
-
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="logo-badge">CUBE</div>
-      <div class="topbar-title">
-        MC &amp; Short Answer Coach
-        <small id="topbarSubject">Earth &amp; Environmental Science</small>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <span class="chip chip-module" id="chipModule">All Modules</span>
-      <span class="chip chip-streak" id="chipStreak">🔥 0</span>
-      <span class="chip chip-xp"     id="chipXP">⚡ 0 XP</span>
-      <button class="btn-exit" onclick="exitSession()">✕ Exit</button>
-    </div>
-  </div>
-
-  <div class="main-layout">
-
-    <!-- Question card -->
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-badge">CUBE</div>
     <div>
-      <div class="progress-wrap">
-        <div class="progress-label">
-          <span id="progressLabel">Q 1 of 0</span>
-          <span id="progressPct">0%</span>
-        </div>
-        <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      </div>
+      <div class="nav-title">Marking Coach</div>
+      <div class="nav-sub">AI-powered HSC feedback</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#top">Home</a>
+    <a href="#how">How it works</a>
+    <a href="#research">Supporting Research</a>
+    <a href="#photos">Photo guide</a>
+    <a href="#limits">Limitations</a>
+    <a href="#privacy">Privacy</a>
+  </div>
 
-      <div class="q-card" id="questionCard">
-        <!-- Populated by JS -->
+</nav>
+
+<!-- HERO — compact intro + continue card (v7: demo panel removed by design, do not reintroduce) -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Get instant feedback on your <span>HSC answers</span></h1>
+      <p class="hero-desc">
+        The CUBE Marking Coach uses AI to analyse your written responses, check your CUBE annotations, and give you personalised feedback — instantly, any time.
+      </p>
+    </div>
+    <div class="hero-side" id="heroSide">
+      <!-- Replaced by a "Continue where you left off" card when a previous launch exists -->
+      <div class="cw-card">
+        <div class="cw-label">Get started</div>
+        <ul class="cw-steps">
+          <li><span class="n">1</span>Pick your subject and class below</li>
+          <li><span class="n">2</span>CUBE the question, write your answer, photograph it</li>
+          <li><span class="n">3</span>Get instant, personalised feedback</li>
+        </ul>
+        <a class="cw-resume" href="#choose">Choose a subject ↓</a>
       </div>
     </div>
-
-    <!-- Side panel -->
-    <div class="side-panel">
-      <div class="panel-card">
-        <div class="panel-title">Session Stats</div>
-        <div class="stat-row"><span>Correct</span>  <span class="stat-val good"    id="statCorrect">0</span></div>
-        <div class="stat-row"><span>Attempted</span><span class="stat-val neutral" id="statAttempted">0</span></div>
-        <div class="stat-row"><span>Accuracy</span> <span class="stat-val good"    id="statAccuracy">—</span></div>
-        <div class="stat-row"><span>Best Streak</span><span class="stat-val neutral" id="statStreak">0</span></div>
-        <div class="stat-row"><span>Session XP</span><span class="stat-val neutral" id="statXP">0</span></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Error Patterns</div>
-        <div id="errorPanel">
-          <div style="font-size:12px;color:var(--muted)">No errors yet — keep going!</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
+
+<!-- SUBJECT BROWSER — the central feature: faculty panels rendered from school-SIHS.json -->
+<section id="choose" class="choose-section">
+  <div class="choose-inner">
+    <h2 class="choose-title">Choose your subject</h2>
+    <p class="choose-sub">Select your faculty, then your subject to get started.</p>
+    <div id="subjects">
+      <div class="subj-fallback">
+        <div class="fb-kla">Science</div>
+        <a href="app/?subject=EES" target="_blank" rel="noopener">🌏 12 Earth &amp; Environmental Science</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-1" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-1</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-2" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-2</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-3" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-3</a>
+        <a href="app/?subject=BIO&amp;class=12Bio-4" target="_blank" rel="noopener">🔬 12 Biology — 12Bio-4</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-1" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS1</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-2" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS2</a>
+        <a href="app/?subject=InvSci&amp;class=12InvSci-3" target="_blank" rel="noopener">🔬 12 Investigating Science — 12SIS3</a>
+        <a href="app/?subject=Chem&amp;class=Chem-1" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH1</a>
+        <a href="app/?subject=Chem&amp;class=Chem-2" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH2</a>
+        <a href="app/?subject=Chem&amp;class=Chem-3" target="_blank" rel="noopener">⚗️ 12 Chemistry — 12SCH3</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-1" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH1</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-2" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH2</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-3" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH3</a>
+        <a href="app/?subject=PHYS&amp;class=PHYS-4" target="_blank" rel="noopener">⚛️ 12 Physics — 12PH4</a>
+        <div class="fb-kla">HSIE</div>
+        <a href="app/?subject=BusS&amp;class=BusS-1" target="_blank" rel="noopener">📊 12 Business Studies — BusS-1</a>
+        <a href="app/?subject=BusS&amp;class=BusS-2" target="_blank" rel="noopener">📊 12 Business Studies — BusS-2</a>
+        <a href="app/?subject=BusS&amp;class=BusS-3" target="_blank" rel="noopener">📊 12 Business Studies — BusS-3</a>
+        <a href="app/?subject=LEG&amp;class=12LS-1" target="_blank" rel="noopener">⚖️ 12 Legal Studies — 12LS-1</a>
+        <a href="app/?subject=LEG&amp;class=12LS-2" target="_blank" rel="noopener">⚖️ 12 Legal Studies — 12LS-2</a>
+        <a href="app/?subject=ANCH&amp;class=12AHis" target="_blank" rel="noopener">🏛️ 12 Ancient History — 12AHis</a>
+        <a href="app/?subject=MHIST&amp;class=MHIST-1" target="_blank" rel="noopener">📜 12 Modern History — 12HMH1</a>
+        <a href="app/?subject=MHIST&amp;class=MHIST-2" target="_blank" rel="noopener">📜 12 Modern History — 12HMH2</a>
+        <a href="app/?subject=MHIST&amp;class=MHIST-3" target="_blank" rel="noopener">📜 12 Modern History — 12HMH3</a>
+        <a href="app/?subject=ECON&amp;class=ECON-1" target="_blank" rel="noopener">📈 12 Economics — 12HEC1</a>
+        <a href="app/?subject=ECON&amp;class=ECON-2" target="_blank" rel="noopener">📈 12 Economics — 12HEC2</a>
+        <a href="app/?subject=ECON&amp;class=ECON-3" target="_blank" rel="noopener">📈 12 Economics — 12HEC3</a>
+        <a href="app/?subject=Geo&amp;class=GEO-1" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE1</a>
+        <a href="app/?subject=Geo&amp;class=GEO-2" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE2</a>
+        <a href="app/?subject=Geo&amp;class=GEO-3" target="_blank" rel="noopener">🗺️ 12 Geography — 12HGE3</a>
+        <a href="app/?subject=SOR2&amp;class=SOR2" target="_blank" rel="noopener">🕊️ 12 Studies of Religion II — 12HRS1</a>
+        <div class="fb-kla">PDHPE</div>
+        <a href="app/?subject=HlthM&amp;class=HlthM-1" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-1</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-2" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-2</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-3" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-3</a>
+        <a href="app/?subject=HlthM&amp;class=HlthM-4" target="_blank" rel="noopener">🏃 12 Health &amp; Movement Science — 12PHS-4</a>
+        <a href="app/?subject=ComFam" target="_blank" rel="noopener">🏠 12 Community &amp; Family Studies</a>
+        <div class="fb-kla">TAS</div>
+        <a href="app/?subject=EngS" target="_blank" rel="noopener">⚙️ 12 Engineering Studies</a>
+        <div class="fb-kla">CAPA</div>
+        <a href="app/?subject=VISART&amp;class=12VA-1" target="_blank" rel="noopener">🎨 12 Visual Arts — 12VA-1</a>
+        <a href="app/?subject=VISART&amp;class=12VA-2" target="_blank" rel="noopener">🎨 12 Visual Arts — 12VA-2</a>
+        <a href="app/?subject=MUS1" target="_blank" rel="noopener">🎵 12 Music 1</a>
+        <div class="fb-kla">VET</div>
+        <a href="app/?subject=Hosp&amp;class=HOSP-1" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC1</a>
+        <a href="app/?subject=Hosp&amp;class=HOSP-2" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC2</a>
+        <a href="app/?subject=Hosp&amp;class=HOSP-3" target="_blank" rel="noopener">🍽️ 12 Hospitality (Kitchen Operations and Cookery) — 11THC3</a>
+      </div>
+    </div>
+    <div class="activity-strip" id="activityStrip" style="display:none;">
+      <div class="as-panel">
+        <div class="as-label">Recent activity</div>
+        <div id="activityRows"></div>
+      </div>
+      <div class="as-panel">
+        <div class="as-label">Built on research</div>
+        <div class="as-research">
+          <div class="icon">🧠</div>
+          <div>
+            <div class="rt">Supporting better feedback for every HSC student.</div>
+            <div class="rd">Timely, specific feedback is one of the highest-impact strategies in education.</div>
+            <a href="#research">Learn more →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH STRIP -->
+<section id="research" style="background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.06));border-top:1px solid rgba(108,99,255,0.2);border-bottom:1px solid rgba(108,99,255,0.2);">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="font-size:11px;font-weight:700;color:#a89fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Supporting Research</div>
+    <h2 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:#f0c030;margin-bottom:20px;">Research supporting timely feedback</h2>
+    <div style="font-size:16px;color:#b8cce0;line-height:1.85;max-width:900px;">
+      <p style="margin-bottom:18px;">Timely feedback is critical for improving HSC responses because it allows students to act on advice while their thinking is still fresh, correcting errors before misconceptions become embedded and applying improvements immediately.</p>
+      <p style="margin-bottom:18px;">Research consistently identifies feedback as one of the highest-impact strategies in education — the Education Endowment Foundation (2021) reports it can advance learning by several months' worth of progress on average, with benefits especially pronounced in science subjects.</p>
+      <p style="margin-bottom:18px;">Students who receive prompt, specific feedback score significantly higher on assessments than those who do not, and also show improved engagement and confidence in their learning (Oliver, 2025). Crucially, immediate feedback produces significantly larger performance gains than delayed feedback on the same material (Stenger, 2014).</p>
+      <p style="margin-bottom:18px;">Without timely feedback, students risk embedding incorrect understanding and compounding gaps in their knowledge (Boxer, 2020; Indiana University Center for Innovative Teaching and Learning, 2023). Emerging research also confirms that AI-generated feedback can meaningfully improve students' revision quality, motivation, and cognitive outcomes (Meyer et al., 2024).</p>
+      <p>The CUBE Marking Coach applies these principles directly — providing immediate, targeted feedback on how well students analyse the question and construct their response, making the thinking process visible and actionable. Rather than simply seeing a Band, students understand exactly what to change and why, building habits of accurate question breakdown, clearer reasoning, and continuous improvement across HSC-style responses.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">Three steps to better HSC answers</h2>
+    <p class="section-desc">CUBE Marking Coach provides you with immediate and personalised feedback to improve your responses.</p>
+
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">1</div>
+        <div class="how-icon">✏️</div>
+        <div class="how-title">CUBE &amp; Answer</div>
+        <div class="how-desc">Circle the directive verb, Underline syllabus keywords, Box constraints and scope words. Then write your response. The AI checks whether you identified the right elements.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">2</div>
+        <div class="how-icon">📸</div>
+        <div class="how-title">Photo your work</div>
+        <div class="how-desc">Take a clear, upright photo of your worksheet showing both the question and your written answer. Upload it directly in the app. No scanning needed.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">3</div>
+        <div class="how-icon">⚡</div>
+        <div class="how-title">Get instant feedback</div>
+        <div class="how-desc">Receive detailed feedback on your CUBE marking, annotation ideas, writing quality, causal connectives, noun groups and more — with an XP score to track improvement.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO GUIDE -->
+<section id="photos" class="photo-section">
+  <div class="section-inner">
+    <div class="section-tag">Photo guide</div>
+    <h2 class="section-title">Getting your photo right</h2>
+    <p class="section-desc">Photo quality directly affects marking accuracy. Take 10 seconds to get it right and you'll get much better feedback.</p>
+
+    <div class="photo-grid" style="margin-top:16px;">
+      <div class="photo-col">
+        <h3 class="good">✅ Do this</h3>
+        <div class="photo-item good">
+          <div class="photo-icon">📐</div>
+          <div class="photo-text"><strong>Flat on desk, any orientation</strong>Place the worksheet flat, hold your phone directly above it, shooting straight down. Portrait or landscape both work fine.</div>
+        </div>
+        <div class="photo-item good">
+          <div class="photo-icon">💡</div>
+          <div class="photo-text"><strong>Good, even lighting</strong>Near a window or under a ceiling light. Avoid harsh shadows across the page.</div>
+        </div>
+        <div class="photo-item good">
+          <div class="photo-icon">🔍</div>
+          <div class="photo-text"><strong>Whole question + whole answer visible</strong>Both the printed question text and all of your handwritten response must be in frame.</div>
+        </div>
+        <div class="photo-item good">
+          <div class="photo-icon">🖊️</div>
+          <div class="photo-text"><strong>Clear pen marks on the question</strong>Your CUBE circles, underlines and boxes need to be clearly visible — use dark pen, press firmly.</div>
+        </div>
+        <div class="photo-item good">
+          <div class="photo-icon">📄</div>
+          <div class="photo-text"><strong>Dotted or dashed writing lines</strong>These are perfect — the AI can easily distinguish them from your solid pen underlines.</div>
+        </div>
+      </div>
+      <div class="photo-col">
+        <h3 class="bad">❌ Avoid this</h3>
+        <div class="photo-item bad">
+          <div class="photo-icon">✂️</div>
+          <div class="photo-text"><strong>Answer without the question</strong>The AI needs to see the printed question to know what to mark. Don't crop it out.</div>
+        </div>
+        <div class="photo-item bad">
+          <div class="photo-icon">🌑</div>
+          <div class="photo-text"><strong>Dark, shadowed or glary images</strong>A phone torch pointing down creates glare. Shadows hide words and make handwriting illegible.</div>
+        </div>
+        <div class="photo-item bad">
+          <div class="photo-icon">📝</div>
+          <div class="photo-text"><strong>Pencil or very light pen</strong>Faint marks are hard for the AI to detect. Use a dark ballpoint or gel pen for CUBE marks.</div>
+        </div>
+        <div class="photo-item bad">
+          <div class="photo-icon">📋</div>
+          <div class="photo-text"><strong>Multiple questions in one photo</strong>Select the question number in the app — but try to have the target question clearly visible.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section id="limits">
+  <div class="section-inner">
+    <div class="section-tag">What to know</div>
+    <h2 class="section-title">Limitations &amp; honest expectations</h2>
+    <p class="section-desc">This tool is designed to support your learning — not replace your teacher, and here is what it can and can't do.</p>
+
+    <div class="limits-grid">
+      <div class="limit-card">
+        <div class="limit-icon">🎯</div>
+        <div>
+          <div class="limit-title">Best for printed HSC-style questions</div>
+          <div class="limit-desc">Works best with typed/printed questions in HSC format. Handwritten questions or unusual formats may not be recognised correctly.</div>
+        </div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-icon">✍️</div>
+        <div>
+          <div class="limit-title">Handwriting must be legible</div>
+          <div class="limit-desc">Very messy handwriting may be partially misread. Words the AI can't read are flagged with [?] so you can check your photo.</div>
+        </div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-icon">🤖</div>
+        <div>
+          <div class="limit-title">AI marking is not infallible</div>
+          <div class="limit-desc">The feedback is AI-generated and aligned to NSW HSC criteria, but may occasionally miss nuance. Use it as a guide, not a final grade.</div>
+        </div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-icon">🔒</div>
+        <div>
+          <div class="limit-title">Privacy — first name + initial only</div>
+          <div class="limit-desc">CUBE records only your first name and surname initial. No full names or student IDs are collected. Photos are not stored by CUBE. Your marks and short extracts of feedback are kept to show your progress.</div>
+        </div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-icon">📡</div>
+        <div>
+          <div class="limit-title">Requires internet connection</div>
+          <div class="limit-desc">The app sends your photo to an AI model for marking. A stable wifi or 4G connection is needed.</div>
+        </div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-icon">👩‍🏫</div>
+        <div>
+          <div class="limit-title">Supplement — not replace — teacher feedback</div>
+          <div class="limit-desc">This tool gives you practice feedback between lessons. Your teacher's feedback on assessments remains the authoritative source.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- PRIVACY -->
+<section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
+  <div class="section-inner">
+    <div class="section-tag">Privacy &amp; compliance</div>
+    <h2 class="section-title">Privacy &amp; data handling</h2>
+    <p style="font-size:15px;color:#dce8f0;line-height:1.6;margin-bottom:20px;max-width:820px;">CUBE is an independent tool developed and maintained by Mr Lawrance (Sureview Pty Ltd) to support student learning. It is not a NSW Department of Education product and has not been approved for departmental use; it is going through the Department's assessment pathway. It is designed around data minimisation, de-identification and server-side handling of student work. This page describes what it actually records.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+
+      <!-- What IS collected -->
+      <div style="background:rgba(105,240,174,0.05);border:1px solid rgba(105,240,174,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#69f0ae;letter-spacing:0.5px;margin-bottom:8px;">✅ What is collected and used</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>Student submissions consist of images of written work only (e.g. handwritten responses)</li>
+          <li>Submissions must not include names, faces, or any identifying features</li>
+          <li>Only first name and surname initial (e.g. "Steve L") may be used to personalise feedback and display class progress</li>
+          <li>A progress record for each marked question: first name and initial, class, subject, question, marks and sub-scores, a short AI-written improvement note and improved sentence, and the date and time</li>
+          <li>If a student presses "Report a problem", their note and a short extract (up to 600 characters) of the transcribed answer, so the issue can be checked</li>
+        </ul>
+      </div>
+
+      <!-- What is NOT collected -->
+      <div style="background:rgba(255,82,82,0.05);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#ff8a80;letter-spacing:0.5px;margin-bottom:8px;">🚫 What is NOT collected or stored</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>No student photos showing faces</li>
+          <li>No full names</li>
+          <li>No student ID numbers</li>
+          <li>No class lists or rosters</li>
+          <li>No email addresses or contact details</li>
+          <li>No photos or complete copies of student answers are stored by CUBE (only the short extracts described under "What is collected")</li>
+        </ul>
+      </div>
+
+      <!-- How data is handled -->
+      <div style="background:rgba(100,181,246,0.05);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#64b5f6;letter-spacing:0.5px;margin-bottom:8px;">🔄 How data is handled</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>Student work is securely transmitted to an external AI service (Anthropic's Claude, through its commercial API) to generate feedback</li>
+          <li>CUBE does not store the images or the full text of answers. Anthropic handles the content under its commercial API terms, which state that it is not used to train its models; Anthropic's own retention rules apply</li>
+          <li>The progress records described above are kept in a Google Sheet that only the teacher/administrator can open, and are used for feedback, the leaderboard and teacher dashboards</li>
+        </ul>
+      </div>
+
+      <!-- De-identification -->
+      <div style="background:rgba(255,171,64,0.05);border:1px solid rgba(255,171,64,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#ffab40;letter-spacing:0.5px;margin-bottom:8px;">🪪 De-identification requirement</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>All submitted work must be de-identified before upload</li>
+          <li>Teachers and students are responsible for ensuring no identifying information is visible</li>
+        </ul>
+      </div>
+
+      <!-- Security -->
+      <div style="background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#a89fff;letter-spacing:0.5px;margin-bottom:8px;">🔐 Security</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>All API access is managed securely server-side</li>
+          <li>No API keys or system credentials are exposed to students</li>
+        </ul>
+      </div>
+
+      <!-- Consent -->
+      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;font-size:13px;color:#c9a84c;letter-spacing:0.5px;margin-bottom:8px;">📋 Consent</div>
+        <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
+          <li>This tool is used for educational purposes to improve student writing and feedback</li>
+          <li>Parent/carer consent should be obtained prior to use</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="nav-badge" style="font-size:11px;padding:2px 8px;">CUBE</div>
+    <span>CUBE Marking Coach — HSC Learning Support Tool</span>
+  </div>
+  <div>Built by Mr Lawrance · Sureview Pty Ltd · NSW HSC aligned</div>
+</footer>
 
 <script>
 /* ── CUBE access-code wallet · wallet-v1.0 ─────────────────────── */
@@ -1044,28 +769,6 @@ window.CUBEAccess = (function () {
     return String(s || "").toUpperCase().replace(/\s+/g, "").trim();
   }
 
-  function normClass(s) {
-    return String(s || "").trim().toUpperCase();
-  }
-
-  // wallet-v1.1 — the class the CURRENT PAGE is acting as (config.studentClass,
-  // else the ?class= param). "" when the page carries no class.
-  function pageClass() {
-    try {
-      return (window.config && window.config.studentClass) ||
-             new URLSearchParams(window.location.search).get("class") || "";
-    } catch (e) { return ""; }
-  }
-
-  // wallet-v1.1 — is per-class scoping on? Read from the cached /access status
-  // (populated by gateStatus); default OFF so gate-off behaviour is unchanged.
-  function classGateOn() {
-    try {
-      var d = JSON.parse(sessionStorage.getItem(GATE_CACHE) || "null");
-      return !!(d && d.classGate);
-    } catch (e) { return false; }
-  }
-
   /* ── storage ─────────────────────────────────────────────────────────── */
 
   function load() {
@@ -1091,15 +794,8 @@ window.CUBEAccess = (function () {
     var want = canon(subject);
     if (!want) return "";
     var list = load();
-    var gateOn = classGateOn();
-    var pc = normClass(pageClass());
     for (var i = 0; i < list.length; i++) {
-      if (canon(list[i].subject) !== want) continue;
-      // wallet-v1.1 — when the class gate is on and BOTH the page and the held
-      // code carry a class, they must match. A page with no class (browse /
-      // whole cohort) never filters — mirrors the worker's fail-open.
-      if (gateOn && pc !== "" && normClass(list[i].cls) !== "" && normClass(list[i].cls) !== pc) continue;
-      return list[i].code || "";
+      if (canon(list[i].subject) === want) return list[i].code || "";
     }
     return "";
   }
@@ -1107,12 +803,8 @@ window.CUBEAccess = (function () {
   function recordFor(subject) {
     var want = canon(subject);
     var list = load();
-    var gateOn = classGateOn();
-    var pc = normClass(pageClass());
     for (var i = 0; i < list.length; i++) {
-      if (canon(list[i].subject) !== want) continue;
-      if (gateOn && pc !== "" && normClass(list[i].cls) !== "" && normClass(list[i].cls) !== pc) continue;
-      return list[i];
+      if (canon(list[i].subject) === want) return list[i];
     }
     return null;
   }
@@ -1122,15 +814,9 @@ window.CUBEAccess = (function () {
     var list = load();
     var code = normCode(rec.code);
     var subj = canon(rec.subject);
-    // wallet-v1.1 — never the same code twice; when the class gate is on keep
-    // one entry per (subject, class) so sibling classes coexist ("treated like
-    // a new subject"), otherwise one per subject (v1.0 behaviour).
-    var cls = normClass(rec.cls);
-    var gateOn = classGateOn();
+    // one code per subject, and never the same code twice
     list = list.filter(function (r) {
-      if (normCode(r.code) === code) return false;
-      if (gateOn) return !(canon(r.subject) === subj && normClass(r.cls) === cls);
-      return canon(r.subject) !== subj;
+      return normCode(r.code) !== code && canon(r.subject) !== subj;
     });
     list.push({
       code: code,
@@ -1178,7 +864,7 @@ window.CUBEAccess = (function () {
       .then(function (x) {
         var d = x.body || {};
         if (x.status === 200 && d.ok) {
-          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", subjectName: d.subjectName || "", classGate: d.classGate || false, cls: d.class || "", label: d.label || "" };
+          return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", cls: d.class || "", label: d.label || "" };
         }
         return { ok: false, reason: d.error || "invalid" };
       })
@@ -1272,28 +958,6 @@ window.CUBEAccess = (function () {
           msg.textContent = "Checking…";
           validate(c).then(function (res) {
             if (res.ok) {
-              // subjectgate-v1.0 — a class code must match THIS page's subject.
-              // Staff/master passes carry an empty subject and stay exempt.
-              if (res.kind === "class" && res.subject && canon(res.subject) !== canon(subject)) {
-                input.classList.add("bad");
-                go.disabled = false;
-                msg.className = "cubeac-msg";
-                msg.textContent = "That code is for " + (res.subjectName || res.subject) +
-                  ", not " + subjLabel + " — ask your teacher for your " + subjLabel + " code.";
-                return;
-              }
-              // classgate-v1.0 — a class code must match THIS page's class, but only when
-              // the worker reports the class gate is on (res.classGate). Whole-cohort codes
-              // (empty cls) and pages with no class are exempt.
-              var pageClass = (window.config && config.studentClass) || new URLSearchParams(location.search).get("class") || "";
-              if (res.classGate && res.kind === "class" && res.cls && pageClass &&
-                  String(res.cls).trim().toUpperCase() !== String(pageClass).trim().toUpperCase()) {
-                input.classList.add("bad");
-                go.disabled = false;
-                msg.className = "cubeac-msg";
-                msg.textContent = "That code is for " + res.cls + ", not " + pageClass + " — use your own class's code.";
-                return;
-              }
               put({ code: res.code, subject: res.subject || subject, cls: res.cls, label: res.label });
               msg.className = "cubeac-msg ok";
               msg.textContent = "✓ " + (res.label || res.cls || res.subject || "Code accepted");
@@ -1325,13 +989,9 @@ window.CUBEAccess = (function () {
   /* Returns a code for the subject, prompting only if none is held.
      Always resolves — "" means "no code, proceed anyway" (gate off). */
   function ensure(subject, opts) {
-    // wallet-v1.1 — make sure the class-gate flag is cached before deciding
-    // whether the held code counts for THIS class.
-    return gateStatus().then(function () {
-      var have = codeFor(subject);
-      if (have) return have;
-      return promptFor(subject, opts);
-    });
+    var have = codeFor(subject);
+    if (have) return Promise.resolve(have);
+    return promptFor(subject, opts);
   }
 
   /* Convenience for GET URLs: returns "&code=XXX" or "". */
@@ -1347,7 +1007,7 @@ window.CUBEAccess = (function () {
   }
 
   return {
-    version: "wallet-v1.1",
+    version: "wallet-v1.0",
     canon: canon,
     all: all,
     codeFor: codeFor,
@@ -1366,64 +1026,341 @@ window.CUBEAccess = (function () {
 })();
 </script>
 <script>
-/* wallet-v1.0 — per-subject code on /questions. The MC coach can query several
-   subjects at once, so the code is resolved inside the loop, per subject. */
-function cubeCodeQS(subj){
-  try { return (window.CUBEAccess && window.CUBEAccess.qs(subj)) || ""; }
-  catch(e){ return ""; }
+// Tell Google Sites iframe the full document height so it removes the internal scrollbar
+function sendHeight() {
+  const h = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: 'setHeight', height: h }, '*');
 }
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+// Also send after fonts/images load
+setTimeout(sendHeight, 500);
+setTimeout(sendHeight, 1500);
+
+// Cache-bust subject links: GitHub Pages / Chrome can serve a stale cached copy of the
+// marking app, so a bare app/?subject=EES click may load an old (non-mobile) build. Stamp the
+// current build version onto each app/ link so every click fetches the live version.
+// Applies whether or not the page is inside the Google Sites iframe — every subject
+// links straight to the app (opens in a new tab), which is the path proven to work.
+// build 2026-07-12 · v8 physics (Physics PHYS added — 4 classes 12PH1–12PH4 → tabs PHYS-1–PHYS-4; v7 facultyPanels retained)
+var CUBE_BUILD = "20260827a";
 (function(){
-  try {
-    var p = new URLSearchParams(window.location.search);
-    var subj = p.get("subject") || "";
-    if (!subj || !window.CUBEAccess) return;
-    // wallet-v1.1 — always defer to ensure() on load; it awaits the gate status
-    // and re-prompts when the held code is for a DIFFERENT class than this page.
-    window.addEventListener("load", function(){
-      setTimeout(function(){ window.CUBEAccess.ensure(subj); }, 400);
-    });
-  } catch(e){}
+  document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
+    var href = a.getAttribute("href");
+    a.setAttribute("href", href + (href.indexOf("?") > -1 ? "&" : "?") + "cv=" + CUBE_BUILD);
+  });
 })();
 
-function cubeHdrs(extra){var h=Object.assign({},extra||{});try{var subj=(new URLSearchParams(window.location.search)).get("subject")||"";var a=(window.CUBEAccess&&window.CUBEAccess.headers(subj))||{};Object.keys(a).forEach(function(k){h[k]=a[k];})}catch(e){}return h}const WORKER_URL="https://cube-proxy.alan-3e2.workers.dev",MC_LOG_WEBHOOK_URL="https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",LB_WEBHOOK_URL="https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",DEBUG_MODE="1"===new URLSearchParams(window.location.search).get("debug"),LATEST_HSC_YEAR=2025,SUBJECT_CONFIG={EES:{name:"Earth & Environmental Science",logCode:"EES",hasMC:!0,syllabusFrom:2019,mcYears:[2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013,2012,2011],modules:["M5","M6","M7","M8"],moduleLabels:{ALL:"All Modules",M5:"M5 — Earth's Processes",M6:"M6 — Hazards",M7:"M7 — Climate Science",M8:"M8 — Resource Management"}},BIO:{name:"Biology",logCode:"BIO",hasMC:!0,syllabusFrom:2019,modules:["M5","M6","M7","M8"],moduleLabels:{ALL:"All Modules",M5:"M5 — Heredity",M6:"M6 — Genetic Change",M7:"M7 — Infectious Disease",M8:"M8 — Non-infectious Disease"}},INVSCI:{name:"Investigating Science",logCode:"InvSci",hasMC:!0,syllabusFrom:2019,modules:["M5","M6","M7","M8"],moduleLabels:{ALL:"All Modules",M5:"M5 — Scientific Investigations",M6:"M6 — Technologies",M7:"M7 — Fact or Fallacy?",M8:"M8 — Science and Society"}},CHEM:{name:"Chemistry",logCode:"Chem",hasMC:!0,syllabusFrom:2019,modules:["M5","M6","M7","M8"],moduleLabels:{ALL:"All Modules",M5:"M5 — Equilibrium & Acid Reactions",M6:"M6 — Acid/Base Reactions",M7:"M7 — Organic Chemistry",M8:"M8 — Applying Chemical Ideas"}},PHYS:{name:"Physics",logCode:"PHYS",hasMC:!0,syllabusFrom:2019,modules:["M5","M6","M7","M8"],moduleLabels:{ALL:"All Modules",M5:"M5 — Advanced Mechanics",M6:"M6 — Electromagnetism",M7:"M7 — The Nature of Light",M8:"M8 — From the Universe to the Atom"}},BS:{name:"Business Studies",logCode:"BusS",hasMC:!0,syllabusFrom:2012,modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Topics",T1:"T1 — Operations",T2:"T2 — Marketing",T3:"T3 — Finance",T4:"T4 — Human Resources"}},HM:{name:"Health & Movement Science",logCode:"HlthM",hasMC:!0,syllabusFrom:2026,mcYears:[2025,2024,2023,2022,2021,2020],modules:["HAG","TIP"],moduleLabels:{ALL:"All Topics",HAG:"HAG — Health in an Australian & Global Context",TIP:"TIP — Training for Improved Performance"}},ES:{name:"Engineering Studies",logCode:"EngS",hasMC:!0,syllabusFrom:2013,mcYears:[2025,2024,2023,2022,2021,2020,2019,2018,2017,2016,2015],modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Modules",T1:"T1 — Civil Structures",T2:"T2 — Personal and Public Transport",T3:"T3 — Aeronautical Engineering",T4:"T4 — Telecommunications Engineering"}},CF:{name:"Community & Family Studies",logCode:"ComFam",hasMC:!0,syllabusFrom:2024,mcYears:[2025,2024,2023,2022,2021,2020,2019,2018,2017],modules:["T1","T2","T3"],moduleLabels:{ALL:"All Topics",T1:"T1 — Research Methodology",T2:"T2 — Groups in Context",T3:"T3 — Parenting & Caring"}},LEG:{name:"Legal Studies",logCode:"LS",hasMC:!0,syllabusFrom:2011,modules:["T1","T2"],moduleLabels:{ALL:"All Topics",T1:"T1 — Crime",T2:"T2 — Human Rights"}},VISART:{name:"Visual Arts",logCode:"VISART",hasMC:!1,syllabusFrom:2018,modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Topics",T1:"T1 — Art Making",T2:"T2 — Art Criticism",T3:"T3 — Art History",T4:"T4 — Frames"}},ANCH:{name:"Ancient History",logCode:"AHis",hasMC:!1,syllabusFrom:2019,modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Topics",T1:"T1 — Personalities in Their Time",T2:"T2 — Historical Periods",T3:"T3 — Cities of Vesuvius",T4:"T4 — Empires"}},MHIST:{name:"Modern History",logCode:"MHIST",hasMC:!1,syllabusFrom:2019,modules:["CORE","NS","PC","CMW"],moduleLabels:{ALL:"All Topics",CORE:"Core — Power & Authority 1919–1946",NS:"National Studies",PC:"Peace & Conflict",CMW:"Change in the Modern World"}},HOSP:{name:"Hospitality (Kitchen Operations and Cookery)",logCode:"Hosp",hasMC:!0,syllabusFrom:2021,mcYears:[2024,2023,2022,2021],modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Topics",T1:"T1 — Hygiene",T2:"T2 — Safety (WHS)",T3:"T3 — Working in the Industry",T4:"T4 — Kitchen Operations & Cookery"}},SOR2:{name:"Studies of Religion II",logCode:"SOR2",hasMC:!0,syllabusFrom:2011,modules:["S1"],moduleLabels:{ALL:"All Topics",S1:"S1 — Religion & Belief Systems in Australia post-1945"}},ECON:{name:"Economics",logCode:"ECON",hasMC:!0,syllabusFrom:2011,modules:["T1","T2","T3","T4"],moduleLabels:{ALL:"All Topics",T1:"T1 — The Global Economy",T2:"T2 — Australia's Place in the Global Economy",T3:"T3 — Economic Issues",T4:"T4 — Economic Policies & Management"}},GEO:{name:"Geography",logCode:"Geo",hasMC:!0,syllabusFrom:2025,mcYears:[2025,2024,2023],modules:["M1","M2","M3","M4"],moduleLabels:{ALL:"All Topics",M1:"M1 — Global Sustainability",M2:"M2 — Geographical Tools",M3:"M3 — Rural & Urban Places",M4:"M4 — Ecosystems & Global Biodiversity"}}};let state={subjects:["EES"],subject:"EES",lockedSubject:!1,modules:["ALL"],years:["all"],filterMode:"random",source:"all",studentName:localStorage.getItem("cube_student_name")||"",studentClass:"",questions:[],queue:[],currentIdx:0,answered:!1,streak:0,bestStreak:0,sessionXP:0,totalCorrect:0,totalAttempted:0,errorCounts:{guessed:0,misread:0,noknowledge:0},pendingWrong:null,reportedQs:{}};const FIRST_ATTEMPT_XP=5,REPEAT_ATTEMPT_XP=2,WRONG_REFLECTION_XP=1,STREAK_BONUS_AT=5,STREAK_BONUS_XP=3;function toggleSelectorSheet(btn){const wrap=btn.closest(".sheet-wrap");if(!wrap)return;const nowOpen=wrap.classList.toggle("open"),arrow=btn.querySelector(".arrow");arrow&&(arrow.textContent=nowOpen?"▲":"▼"),nowOpen&&document.querySelectorAll(".sheet-wrap.open").forEach(w=>{if(w!==wrap){w.classList.remove("open");const a2=w.querySelector(".arrow");a2&&(a2.textContent="▼")}})}function summaryModulesText(){return state.modules.includes("ALL")?"All Modules":state.modules.join(", ")}function summaryYearsText(){return state.years.includes("all")?"All Years":state.years.map(y=>"other"===y?"Other":y).sort().join(", ")}function summarySubjectsText(){const codes=state.lockedSubject?[state.subject]:state.subjects;return 1===codes.length?SUBJECT_CONFIG[codes[0]]?.name||codes[0]:codes.length+" subjects: "+codes.join(", ")}function updateSelectorSummaries(){const set=(id,txt)=>{const el=document.getElementById(id);el&&(el.textContent=txt)};set("subjectSummary",summarySubjectsText()),set("moduleSummary",summaryModulesText()),set("yearSummary",summaryYearsText()),set("filterSummary",summarySubjectsText()+" · "+summaryModulesText()+" · "+summaryYearsText()+" · "+{random:"Random",wrong:"Got Wrong",notattempted:"Not Attempted"}[state.filterMode])}function filtersStorageKey(){return"cube_mc_filters_"+(state.lockedSubject?[state.subject]:[...state.subjects].sort()).join("+")}function saveFilters(){try{localStorage.setItem(filtersStorageKey(),JSON.stringify({modules:state.modules,years:state.years,filterMode:state.filterMode}))}catch{}}function restoreFilters(){try{const raw=localStorage.getItem(filtersStorageKey());if(!raw)return;const f=JSON.parse(raw);if(Array.isArray(f.modules)&&f.modules.length&&(state.modules=f.modules),Array.isArray(f.years)&&f.years.length){const valid=new Set(["all","other"]);(state.lockedSubject?[state.subject]:state.subjects).forEach(c=>subjectYears(c).forEach(y=>valid.add(String(y))));const kept=f.years.filter(y=>valid.has(String(y)));state.years=kept.length?kept:["all"]}if(["random","wrong","notattempted"].includes(f.filterMode)){state.filterMode=f.filterMode;const card=document.querySelector(`.filter-mode-card[data-mode="${f.filterMode}"]`);if(card){document.querySelectorAll(".filter-mode-card").forEach(c=>c.classList.remove("active")),card.classList.add("active");const notice=document.getElementById("filterModeSlowNotice");notice&&notice.classList.toggle("show","random"!==f.filterMode)}}}catch{}}function renderSubjectPills(){const wrap=document.getElementById("subjectPills");wrap&&(wrap.innerHTML=Object.entries(SUBJECT_CONFIG).filter(([,cfg])=>!1!==cfg.hasMC).map(([code,cfg])=>`\n    <div class="subject-pill${state.subjects.includes(code)?" active":""}"\n         data-subject="${code}" onclick="toggleSubject(this)">\n      ${cfg.name}\n    </div>\n  `).join(""))}function toggleSubject(el){const code=el.dataset.subject,idx=state.subjects.indexOf(code);if(idx>=0){if(1===state.subjects.length)return;state.subjects.splice(idx,1),el.classList.remove("active")}else state.subjects.push(code),el.classList.add("active");renderModulePills(),state.years=["all"],renderYearPills(),prefetchAndCount()}function getUnionModules(){if(state.lockedSubject){const cfg=SUBJECT_CONFIG[state.subject];return{ALL:cfg.moduleLabels.ALL,...Object.fromEntries(cfg.modules.map(m=>[m,cfg.moduleLabels[m]||m]))}}const result={ALL:"All Modules / Topics"};for(const code of state.subjects){const cfg=SUBJECT_CONFIG[code];if(cfg)for(const m of cfg.modules)result[m]||(result[m]=cfg.moduleLabels[m]||m)}return result}function renderModulePills(){const mods=getUnionModules(),pills=document.getElementById("modulePills"),validKeys=Object.keys(mods);state.modules=state.modules.filter(m=>validKeys.includes(m)),0===state.modules.length&&(state.modules=["ALL"]),pills.innerHTML=Object.entries(mods).map(([code,label])=>`\n    <div class="module-pill${state.modules.includes(code)?" active":""}"\n         data-module="${code}" onclick="toggleModule(this)">\n      ${label}\n    </div>\n  `).join("")}function toggleModule(el){const code=el.dataset.module;if("ALL"===code)state.modules=["ALL"],document.querySelectorAll(".module-pill").forEach(p=>p.classList.remove("active")),el.classList.add("active");else{const allPill=document.querySelector('.module-pill[data-module="ALL"]'),idx=state.modules.indexOf(code);idx>=0?(state.modules.splice(idx,1),el.classList.remove("active"),0===state.modules.length&&(state.modules=["ALL"],allPill&&allPill.classList.add("active"))):(state.modules=state.modules.filter(m=>"ALL"!==m),allPill&&allPill.classList.remove("active"),state.modules.push(code),el.classList.add("active"))}prefetchAndCount()}function subjectYears(code){const cfg=SUBJECT_CONFIG[code];if(!cfg||!1===cfg.hasMC)return[];if(Array.isArray(cfg.mcYears))return cfg.mcYears.slice().sort((a,b)=>b-a);const from=cfg.syllabusFrom||2025,ys=[];for(let y=2025;y>=from;y--)ys.push(y);return ys}function activeYearSet(){const codes=state.lockedSubject?[state.subject]:state.subjects;if(1===codes.length){const code=codes[0],sf=SUBJECT_CONFIG[code]?.syllabusFrom||0,years=subjectYears(code);return{grouped:!0,current:years.filter(y=>y>=sf),previous:years.filter(y=>y<sf)}}const set=new Set;return codes.forEach(c=>subjectYears(c).forEach(y=>set.add(y))),{grouped:!1,all:[...set].sort((a,b)=>b-a)}}function yearPill(y){const v=String(y);return`<div class="year-pill${state.years.includes(v)?" active":""}" data-year="${v}" onclick="toggleYear(this)">${y} HSC</div>`}function prevYearPill(y){const v=String(y);return`<div class="year-pill prev${state.years.includes(v)?" active":""}" data-year="${v}" onclick="toggleYear(this)">${y} HSC</div>`}function renderYearPills(){const pills=document.getElementById("yearPills");if(!pills)return;const set=activeYearSet(),allActive=state.years.includes("all")?" active":"",otherPill=`<div class="year-pill${state.years.includes("other")?" active":""}" data-year="other" onclick="toggleYear(this)">Other</div>`;let html=`<div class="year-pill${allActive}" data-year="all" onclick="toggleYear(this)">All Years</div>`;set.grouped?(set.current.length&&(html+='<div class="year-group-label">Current syllabus</div>',html+=set.current.map(yearPill).join("")),set.previous.length&&(html+='<div class="year-group-label">Relevant questions selected from previous syllabus</div>',html+=set.previous.map(prevYearPill).join(""),html+='<div class="year-note">Pre-syllabus-change papers — included questions have been checked for current relevance.</div>'),set.current.length||set.previous.length||(html+='<div class="year-note">No past HSC papers are available for this subject yet.</div>')):html+=set.all.map(yearPill).join(""),html+=otherPill,pills.innerHTML=html}function toggleYear(el){const val=el.dataset.year;if("all"===val)state.years=["all"],document.querySelectorAll(".year-pill").forEach(p=>p.classList.remove("active")),el.classList.add("active");else{const allPill=document.querySelector('.year-pill[data-year="all"]'),idx=state.years.indexOf(val);idx>=0?(state.years.splice(idx,1),el.classList.remove("active"),0===state.years.length&&(state.years=["all"],allPill&&allPill.classList.add("active"))):(state.years=state.years.filter(y=>"all"!==y),allPill&&allPill.classList.remove("active"),state.years.push(val),el.classList.add("active"))}prefetchAndCount()}function selectFilterMode(el){document.querySelectorAll(".filter-mode-card").forEach(c=>c.classList.remove("active")),el.classList.add("active"),state.filterMode=el.dataset.mode;const notice=document.getElementById("filterModeSlowNotice");"wrong"===state.filterMode||"notattempted"===state.filterMode?notice.classList.add("show"):notice.classList.remove("show"),prefetchAndCount()}function onSubjectChange(){state.subject=document.getElementById("subjectSelect").value,state.subjects=[state.subject],state.modules=["ALL"],state.years=["all"],renderModulePills(),renderYearPills(),prefetchAndCount()}function buildFilterKey(){return`${[...state.subjects].sort().join("+")}:${[...state.modules].sort().join("+")}:${[...state.years].sort().join("+")}:${state.source}:${state.filterMode}`}let _prefetchCache={};async function prefetchAndCount(){updateSelectorSummaries();const key=buildFilterKey();if(document.getElementById("countHint").textContent="Checking question bank…",document.getElementById("btnStart").disabled=!0,"random"!==state.filterMode||void 0===_prefetchCache[key])try{let total=0,authGate=null;const subjectList=state.lockedSubject?[state.subject]:state.subjects,fetchPromises=[];for(const subj of subjectList){const modList=state.modules.includes("ALL")?["all"]:state.modules,yearList=state.years.includes("all")?["all"]:state.years;for(const mod of modList)for(const yr of yearList)fetchPromises.push(fetch(`${WORKER_URL}/questions?subject=${subj}&module=${mod}&year=${yr}&source=${state.source}&countOnly=1${cubeCodeQS(subj)}`).then(r=>r.json().then(d=>({status:r.status,d}))).then(x=>{if(x.status===403){const e=x.d&&x.d.error;if(e==="access_code_wrong_subject")authGate="wrong";else if(!authGate)authGate="need";return 0;}return (x.d&&x.d.count)||0;}).catch(()=>0))}total=(await Promise.all(fetchPromises)).reduce((a,b)=>a+b,0);if(authGate&&total===0){const nm=SUBJECT_CONFIG[state.subject]?.name||state.subject;document.getElementById("countHint").textContent=authGate==="wrong"?"⚠ Your class code is for a different subject — ask your teacher for your "+nm+" code":"⚠ You need your "+nm+" class code to load questions — ask your teacher";document.getElementById("btnStart").disabled=!0;return}"random"===state.filterMode&&(_prefetchCache[key]=total),updateCountHint(total)}catch(e){document.getElementById("countHint").textContent="⚠ Could not reach question bank — must be served via GitHub Pages, not opened as a local file",document.getElementById("btnStart").disabled=!0}else updateCountHint(_prefetchCache[key])}function updateCountHint(count){const modeStr="random"!==state.filterMode?` · Mode: ${{random:"Random",wrong:"Got Wrong",notattempted:"Not Attempted"}[state.filterMode]}`:"";document.getElementById("countHint").textContent=count>0?`Up to ${count} question${1===count?"":"s"} available${modeStr}`:"No questions yet for this selection — check back soon",document.getElementById("btnStart").disabled=0===count}function logMCAnswer(q,studentAnswer,isCorrect,attemptType,reflectionType){if(state.studentName.trim())try{fetch(`${WORKER_URL}/log`,{method:"POST",headers:cubeHdrs({"Content-Type":"application/json"}),body:JSON.stringify({type:"MC_ROW",webhookUrl:MC_LOG_WEBHOOK_URL,student:state.studentName.trim(),subject:SUBJECT_CONFIG[q._subjectCode||state.subject]?.logCode||state.subject,module:q.module||"—",year:String(q.year||"—"),source:q.source||"HSC",questionId:q.id||"—",questionText:q.questionText||"",correctAnswer:q.correctAnswer||"—",studentAnswer:studentAnswer||"—",isCorrect:isCorrect,attemptType:attemptType,reflectionType:reflectionType||"—",xpEarned:isCorrect?"first"===attemptType?5:2:1,sessionXP:state.sessionXP,studentClass:state.studentClass||""})})}catch(e){console.warn("MC log failed:",e.message)}}function toggleQuestionReport(){const q=state.queue[state.currentIdx];if(!q||state.reportedQs[q.id])return;const panel=document.getElementById("qReportPanel");panel&&panel.classList.toggle("open")}function submitQuestionReport(){const q=state.queue[state.currentIdx];if(!q||state.reportedQs[q.id])return;const catEl=document.getElementById("qReportCat"),noteEl=document.getElementById("qReportNote"),cat=catEl?catEl.value:"";if(!cat)return void(catEl&&(catEl.style.borderColor="var(--accent)",catEl.focus()));const subjCode=q._subjectCode||state.subject;try{fetch(`${WORKER_URL}/log`,{method:"POST",headers:cubeHdrs({"Content-Type":"application/json"}),body:JSON.stringify({type:"FEEDBACK",tool:"MC",student:state.studentName.trim()||"anonymous",studentClass:state.studentClass||"",subject:SUBJECT_CONFIG[subjCode]?.logCode||subjCode,ref:q.id||"—",question:"—",year:String(q.year||"—"),module:q.module||"—",category:cat,detail:(noteEl?noteEl.value:"").trim().slice(0,200),build:"mc-sa-coach · ees-years-fix v2 · 2026-09-05"})})}catch(e){console.warn("Feedback send failed:",e.message)}state.reportedQs[q.id]=!0;const panel=document.getElementById("qReportPanel");panel&&panel.classList.remove("open");const btn=document.getElementById("qReportBtn");btn&&(btn.classList.add("reported"),btn.disabled=!0,btn.textContent="⚑ Reported — thanks ✓")}async function fetchStudentHistory(studentName,subjectLogCodes){const params=new URLSearchParams({student:studentName,subjects:subjectLogCodes.join(","),webhook:MC_LOG_WEBHOOK_URL}),url=`${WORKER_URL}/history?`+params.toString(),res=await fetch(url,{method:"GET",headers:cubeHdrs()});if(!res.ok)throw new Error("History fetch failed: "+res.status);const data=await res.json();if(data.error)throw new Error("Apps Script error: "+data.error+(data.raw?" | "+data.raw:""));const rows=data.rows||[];0===rows.length?(console.warn("[CUBE history] Zero rows returned for student:",studentName,"subjects:",subjectLogCodes),console.warn("[CUBE history] Full response:",JSON.stringify(data))):console.log("[CUBE history] Loaded",rows.length,"rows for",studentName);const historyMap=new Map,sorted=[...rows].sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));for(const row of sorted)historyMap.set(row.questionId,row.isCorrect?"correct":"wrong");return historyMap}async function startSession(){saveFilters(),document.getElementById("btnStart").disabled=!0,document.getElementById("loadingMsg").textContent="Loading questions…";const subjectList=state.lockedSubject?[state.subject]:state.subjects,modList=state.modules.includes("ALL")?["all"]:state.modules,yearList=state.years.includes("all")?["all"]:state.years;let historyMap=null;if("wrong"===state.filterMode||"notattempted"===state.filterMode){if(!state.studentName.trim())return document.getElementById("loadingMsg").textContent="⚠ Please enter your name above — required for Got Wrong / Not Attempted modes.",void(document.getElementById("btnStart").disabled=!1);document.getElementById("loadingMsg").textContent="Fetching your history…";try{const logCodes=subjectList.map(s=>SUBJECT_CONFIG[s]?.logCode||s);if(historyMap=await fetchStudentHistory(state.studentName.trim(),logCodes),0===historyMap.size)return document.getElementById("loadingMsg").textContent="⚠ No history found for '"+state.studentName.trim()+"'. Check: (1) name matches exactly what you used before, (2) LogWebhook.gs v13.2 has been redeployed as a new version in Apps Script.",void(document.getElementById("btnStart").disabled=!1)}catch(e){return document.getElementById("loadingMsg").textContent="⚠ Could not load history: "+e.message,void(document.getElementById("btnStart").disabled=!1)}document.getElementById("loadingMsg").textContent="Loading questions…"}let allQuestions=[];try{const fetchPromises=[];for(const subj of subjectList)for(const mod of modList)for(const yr of yearList)fetchPromises.push(fetch(`${WORKER_URL}/questions?subject=${subj}&module=${mod}&year=${yr}&source=${state.source}${cubeCodeQS(subj)}`).then(r=>r.ok?r.json():{questions:[]}).then(d=>(d.questions||[]).map(q=>({...q,_subjectCode:subj}))).catch(()=>[]));allQuestions=(await Promise.all(fetchPromises)).flat();const seen=new Set;allQuestions=allQuestions.filter(q=>!(!q.id||seen.has(q.id))&&(seen.add(q.id),!0))}catch(e){return document.getElementById("loadingMsg").textContent="⚠ Failed to load questions: "+e.message,void(document.getElementById("btnStart").disabled=!1)}if(!allQuestions||0===allQuestions.length)return document.getElementById("loadingMsg").textContent="No questions found for this selection.",void(document.getElementById("btnStart").disabled=!1);if(null!==historyMap&&("wrong"===state.filterMode?allQuestions=allQuestions.filter(q=>"wrong"===historyMap.get(q.id)):"notattempted"===state.filterMode&&(allQuestions=allQuestions.filter(q=>!historyMap.has(q.id))),0===allQuestions.length)){const msg="wrong"===state.filterMode?"🎉 No wrong answers to review — great work! Try Random mode or Not Attempted.":"🎉 You've attempted all available questions! Try Random or Got Wrong mode.";return document.getElementById("loadingMsg").textContent=msg,void(document.getElementById("btnStart").disabled=!1)}state.questions=shuffle([...allQuestions]),state.queue=[...state.questions],state.currentIdx=0,state.answered=!1,state.streak=0,state.bestStreak=0,state.sessionXP=0,state.totalCorrect=0,state.totalAttempted=0,state.errorCounts={guessed:0,misread:0,noknowledge:0},state.pendingWrong=null,document.getElementById("modeScreen").style.display="none",document.getElementById("sessionScreen").style.display="flex";const subjectDisplay=1===subjectList.length?SUBJECT_CONFIG[subjectList[0]]?.name||subjectList[0]:subjectList.length+" subjects";document.getElementById("topbarSubject").textContent=subjectDisplay;const modDisplay=state.modules.includes("ALL")?"All Modules":state.modules.join(", "),yearDisplay=state.years.includes("all")?"":" · "+state.years.map(y=>"other"===y?"Other":y+" HSC").join(", ");document.getElementById("chipModule").textContent="📌 "+modDisplay+yearDisplay,document.getElementById("loadingMsg").textContent="",renderQuestion()}function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}function renderQuestion(){const q=state.queue[state.currentIdx],num=state.currentIdx+1,tot=state.queue.length,pct=Math.round(num/tot*100);document.getElementById("progressLabel").textContent=`Q ${num} of ${tot}`,document.getElementById("progressPct").textContent=pct+"%",document.getElementById("progressFill").style.width=pct+"%";const subjCode=q._subjectCode||state.subject,imgUrl=q.image?`https://allawrance.github.io/cube-app/${subjCode}/questions/images/${q.year}/${q.image}`:null;let stimulusHTML="";q.stimulus?stimulusHTML=`\n      <div class="stimulus-box">\n        <div class="stimulus-label">📊 Stimulus</div>\n        ${q.stimulus}\n      </div>`:imgUrl&&(stimulusHTML=`\n      <div class="stimulus-box">\n        <div class="stimulus-label">🖼 Stimulus Image</div>\n        <img class="stimulus-img" src="${imgUrl}" alt="Question stimulus" loading="lazy"\n          style="max-width:100%;max-height:300px;height:auto;width:auto;display:block;margin:8px auto 0;border-radius:6px;border:1px solid rgba(255,255,255,0.08);object-fit:contain;">\n      </div>`);const optHTML=Object.entries(q.options).map(([letter,text])=>`\n    <button class="option-btn" data-letter="${letter}" onclick="selectAnswer('${letter}')">\n      <span class="option-label">${letter}</span>\n      <span class="option-text">${text}</span>\n    </button>\n  `).join(""),subjLabel=SUBJECT_CONFIG[subjCode]?.name||subjCode,sf=SUBJECT_CONFIG[subjCode]?.syllabusFrom,prevChip=sf&&q.year&&Number(q.year)<sf?'<span class="q-chip q-chip-prev">Previous syllabus</span>':"";document.getElementById("questionCard").innerHTML=`\n    <div class="q-header">\n      <div class="q-chips">\n        <span class="q-chip q-chip-num">Q${num}</span>\n        <span class="q-chip q-chip-mod">${q.module}</span>\n        ${q.topic?`<span class="q-chip q-chip-topic">${q.topic}</span>`:""}\n        ${prevChip}\n      </div>\n      <div class="q-source">${q.year?q.year+" ":""}${q.source||""} ${subjCode!==state.subject?"· "+subjLabel:""}</div>\n    </div>\n    <div class="q-body">\n      <div class="q-report-row">\n        <button class="q-report-btn${state.reportedQs[q.id]?" reported":""}" id="qReportBtn"\n          onclick="toggleQuestionReport()" ${state.reportedQs[q.id]?"disabled":""}\n          title="Something wrong with this question? Report it — the question details are attached automatically">\n          ${state.reportedQs[q.id]?"⚑ Reported — thanks ✓":'<span style="color:#ff3b30">⚑</span> Report an issue'}\n        </button>\n      </div>\n      ${state.reportedQs[q.id]?"":'\n      <div class="q-report-panel" id="qReportPanel">\n        <div class="q-report-title">What\'s wrong with this question?</div>\n        <select class="q-report-select" id="qReportCat">\n          <option value="">Choose the issue&hellip;</option>\n          <option>Wrong module allocation</option>\n          <option>Image wrong, missing or unreadable</option>\n          <option>Table lost its formatting &mdash; rows run together</option>\n          <option>I think the answer key is wrong</option>\n          <option>Typo or error in the question text</option>\n          <option>Duplicate question</option>\n          <option>Other</option>\n        </select>\n        <textarea class="q-report-note" id="qReportNote" maxlength="200"\n          placeholder="Optional detail &mdash; e.g. which module it should be, or which row of the table is affected"></textarea>\n        <div class="q-report-actions">\n          <button class="q-report-cancel" onclick="toggleQuestionReport()">Cancel</button>\n          <button class="q-report-send" onclick="submitQuestionReport()">Send report</button>\n        </div>\n      </div>'}\n      ${stimulusHTML}\n      <div class="q-stem">${q.questionText}</div>\n      <div class="options" id="options">${optHTML}</div>\n\n      <div class="reflection-wrap" id="reflectionWrap">\n        <div class="reflection-title">Why did you choose that option?</div>\n        <div class="reflection-btns">\n          <button class="ref-btn" onclick="logReflection('guessed')">🎲 I guessed</button>\n          <button class="ref-btn" onclick="logReflection('misread')">👁 I misread the question</button>\n          <button class="ref-btn" onclick="logReflection('noknowledge')">📚 I didn't know the concept</button>\n        </div>\n      </div>\n\n      <div class="feedback-panel" id="feedbackPanel">\n        <div class="feedback-result" id="feedbackResult"></div>\n        <div class="feedback-section" id="feedbackExplanation"></div>\n        <div class="feedback-section" id="feedbackDistractor"></div>\n        <div class="feedback-section" id="feedbackCoach"></div>\n      </div>\n\n      <button class="btn-next" id="btnNext" onclick="nextQuestion()">\n        ${num===tot?"See Results →":"Next Question →"}\n      </button>\n    </div>\n  `,state.answered=!1}function selectAnswer(letter){if(state.answered)return;state.answered=!0,state.totalAttempted++;const q=state.queue[state.currentIdx],correct=letter===q.correctAnswer;document.querySelectorAll(".option-btn").forEach(btn=>{btn.disabled=!0,btn.dataset.letter===q.correctAnswer&&btn.classList.add("correct"),btn.dataset.letter!==letter||correct||btn.classList.add("wrong")});const lsKey="mc_seen_"+q.id,seen=localStorage.getItem(lsKey);if(correct){state.streak++,state.bestStreak=Math.max(state.bestStreak,state.streak),state.totalCorrect++;const xpGain=seen?2:5;seen||localStorage.setItem(lsKey,"1");const bonusXP=state.streak%5==0&&state.streak>0?3:0;state.sessionXP+=xpGain+bonusXP,logMCAnswer(q,letter,!0,seen?"repeat":"first",null),showXPPop("+"+(xpGain+bonusXP)+" XP",correct),showFeedback(q,letter,correct,null)}else state.streak=0,state.sessionXP+=1,state.pendingWrong={q:q,letter:letter,attemptType:seen?"repeat":"first"},document.getElementById("reflectionWrap").style.display="block";updateHUD()}function logReflection(type){if(state.errorCounts[type]=(state.errorCounts[type]||0)+1,document.getElementById("reflectionWrap").style.display="none",state.pendingWrong){const{q:q,letter:letter,attemptType:attemptType}=state.pendingWrong;logMCAnswer(q,letter,!1,attemptType,type),state.pendingWrong=null}showFeedback(state.queue[state.currentIdx],null,!1,type),updateHUD(),updateErrorPanel()}function showFeedback(q,chosenLetter,correct,reflectionType){const panel=document.getElementById("feedbackPanel"),result=document.getElementById("feedbackResult"),expl=document.getElementById("feedbackExplanation"),distr=document.getElementById("feedbackDistractor"),coach=document.getElementById("feedbackCoach");panel.className="feedback-panel "+(correct?"correct":"wrong"),correct?(result.className="feedback-result correct",result.textContent="✓ Correct!",expl.innerHTML=`<div class="feedback-section-title">Why it's right</div>${q.explanation}`,distr.innerHTML="",coach.innerHTML=""):(result.className="feedback-result wrong",result.textContent="✗ Incorrect — correct answer: "+q.correctAnswer,expl.innerHTML=`<div class="feedback-section-title">Why ${q.correctAnswer} is correct</div>${q.explanation}`,chosenLetter&&q.distractors&&q.distractors[chosenLetter]?distr.innerHTML=`\n        <div class="feedback-section-title" style="margin-top:10px;">Why you may have picked that</div>\n        ${q.distractors[chosenLetter]}`:distr.innerHTML="",q.coach&&(coach.innerHTML=`\n        <div style="margin-top:12px;padding:10px 12px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;font-size:13px;">\n          <span style="color:var(--accent);font-weight:700;">💡 Coach tip</span><br>\n          ${q.coach}\n        </div>`)),document.getElementById("btnNext").style.display="inline-block"}function exitSession(){if(state.pendingWrong){const{q:q,letter:letter,attemptType:attemptType}=state.pendingWrong;logMCAnswer(q,letter,!1,attemptType,"—"),state.pendingWrong=null}state.totalAttempted>0?showComplete(!0):(document.getElementById("sessionScreen").style.display="none",document.getElementById("modeScreen").style.display="flex",document.getElementById("loadingMsg").textContent="",document.getElementById("btnStart").disabled=!1,prefetchAndCount())}function nextQuestion(){state.currentIdx++,state.currentIdx>=state.queue.length?showComplete():renderQuestion()}function updateHUD(){document.getElementById("chipStreak").textContent="🔥 "+state.streak,document.getElementById("chipXP").textContent="⚡ "+state.sessionXP+" XP",document.getElementById("statCorrect").textContent=state.totalCorrect,document.getElementById("statAttempted").textContent=state.totalAttempted,document.getElementById("statStreak").textContent=state.bestStreak,document.getElementById("statXP").textContent=state.sessionXP;const acc=state.totalAttempted>0?Math.round(state.totalCorrect/state.totalAttempted*100)+"%":"—";document.getElementById("statAccuracy").textContent=acc}function updateErrorPanel(){const ec=state.errorCounts,total=ec.guessed+ec.misread+ec.noknowledge;if(0===total)return;const items=[{key:"guessed",icon:"🎲",label:"Guessing",count:ec.guessed},{key:"misread",icon:"👁",label:"Misread Q",count:ec.misread},{key:"noknowledge",icon:"📚",label:"Gap in concept",count:ec.noknowledge}].filter(x=>x.count>0).sort((a,b)=>b.count-a.count);document.getElementById("errorPanel").innerHTML=items.map(x=>`\n    <div class="error-item">\n      ${x.icon} ${x.label}: <strong>${x.count}</strong>\n      <div class="error-bar">\n        <div class="error-fill" style="width:${Math.round(x.count/total*100)}%"></div>\n      </div>\n    </div>\n  `).join("")}function showXPPop(text,correct){const pop=document.createElement("div");pop.className="xp-pop",pop.textContent=text,pop.style.color=correct?"var(--purple)":"var(--muted)";const r=document.getElementById("chipXP").getBoundingClientRect();pop.style.position="fixed",pop.style.left=r.left+"px",pop.style.top=r.bottom+"px",document.body.appendChild(pop),setTimeout(()=>pop.remove(),1300)}function showComplete(earlyExit){const ec=state.errorCounts,errors=[{icon:"🎲",label:"Guessing",count:ec.guessed},{icon:"👁",label:"Misread Q",count:ec.misread},{icon:"📚",label:"Gap in concept",count:ec.noknowledge}].filter(x=>x.count>0).sort((a,b)=>b.count-a.count),acc=state.totalAttempted>0?Math.round(state.totalCorrect/state.totalAttempted*100):0,totalQ=state.queue.length,doneQ=state.totalAttempted,remaining=totalQ-doneQ,xpMsg=earlyExit?state.sessionXP>=10?"Great effort — come back for the rest!":state.sessionXP>=4?"Good start — finish the session next time!":"Every question counts — keep coming back!":state.sessionXP>=20?"Outstanding session!":state.sessionXP>=12?"Solid work — keep it up!":state.sessionXP>=6?"Good effort — try again to improve!":"Every attempt counts — keep going!",titleText=earlyExit?"SESSION SAVED":"SESSION COMPLETE",subtitleText=earlyExit&&remaining>0?`<div style="font-size:13px;color:var(--muted);margin-bottom:8px;">${doneQ} of ${totalQ} questions attempted &mdash; ${remaining} remaining</div>`:"";document.getElementById("questionCard").innerHTML=`\n    <div class="complete-screen">\n      <div class="complete-title">${titleText}</div>\n      ${subtitleText}\n\n      \x3c!-- XP HERO — big and motivating --\x3e\n      <div style="text-align:center;margin:20px 0 24px;">\n        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">XP EARNED THIS SESSION</div>\n        <div style="font-size:64px;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-2px;">+${state.sessionXP}</div>\n        <div style="font-size:14px;color:var(--purple);font-weight:600;margin-top:6px;">${xpMsg}</div>\n      </div>\n\n      \x3c!-- STAT GRID --\x3e\n      <div class="complete-grid" style="margin-bottom:20px;">\n        <div class="complete-stat-card">\n          <div class="complete-stat-val">${state.totalCorrect}/${state.totalAttempted}</div>\n          <div class="complete-stat-label">Correct</div>\n        </div>\n        <div class="complete-stat-card">\n          <div class="complete-stat-val">${acc}%</div>\n          <div class="complete-stat-label">Accuracy</div>\n        </div>\n        <div class="complete-stat-card">\n          <div class="complete-stat-val">${state.bestStreak}</div>\n          <div class="complete-stat-label">Best Streak</div>\n        </div>\n        <div class="complete-stat-card" style="border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.08);">\n          <div class="complete-stat-val" style="color:var(--accent);">${state.sessionXP}</div>\n          <div class="complete-stat-label">XP Earned</div>\n        </div>\n      </div>\n\n      \x3c!-- ERROR BREAKDOWN --\x3e\n      ${errors.length>0?`\n        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px;width:100%;max-width:460px;">\n          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Error Pattern</div>\n          <div style="font-size:13px;color:var(--text);">\n            Most common: ${errors[0].icon} <strong>${errors[0].label}</strong> (${errors[0].count}x)\n            ${errors.length>1?`<br><span style="color:var(--muted)">${errors[1].icon} ${errors[1].label}: ${errors[1].count}x</span>`:""}\n          </div>\n        </div>`:""}\n\n      \x3c!-- LEADERBOARD PANEL --\x3e\n      <div id="completeLbPanel" style="width:100%;max-width:460px;margin-bottom:20px;">\n        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">\n          🏆 YOUR RANKING\n        </div>\n        <div id="completeLbContent" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--muted);">\n          Loading leaderboard...\n        </div>\n      </div>\n\n      \x3c!-- ACTIONS --\x3e\n      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px;">\n        ${earlyExit&&remaining>0?'\n          <button class="btn-start" style="margin:0;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);" onclick="continueSession()">Continue Session →</button>\n        ':""}\n        <button class="btn-start" style="margin:0;" onclick="returnToSelection()">New Session →</button>\n      </div>\n      <div style="font-size:11px;color:var(--muted);margin-top:14px;">Session saved ✓</div>\n    </div>\n  `,document.getElementById("progressLabel").textContent="Session complete!",document.getElementById("progressPct").textContent="100%",document.getElementById("progressFill").style.width="100%",document.getElementById("sessionScreen").classList.add("complete-mode"),setTimeout(()=>fetchCompleteLb(),1500)}async function fetchCompleteLb(){const el=document.getElementById("completeLbContent");if(!el)return;const subjectList=state.lockedSubject?[state.subject]:state.subjects,me=(state.studentName||"").trim().toLowerCase(),subj={EES:"EES",BIO:"BIO",INVSCI:"INVSCI",CHEM:"CHEM",BS:"BUSS",HM:"HLTHM",ES:"ENGS",CF:"COMFAM",LEG:"LEG",VISART:"VISART",ANCH:"ANCH",ECON:"ECON",GEO:"GEO"}[subjectList[0]]||subjectList[0]||"EES";try{const clsQS=state.studentClass?`&class=${encodeURIComponent(state.studentClass)}`:"",url=`${WORKER_URL}/leaderboard?subject=${subj}${clsQS}&period=week&directive=all&lburl=${encodeURIComponent(LB_WEBHOOK_URL)}`,res=await fetch(url,{headers:cubeHdrs()}),data=await res.json(),lb=data.leaderboard||[];if(console.log("CUBE LB ←",data.version||"(no version — webhook deploy older than v4.3?)","| tabs:",JSON.stringify(data.tabsQueried||[]),"| rows:",lb.length,data.error?"| ERROR: "+data.error:""),0===lb.length)return void(el.textContent="No leaderboard data yet this week — keep practising!");const myIdx=lb.findIndex(p=>(p.student||"").toLowerCase()===me),myXP=myIdx>=0?Math.round(lb[myIdx].totalXP):null,top10=lb.slice(0,10);myIdx>=10&&top10.push({...lb[myIdx],_outside:!0}),el.innerHTML=top10.map((p,i)=>{const rank=lb.indexOf(p)+1,isMe=(p.student||"").toLowerCase()===me,medal=1===rank?"🥇":2===rank?"🥈":3===rank?"🥉":`${rank}.`;return`\n        <div style="display:flex;align-items:center;padding:6px 8px;${isMe?"background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;":i%2==0?"background:rgba(255,255,255,0.02);":""}${p._outside?"margin-top:4px;border-top:1px solid var(--border);padding-top:8px;":""}">\n          <span style="width:28px;font-size:12px;font-weight:700;color:${isMe?"var(--accent)":"var(--muted)"};">${medal}</span>\n          <span style="flex:1;font-size:13px;font-weight:${isMe?700:400};color:${isMe?"var(--accent)":"var(--text)"};">${p.student}${isMe?" ← you":""}</span>\n          <span style="font-size:12px;font-weight:700;color:var(--purple);">${Math.round(p.totalXP)} XP</span>\n        </div>`}).join("")+(null!==myXP?`\n      <div style="font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">\n        This session you earned <strong style="color:var(--accent);">+${state.sessionXP} XP</strong>\n        ${myIdx>=0?` &mdash; you are ranked <strong style="color:var(--accent);">#${myIdx+1}</strong> this week`:""}\n      </div>`:"")}catch(e){el.textContent="Could not load leaderboard."}}function continueSession(){document.getElementById("sessionScreen").classList.remove("complete-mode"),document.getElementById("questionCard").innerHTML="",renderQuestion()}function returnToSelection(){if(state.pendingWrong){const{q:q,letter:letter,attemptType:attemptType}=state.pendingWrong;logMCAnswer(q,letter,!1,attemptType,"—"),state.pendingWrong=null}document.getElementById("sessionScreen").classList.remove("complete-mode"),document.getElementById("sessionScreen").style.display="none",document.getElementById("modeScreen").style.display="flex",document.getElementById("loadingMsg").textContent="",state.questions=[],state.queue=[],state.currentIdx=0,state.answered=!1,state.streak=0,state.bestStreak=0,state.sessionXP=0,state.totalCorrect=0,state.totalAttempted=0,state.errorCounts={guessed:0,misread:0,noknowledge:0},prefetchAndCount()}async function runDebug(){const out=document.getElementById("debugOut");out.style.display="block",out.textContent="Running...\n";const name=(state.studentName||"").trim()||"test",codes=(state.lockedSubject?[state.subject]:state.subjects).map(s=>SUBJECT_CONFIG[s]?.logCode||s);out.textContent+="Name: "+name+"\nCodes: "+codes.join(",")+"\n\n";const params=new URLSearchParams({student:name,subjects:codes.join(","),webhook:MC_LOG_WEBHOOK_URL}),url=WORKER_URL+"/history?"+params.toString();out.textContent+="URL: "+url+"\n\nFetching...\n";try{const res=await fetch(url,{method:"GET",headers:cubeHdrs()});out.textContent+="Status: "+res.status+"\n";const text=await res.text();out.textContent+="Response (first 500):\n"+text.slice(0,500)+"\n";try{const data=JSON.parse(text);out.textContent+="\nParsed OK. rows: "+(data.rows||[]).length+"\n",data.error&&(out.textContent+="ERROR: "+data.error+"\n"),(data.rows||[]).length>0&&(out.textContent+="\nFirst 3:\n"+JSON.stringify(data.rows.slice(0,3),null,2)+"\n")}catch(pe){out.textContent+="JSON parse failed: "+pe.message+"\n"}}catch(fe){out.textContent+="Fetch error: "+fe.message+"\n"}}!function(){const params=new URLSearchParams(window.location.search),raw=params.get("subject")||null,classParam=params.get("class")||"";state.studentClass=classParam;const subj=raw?{EES:"EES",BIO:"BIO",BIOLOGY:"BIO",INVSCI:"INVSCI",INVESTIGATINGSCIENCE:"INVSCI",CHEM:"CHEM",CHEMISTRY:"CHEM",PHYS:"PHYS",PHYSICS:"PHYS",BS:"BS",BUSS:"BS",HM:"HM",HLTHM:"HM",ES:"ES",ENGS:"ES",CF:"CF",COMFAM:"CF",LEG:"LEG",LEGAL:"LEG",LS:"LEG",VISART:"VISART",VA:"VISART",VISARTS:"VISART",ANCH:"ANCH",ANCHIST:"ANCH",AHIS:"ANCH",AHIST:"ANCH",MHIST:"MHIST",MODH:"MHIST",MODERNHIST:"MHIST",MODERNHISTORY:"MHIST",HOSP:"HOSP",HOSPITALITY:"HOSP",SOR2:"SOR2",SOR:"SOR2",ECON:"ECON",ECONOMICS:"ECON",GEO:"GEO",GEOGRAPHY:"GEO"}[raw.toUpperCase()]||raw.toUpperCase():null;if(subj&&SUBJECT_CONFIG[subj]){state.subject=subj,state.subjects=[subj],state.lockedSubject=!0;const lockedEl=document.getElementById("subjectLocked");lockedEl.style.display="block",lockedEl.textContent=SUBJECT_CONFIG[subj].name,document.getElementById("subjectDropdown").style.display="none",document.getElementById("subjectHint").style.display="none"}else state.subject="EES",state.subjects=["EES"],state.lockedSubject=!1,renderSubjectPills();restoreFilters(),renderModulePills(),renderYearPills();const savedName=localStorage.getItem("cube_student_name")||"";state.studentName=savedName;const nameInput=document.getElementById("studentNameInput");if(nameInput&&savedName&&(nameInput.value=savedName),DEBUG_MODE){const dbtn=document.getElementById("btnDebug");dbtn&&(dbtn.style.display="inline-block")}prefetchAndCount()}();
-</script>
-<script>
-/* ── No-MC backstop ──────────────────────────────────────────────────────
-   Subjects without a multiple-choice section in their HSC written exam
-   (Visual Arts, Ancient History) must not land students on an empty coach.
-   Self-contained on purpose: depends on nothing in the main bundle, so it
-   behaves identically in the readable and minified builds. Runs right after
-   the main init (same synchronous frame → no flash) and, for a no-MC subject,
-   replaces the setup screen with a friendly redirect. */
+// ── subjectBrowser-v3 (v7 facultyPanels · 2026-07-10): render faculty panels
+// from school-SIHS.json. Flow unchanged from v2: pick subject, then (only if the
+// subject has 2+ classes) pick a class — pills for 2–4 classes, dropdown for 5+.
+// New in v3: full-width faculty panels with header + description (no faculty icon),
+// class-count badges, hero "Continue where you left off" card, mobile faculty
+// accordions, recent-activity strip (localStorage only). If the school file fails
+// to load, the static fallback markup above is left untouched (automatic rollback).
 (function(){
-  try{
-    var raw=(new URLSearchParams(location.search).get('subject')||'').toUpperCase();
-    var NORM={VA:'VISART',VISARTS:'VISART',VISART:'VISART',ANCH:'ANCH',ANCHIST:'ANCH',AHIS:'ANCH',AHIST:'ANCH'};
-    var subj=NORM[raw]||raw;
-    var NO_MC={VISART:'Visual Arts',ANCH:'Ancient History'};
-    if(!NO_MC[subj]) return;
-    var name=NO_MC[subj];
-    var cls=(new URLSearchParams(location.search).get('class')||'');
-    var back='./?subject='+encodeURIComponent(subj)+(cls?'&class='+encodeURIComponent(cls):'');
-    var ms=document.getElementById('modeScreen');
-    if(!ms) return;
-    ms.innerHTML=
-      '<div style="max-width:560px;margin:8vh auto;text-align:center;font-family:\'DM Sans\',sans-serif;color:var(--text)">'
-      +'<div style="font-size:44px;margin-bottom:14px">\uD83C\uDFA8</div>'
-      +'<div style="font-size:22px;font-weight:800;margin-bottom:10px">No multiple-choice coach for '+name+'</div>'
-      +'<div style="font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px">'
-      +name+' doesn\u2019t have a multiple-choice section in its HSC written exam, so there\u2019s no MC question bank to practise. '
-      +'Head back to the CUBE Marking Coach to work on short-answer responses instead.</div>'
-      +'<a href="'+back+'" style="display:inline-block;background:var(--accent,#c9a84c);color:#1a1205;font-weight:800;'
-      +'text-decoration:none;padding:12px 22px;border-radius:12px;font-size:15px">\u2190 Back to Marking Coach</a>'
-      +'</div>';
-  }catch(e){}
+  var SCHOOL_FILE = "school-SIHS.json";
+  var VER = "2026-07-12";
+  var KLA_META = {
+    "Science": { desc: "Earth systems, biology, chemistry & investigation", color: "#69f0ae" },
+    "HSIE":    { desc: "Humanities, society, business & law",               color: "#ffcc80" },
+    "PDHPE":   { desc: "Health, movement & personal development",           color: "#b39ddb" },
+    "TAS":     { desc: "Technology & applied studies",                      color: "#64b5f6" },
+    "CAPA":    { desc: "Creative & performing arts",                        color: "#f48fb1" },
+    "VET":     { desc: "Vocational education & training",                   color: "#4dd0e1" }
+  };
+
+  function buildHref(code, cls){
+    return "app/?subject=" + encodeURIComponent(code)
+      + (cls ? "&class=" + encodeURIComponent(cls) : "")
+      + "&cv=" + CUBE_BUILD; // cache-bust JS-generated links too (static ones are stamped above)
+  }
+  function rememberLaunch(su, clsTab, clsLabel){
+    try {
+      // cubeLastLaunch keeps its v2 shape { subject, cls, t } for backwards compatibility
+      localStorage.setItem("cubeLastLaunch", JSON.stringify({ subject: su.code, cls: clsTab || null, t: Date.now() }));
+      var hist = [];
+      try { hist = JSON.parse(localStorage.getItem("cubeLaunchHistory") || "[]"); } catch(e){}
+      hist.unshift({ subject: su.code, name: su.name, emoji: su.emoji, clsLabel: clsLabel || null, t: Date.now() });
+      localStorage.setItem("cubeLaunchHistory", JSON.stringify(hist.slice(0, 5)));
+    } catch(e){}
+  }
+  function ping(){ if (typeof sendHeight === "function") { sendHeight(); setTimeout(sendHeight, 350); } }
+  function relTime(t){
+    if (!t) return "recently";
+    var s = Math.floor((Date.now() - t) / 1000);
+    if (s < 60) return "just now";
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + " min ago";
+    var hr = Math.floor(m / 60);
+    if (hr < 24) return hr + (hr === 1 ? " hr ago" : " hrs ago");
+    var d = Math.floor(hr / 24);
+    if (d === 1) return "yesterday";
+    return d + " days ago";
+  }
+
+  fetch(SCHOOL_FILE + "?v=" + VER, { cache: "no-cache" })
+    .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(render)
+    .catch(function(err){ console.warn("CUBE landing: school config unavailable, using static list.", err); });
+
+  function launchLink(subj, clsObj, cssClass, label){
+    var a = document.createElement("a");
+    a.className = cssClass;
+    a.href = buildHref(subj.code, clsObj ? clsObj.tab : null);
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.innerHTML = label;
+    // wallet-v1.0 — ask for the class code once per subject, then launch.
+    // Held back rather than blocked: a student who skips still gets through
+    // while ACCESS_GATE is off, so nothing changes for them until go-live.
+    a.addEventListener("click", function(ev){
+      rememberLaunch(subj, clsObj ? clsObj.tab : null, clsObj ? clsObj.label : null);
+      if (!window.CUBEAccess) return;                       // wallet absent → old behaviour
+      if (window.CUBEAccess.codeFor(subj.code)) return;     // already held → straight through
+      ev.preventDefault();
+      window.CUBEAccess.ensure(subj.code, { subjectName: subj.name }).then(function(){
+        window.open(a.href, "_blank", "noopener");
+      });
+    });
+    return a;
+  }
+
+  // Normalise a subject's class list to [{label, tab}] regardless of file shape.
+  // New shape: classes:[{label,tab}]. Legacy shape: classCodes:["12Bio-1",...]
+  // (label == tab). This keeps an old school file working during transition.
+  function normaliseClasses(su){
+    if (Array.isArray(su.classes)) {
+      return su.classes.map(function(c){
+        if (typeof c === "string") return { label: c, tab: c };
+        return { label: c.label || c.tab, tab: c.tab || c.label };
+      });
+    }
+    return (su.classCodes || []).map(function(c){ return { label: c, tab: c }; });
+  }
+
+  function render(school){
+    var root = document.getElementById("subjects");
+    if (!root || !school || !Array.isArray(school.subjects) || !school.subjects.length) return;
+    var isMobile = !!(window.CUBE_IS_MOBILE && window.CUBE_IS_MOBILE());
+
+    var last = null;
+    try { last = JSON.parse(localStorage.getItem("cubeLastLaunch") || "null"); } catch(e){}
+
+    // Hero "Continue where you left off" card (falls back to the static get-started card)
+    var lastMatch = renderHeroSide(school, last);
+
+    root.classList.remove("subjects-v2");
+    root.classList.add("subjects-v3");
+    root.innerHTML = "";
+
+    // Group by KLA in file order
+    var klas = [], byKla = {};
+    school.subjects.forEach(function(su){
+      var k = su.kla || "Subjects";
+      if (!byKla[k]) { byKla[k] = []; klas.push(k); }
+      byKla[k].push(su);
+    });
+
+    // On mobile, open the faculty of the last launch (or the first faculty)
+    var openKla = (lastMatch && lastMatch.kla) || klas[0];
+
+    klas.forEach(function(k){
+      var meta = KLA_META[k] || { desc: "", color: "#c9a84c" };
+      var panel = document.createElement("div");
+      panel.className = "fac-panel";
+      panel.style.setProperty("--fac-color", meta.color);
+      panel.style.setProperty("--fac-border", meta.color + "40");
+      panel.style.setProperty("--fac-bg", meta.color + "0d");
+      var n = byKla[k].length;
+      panel.style.flexGrow = n;
+      panel.style.flexBasis = Math.min(n * 200, 1100) + "px";
+
+      // Faculty header: name + description only — no icon by design
+      var head = document.createElement("div");
+      head.className = "fac-head";
+      head.innerHTML = '<div><div class="fac-name">' + k + '</div>'
+        + (meta.desc ? '<div class="fac-desc">' + meta.desc + '</div>' : '')
+        + '</div><span class="fac-arrow">\u25be</span>';
+      panel.appendChild(head);
+
+      var grid = document.createElement("div");
+      grid.className = "fac-grid";
+      byKla[k].forEach(function(su){ grid.appendChild(card(su, meta)); });
+      panel.appendChild(grid);
+
+      if (isMobile) {
+        if (k === openKla) panel.classList.add("open");
+        head.addEventListener("click", function(){ panel.classList.toggle("open"); ping(); });
+      }
+      root.appendChild(panel);
+    });
+
+    renderActivity();
+    ping();
+  }
+
+  function renderHeroSide(school, last){
+    var side = document.getElementById("heroSide");
+    if (!side || !last || !last.subject) return null;
+    var match = school.subjects.filter(function(su){ return su.code === last.subject; })[0];
+    if (!match) return null;
+    var clsList = normaliseClasses(match);
+    var clsObj = last.cls ? clsList.filter(function(c){ return c.tab === last.cls; })[0] : null;
+    if (last.cls && !clsObj) return null; // stored class no longer exists in the school file
+    var card = document.createElement("div");
+    card.className = "cw-card";
+    card.innerHTML =
+      '<div class="cw-label">Continue where you left off</div>' +
+      '<div class="cw-row"><div class="cw-emoji">' + match.emoji + '</div><div>' +
+        '<div class="cw-name">' + match.name + '</div>' +
+        (clsObj ? '<div class="cw-class">Class: ' + clsObj.label + '</div>' : '') +
+      '</div></div>' +
+      '<div class="cw-meta"><span>Last opened ' + relTime(last.t) + '</span></div>';
+    card.appendChild(launchLink(match, clsObj, "cw-resume", "Resume \u2192"));
+    side.innerHTML = "";
+    side.appendChild(card);
+    return match;
+  }
+
+  function renderActivity(){
+    var strip = document.getElementById("activityStrip");
+    var rows = document.getElementById("activityRows");
+    if (!strip || !rows) return;
+    strip.style.display = ""; // hidden on mobile via CSS
+    var hist = [];
+    try { hist = JSON.parse(localStorage.getItem("cubeLaunchHistory") || "[]"); } catch(e){}
+    if (!hist.length) {
+      rows.innerHTML = '<div class="as-empty">No activity yet \u2014 pick a subject above to get started.</div>';
+      return;
+    }
+    rows.innerHTML = "";
+    hist.slice(0, 3).forEach(function(hh){
+      var r = document.createElement("div");
+      r.className = "as-row";
+      r.innerHTML = '<span>' + (hh.emoji || "") + " " + hh.name + (hh.clsLabel ? " \u2014 " + hh.clsLabel : "")
+        + '</span><span class="t">' + relTime(hh.t) + '</span>';
+      rows.appendChild(r);
+    });
+  }
+
+  function card(su, meta){
+    var classes = normaliseClasses(su);
+    var accent = su.accent || meta.color || "#c9a84c";
+    var badgeText = classes.length === 0 ? "Tap to start" : classes.length === 1 ? "1 class" : classes.length + " classes";
+    var inner =
+      '<div class="sv3-top"><span class="sv3-emoji">' + su.emoji + '</span>' +
+      '<span class="sv3-name">12 ' + su.name + '</span></div>' +
+      '<span class="sv3-badge">' + badgeText + '</span>';
+
+    function paint(el){
+      el.style.setProperty("--acc", accent);
+      el.style.setProperty("--acc-bg", accent + "1f");
+      el.style.borderColor = accent + "55";
+    }
+
+    // 0 or 1 class: the whole card launches directly. Param uses tab; display uses label.
+    if (classes.length <= 1) {
+      var only = classes[0] || null;
+      var a = launchLink(su, only, "sv3-card",
+        inner + (only ? '<div class="sv3-hint">' + only.label + '</div>' : ''));
+      paint(a);
+      return a;
+    }
+
+    // 2+ classes: card expands to a class picker (pills for 2–4, dropdown for 5+)
+    var d = document.createElement("div");
+    d.className = "sv3-card";
+    paint(d);
+    d.innerHTML = inner + '<div class="sv3-hint">tap to choose your class</div>';
+    var open = false, picker = null, pickLabel = null;
+    d.addEventListener("click", function(ev){
+      if (ev.target.closest && (ev.target.closest(".sv3-pill") || ev.target.tagName === "SELECT" || ev.target.tagName === "OPTION")) return;
+      open = !open;
+      d.classList.toggle("open", open);
+      if (open && !picker) {
+        pickLabel = document.createElement("div");
+        pickLabel.className = "sv3-picker-label";
+        pickLabel.textContent = "Select your class";
+        d.appendChild(pickLabel);
+        if (classes.length <= 4) {
+          picker = document.createElement("div");
+          picker.className = "sv3-pills";
+          classes.forEach(function(c){
+            var p = launchLink(su, c, "sv3-pill", su.emoji + " " + c.label);
+            p.style.borderColor = accent + "99";
+            picker.appendChild(p);
+          });
+        } else {
+          picker = document.createElement("select");
+          picker.className = "sv3-select";
+          var o0 = document.createElement("option");
+          o0.value = ""; o0.textContent = "Select your class\u2026";
+          picker.appendChild(o0);
+          classes.forEach(function(c){
+            var o = document.createElement("option");
+            o.value = c.tab; o.textContent = c.label;
+            picker.appendChild(o);
+          });
+          picker.addEventListener("change", function(){
+            if (!picker.value) return;
+            var chosen = classes.filter(function(c){ return c.tab === picker.value; })[0];
+            rememberLaunch(su, chosen.tab, chosen.label);
+            window.open(buildHref(su.code, chosen.tab), "_blank", "noopener");
+            picker.value = "";
+          });
+        }
+        d.appendChild(picker);
+      } else if (picker) {
+        picker.style.display = open ? "" : "none";
+        if (pickLabel) pickLabel.style.display = open ? "" : "none";
+      }
+      ping();
+    });
+    return d;
+  }
+})();
+
+// On mobile, collapse the info sections behind tap-to-expand toggles —
+// students land here to pick a subject; research/photo/privacy stay one tap away.
+(function(){
+  if (!(window.CUBE_IS_MOBILE && window.CUBE_IS_MOBILE())) return;
+  var labels = {
+    research: "📚 Research supporting timely feedback",
+    how:      "⚙️ How it works",
+    photos:   "📸 Getting your photo right",
+    limits:   "⚠️ Limitations & honest expectations",
+    privacy:  "🔒 Privacy & data handling"
+  };
+  Object.keys(labels).forEach(function(id){
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    var inner = document.createElement("div");
+    while (sec.firstChild) inner.appendChild(sec.firstChild);
+    inner.style.display = "none";
+    inner.style.paddingTop = "14px";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sec-toggle";
+    btn.innerHTML = "<span>" + labels[id] + "</span><span class=\"arrow\">▼</span>";
+    btn.addEventListener("click", function(){
+      var open = inner.style.display === "none";
+      inner.style.display = open ? "block" : "none";
+      btn.querySelector(".arrow").textContent = open ? "▲" : "▼";
+      sendHeight();
+      setTimeout(sendHeight, 350);
+    });
+    sec.classList.add("collapsed-mobile");
+    sec.appendChild(btn);
+    sec.appendChild(inner);
+  });
+  sendHeight();
 })();
 </script>
 <div id="cube-build-tag" title="Build version — tap to confirm you are on the latest deploy"
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE MC · ees-years-fix v2 · 2026-09-05</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.4 privacy-v1.0 · 2026-11-07</div>
 </body>
 </html>
