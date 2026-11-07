@@ -470,14 +470,14 @@ window.CUBEAccess = (function () {
   function validate(code) {
     var c = normCode(code);
     if (!c) return Promise.resolve({ ok: false, reason: "empty" });
-    return fetch(WORKER + "/access?code=" + encodeURIComponent(c))
+    return fetch(WORKER + "/access?code=" + encodeURIComponent(c) + "&tool=marking")   // doorLockdown-v1.0: only passes that can MARK get through this door
       .then(function (r) { return r.json().then(function (d) { return { status: r.status, body: d }; }); })
       .then(function (x) {
         var d = x.body || {};
         if (x.status === 200 && d.ok) {
           return { ok: true, code: c, kind: d.kind || "class", subject: d.subject || "", subjectName: d.subjectName || "", classGate: d.classGate || false, cls: d.class || "", label: d.label || "" };
         }
-        return { ok: false, reason: d.error || "invalid" };
+        return { ok: false, reason: d.error || "invalid", message: d.message || "" };
       })
       .catch(function () { return { ok: false, reason: "offline" }; });
   }
@@ -601,6 +601,8 @@ window.CUBEAccess = (function () {
               msg.className = "cubeac-msg";
               msg.textContent = res.reason === "offline"
                 ? "Could not reach the server — check your connection and try again."
+                : res.reason === "marking_withdrawn"
+                ? "Student access to the CUBE Marking Coach has been withdrawn. The multiple-choice coach is still available."
                 : "That code was not recognised. Check it with your teacher.";
             }
           });
