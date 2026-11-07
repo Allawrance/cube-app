@@ -612,7 +612,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
         <div class="limit-icon">🔒</div>
         <div>
           <div class="limit-title">Privacy — first name + initial only</div>
-          <div class="limit-desc">Only your first name and surname initial are stored. Photos are processed and not retained. No full names or student IDs are collected.</div>
+          <div class="limit-desc">CUBE records only your first name and surname initial. No full names or student IDs are collected. Photos are not stored by CUBE. Your marks and short extracts of feedback are kept to show your progress.</div>
         </div>
       </div>
       <div class="limit-card">
@@ -639,8 +639,8 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
 <section id="privacy" style="background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border-top:1px solid rgba(201,168,76,0.15);">
   <div class="section-inner">
     <div class="section-tag">Privacy &amp; compliance</div>
-    <h2 class="section-title">Privacy &amp; NSW Department of Education Guidelines</h2>
-    <p style="font-size:15px;color:#dce8f0;line-height:1.6;margin-bottom:20px;max-width:820px;">This tool has been developed and is maintained by Mr Lawrance to support student learning. It is designed to align with NSW Department of Education guidance on the use of AI, including data minimisation, de-identification, and secure processing of student work.</p>
+    <h2 class="section-title">Privacy &amp; data handling</h2>
+    <p style="font-size:15px;color:#dce8f0;line-height:1.6;margin-bottom:20px;max-width:820px;">CUBE is an independent tool developed and maintained by Mr Lawrance (Sureview Pty Ltd) to support student learning. It is not a NSW Department of Education product and has not been approved for departmental use; it is going through the Department's assessment pathway. It is designed around data minimisation, de-identification and server-side handling of student work. This page describes what it actually records.</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
 
@@ -651,6 +651,8 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
           <li>Student submissions consist of images of written work only (e.g. handwritten responses)</li>
           <li>Submissions must not include names, faces, or any identifying features</li>
           <li>Only first name and surname initial (e.g. "Steve L") may be used to personalise feedback and display class progress</li>
+          <li>A progress record for each marked question: first name and initial, class, subject, question, marks and sub-scores, a short AI-written improvement note and improved sentence, and the date and time</li>
+          <li>If a student presses "Report a problem", their note and a short extract (up to 600 characters) of the transcribed answer, so the issue can be checked</li>
         </ul>
       </div>
 
@@ -661,9 +663,9 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
           <li>No student photos showing faces</li>
           <li>No full names</li>
           <li>No student ID numbers</li>
-          <li>No class lists</li>
-          <li>No identifying personal information</li>
-          <li>No full student responses are retained after processing</li>
+          <li>No class lists or rosters</li>
+          <li>No email addresses or contact details</li>
+          <li>No photos or complete copies of student answers are stored by CUBE (only the short extracts described under "What is collected")</li>
         </ul>
       </div>
 
@@ -671,9 +673,9 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
       <div style="background:rgba(100,181,246,0.05);border:1px solid rgba(100,181,246,0.2);border-radius:12px;padding:14px 16px;">
         <div style="font-weight:700;font-size:13px;color:#64b5f6;letter-spacing:0.5px;margin-bottom:8px;">🔄 How data is handled</div>
         <ul style="font-size:15px;color:#dce8f0;line-height:1.6;padding-left:16px;margin:0;">
-          <li>Student work is securely transmitted to an external AI service to generate feedback</li>
-          <li>Images and responses are not stored after processing is complete</li>
-          <li>The only data retained is first name and surname initial for classroom use (e.g. feedback display or leaderboard)</li>
+          <li>Student work is securely transmitted to an external AI service (Anthropic's Claude, through its commercial API) to generate feedback</li>
+          <li>CUBE does not store the images or the full text of answers. Anthropic handles the content under its commercial API terms, which state that it is not used to train its models; Anthropic's own retention rules apply</li>
+          <li>The progress records described above are kept in a Google Sheet that only the teacher/administrator can open, and are used for feedback, the leaderboard and teacher dashboards</li>
         </ul>
       </div>
 
@@ -714,7 +716,7 @@ html.mobile-ui footer { flex-direction: column; gap: 8px; text-align: center; pa
     <div class="nav-badge" style="font-size:11px;padding:2px 8px;">CUBE</div>
     <span>CUBE Marking Coach — HSC Learning Support Tool</span>
   </div>
-  <div>Built by Mr Lawrance · NSW HSC aligned</div>
+  <div>Built by Mr Lawrance · Sureview Pty Ltd · NSW HSC aligned</div>
 </footer>
 
 <script>
@@ -1041,16 +1043,7 @@ setTimeout(sendHeight, 1500);
 // Applies whether or not the page is inside the Google Sites iframe — every subject
 // links straight to the app (opens in a new tab), which is the path proven to work.
 // build 2026-07-12 · v8 physics (Physics PHYS added — 4 classes 12PH1–12PH4 → tabs PHYS-1–PHYS-4; v7 facultyPanels retained)
-var CUBE_BUILD = "20260919a";   // bumped for studentLockdown v4.2 + mcopen-v1.0 so every app link fetches the new build
-// mcopen-v1.0 · 2026-09-19 — while the Marking Coach is withdrawn (Worker MARKING_LOCKDOWN on)
-// the landing page no longer asks for a class code: the Marking Coach shows only the notice +
-// comment box, and the MC Coach needs no code while Worker MC_OPEN is on. Fresh status fetch
-// (not the per-tab cache). If a click beats this fetch, the old prompt simply appears.
-window.CUBE_MARKING_NOCODE = false;
-fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
-  .then(function(r){ return r.json(); })
-  .then(function(d){ window.CUBE_MARKING_NOCODE = !!(d && d.markingLockdown === true); })
-  .catch(function(){});
+var CUBE_BUILD = "20260827a";
 (function(){
   document.querySelectorAll('#subjects a[href^="app/"]').forEach(function(a){
     var href = a.getAttribute("href");
@@ -1123,7 +1116,6 @@ fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
     // while ACCESS_GATE is off, so nothing changes for them until go-live.
     a.addEventListener("click", function(ev){
       rememberLaunch(subj, clsObj ? clsObj.tab : null, clsObj ? clsObj.label : null);
-      if (window.CUBE_MARKING_NOCODE) return;               // mcopen-v1.0 — Marking Coach withdrawn → straight through
       if (!window.CUBEAccess) return;                       // wallet absent → old behaviour
       if (window.CUBEAccess.codeFor(subj.code)) return;     // already held → straight through
       ev.preventDefault();
@@ -1338,7 +1330,7 @@ fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
     how:      "⚙️ How it works",
     photos:   "📸 Getting your photo right",
     limits:   "⚠️ Limitations & honest expectations",
-    privacy:  "🔒 Privacy & DET guidelines"
+    privacy:  "🔒 Privacy & data handling"
   };
   Object.keys(labels).forEach(function(id){
     var sec = document.getElementById(id);
@@ -1369,7 +1361,6 @@ fetch("https://cube-proxy.alan-3e2.workers.dev/access?v=" + Date.now())
   style="position:fixed;left:6px;bottom:6px;z-index:99999;font-family:monospace;font-size:9px;
          line-height:1;color:rgba(255,255,255,0.28);background:rgba(0,0,0,0.35);
          padding:3px 6px;border-radius:6px;pointer-events:auto;cursor:pointer;user-select:none;"
-  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.3 mcopen-v1.0 · 2026-09-19</div>
+  onclick="this.style.fontSize=this.style.fontSize==='9px'?'13px':'9px';this.style.color=this.style.color.indexOf('0.28')>-1?'rgba(201,168,76,0.9)':'rgba(255,255,255,0.28)';">CUBE Landing · v7.4 privacy-v1.0 · 2026-11-07</div>
 </body>
 </html>
-
