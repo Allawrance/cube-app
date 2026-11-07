@@ -482,7 +482,7 @@ html.mobile-xs .trophy-row{ flex-direction:column; }
 // Tab data comes through the Worker /sheet endpoint (owner-executed Apps
 // Script) — the private spreadsheet's ID is not present in this public file.
 const WORKER_BASE = 'https://cube-proxy.alan-3e2.workers.dev';
-const BUILD = 'v3.8 · 2026-11-08 · band panel lists all bands';
+const BUILD = 'v3.9 · 2026-11-08 · indicative band panel includes marks';
 
 // ── SUBJECT REGISTRY — SINGLE SOURCE OF TRUTH ──────────────────────────────
 // One entry PER SUBJECT, class tabs nested. 'label' = what teachers see on the
@@ -1423,42 +1423,61 @@ function toggleAccordion(id){
 }
 
 function renderBandAccordion(s){
+  // bandPanel-v2.0 — Indicative Band distribution combining BOTH kinds of response:
+  //   solid  = band-marked responses (the model returned an indicative band)
+  //   light  = marked responses placed at their band-equivalent mark % (HSC cut-offs 90/80/70/60/50)
   const el = document.getElementById('acc-band');
   const rows = saRowsAll();  // cumulative — band attainment is not a weekly metric
-  function bandLabel(v){
+  function bandFromField(v){
     if(v==null) return null;
     var str=String(v).trim();
-    if(/^E[1-4]$/i.test(str)) return 'Band '+str.toUpperCase();
+    if(/^E[1-4]$/i.test(str)) return str.toUpperCase();
     var n=Number(str);
-    if(!isNaN(n) && Math.abs(n-Math.round(n))<1e-9){ n=Math.round(n); if(n>=1&&n<=6) return 'Band '+n; }
+    if(!isNaN(n) && Math.abs(n-Math.round(n))<1e-9){ n=Math.round(n); if(n>=1&&n<=6) return String(n); }
     return null;
   }
-  var counts={};
-  rows.forEach(function(r){ var b=bandLabel(r['Ind Band']); if(b) counts[b]=(counts[b]||0)+1; });
-  var present=Object.keys(counts);
-  if(!present.length){ el.innerHTML=''; return; }
-  var total=present.reduce(function(a,k){return a+counts[k];},0);
-  // bandPanel-v1.0 — always list Band 6 → Band 1 (plus any extension E-bands present) and scale
-  // bars to the TOTAL, so one response shows as one short bar rather than a full-width 100% bar.
-  var hasE=present.some(function(k){return /Band E/i.test(k);});
-  var labels=hasE ? ['Band E4','Band E3','Band E2','Band E1'] : ['Band 6','Band 5','Band 4','Band 3','Band 2','Band 1'];
-  present.forEach(function(k){ if(labels.indexOf(k)<0) labels.push(k); });
-  var maxC=total;
+  var bandRows=[], markRows=[];
+  rows.forEach(function(r){
+    var b=bandFromField(r['Ind Band']);
+    if(b) bandRows.push(b);
+    else if(r['Mark %']!=null && !isNaN(Number(r['Mark %']))) markRows.push(Math.max(0,Math.min(1,Number(r['Mark %']))));
+  });
+  if(!bandRows.length && !markRows.length){ el.innerHTML=''; return; }
+  var ext = bandRows.some(function(b){return /^E/.test(b);});
+  var keys = ext ? ['E4','E3','E2','E1'] : ['6','5','4','3','2','1'];
+  function fromPct(p){
+    if(ext) return p>=0.9?'E4':p>=0.8?'E3':p>=0.7?'E2':'E1';
+    return p>=0.9?'6':p>=0.8?'5':p>=0.7?'4':p>=0.6?'3':p>=0.5?'2':'1';
+  }
+  var bandC={}, markC={};
+  keys.forEach(function(k){bandC[k]=0; markC[k]=0;});
+  bandRows.forEach(function(b){ if(bandC[b]==null){bandC[b]=0; markC[b]=0; keys.push(b);} bandC[b]++; });
+  markRows.forEach(function(p){ markC[fromPct(p)]++; });
+  var total=bandRows.length+markRows.length;
+  var cut = ext ? {E4:'90–100%',E3:'80–89%',E2:'70–79%',E1:'below 70%'}
+                : {'6':'90–100%','5':'80–89%','4':'70–79%','3':'60–69%','2':'50–59%','1':'below 50%'};
   const body =
-    '<div class="bar-chart">'+labels.map(function(k){
-      var c=counts[k]||0, p=Math.round(c/total*100);
-      return '<div class="bar-row"><div class="bar-label" title="'+k+'">'+k+'</div>'+
-        '<div class="bar-track"><div class="bar-fill" style="width:'+(c/maxC*100)+'%;background:'+s.color+'"></div></div>'+
-        '<div class="bar-val">'+c+' <span style="color:var(--text-dim)">('+p+'%)</span></div></div>';
+    '<div class="bar-chart">'+keys.map(function(k){
+      var b=bandC[k]||0, m=markC[k]||0, c=b+m, p=Math.round(c/total*100);
+      var tip='Ind Band '+k+' — '+b+' band-marked, '+m+' from marks'+(cut[k]?' ('+cut[k]+')':'');
+      return '<div class="bar-row" title="'+tip+'"><div class="bar-label">Ind Band '+k+
+          (cut[k]?' <span style="color:var(--text-dim);font-size:0.72rem">'+cut[k]+'</span>':'')+'</div>'+
+        '<div class="bar-track" style="height:9px;display:flex">'+
+          '<div class="bar-fill" style="border-radius:0;width:'+(b/total*100)+'%;background:'+s.color+'"></div>'+
+          '<div class="bar-fill" style="border-radius:0;width:'+(m/total*100)+'%;background:'+s.color+';opacity:0.4"></div>'+
+        '</div>'+
+        '<div class="bar-val" style="width:64px">'+c+' <span style="color:var(--text-dim)">('+p+'%)</span></div></div>';
     }).join('')+'</div>'+
-    (total<5 ? '<div style="font-size:0.78rem;color:var(--text-dim);line-height:1.4;margin-top:0.85rem">'+
-      'Only '+total+' band-marked response'+(total!==1?'s':'')+' so far. Most questions have a set number of marks, so they appear in the Mark&nbsp;% figures instead; this panel fills as students attempt questions marked by band.</div>' : '')+
-    '<div style="font-size:0.72rem;color:var(--text-dim);line-height:1.4;margin-top:0.85rem">'+
-      'Band-marked responses are assessed holistically against NESA performance-band descriptors, '+
-      'so they are shown as a distribution here and are <strong>not</strong> included in the Mark&nbsp;% averages below.'+
+    '<div style="display:flex;gap:1.2rem;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);margin-top:0.8rem">'+
+      '<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+s.color+';vertical-align:-1px"></span> band-marked ('+bandRows.length+')</span>'+
+      '<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+s.color+';opacity:0.4;vertical-align:-1px"></span> from marks ('+markRows.length+')</span>'+
+    '</div>'+
+    '<div style="font-size:0.72rem;color:var(--text-dim);line-height:1.4;margin-top:0.6rem">'+
+      'Marked responses are shown at their band-equivalent mark %. A single short question is a rough indicator only, '+
+      'not an HSC band: a 2-mark question can only score 0%, 50% or 100%.'+
     '</div>';
   const wasOpen = el.querySelector('.accordion.open') !== null;
-  el.innerHTML = accordion('band-acc', 'HSC Band Distribution', total+' band-marked response'+(total!==1?'s':'')+' \u00b7 all time', body, wasOpen);
+  el.innerHTML = accordion('band-acc', 'Indicative Band Distribution', total+' response'+(total!==1?'s':'')+' · all time', body, wasOpen);
 }
 
 function renderLogAccordion(s){
