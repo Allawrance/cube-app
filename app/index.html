@@ -2996,7 +2996,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
     try {
       const classQS = config.studentClass ? `&class=${encodeURIComponent(config.studentClass)}` : "";
       const url = `https://cube-proxy.alan-3e2.workers.dev/leaderboard?subject=${config.subjectCode}&period=${period||lbPeriod}&directive=${directive||lbDirective}${classQS}&lburl=${encodeURIComponent(config.leaderboardUrl||"")}`;
-      const res  = await fetch(url);
+      const res  = await fetch(url, { headers: cubeAccessHeaders() });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setLeaderboard(data);
