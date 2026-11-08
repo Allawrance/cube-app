@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.13 · 2026-11-08 · eestask-v1.1 (EES cap needs ≥1 Missing row — partial rows alone never cap; focus tidied + shown as 'What the question asks for'; needs Worker v4.9) · was v3.12 · 2026-11-08 · eestask-v1.0 (EES answer-the-question gate: mark + Write XP capped from eesTaskCheck rows; needs Worker v4.8) · gatelog-v1.0 (Sheet/leaderboard mark now uses the same gate chain as the report — fixes VA coverage + MHIST structure caps not reaching the Sheet) · was v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
+    window.CUBE_BUILD = "v3.14 · 2026-11-08 · eestask-v1.2 (EES: each element the question names judged separately — named-but-unexplained fires the cap; a verified science error caps at marks − 1; needs Worker v5.0) · was v3.13 · 2026-11-08 · eestask-v1.1 (EES cap needs ≥1 Missing row — partial rows alone never cap; focus tidied + shown as 'What the question asks for'; needs Worker v4.9) · was v3.12 · 2026-11-08 · eestask-v1.0 (EES answer-the-question gate: mark + Write XP capped from eesTaskCheck rows; needs Worker v4.8) · gatelog-v1.0 (Sheet/leaderboard mark now uses the same gate chain as the report — fixes VA coverage + MHIST structure caps not reaching the Sheet) · was v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -945,6 +945,22 @@ const eesTidyFocus = (f) => {
     .replace(/[.\s]+$/, "");
   return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
 };
+// eestask-v1.2: elements judged separately; coverage cap needs an absent row/element; verified science error → marks − 1
+const eesNorm = (t) => String(t || "").toLowerCase().replace(/\[\?\]/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+const eesQuoteInResponse = (quote, responseText) => {
+  const q = eesNorm(quote), r = eesNorm(responseText);
+  if (!q || !r) return false;
+  if (r.includes(q)) return true;
+  const words = q.split(" ").filter(w => w.length >= 3);
+  if (words.length < 2) return false;
+  const have = new Set(r.split(" "));
+  return words.filter(w => have.has(w)).length / words.length >= 0.8;
+};
+const eesCoverageCredit = (x, st) => {
+  if (st === "met") return 1;
+  if (st === "absent") return 0;
+  return String(x.partialReason || "").toLowerCase().trim() === "science-error" ? 1 : EES_TASK_PARTIAL_CREDIT;
+};
 const eesTaskGate = (isEES, a, marks, rawAwarded) => {
   try {
     if (!isEES || rawAwarded === null || rawAwarded === undefined) return null;
@@ -954,18 +970,48 @@ const eesTaskGate = (isEES, a, marks, rawAwarded) => {
     const tc = a && a.specialCheck && a.specialCheck.eesTaskCheck;
     const rows = tc && Array.isArray(tc.rows) ? tc.rows.filter(r => r && typeof r === "object") : [];
     if (rows.length === 0) return null;
-    const st = r => String(r.status || "").toLowerCase().trim();
+    const st = x => String(x.status || "").toLowerCase().trim();
     if (rows.some(r => !EES_TASK_STATUSES.includes(st(r)))) return null;
-    // eestask-v1.1: cap only when ≥1 row is absent; partials alone never cap
-    if (!rows.some(r => st(r) === "absent")) return null;
-    const credit = rows.reduce((t, r) => t + (st(r) === "met" ? 1 : st(r) === "partial" ? EES_TASK_PARTIAL_CREDIT : 0), 0);
-    const cap = Math.min(marks, roundHalfUp(marks * credit / rows.length));
+    const respText = String((a && a.studentResponseText) || "");
+    const errors = [], seen = new Set();
+    const noteError = (x, where) => {
+      if (st(x) !== "partial") return;
+      if (String(x.partialReason || "").toLowerCase().trim() !== "science-error") return;
+      const quote = String(x.errorQuote || "").trim();
+      if (!eesQuoteInResponse(quote, respText)) return;
+      const k = eesNorm(quote); if (seen.has(k)) return; seen.add(k);
+      errors.push({ where: String(where || "").trim(), quote, correction: String(x.correction || "").trim() });
+    };
+    let anyAbsent = false, credit = 0;
+    const shown = rows.map(r => {
+      const elsRaw = Array.isArray(r.elements) ? r.elements.filter(e => e && typeof e === "object") : [];
+      const els = (elsRaw.length >= 2 && elsRaw.every(e => EES_TASK_STATUSES.includes(st(e)))) ? elsRaw : [];
+      let status;
+      if (els.length) {
+        credit += els.reduce((t, e) => t + eesCoverageCredit(e, st(e)), 0) / els.length;
+        if (els.some(e => st(e) === "absent")) anyAbsent = true;
+        els.forEach(e => noteError(e, e.name));
+        status = els.every(e => st(e) === "met") ? "met" : els.every(e => st(e) === "absent") ? "absent" : "partial";
+      } else {
+        credit += eesCoverageCredit(r, st(r));
+        if (st(r) === "absent") anyAbsent = true;
+        status = st(r);
+      }
+      noteError(r, r.requirement);
+      return { key: String(r.key || ""), requirement: String(r.requirement || "").trim(), status,
+               evidence: String(r.evidence || "").trim(), note: String(r.note || "").trim(),
+               elements: els.map(e => ({ name: String(e.name || "").trim(), status: st(e), note: String(e.note || "").trim() })) };
+    });
+    const coverageCap = anyAbsent ? Math.min(marks, roundHalfUp(marks * credit / rows.length)) : marks;
+    const errorCap = errors.length ? Math.max(0, marks - 1) : marks;
+    const cap = Math.min(coverageCap, errorCap);
     if (cap >= rawAwarded) return null;
     return {
       cap, credit, total: rows.length,
+      missing: anyAbsent && coverageCap < rawAwarded,
+      errors,
       focus: eesTidyFocus(tc && tc.focus),
-      rows: rows.map(r => ({ key: String(r.key || ""), requirement: String(r.requirement || "").trim(),
-                             status: st(r), evidence: String(r.evidence || "").trim(), note: String(r.note || "").trim() })),
+      rows: shown,
       xpScale: cap / rawAwarded,
     };
   } catch (_) { return null; }
@@ -991,6 +1037,59 @@ const finalMarkFromGates = (g, raw) =>
   : raw;
 const EES_TASK_ICON = { met: "✓", partial: "~", absent: "✗" };
 const EES_TASK_WORD = { met: "Done", partial: "Partly", absent: "Missing" };
+function EesTaskPanel({ gate, marks, print }) {
+  if (!gate) return null;
+  const C = print
+    ? { box:{margin:"-8px 0 18px 0",background:"#fff7ed",border:"2px solid #b45309",borderLeft:"6px solid #b45309",borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"},
+        head:"#b45309", headSize:"11px", text:"#3a2a12", textSize:"12.5px", rowSize:"12px", sub:"#5a5a5a", note:"#7a6a55",
+        met:"#2f6b2a", partial:"#b9770a", absent:"#b45309" }
+    : { box:{margin:"-10px 0 20px 0",background:"rgba(180,83,9,0.14)",border:"1.5px solid rgba(251,146,60,0.55)",borderLeft:"5px solid #fb923c",borderRadius:"10px",padding:"11px 16px",fontFamily:"sans-serif"},
+        head:"#fdba74", headSize:"10px", text:"#fde8d0", textSize:"13px", rowSize:"12.5px", sub:"#e8d5bf", note:"#d9b99a",
+        met:"#81c784", partial:"#ffd27a", absent:"#fdba74" };
+  const col = st => C[st] || C.absent;
+  const heading = gate.missing ? "Answer the question first — why this mark is capped" : "Check your science — why this mark is capped";
+  return (
+    <div className={print ? "pr-no-break" : undefined} style={C.box}>
+      <div style={{fontSize:C.headSize,fontWeight:800,letterSpacing:"1.2px",color:C.head,textTransform:"uppercase",marginBottom:"5px"}}>{heading}</div>
+      <div style={{fontSize:C.textSize,color:C.text,lineHeight:"1.6",marginBottom:"6px"}}>
+        {gate.missing && gate.focus ? <>What the question asks for: <strong>{gate.focus}</strong>. </> : null}
+        {gate.missing ? "Your response does not yet do all of that" : "Your response answers the question, but it contains a science error"}, so the mark is capped at <strong>{gate.cap} / {marks}</strong> and your Write XP is reduced to match. Your literacy scores {print ? "below " : ""}still show the writing skills you used — {gate.missing ? "aim them at the question" : "fix the science"} {print ? "next time." : "in your rewrite."}
+      </div>
+      {gate.missing && (
+        <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
+          {gate.rows.map((r,i)=>(
+            <div key={i} style={{fontSize:C.rowSize,color:C.text,lineHeight:"1.5"}}>
+              <strong style={{color:col(r.status)}}>{EES_TASK_ICON[r.status]} {EES_TASK_WORD[r.status]}</strong>
+              {r.requirement ? <span style={{color:C.sub}}> — {r.requirement}</span> : null}
+              {r.status!=="met" && r.note && !(r.elements && r.elements.length) ? <span style={{color:C.note}}> · {r.note}</span> : null}
+              {r.elements && r.elements.length ? (
+                <div style={{paddingLeft:"18px",marginTop:"2px",display:"flex",flexDirection:"column",gap:"2px"}}>
+                  {r.elements.map((e,j)=>(
+                    <div key={j}>
+                      <strong style={{color:col(e.status)}}>{EES_TASK_ICON[e.status]} {e.name}</strong>
+                      {e.status!=="met" && e.note ? <span style={{color:C.note}}> · {e.note}</span> : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      )}
+      {gate.errors && gate.errors.length ? (
+        <div style={{display:"flex",flexDirection:"column",gap:"3px",marginTop: gate.missing ? "6px" : "0"}}>
+          {gate.missing ? <div style={{fontSize:C.rowSize,color:C.text,fontWeight:700}}>Also check your science:</div> : null}
+          {gate.errors.map((e,i)=>(
+            <div key={i} style={{fontSize:C.rowSize,color:C.text,lineHeight:"1.5"}}>
+              <strong style={{color:C.absent}}>✗ “{e.quote}”</strong>
+              {e.correction ? <span style={{color:C.sub}}> → {e.correction}</span> : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 // ── Feedback plan: how many medals & missions to SHOW, driven by marks lost (build 2026-07-05) ──
 const getFeedbackPlan = (marksLost) => {
@@ -2022,27 +2121,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
       )}
 
       {/* eestask-v1.0: EES answer-the-question cap — shown ONLY when the gate lowered the mark. */}
-      {eesGate && (
-        <div className="pr-no-break" style={{margin:"-8px 0 18px 0",background:"#fff7ed",border:"2px solid #b45309",borderLeft:"6px solid #b45309",borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"}}>
-          <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Answer the question first — why this mark is capped</div>
-          <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6",marginBottom:"6px"}}>
-            {eesGate.focus ? <>What the question asks for: <strong>{eesGate.focus}</strong>. </> : null}
-            Your response does not yet do all of that, so the mark is capped at <strong>{eesGate.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores below still show the writing skills you used — aim them at the question next time.
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
-            {eesGate.rows.map((r,i)=>{
-              const col = r.status==="met" ? "#2f6b2a" : r.status==="partial" ? "#b9770a" : "#b45309";
-              return (
-                <div key={i} style={{fontSize:"12px",color:"#3a2a12",lineHeight:"1.5"}}>
-                  <strong style={{color:col}}>{EES_TASK_ICON[r.status]} {EES_TASK_WORD[r.status]}</strong>
-                  {r.requirement ? <span style={{color:"#5a5a5a"}}> — {r.requirement}</span> : null}
-                  {r.status!=="met" && r.note ? <span style={{color:"#7a6a55"}}> · {r.note}</span> : null}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <EesTaskPanel gate={eesGate} marks={c.marks} print={true}/>
 
       {/* ── THE QUESTION ── */}
       <div className="pr-question-block pr-no-break">
@@ -3923,27 +4002,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
                   </div>
                 )}
                 {/* eestask-v1.0: EES answer-the-question cap — on screen, ONLY when the gate lowered the mark */}
-                {eesGateR && (
-                  <div style={{margin:"-10px 0 20px 0",background:"rgba(180,83,9,0.14)",border:"1.5px solid rgba(251,146,60,0.55)",borderLeft:"5px solid #fb923c",borderRadius:"10px",padding:"11px 16px",fontFamily:"sans-serif"}}>
-                    <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Answer the question first — why this mark is capped</div>
-                    <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6",marginBottom:"6px"}}>
-                      {eesGateR.focus ? <>What the question asks for: <strong>{eesGateR.focus}</strong>. </> : null}
-                      Your response does not yet do all of that, so the mark is capped at <strong>{eesGateR.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores are still shown so you can see the writing skills you used — aim them at the question in your rewrite.
-                    </div>
-                    <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
-                      {eesGateR.rows.map((r,i)=>{
-                        const col = r.status==="met" ? "#81c784" : r.status==="partial" ? "#ffd27a" : "#fdba74";
-                        return (
-                          <div key={i} style={{fontSize:"12.5px",color:"#fde8d0",lineHeight:"1.5"}}>
-                            <strong style={{color:col}}>{EES_TASK_ICON[r.status]} {EES_TASK_WORD[r.status]}</strong>
-                            {r.requirement ? <span style={{color:"#e8d5bf"}}> — {r.requirement}</span> : null}
-                            {r.status!=="met" && r.note ? <span style={{color:"#d9b99a"}}> · {r.note}</span> : null}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                <EesTaskPanel gate={eesGateR} marks={c.marks} print={false}/>
               </>
               );
             })()}
@@ -4474,7 +4533,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
 
               {/* eestask-v1.0: why the XP column is lower than the scores (EES gate only) */}
               {eesGateR && <div style={{background:"rgba(180,83,9,0.12)",border:"1px solid rgba(251,146,60,0.45)",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px",fontFamily:"sans-serif",fontSize:"12.5px",color:"#fde8d0",lineHeight:"1.55"}}>
-                Your literacy <strong>scores</strong> are shown as marked. Your <strong>XP</strong> is reduced because the response does not yet answer the question — answer the question first, then these writing skills earn full XP.
+                Your literacy <strong>scores</strong> are shown as marked. Your <strong>XP</strong> is reduced because the response {eesGateR.missing ? "does not yet answer the question — answer the question first" : "contains a science error — fix the science"}, then these writing skills earn full XP.
               </div>}
 
               {/* ── XP summary strip ── */}
