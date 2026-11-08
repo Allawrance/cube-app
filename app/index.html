@@ -283,7 +283,7 @@
     // ─── SINGLE SOURCE OF TRUTH FOR BUILD VERSION ───────────────────────────
     // Change this ONE line each deploy. The console log AND the corner tag both
     // read from it, so the visible version can never drift out of sync again.
-    window.CUBE_BUILD = "v3.12 · 2026-11-08 · eestask-v1.0 (EES answer-the-question gate: mark + Write XP capped from eesTaskCheck rows; needs Worker v4.8) · gatelog-v1.0 (Sheet/leaderboard mark now uses the same gate chain as the report — fixes VA coverage + MHIST structure caps not reaching the Sheet) · was v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
+    window.CUBE_BUILD = "v3.13 · 2026-11-08 · eestask-v1.1 (EES cap needs ≥1 Missing row — partial rows alone never cap; focus tidied + shown as 'What the question asks for'; needs Worker v4.9) · was v3.12 · 2026-11-08 · eestask-v1.0 (EES answer-the-question gate: mark + Write XP capped from eesTaskCheck rows; needs Worker v4.8) · gatelog-v1.0 (Sheet/leaderboard mark now uses the same gate chain as the report — fixes VA coverage + MHIST structure caps not reaching the Sheet) · was v3.11-demo · 2026-11-07 · doorLockdown-v1.1 (saved codes re-checked) · demoIsolation (log/leaderboard send code) · otherBox-v1.0 · doorLockdown-v1.0 · was v3.9-dc6 2026-09-04 · directivecoverage-v1.2 (BusS, advisory + causal-fix + soft-thin cap) · stage1-whole-question-v2.0 · whole-question headings with stimulus boxes recognised · section preambles no longer disqualify a heading · self-contradictory questionNotFound retried once · parse-repair-v1.0 · wallet-v1.1 · classgate-v1.0 · json-multiobject-v1.0 · stage2-stream-v1.0 · buildtag-v1.1 · mhist-argstructure-v1.0 · subjectcode-scope-v1.1 · mhist-argnet-v1.1 · mhist-argscope-v1.1";
 
     // Configure pdf.js worker
     if (typeof pdfjsLib !== 'undefined') {
@@ -938,6 +938,13 @@ const directiveCoverageGate = (a, marks, rawAwarded, config) => {
 const EES_TASK_PARTIAL_CREDIT = 0.5;
 const EES_TASK_STATUSES = ["met", "partial", "absent"];
 const roundHalfUp = (x) => Math.round(x + 1e-9);
+// eestask-v1.1: tidy the displayed focus (strip "The student must…", capitalise)
+const eesTidyFocus = (f) => {
+  const t = String(f || "").trim()
+    .replace(/^(?:this question asks (?:you|the student) to show|the students?\s+(?:must|needs? to|should|has to|is required to|are required to)|students?\s+(?:must|need to|should)|you\s+(?:must|need to|should))\s*:?\s*/i, "")
+    .replace(/[.\s]+$/, "");
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
+};
 const eesTaskGate = (isEES, a, marks, rawAwarded) => {
   try {
     if (!isEES || rawAwarded === null || rawAwarded === undefined) return null;
@@ -949,12 +956,14 @@ const eesTaskGate = (isEES, a, marks, rawAwarded) => {
     if (rows.length === 0) return null;
     const st = r => String(r.status || "").toLowerCase().trim();
     if (rows.some(r => !EES_TASK_STATUSES.includes(st(r)))) return null;
+    // eestask-v1.1: cap only when ≥1 row is absent; partials alone never cap
+    if (!rows.some(r => st(r) === "absent")) return null;
     const credit = rows.reduce((t, r) => t + (st(r) === "met" ? 1 : st(r) === "partial" ? EES_TASK_PARTIAL_CREDIT : 0), 0);
     const cap = Math.min(marks, roundHalfUp(marks * credit / rows.length));
     if (cap >= rawAwarded) return null;
     return {
       cap, credit, total: rows.length,
-      focus: String((tc && tc.focus) || "").trim(),
+      focus: eesTidyFocus(tc && tc.focus),
       rows: rows.map(r => ({ key: String(r.key || ""), requirement: String(r.requirement || "").trim(),
                              status: st(r), evidence: String(r.evidence || "").trim(), note: String(r.note || "").trim() })),
       xpScale: cap / rawAwarded,
@@ -2017,7 +2026,7 @@ function _e1663c({ studentName, questionNumber, subjectName, subjectCode,
         <div className="pr-no-break" style={{margin:"-8px 0 18px 0",background:"#fff7ed",border:"2px solid #b45309",borderLeft:"6px solid #b45309",borderRadius:"10px",padding:"12px 18px",fontFamily:"sans-serif"}}>
           <div style={{fontSize:"11px",fontWeight:800,letterSpacing:"1.2px",color:"#b45309",textTransform:"uppercase",marginBottom:"5px"}}>Answer the question first — why this mark is capped</div>
           <div style={{fontSize:"12.5px",color:"#3a2a12",lineHeight:"1.6",marginBottom:"6px"}}>
-            {eesGate.focus ? <>This question asks you to show <strong>{eesGate.focus.replace(/\.$/,"")}</strong>. </> : null}
+            {eesGate.focus ? <>What the question asks for: <strong>{eesGate.focus}</strong>. </> : null}
             Your response does not yet do all of that, so the mark is capped at <strong>{eesGate.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores below still show the writing skills you used — aim them at the question next time.
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
@@ -3918,7 +3927,7 @@ Return ONLY a JSON array of strings in the order they appear, e.g. ["22(a)","22(
                   <div style={{margin:"-10px 0 20px 0",background:"rgba(180,83,9,0.14)",border:"1.5px solid rgba(251,146,60,0.55)",borderLeft:"5px solid #fb923c",borderRadius:"10px",padding:"11px 16px",fontFamily:"sans-serif"}}>
                     <div style={{fontSize:"10px",fontWeight:800,letterSpacing:"1.2px",color:"#fdba74",textTransform:"uppercase",marginBottom:"4px"}}>Answer the question first — why this mark is capped</div>
                     <div style={{fontSize:"13px",color:"#fde8d0",lineHeight:"1.6",marginBottom:"6px"}}>
-                      {eesGateR.focus ? <>This question asks you to show <strong>{eesGateR.focus.replace(/\.$/,"")}</strong>. </> : null}
+                      {eesGateR.focus ? <>What the question asks for: <strong>{eesGateR.focus}</strong>. </> : null}
                       Your response does not yet do all of that, so the mark is capped at <strong>{eesGateR.cap} / {c.marks}</strong> and your Write XP is reduced to match. Your literacy scores are still shown so you can see the writing skills you used — aim them at the question in your rewrite.
                     </div>
                     <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
