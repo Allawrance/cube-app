@@ -16,9 +16,9 @@
   "sheetTabCube": "PHYS CUBE",
   "sheetTabFull": "PHYS",
   "classCodes": ["PHYS-1", "PHYS-2", "PHYS-3", "PHYS-4"],
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=PHYS",
-  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=PHYS",
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker",
 
   "leaderboardTip": "Physics rewards reasoning: explain using named laws and models; for calculations, show the relationship, substitution, units and significant figures — CUBE checks your working, your teacher confirms the final number.",
 
