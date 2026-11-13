@@ -13,7 +13,7 @@
   "sheetTabCube": "MHIST CUBE",
   "sheetTabFull": "MHIST",
   "accentColor": "#ef9a9a",
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=MHIST",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=MHIST",
   "hasMC": false,
   "kla": "HSIE",
   "classCodes": [
@@ -1872,6 +1872,6 @@
     ]
   },
   "modernHistoryNote": "Modern History CUBE marking has important differences from Science subjects and from Ancient History. The Underline step should identify: named individuals (Hitler, Stalin, Mandela, Deng Xiaoping), named events with dates (Enabling Act 1933, Tet Offensive 1968, Sharpeville 1960), named legislation and treaties, named source types (propaganda posters, cartoons, speeches, official documents, memoirs), named historical concepts (causation, continuity and change, significance, perspectives, contestability), and any directive verbs that trigger source evaluation or historiographical judgement. Section I questions come with PROVIDED sources — the Evaluate/plan step must show how each source will be used AND supplemented with own knowledge. Planning arrows should show: thesis → evidence (named events/individuals/dates) → source analysis (usefulness/reliability where relevant) → (optional) differing interpretations → judgement. Before marking, confirm which topic option the question belongs to — this subject spans one core plus thirteen school-taught options across three elective sections, each with its own prescribed date range.",
-  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker"
 }
