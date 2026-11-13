@@ -20,9 +20,9 @@
     "GEO-2",
     "GEO-3"
   ],
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Geo",
-  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=Geo",
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker",
   "leaderboardTip": "Geography rewards judgement, not description: evaluate/assess management strategies for sustainability AT A RANGE OF SCALES, and bring in different perspectives and geographical data.",
   "syllabus": {
     "GS": {
