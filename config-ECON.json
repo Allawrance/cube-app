@@ -9,7 +9,7 @@
   "dominantMode": "Economic argument + theory and diagrams + contemporary statistics and named policies",
   "cleanRule": "Economics = economic argument + relevant theory (models, diagrams, equations) + contemporary statistics and named policies/examples + explicit links to economic objectives and the question's directive verb",
   "leaderboardTip": "HSC Economics questions reward PRECISE, CONTEMPORARY evidence — real statistics (cash rate, inflation %, unemployment %, GDP growth), named policies (a specific Federal Budget, RBA decisions, named trade agreements like CPTPP or ChAFTA) and correctly drawn, labelled diagrams (AD/AS, exchange rate S&D, Lorenz curve). Generic claims like 'the government spends money' cannot reach Band 5. Always apply theory to the contemporary Australian economy and refer to any stimulus provided.",
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=ECON",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=ECON",
   "hasMC": true,
   "sheetTabCube": "ECON CUBE",
   "sheetTabFull": "ECON",
@@ -688,6 +688,6 @@
     ]
   },
   "econEvidenceNote": "Economics marking requires applied theory plus contemporary evidence. The CUBE Underline step should highlight not just syllabus keywords but also: any statistics, dates or figures in the question or stimulus, any named policies/institutions/agreements, and any directive to 'refer to the information provided' — these define the evidence base the response must use.",
-  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker"
 }
