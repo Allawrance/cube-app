@@ -13,7 +13,7 @@
   "sheetTabCube": "ANCH CUBE",
   "sheetTabFull": "ANCH",
   "accentColor": "#ffcc80",
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=ANCH",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=ANCH",
   "hasMC": false,
   "kla": "HSIE",
   "classCodes": [
@@ -664,6 +664,6 @@
     ]
   },
   "ancientHistoryNote": "Ancient History CUBE marking has important differences from Science and HSIE subjects. The Underline step should identify: named historical figures, named sites (Karnak, Malkata, Thebes), named source types (wall paintings, papyri, reliefs), named historical concepts (maat, continuity, significance), and any directive verbs that trigger source evaluation or historiographical judgement. Planning arrows should show: thesis → evidence (named sources) → source analysis (value/limitation) → historiography (named historian) → judgement.",
-  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker"
 }
