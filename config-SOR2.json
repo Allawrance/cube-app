@@ -17,9 +17,9 @@
   "classCodes": [
     "12HRS1"
   ],
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=SOR2",
-  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=SOR2",
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker",
   "leaderboardTip": "SOR rewards evidence + significance for adherents: quote sacred texts and use accurate terminology, and keep every point linked back to the question — don't just recount content.",
   "syllabus": {
     "5": {
