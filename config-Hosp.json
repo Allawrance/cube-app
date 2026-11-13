@@ -16,9 +16,9 @@
   "sheetTabCube": "Hosp CUBE",
   "sheetTabFull": "Hosp",
   "classCodes": ["HOSP-1", "HOSP-2", "HOSP-3"],
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Hosp",
-  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=Hosp",
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker",
 
   "leaderboardTip": "Hospitality rewards APPLICATION: answer the kitchen/workplace scenario with a realistic industry response, use correct industry terminology, and back it with a workplace example — don't just recite theory.",
 
