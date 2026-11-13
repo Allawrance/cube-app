@@ -16,9 +16,9 @@
   "sheetTabCube": "Chem CUBE",
   "sheetTabFull": "Chem",
   "classCodes": ["Chem-1", "Chem-2", "Chem-3"],
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=Chem",
-  "logUrl": "REPLACE_WITH_LOG_WEBHOOK_EXEC_URL",
-  "leaderboardUrl": "REPLACE_WITH_LEADERBOARD_WEBHOOK_EXEC_URL",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=Chem",
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker",
 
   "leaderboardTip": "Chemistry rewards precision: explain with correct terminology and nomenclature; for calculations, show the method, units and significant figures — CUBE checks your working, your teacher confirms the final number.",
 
