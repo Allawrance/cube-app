@@ -10,10 +10,10 @@
   "leaderboardTip": "Explain and Analyse questions require technical reasoning \u2014 forces, materials, energy transfer, and design features.",
   "sheetTabCube": "ES CUBE",
   "sheetTabFull": "EngS",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec",
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=ES",
+  "leaderboardUrl": "via-worker",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=ES",
   "hasMC": true,
-  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
+  "logUrl": "via-worker",
   "syllabus": {
     "file_name": "04_ENGINEERING_STUDIES_SYLLABUS_DATABASE.json",
     "version": "1.0",
