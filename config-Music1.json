@@ -10,7 +10,7 @@
   "dominantMode": "Aural analysis — concept-based listening + specific musical evidence + concept vocabulary",
   "cleanRule": "Music 1 Aural = name the concept(s) the question targets (duration / pitch / dynamics and expressive techniques / tone colour / texture / structure) + describe SPECIFIC musical events heard in the excerpt (instruments, sections, changes over time) + use correct concept vocabulary (syncopation, register, crescendo, ostinato, layers, riff) + track HOW the concept changes across the excerpt, not just what is present",
   "leaderboardTip": "HSC Music 1 Aural rewards SPECIFIC, well-supported observations — name the instruments, describe what they do, say WHERE in the excerpt it happens (opening / middle / end), and use concept vocabulary correctly. Generic statements like 'the tempo is fast and there are drums' earn 2–3 marks. Top responses track how the concept CHANGES across the excerpt and cover EVERY concept the question names (e.g. both pitch AND dynamics and expressive techniques).",
-  "mcUrl": "https://allawrance.github.io/cube-app/mc-coach.html?subject=MUS1",
+  "mcUrl": "https://cube.sureview.com.au/app/mc-sa-coach.html?subject=MUS1",
   "hasMC": false,
   "sheetTabCube": "MUS1 CUBE",
   "sheetTabFull": "MUS1",
@@ -565,6 +565,6 @@
     ]
   },
   "auralNote": "Music 1 Aural responses are assessed on the quality of aural observations — specific, located-in-time musical evidence expressed in correct concept vocabulary. CUBE in Music 1 should identify: the directive verb (Circle), the concept(s) of music named in the question — ALL of them in compound questions (Underline), and the excerpt constraint — work title, artist/composer, excerpt length (Box). Planning arrows should suggest a section-by-section listening plan (opening / middle / end), which concept features to listen for, and a reminder to cover every named concept.",
-  "logUrl": "https://script.google.com/macros/s/AKfycbxfWJkiKQb1bUQOqDikh5jMkyEQnKZC1anu9yLTAEeB-5YC0IyAY3Fs0kWSYRx8Fcfg/exec",
-  "leaderboardUrl": "https://script.google.com/macros/s/AKfycbzdHZeyFM0Or_1s_UCEtSImlsjOp9-59Qu2V15YGk4MeDQEKkPKH7xm0RkRDJoApulR/exec"
+  "logUrl": "via-worker",
+  "leaderboardUrl": "via-worker"
 }
